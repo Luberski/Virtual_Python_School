@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Button from "../components/Button";
+import Image from "next/image";
+import Footer from "../components/Footer";
 
 export default function IndexPage() {
   const [profile, setProfile] = useState(false);
@@ -233,6 +235,15 @@ export default function IndexPage() {
             </div>
           </div>
         </div>
+        <div className="flex items-center justify-center my-16">
+          <Image
+            src="/undraw_online_test_gba7.png"
+            alt="online_test"
+            width="601"
+            height="278"
+          />
+        </div>
+        <Footer />
       </div>
     </>
   );
