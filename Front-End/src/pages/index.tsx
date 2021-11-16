@@ -4,9 +4,12 @@ import Image from "next/image";
 import Footer from "../components/Footer";
 import Link from "next/link";
 import ButtonLink from "../components/ButtonLink";
+import { useTranslations } from "next-intl";
 
 export default function IndexPage() {
   const [profile, _setProfile] = useState(false);
+  const t = useTranslations();
+
   return (
     <>
       <div className="absolute w-full h-full bg-gray-50">
@@ -22,10 +25,10 @@ export default function IndexPage() {
               </div>
               <ul className="items-center hidden h-full pr-12 xl:flex">
                 <li className="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 cursor-pointer rounded-xl">
-                  Home
+                {t("Home.home")}
                 </li>
                 <li className="flex items-center px-4 py-2 mx-4 text-sm tracking-normal text-gray-700 cursor-pointer rounded-xl">
-                  Courses
+                {t("Home.courses")}
                 </li>
               </ul>
             </div>
@@ -110,10 +113,10 @@ export default function IndexPage() {
                     ) : (
                       <div className="space-x-4">
                         <Link href="/login" passHref={true}>
-                          <ButtonLink>Log in</ButtonLink>
+                          <ButtonLink>{t("Auth.login")}</ButtonLink>
                         </Link>
                         <Link href="/register" passHref={true}>
-                          <ButtonLink primary>Register</ButtonLink>
+                          <ButtonLink primary>{t("Auth.register")}</ButtonLink>
                         </Link>
                       </div>
                     )}
@@ -226,19 +229,19 @@ export default function IndexPage() {
               <p className="text-gray-700">
                 For beginers starting with programming.
               </p>
-              <Button className="mt-16 w-36">Learn More</Button>
+              <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
             </div>
             <div className="flex flex-col justify-center p-8 bg-blue-100 rounded-xl">
               <h3 className="text-xl font-bold">Intermediate</h3>
               <p className="text-gray-700">
                 For people who know the basics of programming
               </p>
-              <Button className="mt-16 w-36">Learn More</Button>
+              <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
             </div>
             <div className="flex flex-col justify-center p-8 bg-yellow-100 rounded-xl">
               <h3 className="text-xl font-bold">Advanced</h3>
               <p className="text-gray-700">For people mastering own skills.</p>
-              <Button className="mt-16 w-36">Learn More</Button>
+              <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
             </div>
           </div>
         </div>
@@ -254,4 +257,15 @@ export default function IndexPage() {
       </div>
     </>
   );
+}
+
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      i18n: Object.assign(
+        {},
+        await import(`../../i18n/${locale}.json`)
+      ),
+    },
+  };
 }

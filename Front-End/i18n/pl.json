@@ -1,0 +1,11 @@
+{
+  "Auth": {
+    "login": "Logowanie",
+    "register": "Rejestracja"
+  },
+  "Home": {
+    "home": "Strona Główna",
+    "courses": "Kursy",
+    "learn-more":"Dowiedz się więcej"
+  }
+}

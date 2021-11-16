@@ -1,0 +1,11 @@
+{
+  "Auth": {
+    "login": "Log in",
+    "register": "Register"
+  },
+  "Home": {
+    "home": "Home",
+    "courses": "Courses",
+    "learn-more":"Learn More"
+  }
+}

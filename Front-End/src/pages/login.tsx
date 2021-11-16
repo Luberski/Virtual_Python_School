@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "../components/Button";
-import Image from "next/image";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function LoginPage() {
+  const t = useTranslations();
+
   return (
     <>
       <div className="absolute w-full h-full bg-white">
@@ -34,7 +36,7 @@ export default function LoginPage() {
             <Input type="email" placeholder="E-mail" />
             <Input type="password" placeholder="Password" />
             <Button primary className="w-36">
-              Log in
+              {t("Auth.login")}
             </Button>
           </div>
         </div>
@@ -43,4 +45,12 @@ export default function LoginPage() {
       </div>
     </>
   );
+}
+
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      i18n: Object.assign({}, await import(`../../i18n/${locale}.json`)),
+    },
+  };
 }
