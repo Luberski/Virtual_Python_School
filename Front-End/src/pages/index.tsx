@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import Button from "../components/Button";
 import Image from "next/image";
 import Footer from "../components/Footer";
+import Link from "next/link";
+import ButtonLink from "../components/ButtonLink";
 
 export default function IndexPage() {
-  const [profile, setProfile] = useState(false);
+  const [profile, _setProfile] = useState(false);
   return (
     <>
       <div className="absolute w-full h-full bg-gray-50">
@@ -12,9 +14,11 @@ export default function IndexPage() {
           <div className="container flex items-center justify-between h-16 px-6 mx-auto lg:items-stretch">
             <div className="flex items-center h-full">
               <div className="flex items-center mr-10">
-                <h3 className="hidden ml-3 text-base font-bold leading-tight tracking-normal text-gray-900 lg:block">
-                  Virtual Python School
-                </h3>
+                <Link href="/" passHref={true}>
+                  <a className="hidden ml-3 text-base font-bold leading-tight tracking-normal text-gray-900 lg:block no-underline hover:no-underline">
+                    Virtual Python School
+                  </a>
+                </Link>
               </div>
               <ul className="items-center hidden h-full pr-12 xl:flex">
                 <li className="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 cursor-pointer rounded-xl">
@@ -31,7 +35,6 @@ export default function IndexPage() {
                   <div
                     aria-haspopup="true"
                     className="relative flex items-center justify-end w-full cursor-pointer"
-                    onClick={() => setProfile(!profile)}
                   >
                     {profile ? (
                       <div className="flex">
@@ -106,8 +109,12 @@ export default function IndexPage() {
                       </div>
                     ) : (
                       <div className="space-x-4">
-                        <Button>Log in</Button>
-                        <Button primary>Register</Button>
+                        <Link href="/login" passHref={true}>
+                          <ButtonLink>Log in</ButtonLink>
+                        </Link>
+                        <Link href="/register" passHref={true}>
+                          <ButtonLink primary>Register</ButtonLink>
+                        </Link>
                       </div>
                     )}
                   </div>
