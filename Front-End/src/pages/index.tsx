@@ -25,10 +25,10 @@ export default function IndexPage() {
               </div>
               <ul className="items-center hidden h-full pr-12 xl:flex">
                 <li className="flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 cursor-pointer rounded-xl">
-                {t("Home.home")}
+                  {t("Home.home")}
                 </li>
                 <li className="flex items-center px-4 py-2 mx-4 text-sm tracking-normal text-gray-700 cursor-pointer rounded-xl">
-                {t("Home.courses")}
+                  {t("Home.courses")}
                 </li>
               </ul>
             </div>
@@ -215,32 +215,23 @@ export default function IndexPage() {
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
             <h1 className="text-4xl font-bold text-center text-gray-900">
-              Python for everyone
+              {t("Home.leading")}
             </h1>
             <h2 className="text-xl text-center text-gray-900">
-              Choose your skill level
+              {t("Home.choose-skill-level")}
             </h2>
           </div>
         </div>
         <div className="container px-6 mx-auto">
           <div className="flex items-center justify-center w-full space-x-12">
             <div className="flex flex-col justify-center p-8 bg-green-100 rounded-xl">
-              <h3 className="text-xl font-bold">Beginners</h3>
-              <p className="text-gray-700">
-                For beginers starting with programming.
-              </p>
+              <h3 className="text-xl font-bold">{t("Home.beginners")}</h3>
+              <p className="text-gray-700">{t("Home.beginners-info")}</p>
               <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
             </div>
             <div className="flex flex-col justify-center p-8 bg-blue-100 rounded-xl">
-              <h3 className="text-xl font-bold">Intermediate</h3>
-              <p className="text-gray-700">
-                For people who know the basics of programming
-              </p>
-              <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
-            </div>
-            <div className="flex flex-col justify-center p-8 bg-yellow-100 rounded-xl">
-              <h3 className="text-xl font-bold">Advanced</h3>
-              <p className="text-gray-700">For people mastering own skills.</p>
+              <h3 className="text-xl font-bold">{t("Home.intermediate")}</h3>
+              <p className="text-gray-700">{t("Home.intermediate-info")}</p>
               <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
             </div>
           </div>
@@ -262,10 +253,7 @@ export default function IndexPage() {
 export async function getStaticProps({ locale }) {
   return {
     props: {
-      i18n: Object.assign(
-        {},
-        await import(`../../i18n/${locale}.json`)
-      ),
+      i18n: Object.assign({}, await import(`../../i18n/${locale}.json`)),
     },
   };
 }

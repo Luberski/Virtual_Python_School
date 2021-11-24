@@ -1,11 +1,26 @@
 {
   "Auth": {
     "login": "Logowanie",
-    "register": "Rejestracja"
+    "register": "Rejestracja",
+    "logout": "Wyloguj",
+    "email": "Email",
+    "password": "Hasło",
+    "confirm-password": "Potwierdź hasło",
+    "name": "Imię",
+    "last-name": "Nazwisko",
+    "welcome-back": "Witaj ponownie",
+    "forgot-password": "Zapomniałeś hasła?",
+    "create-new-account": "Utwórz nowe konto"
   },
   "Home": {
     "home": "Strona Główna",
     "courses": "Kursy",
-    "learn-more":"Dowiedz się więcej"
+    "learn-more": "Dowiedz się więcej",
+    "leading": "Python dla każdego",
+    "choose-skill-level": "Wybierz swój poziom",
+    "beginners": "Początkujący",
+    "beginners-info": "Dla początkujących dopiero zaczynających przygodę z programowaniem.",
+    "intermediate": "Zaawansowany",
+    "intermediate-info": "Dla zaawansowanych co znają podstawy programowania."
   }
 }

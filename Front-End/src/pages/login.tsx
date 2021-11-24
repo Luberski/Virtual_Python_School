@@ -27,14 +27,14 @@ export default function LoginPage() {
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
             <h1 className="text-5xl font-bold text-center text-gray-900">
-              Welcome back!
+              {t("Auth.welcome-back")}
             </h1>
           </div>
         </div>
         <div className="container px-6 mx-auto">
           <div className="flex flex-col space-y-8 items-center justify-center">
-            <Input type="email" placeholder="E-mail" />
-            <Input type="password" placeholder="Password" />
+            <Input type="email" placeholder={t("Auth.email")} />
+            <Input type="password" placeholder={t("Auth.password")} />
             <Button primary className="w-36">
               {t("Auth.login")}
             </Button>

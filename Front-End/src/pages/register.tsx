@@ -27,17 +27,17 @@ export default function RegisterPage() {
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
             <h1 className="text-5xl font-bold text-center text-gray-900">
-              Join us!
+              {t("Auth.create-new-account")}
             </h1>
           </div>
         </div>
         <div className="container px-6 mx-auto">
           <div className="flex flex-col space-y-8 items-center justify-center">
-            <Input type="email" placeholder="E-mail" />
-            <Input type="text" placeholder="Name" />
-            <Input type="text" placeholder="Last name" />
-            <Input type="password" placeholder="Password" />
-            <Input type="password" placeholder="Repeat password" />
+            <Input type="email" placeholder={t("Auth.email")} />
+            <Input type="text" placeholder={t("Auth.name")} />
+            <Input type="text" placeholder={t("Auth.last-name")} />
+            <Input type="password" placeholder={t("Auth.password")} />
+            <Input type="password" placeholder={t("Auth.confirm-password")} />
             <Button primary className="w-36">
               {t("Auth.register")}
             </Button>
