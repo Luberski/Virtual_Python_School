@@ -209,7 +209,7 @@ export default function IndexPage() {
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
             <h1 className="text-4xl font-bold text-center text-gray-900">
-              {t("Home.leading")}
+              {t("Home.courses")}
             </h1>
             <h2 className="text-xl text-center text-gray-900">
               {t("Home.choose-skill-level")}
