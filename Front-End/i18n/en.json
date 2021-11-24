@@ -22,5 +22,8 @@
     "beginners-info": "For beginers starting with programming.",
     "intermediate": "Intermediate",
     "intermediate-info": "For people who know the basics of programming"
+  },
+  "Courses": {
+    "enroll": "Enroll"
   }
 }

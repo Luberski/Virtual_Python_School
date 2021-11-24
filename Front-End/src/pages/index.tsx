@@ -220,13 +220,25 @@ export default function IndexPage() {
           <div className="flex items-center justify-center w-full space-x-12">
             <div className="flex flex-col justify-center p-8 bg-green-100 rounded-xl">
               <h3 className="text-xl font-bold">{t("Home.beginners")}</h3>
-              <p className="text-gray-700">{t("Home.beginners-info")}</p>
-              <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
+              <p className="text-gray-700 max-w-xs">
+                {t("Home.beginners-info")}
+              </p>
+              <Link href="/courses" passHref={true}>
+                <ButtonLink className="mt-16 w-42">
+                  {t("Home.learn-more")}
+                </ButtonLink>
+              </Link>
             </div>
             <div className="flex flex-col justify-center p-8 bg-blue-100 rounded-xl">
               <h3 className="text-xl font-bold">{t("Home.intermediate")}</h3>
-              <p className="text-gray-700">{t("Home.intermediate-info")}</p>
-              <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
+              <p className="text-gray-700 max-w-xs">
+                {t("Home.intermediate-info")}
+              </p>
+              <Link href="/courses" passHref={true}>
+                <ButtonLink className="mt-16 w-42">
+                  {t("Home.learn-more")}
+                </ButtonLink>
+              </Link>
             </div>
           </div>
         </div>

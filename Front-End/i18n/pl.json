@@ -20,7 +20,10 @@
     "choose-skill-level": "Wybierz swój poziom",
     "beginners": "Początkujący",
     "beginners-info": "Dla początkujących dopiero zaczynających przygodę z programowaniem.",
-    "intermediate": "Zaawansowany",
-    "intermediate-info": "Dla zaawansowanych co znają podstawy programowania."
+    "intermediate": "Średniozaawansowany",
+    "intermediate-info": "Dla średniozaawansowanych co znają podstawy programowania."
+  },
+  "Courses": {
+    "enroll": "Zapisz się"
   }
 }

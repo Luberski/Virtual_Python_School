@@ -217,26 +217,72 @@ export default function IndexPage() {
           </div>
         </div>
         <div className="container px-6 mx-auto">
-          <div className="flex items-center justify-center w-full space-x-12">
-            <div className="flex flex-col justify-center p-8 bg-green-100 rounded-xl">
+          <div className="flex justify-center w-full h-full space-x-12">
+            <div className="flex flex-col p-8 bg-green-100 rounded-xl">
               <h3 className="text-xl font-bold">{t("Home.beginners")}</h3>
-              <p className="text-gray-700">{t("Home.beginners-info")}</p>
-              <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
+              <p className="text-gray-700 max-w-xs">
+                {t("Home.beginners-info")}
+              </p>
+              <ul className="px-8 py-4 list-disc">
+                <li>Introduction</li>
+                <li>Basics</li>
+                <li>Variables</li>
+                <li>Functions</li>
+                <li>Arrays</li>
+                <li>Objects</li>
+                <li>Classes</li>
+                <li>Inheritance</li>
+                <li>Polymorphism</li>
+                <li>Encapsulation</li>
+                <li>Abstraction</li>
+                <li>Operators</li>
+                <li>Input/Output</li>
+                <li>Exceptions</li>
+                <li>Debugging</li>
+                <li>Unit testing</li>
+                <li>File handling</li>
+                <li>Sorting</li>
+              </ul>
+              <Button className="mt-16 w-42">{t("Courses.enroll")}</Button>
             </div>
-            <div className="flex flex-col justify-center p-8 bg-blue-100 rounded-xl">
+            <div className="flex flex-col p-8 bg-blue-100 rounded-xl">
               <h3 className="text-xl font-bold">{t("Home.intermediate")}</h3>
-              <p className="text-gray-700">{t("Home.intermediate-info")}</p>
-              <Button className="mt-16 w-42">{t("Home.learn-more")}</Button>
+              <p className="text-gray-700 max-w-xs">
+                {t("Home.intermediate-info")}
+              </p>
+              <ul className="px-8 py-4 list-disc">
+                <li>Introduction</li>
+                <li>Basics</li>
+                <li>Variables</li>
+                <li>Functions</li>
+                <li>Arrays</li>
+                <li>Objects</li>
+                <li>Classes</li>
+                <li>Inheritance</li>
+                <li>Polymorphism</li>
+                <li>Encapsulation</li>
+                <li>Abstraction</li>
+                <li>Operators</li>
+                <li>Input/Output</li>
+                <li>Exceptions</li>
+                <li>Debugging</li>
+                <li>Unit testing</li>
+                <li>File handling</li>
+                <li>Regular expressions</li>
+                <li>Sorting</li>
+                <li>Algorithms</li>
+                <li>Data structures</li>
+                <li>Web development</li>
+                <li>Web security</li>
+                <li>Web APIs</li>
+                <li>Web frameworks</li>
+                <li>Web services</li>
+                <li>Web scraping</li>
+                <li>Loops and conditions</li>
+              </ul>
+              <Button className="mt-16 w-42">{t("Courses.enroll")}</Button>
             </div>
           </div>
-        </div>
-        <div className="flex items-center justify-center my-16">
-          <Image
-            src="/undraw_online_test_gba7.png"
-            alt="online_test"
-            width="601"
-            height="278"
-          />
         </div>
         <Footer />
       </div>
