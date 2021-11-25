@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import Button from "../components/Button";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import ButtonInput from "../components/ButtonInput";
 
 export default function RegisterPage() {
   const t = useTranslations();
+  const { register, handleSubmit } = useForm();
+  const onSubmit = (data) => console.log(data);
 
   return (
     <>
@@ -32,16 +35,52 @@ export default function RegisterPage() {
           </div>
         </div>
         <div className="container px-6 mx-auto">
-          <div className="flex flex-col space-y-8 items-center justify-center">
-            <Input type="email" placeholder={t("Auth.email")} />
-            <Input type="text" placeholder={t("Auth.name")} />
-            <Input type="text" placeholder={t("Auth.last-name")} />
-            <Input type="password" placeholder={t("Auth.password")} />
-            <Input type="password" placeholder={t("Auth.confirm-password")} />
-            <Button primary className="w-36">
-              {t("Auth.register")}
-            </Button>
-          </div>
+          <form
+            className="flex flex-col space-y-8 items-center justify-center"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <Input
+              label="email"
+              type="email"
+              placeholder={t("Auth.email")}
+              register={register}
+              required
+            />
+            <Input
+              label="firstName"
+              type="text"
+              placeholder={t("Auth.name")}
+              register={register}
+              required
+            />
+            <Input
+              label="lastName"
+              type="text"
+              placeholder={t("Auth.last-name")}
+              register={register}
+              required
+            />
+            <Input
+              label="password"
+              type="password"
+              placeholder={t("Auth.password")}
+              register={register}
+              required
+            />
+            <Input
+              label="confirmPassword"
+              type="password"
+              placeholder={t("Auth.confirm-password")}
+              register={register}
+              required
+            />
+            <ButtonInput
+              primary
+              className="w-36"
+              type="submit"
+              value={t("Auth.register")}
+            />
+          </form>
         </div>
 
         <Footer />

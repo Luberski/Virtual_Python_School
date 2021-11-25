@@ -7,7 +7,7 @@ import ButtonLink from "../components/ButtonLink";
 import { useTranslations } from "next-intl";
 import NavBar from "../components/NavBar";
 
-export default function IndexPage() {
+export default function CoursesPage() {
   const [profile, _setProfile] = useState(false);
   const t = useTranslations();
 

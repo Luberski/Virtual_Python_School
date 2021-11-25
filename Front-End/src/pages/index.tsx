@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Button from "../components/Button";
 import Image from "next/image";
 import Footer from "../components/Footer";
 import Link from "next/link";
