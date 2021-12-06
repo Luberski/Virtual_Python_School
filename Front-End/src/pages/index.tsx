@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Footer from "../components/Footer";
 import Link from "next/link";
@@ -6,14 +6,11 @@ import ButtonLink from "../components/ButtonLink";
 import { useTranslations } from "next-intl";
 import NavBar from "../components/NavBar";
 
-import { useAppDispatch, useAppSelector } from "../hooks";
+import { useAppSelector } from "../hooks";
 import { selectIsLogged, selectAuthUser } from "../features/auth/authSlice";
 
 export default function IndexPage() {
-  const [profile, _setProfile] = useState(false);
   const t = useTranslations();
-
-  const dispatch = useAppDispatch();
 
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
@@ -104,7 +101,7 @@ export default function IndexPage() {
                             <span className="ml-2">Account Settings</span>
                           </li>
                         </ul>
-                        <img
+                        <Image
                           className="object-cover w-10 h-10 rounded"
                           src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/3b/3b80afb3cc996edde4b3c8d599196c032410f754_full.jpg"
                           alt="logo"
