@@ -6,9 +6,17 @@ import ButtonLink from "../components/ButtonLink";
 import { useTranslations } from "next-intl";
 import NavBar from "../components/NavBar";
 
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { selectIsLogged, selectAuthUser } from "../features/auth/authSlice";
+
 export default function IndexPage() {
   const [profile, _setProfile] = useState(false);
   const t = useTranslations();
+
+  const dispatch = useAppDispatch();
+
+  const user = useAppSelector(selectAuthUser);
+  const isLoggedIn = useAppSelector(selectIsLogged);
 
   return (
     <>
@@ -32,7 +40,7 @@ export default function IndexPage() {
                     aria-haspopup="true"
                     className="relative flex items-center justify-end w-full cursor-pointer"
                   >
-                    {profile ? (
+                    {isLoggedIn ? (
                       <div className="flex">
                         <ul className="absolute right-0 z-40 w-40 p-2 mt-48 bg-white border-r rounded ">
                           <li className="py-2 text-sm leading-3 tracking-normal text-gray-600 cursor-pointer hover:text-blue-500 focus:text-blue-500 focus:outline-none">
@@ -101,7 +109,9 @@ export default function IndexPage() {
                           src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/3b/3b80afb3cc996edde4b3c8d599196c032410f754_full.jpg"
                           alt="logo"
                         />
-                        <p className="ml-2 text-sm text-gray-800">John Xina</p>
+                        <p className="ml-2 text-sm text-gray-800">
+                          {user.name} {user.lastName}
+                        </p>
                       </div>
                     ) : (
                       <div className="space-x-4">

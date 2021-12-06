@@ -5,11 +5,26 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import ButtonInput from "../components/ButtonInput";
+import { useAppDispatch } from "../hooks";
+import {
+  loginUser,
+} from "../features/auth/authSlice";
 
 export default function LoginPage() {
+  const dispatch = useAppDispatch();
   const t = useTranslations();
   const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => console.log(data);
+
+  const onSubmit = async (data) => {
+    console.log(data);
+    const { email, password } = data;
+
+    try {
+      await dispatch(loginUser({ email, password })).unwrap();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
