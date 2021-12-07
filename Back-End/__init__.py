@@ -23,4 +23,4 @@ def login():
 def hello_world():
     return "Hello world"
 
-app.run()
+return app
