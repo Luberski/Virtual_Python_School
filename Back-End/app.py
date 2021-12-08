@@ -20,7 +20,7 @@ def login():
                       request.form['password']) != None:
             user = up.user(ipa_.user_show(request.form['username']))
             user.parser()
-           # tst.check()
+            user.check()
             return user.dicto
         else:
             error = '404 xD'

@@ -35,9 +35,9 @@ class user:
 
         self.dicto = jsonify(self.dicto)
         #self.dicto = self.dicto
-    
+
     def check(self):
-        self.base = salsa.create_engine('mysql+pymysql://root:root@virtualschool.wi.zut.edu.pl/Virtual_Python_School')
+        self.base = salsa.create_engine("mariadb+mariadbconnector://root:root@virtualschool.wi.zut.edu.pl:3306/Virtual_Python_School")
         print(inspect(self.base))
         #print(con.execute("SELECT * FROM users"))
 
