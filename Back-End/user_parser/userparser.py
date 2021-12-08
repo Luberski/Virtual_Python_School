@@ -23,10 +23,10 @@ class user:
 
         self.dicto = {
             "data": {
-                "Mail": mail,
-                "Imie": imie,
-                "Nazwisko": nazwisko,
-                "ZutID": zutID,
+                "email": mail,
+                "name": imie,
+                "lastName": nazwisko,
+                "zutID": zutID,
                 "token": None
             },
                 "error": None
