@@ -25,5 +25,9 @@
   },
   "Courses": {
     "enroll": "Enroll"
+  },
+  "Playground": {
+    "run": "Run",
+    "leading": "Code Playground"
   }
 }

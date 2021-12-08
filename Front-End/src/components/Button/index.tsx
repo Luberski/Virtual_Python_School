@@ -1,12 +1,18 @@
 import clsx from "clsx";
 
 type ButtonProps = {
-  children?: React.ReactNode;
-  className?: string;
   primary?: boolean;
 };
 
-const Button = ({ children, primary = false, className }: ButtonProps) => (
+const Button = (
+  {
+    children,
+    primary = false,
+    className,
+    onClick,
+  }: ButtonProps & React.HTMLProps<HTMLButtonElement>,
+  {}
+) => (
   <button
     className={clsx(
       primary
@@ -14,6 +20,7 @@ const Button = ({ children, primary = false, className }: ButtonProps) => (
         : `px-6 py-2 text-center text-black bg-white shadow-cool rounded-xl`,
       className
     )}
+    onClick={onClick}
   >
     {children}
   </button>
