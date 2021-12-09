@@ -14,11 +14,10 @@ export default function LoginPage() {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
-    const { email, password } = data;
+    const { username, password } = data;
 
     try {
-      await dispatch(loginUser({ email, password })).unwrap();
+      await dispatch(loginUser({ username, password })).unwrap();
     } catch (error) {
       console.error(error);
     }
@@ -41,9 +40,9 @@ export default function LoginPage() {
             onSubmit={handleSubmit(onSubmit)}
           >
             <Input
-              label="email"
-              type="email"
-              placeholder={t("Auth.email")}
+              label="username"
+              type="username"
+              placeholder={t("Auth.username")}
               register={register}
               required
             />

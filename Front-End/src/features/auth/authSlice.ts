@@ -26,12 +26,12 @@ const initialState: AuthState = {
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async ({ email, password }: { email: string; password: string }) => {
+  async ({ username, password }: { username: string; password: string }) => {
     try {
-      const res = await apiClient.post("/login", {
-        email: email,
-        password: password,
-      });
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
+      const res = await apiClient.post("/login", formData);
       return res.data;
     } catch (error) {
       throw error;
@@ -52,11 +52,14 @@ export const authSlice = createSlice({
       .addCase(
         loginUser.fulfilled,
         (state, { payload: { data } }: { payload: AuthPayload }) => {
-          state.user.id = data.id;
-          state.user.zutId = data.zutId;
-          state.user.email = data.email;
-          state.user.name = data.name;
-          state.user.lastName = data.lastName;
+          state.user = {
+            id: data.id,
+            zutID: data.zutID,
+            username: data.username,
+            name: data.name,
+            lastName: data.lastName,
+            email: data.email,
+          };
           state.isLoggedIn = true;
           state.status = "succeeded";
         }

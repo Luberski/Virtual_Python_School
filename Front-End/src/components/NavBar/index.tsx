@@ -102,8 +102,10 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                       className="object-cover w-10 h-10 rounded"
                       src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/3b/3b80afb3cc996edde4b3c8d599196c032410f754_full.jpg"
                       alt="logo"
+                      width={40}
+                      height={40}
                     />
-                    <p className="ml-2 text-sm text-gray-800">
+                    <p className="flex ml-2 text-sm text-gray-800 items-center">
                       {user.name} {user.lastName}
                     </p>
                   </div>

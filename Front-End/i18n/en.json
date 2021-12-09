@@ -10,7 +10,8 @@
     "last-name": "Last name",
     "welcome-back": "Welcome back",
     "forgot-password": "Forgot password?",
-    "create-new-account": "Create new account"
+    "create-new-account": "Create new account",
+    "username": "Username"
   },
   "Home": {
     "home": "Home",

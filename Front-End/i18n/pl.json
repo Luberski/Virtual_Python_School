@@ -10,7 +10,8 @@
     "last-name": "Nazwisko",
     "welcome-back": "Witaj ponownie",
     "forgot-password": "Zapomniałeś hasła?",
-    "create-new-account": "Utwórz nowe konto"
+    "create-new-account": "Utwórz nowe konto",
+    "username": "Nazwa użytkownika"
   },
   "Home": {
     "home": "Strona Główna",
