@@ -23,7 +23,7 @@ export default function CoursesPage() {
         </div>
         <div className="container px-6 mx-auto">
           <div className="flex justify-center w-full h-full space-x-12">
-            <div className="flex flex-col p-8 bg-green-100 rounded-xl">
+            <div className="flex flex-col p-8 bg-emerald-200 shadow-md shadow-emerald-300/50 rounded-xl">
               <h3 className="text-xl font-bold">{t("Home.beginners")}</h3>
               <p className="text-gray-700 max-w-xs">
                 {t("Home.beginners-info")}
@@ -50,7 +50,7 @@ export default function CoursesPage() {
               </ul>
               <Button className="mt-16 w-42">{t("Courses.enroll")}</Button>
             </div>
-            <div className="flex flex-col p-8 bg-blue-100 rounded-xl">
+            <div className="flex flex-col p-8 bg-indigo-200 shadow-md shadow-indigo-300/50 rounded-xl">
               <h3 className="text-xl font-bold">{t("Home.intermediate")}</h3>
               <p className="text-gray-700 max-w-xs">
                 {t("Home.intermediate-info")}

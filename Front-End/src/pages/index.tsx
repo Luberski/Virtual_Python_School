@@ -29,10 +29,10 @@ export default function IndexPage() {
           </div>
         </div>
         <div className="container px-6 mx-auto">
-          <div className="flex items-center justify-center w-full space-x-12">
-            <div className="flex flex-col justify-center p-8 bg-green-100 rounded-xl">
+          <div className="flex justify-center w-full h-full space-x-12">
+            <div className="flex flex-col p-8 bg-emerald-200 shadow-md hover:shadow-xl hover:shadow-emerald-400/50 transition duration-500 ease-in-out hover:scale-110 shadow-emerald-200/50 rounded-xl">
               <h3 className="text-xl font-bold">{t("Home.beginners")}</h3>
-              <p className="text-gray-700 max-w-xs">
+              <p className="text-gray-700 max-w-xs h-8">
                 {t("Home.beginners-info")}
               </p>
               <Link href="/courses" passHref={true}>
@@ -41,9 +41,9 @@ export default function IndexPage() {
                 </ButtonLink>
               </Link>
             </div>
-            <div className="flex flex-col justify-center p-8 bg-blue-100 rounded-xl">
+            <div className="flex flex-col p-8 bg-indigo-200 shadow-md hover:shadow-xl hover:shadow-indigo-400/50 transition duration-500 ease-in-out hover:scale-110 shadow-indigo-200/50 rounded-xl ">
               <h3 className="text-xl font-bold">{t("Home.intermediate")}</h3>
-              <p className="text-gray-700 max-w-xs">
+              <p className="text-gray-700 max-w-xs h-8">
                 {t("Home.intermediate-info")}
               </p>
               <Link href="/courses" passHref={true}>

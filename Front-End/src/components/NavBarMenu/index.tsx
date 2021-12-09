@@ -14,8 +14,8 @@ const NavBarMenu = () => {
         <li
           className={clsx(
             router.pathname == "/"
-              ? "text-blue-700 bg-blue-100"
-              : `text-gray-700`,
+              ? "text-indigo-800 bg-indigo-200 shadow-md shadow-indigo-200/50"
+              : `text-gray-800`,
             "flex items-center px-4 py-2 text-sm font-medium  cursor-pointer rounded-xl"
           )}
         >
@@ -27,8 +27,8 @@ const NavBarMenu = () => {
         <li
           className={clsx(
             router.pathname == "/courses"
-              ? "text-blue-700 bg-blue-100"
-              : `text-gray-700`,
+              ? "text-indigo-800 bg-indigo-200 shadow-lg shadow-indigo-200/50"
+              : `text-gray-800`,
             "flex items-center px-4 py-2 text-sm font-medium  cursor-pointer rounded-xl"
           )}
         >
