@@ -28,6 +28,11 @@ ipa_ = ipahttp.ipa('ipa2.zut.edu.pl')
 #             'user': user.format()
 #     })
 
+@app.route("/en/playground", methods=['POST','GET'])
+def parse():
+    data = request.data
+    print(data)
+
 @app.route("/login", methods=['POST'])
 def login():
     error = None
