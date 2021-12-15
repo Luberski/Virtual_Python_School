@@ -1,3 +1,3 @@
-from .sshrequests import sshrequests
+from .sshrequests import *
 
 
