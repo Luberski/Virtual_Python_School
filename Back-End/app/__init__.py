@@ -17,8 +17,8 @@ def parse():
     if request.method == 'POST':
         data = request.json
         output = sshreq.asd.run_code(data['data']['content'])
-        return jsonify({"data":{}})
-    return jsonify({"error":"error"})
+        return output
+    return jsonify({"error":"400"})
 
 @app.route("/api/login", methods=['POST', 'GET'])
 def login():
