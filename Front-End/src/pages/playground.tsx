@@ -3,13 +3,18 @@ import Editor from "@monaco-editor/react";
 import Button from "../components/Button";
 import NavBar from "../components/NavBar";
 import { useTranslations } from "use-intl";
-import { useAppDispatch } from "../hooks";
-import { sendCode } from "../features/playground/playgroundSlice";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import {
+  selectPlaygroundData,
+  sendCode,
+} from "../features/playground/playgroundSlice";
 
 export default function Playground() {
   const dispatch = useAppDispatch();
   const t = useTranslations();
   const editorRef = useRef(null);
+
+  const playgroundData = useAppSelector(selectPlaygroundData);
 
   const handleEditorDidMount = (editor, _monaco) => {
     editorRef.current = editor;
@@ -40,6 +45,13 @@ export default function Playground() {
           <Button onClick={handleValue} primary>
             {t("Playground.run")}
           </Button>
+          <div>
+            <h2 className="text-4xl font-bold text-center text-gray-900 py-4">
+              Output
+            </h2>
+            <pre className="bg-gray-900 text-white">{playgroundData?.content}</pre>
+          </div>
+        </div>
           <Editor
             height="90vh"
             defaultLanguage="python"
@@ -47,7 +59,6 @@ export default function Playground() {
             onMount={handleEditorDidMount}
             theme="vs-dark"
           />
-        </div>
       </div>
     </>
   );

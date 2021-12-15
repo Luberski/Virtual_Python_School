@@ -2,17 +2,20 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import apiClient from "../../apiClient";
 import type { RootState } from "../../store";
 import { ApiPayload } from "../../models/ApiPayload";
+import { Playground } from "../../models/Playground";
 
 interface PlaygroundPayload extends ApiPayload {
   data: { content: string };
 }
 
 export type PlaygroundState = {
+  data: Playground;
   status: "idle" | "pending" | "succeeded" | "failed";
   error: string | null;
 };
 
 const initialState: PlaygroundState = {
+  data: null,
   status: "idle",
   error: null,
 };
@@ -42,6 +45,9 @@ export const playgroundSlice = createSlice({
       .addCase(
         sendCode.fulfilled,
         (state, { payload: { data } }: { payload: PlaygroundPayload }) => {
+          state.data = {
+            content: data.content,
+          };
           state.status = "succeeded";
         }
       )
@@ -52,7 +58,8 @@ export const playgroundSlice = createSlice({
       });
   },
 });
-
+export const selectPlaygroundData = (state: RootState) =>
+  state.playground.data;
 export const selectPlaygroundError = (state: RootState) =>
   state.playground.error;
 export const selectPlaygroundStatus = (state: RootState) =>
