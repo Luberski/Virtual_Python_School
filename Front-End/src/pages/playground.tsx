@@ -42,23 +42,27 @@ export default function Playground() {
           </div>
         </div>
         <div className="container mx-auto px-6 space-y-4">
-          <Button onClick={handleValue} primary>
-            {t("Playground.run")}
-          </Button>
-          <div>
-            <h2 className="text-4xl font-bold text-center text-gray-900 py-4">
-              Output
-            </h2>
-            <pre className="bg-gray-900 text-white">{playgroundData?.content}</pre>
+          <div className="grid grid-cols-2 items-center">
+            <Button onClick={handleValue} primary className="w-28 h-12">
+              {t("Playground.run")}
+            </Button>
+            <h3 className="text-3xl font-bold text-gray-900 py-4">Output</h3>
           </div>
         </div>
+        <div className="flex px-6 ">
           <Editor
-            height="90vh"
+            className="w-1/2 h-96"
             defaultLanguage="python"
             defaultValue="# play with code"
             onMount={handleEditorDidMount}
             theme="vs-dark"
           />
+          <div className="w-full">
+            <pre className="bg-black text-white h-96 px-8">
+              {playgroundData?.content}
+            </pre>
+          </div>
+        </div>
       </div>
     </>
   );
