@@ -1,1 +1,1 @@
-from .ipahttp import ipa
+from .ipahttp import *

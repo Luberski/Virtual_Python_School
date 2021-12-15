@@ -1,1 +1,0 @@
-sql_config = "mysql+pymysql://root:root@virtualschool.wi.zut.edu.pl/Virtual_Python_School"

@@ -1,52 +1,48 @@
-import os
 from flask import Flask, request, jsonify
-from app.ipahttp import ipahttp
+# from flask_jwt import JWT, jwt_required, current_identity
+import app.ipahttp as ipahttp
 import json
-from flask_jwt_extended import JWTManager
-from flask_restful import Api
-
-
+import app.api as up
+from werkzeug.security import safe_str_cmp
 
 app = Flask(__name__)
+
 ipa_ = ipahttp.ipa('ipa2.zut.edu.pl')
+app.config['SECRET_KEY'] = 'super-secret'
+app.debug = True
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = postgresqlConfig
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# # Setup the Flask-JWT-Extended extension
-# app.config["JWT_SECRET_KEY"] = "Dese.Decent.Pups.BOOYO0OST"  # Change this!
-# jwt = JWTManager(app)
-# api = Api(app)
 
-# @app.route('/users/<int:user_id>')
-# def show(user_id):
-#     user = User.query.filter(User.id == user_id).one_or_none()
-#     if user is None:
-#         abort(404)
-#     else:
-#         return jsonify({
-#             'success': True,
-#             'user': user.format()
-#     })
-
-@app.route("/api/playground", methods=['POST','GET'])
-def parse():
-    data = request.data
-    print(data)
-
-@app.route("/api/login", methods=['POST'])
+@app.route("/api/login", methods=['POST', 'GET'])
 def login():
     error = None
-
-    if request.method == 'POST' and request.is_json:
-        post_data = request.get_json()
-        if ipa_.login(post_data['username'],
-                        post_data['password']) != None:
-            return jsonify(ipa_.user_show(post_data['username']), indent=4)
-            # abort(422)
+    if request.method == 'POST':
+        if ipa_.login(request.form['username'],
+                      request.form['password']) != None:
+            user = up.user(ipa_.user_show(request.form['username']))
+            user.parser()
+            # user.check()
+            return user.dicto
+        else:
+            error = '404 xD'
     return str(error)
 
-@app.route("/")
-def hello_world():
-    return "Hello world"
+
+def authenticate(username, password):
+    return None
+
+
+def identity(payload):
+    #user_id = payload['identity']
+    return None
+
+
+# jwt = JWT(app, authenticate, identity)
+
+
+# @app.route('/api/protected')
+# @jwt_required()
+# def protected():
+#     return '%s' % current_identity
+
 
 app.run()
