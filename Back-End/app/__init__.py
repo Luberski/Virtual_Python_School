@@ -17,7 +17,7 @@ def parse():
     if request.method == 'POST':
         data = request.json
         text, err = sshreq.asd.run_code(data['data']['content'])
-        if(len(err) != 0):
+        if(len(err) == 0):
             return jsonify({"data":{"content":text}})
         else:
             return jsonify({"error":err})
