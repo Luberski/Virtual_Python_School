@@ -4,6 +4,7 @@ import app.ipahttp as ipahttp
 import json
 import app.api as up
 from werkzeug.security import safe_str_cmp
+import app.sshrequests as sshreq
 
 app = Flask(__name__)
 
@@ -11,6 +12,13 @@ ipa_ = ipahttp.ipa('ipa2.zut.edu.pl')
 app.config['SECRET_KEY'] = 'super-secret'
 app.debug = True
 
+@app.route("/api/playground", methods=['POST'])
+def parse():
+    if request.method == 'POST':
+        data = request.json
+        output = sshreq.asd.run_code(data['data']['content'])
+        return jsonify({"data":{}})
+    return jsonify({"error":"error"})
 
 @app.route("/api/login", methods=['POST', 'GET'])
 def login():
