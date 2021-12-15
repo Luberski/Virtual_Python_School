@@ -21,7 +21,7 @@ export const sendCode = createAsyncThunk(
   "api/playground",
   async ({ content }: { content: string }) => {
     try {
-      const res = await apiClient.post("/login", { data: { content } });
+      const res = await apiClient.post("/playground", { data: { content } });
       return res.data;
     } catch (error) {
       throw error;
@@ -53,8 +53,9 @@ export const playgroundSlice = createSlice({
   },
 });
 
-
-export const selectPlaygroundError = (state: RootState) => state.playground.error;
-export const selectPlaygroundStatus = (state: RootState) => state.playground.status;
+export const selectPlaygroundError = (state: RootState) =>
+  state.playground.error;
+export const selectPlaygroundStatus = (state: RootState) =>
+  state.playground.status;
 
 export default playgroundSlice.reducer;
