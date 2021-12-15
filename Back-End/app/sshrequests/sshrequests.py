@@ -8,4 +8,7 @@ class asd:
         text = pipe.communicate()[0].decode('ascii')
         err = pipe.communicate()[1].decode('ascii')
         print(text,err)
-        return jsonify({"return":text, "error":err})
+        if(len(err) != 0):
+            return jsonify({"data":{"content":text}})
+        else:
+            return jsonify({"error":err})
