@@ -11,7 +11,7 @@ const NavBarMenu = () => {
   return (
     <ul className="items-center hidden h-full xl:flex">
       <Link href="/" passHref={true}>
-        <li
+        <a
           className={clsx(
             router.pathname == "/"
               ? "text-indigo-800 bg-indigo-200 shadow-md shadow-indigo-200/50"
@@ -20,11 +20,11 @@ const NavBarMenu = () => {
           )}
         >
           {t("Home.home")}
-        </li>
+        </a>
       </Link>
 
       <Link href="/courses" passHref={true}>
-        <li
+        <a
           className={clsx(
             router.pathname == "/courses"
               ? "text-indigo-800 bg-indigo-200 shadow-lg shadow-indigo-200/50"
@@ -33,7 +33,7 @@ const NavBarMenu = () => {
           )}
         >
           {t("Home.courses")}
-        </li>
+        </a>
       </Link>
     </ul>
   );
