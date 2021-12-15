@@ -3,8 +3,11 @@ import Editor from "@monaco-editor/react";
 import Button from "../components/Button";
 import NavBar from "../components/NavBar";
 import { useTranslations } from "use-intl";
+import { useAppDispatch } from "../hooks";
+import { sendCode } from "../features/playground/playgroundSlice";
 
 export default function Playground() {
+  const dispatch = useAppDispatch();
   const t = useTranslations();
   const editorRef = useRef(null);
 
@@ -12,8 +15,14 @@ export default function Playground() {
     editorRef.current = editor;
   };
 
-  const handleValue = () => {
-    console.log(editorRef.current.getValue());
+  const handleValue = async () => {
+    const value = editorRef.current.getValue();
+    try {
+      await dispatch(sendCode({ content: value })).unwrap();
+      console.log(value);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

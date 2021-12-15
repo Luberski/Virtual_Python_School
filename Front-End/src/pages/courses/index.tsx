@@ -1,8 +1,8 @@
 import React from "react";
-import Button from "../components/Button";
-import Footer from "../components/Footer";
+import Button from "../../components/Button";
+import Footer from "../../components/Footer";
 import { useTranslations } from "next-intl";
-import NavBar from "../components/NavBar";
+import NavBar from "../../components/NavBar";
 
 export default function CoursesPage() {
   const t = useTranslations();
@@ -98,7 +98,7 @@ export default function CoursesPage() {
 export async function getStaticProps({ locale }) {
   return {
     props: {
-      i18n: Object.assign({}, await import(`../../i18n/${locale}.json`)),
+      i18n: Object.assign({}, await import(`../../../i18n/${locale}.json`)),
     },
   };
 }
