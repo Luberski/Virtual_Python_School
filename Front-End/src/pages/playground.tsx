@@ -32,11 +32,11 @@ export default function Playground() {
 
   return (
     <>
-      <div className="absolute w-full h-full bg-white">
+      <div className="absolute w-full h-full">
         <NavBar />
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-5xl font-bold text-center text-gray-900">
+            <h1 className="text-5xl font-bold text-center">
               {t("Playground.leading")}
             </h1>
           </div>
@@ -46,7 +46,7 @@ export default function Playground() {
             <Button onClick={handleValue} primary className="w-28 h-12">
               {t("Playground.run")}
             </Button>
-            <h3 className="text-3xl font-bold text-gray-900 py-4">Output</h3>
+            <h3 className="text-3xl font-bold py-4">Output</h3>
           </div>
         </div>
         <div className="flex px-6 ">

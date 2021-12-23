@@ -13,12 +13,12 @@ export default function RegisterPage() {
 
   return (
     <>
-      <div className="absolute w-full h-full bg-white">
+      <div className="absolute w-full h-full">
         <NavBar />
 
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-5xl font-bold text-center text-gray-900">
+            <h1 className="text-5xl font-bold text-center">
               {t("Auth.create-new-account")}
             </h1>
           </div>
