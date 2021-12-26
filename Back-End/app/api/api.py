@@ -1,42 +1,24 @@
-import json
-# import sqlalchemy as salsa
-# from sqlalchemy import engine
-# from sqlalchemy import inspect
-from flask import Flask, jsonify
-# from flask_jwt import JWT, jwt_required, current_identity
+class User:
+    def __init__(self, json_data):
+        self.json_data = json_data
+        self.dicto = None
 
-
-class user:
-    def __init__(self,json_dump):
-        self.json_dump = json_dump
-
-    def parser(self):
-        mail = self.json_dump["principal"]
-        imie_nazwisko = self.json_dump["result"]["result"]["displayname"][0]
+    def parse(self) -> dict:
+        mail = self.json_data["principal"]
+        imie_nazwisko = self.json_data["result"]["result"]["displayname"][0]
         imie = imie_nazwisko.split(" ")[0]
         nazwisko = imie_nazwisko.split(" ")[-1]
-        zutID = self.json_dump["result"]["value"]
-        #generate JWT
-
-        #jwt = JWT(app, zutID, 1)
-        #print('%s' % current_identity)
+        zut_id = self.json_data["result"]["value"]
 
         self.dicto = {
             "data": {
                 "email": mail,
                 "name": imie,
                 "lastName": nazwisko,
-                "zutID": zutID,
-                "token": None
+                "zutID": zut_id,
+                "token": None,
             },
-                "error": None
-            }
+            "error": None,
+        }
 
-
-        self.dicto = jsonify(self.dicto)
-        #self.dicto = self.dicto
-
-    # def check(self):
-        # self.base = salsa.create_engine("mariadb+mariadbconnector://root:root@virtualschool.wi.zut.edu.pl:3306/Virtual_Python_School")
-        # print(inspect(self.base))
-        #print(con.execute("SELECT * FROM users"))
+        return self.dicto
