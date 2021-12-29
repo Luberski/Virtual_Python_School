@@ -13,12 +13,8 @@ export default function CoursesPage() {
         <NavBar />
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-4xl font-bold text-center">
-              {t("Home.courses")}
-            </h1>
-            <h2 className="text-xl text-center">
-              {t("Home.choose-skill-level")}
-            </h2>
+            <h1 className="text-center">{t("Home.courses")}</h1>
+            <h2 className="text-center">{t("Home.choose-skill-level")}</h2>
           </div>
         </div>
         <div className="container px-6 mx-auto">
@@ -48,13 +44,13 @@ export default function CoursesPage() {
                 <li>File handling</li>
                 <li>Sorting</li>
               </ul>
-              <Button className="mt-16 w-42">{t("Courses.enroll")}</Button>
+              <Button className="btn-secondary mt-16 w-42">
+                {t("Courses.enroll")}
+              </Button>
             </div>
             <div className="flex flex-col p-8 bg-indigo-200 shadow-md shadow-indigo-300/50 rounded-xl text-gray-700">
               <h3 className="text-xl font-bold">{t("Home.intermediate")}</h3>
-              <p className="max-w-xs">
-                {t("Home.intermediate-info")}
-              </p>
+              <p className="max-w-xs">{t("Home.intermediate-info")}</p>
               <ul className="px-8 py-4 list-disc">
                 <li>Introduction</li>
                 <li>Basics</li>
@@ -85,7 +81,9 @@ export default function CoursesPage() {
                 <li>Web scraping</li>
                 <li>Loops and conditions</li>
               </ul>
-              <Button className="mt-16 w-42">{t("Courses.enroll")}</Button>
+              <Button className="btn-secondary mt-16 w-42">
+                {t("Courses.enroll")}
+              </Button>
             </div>
           </div>
         </div>

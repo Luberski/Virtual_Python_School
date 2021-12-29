@@ -18,9 +18,7 @@ export default function RegisterPage() {
 
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-5xl font-bold text-center">
-              {t("Auth.create-new-account")}
-            </h1>
+            <h1 className="text-center">{t("Auth.create-new-account")}</h1>
           </div>
         </div>
         <div className="container px-6 mx-auto">
@@ -64,8 +62,7 @@ export default function RegisterPage() {
               required
             />
             <ButtonInput
-              primary
-              className="w-36"
+              className="btn-primary w-36"
               type="submit"
               value={t("Auth.register")}
             />

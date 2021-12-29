@@ -36,17 +36,17 @@ export default function Playground() {
         <NavBar />
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-5xl font-bold text-center">
-              {t("Playground.leading")}
-            </h1>
+            <h1 className="text-center">{t("Playground.leading")}</h1>
           </div>
         </div>
         <div className="container mx-auto px-6 space-y-4">
           <div className="grid grid-cols-2 items-center">
-            <Button onClick={handleValue} primary className="w-28 h-12">
+            <Button
+              onClick={handleValue}
+              className="btn-primary w-28 h-12 my-8"
+            >
               {t("Playground.run")}
             </Button>
-            <h3 className="text-3xl font-bold py-4">Output</h3>
           </div>
         </div>
         <div className="flex px-6 ">
@@ -58,9 +58,22 @@ export default function Playground() {
             theme="vs-dark"
           />
           <div className="w-full">
-            <pre className="bg-black text-white h-96 px-8">
-              {playgroundData?.content}
-            </pre>
+            <div className="w-full shadow-2xl subpixel-antialiased rounded h-96 bg-black border-black mx-auto">
+              <div
+                className="flex items-center h-6 rounded-t bg-gray-100 border-b border-gray-500 text-center text-black"
+                id="headerTerminal"
+              >
+                <div className="mx-auto" id="terminaltitle">
+                  <p className="text-center">Terminal output</p>
+                </div>
+              </div>
+              <div
+                className="pl-1 pt-1 h-auto  text-white font-mono text-xs bg-black"
+                id="console"
+              >
+                <pre className="pb-1">{playgroundData?.content}</pre>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -20,9 +20,7 @@ export default function IndexPage() {
         <NavBar user={user} isLoggedIn={isLoggedIn} />
         <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-4xl font-bold text-center">
-              {t("Home.leading")}
-            </h1>
+            <h1 className="text-center">{t("Home.leading")}</h1>
             <h2 className="text-xl text-center">
               {t("Home.choose-skill-level")}
             </h2>
@@ -34,7 +32,7 @@ export default function IndexPage() {
               <h3 className="text-xl font-bold">{t("Home.beginners")}</h3>
               <p className="max-w-xs h-8">{t("Home.beginners-info")}</p>
               <Link href="/courses" passHref={true}>
-                <ButtonLink className="mt-16 w-42">
+                <ButtonLink className="btn-secondary mt-16 w-42">
                   {t("Home.learn-more")}
                 </ButtonLink>
               </Link>
@@ -43,7 +41,7 @@ export default function IndexPage() {
               <h3 className=" text-xl font-bold">{t("Home.intermediate")}</h3>
               <p className=" max-w-xs h-8">{t("Home.intermediate-info")}</p>
               <Link href="/courses" passHref={true}>
-                <ButtonLink className="mt-16 w-42">
+                <ButtonLink className="btn-secondary mt-16 w-42">
                   {t("Home.learn-more")}
                 </ButtonLink>
               </Link>
