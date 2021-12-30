@@ -6,6 +6,7 @@ import { useTranslations } from "use-intl";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import {
   selectPlaygroundData,
+  selectPlaygroundError,
   sendCode,
 } from "../features/playground/playgroundSlice";
 
@@ -15,6 +16,7 @@ export default function Playground() {
   const editorRef = useRef(null);
 
   const playgroundData = useAppSelector(selectPlaygroundData);
+  const playgroundError = useAppSelector(selectPlaygroundError);
 
   const handleEditorDidMount = (editor, _monaco) => {
     editorRef.current = editor;
@@ -60,7 +62,7 @@ export default function Playground() {
           <div className="w-full">
             <div className="w-full shadow-2xl subpixel-antialiased rounded h-96 bg-black border-black mx-auto">
               <div
-                className="flex items-center h-6 rounded-t bg-gray-100 border-b border-gray-500 text-center text-black"
+                className="flex items-center h-6 rounded-t bg-gray-300 dark:bg-gray-700 border-b border-gray-500 text-center text-black dark:text-white"
                 id="headerTerminal"
               >
                 <div className="mx-auto" id="terminaltitle">
@@ -68,10 +70,16 @@ export default function Playground() {
                 </div>
               </div>
               <div
-                className="pl-1 pt-1 h-auto  text-white font-mono text-xs bg-black"
+                className="pl-1 pt-1 h-auto  font-mono text-xs bg-black"
                 id="console"
               >
-                <pre className="pb-1">{playgroundData?.content}</pre>
+                {playgroundData?.content ? (
+                  <pre className="pb-1 text-white">
+                    {playgroundData?.content}
+                  </pre>
+                ) : (
+                  <pre className="pb-1 text-red-500">{playgroundError}</pre>
+                )}
               </div>
             </div>
           </div>

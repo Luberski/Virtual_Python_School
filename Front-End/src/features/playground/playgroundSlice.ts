@@ -5,7 +5,8 @@ import { ApiPayload } from "../../models/ApiPayload";
 import { Playground } from "../../models/Playground";
 
 interface PlaygroundPayload extends ApiPayload {
-  data: { content: string };
+  data: { content: string | null };
+  error: string | null;
 }
 
 export type PlaygroundState = {
@@ -41,16 +42,17 @@ export const playgroundSlice = createSlice({
       .addCase(sendCode.pending, (state, _action) => {
         state.status = "pending";
       })
-      // TODO: recieve token
-      .addCase(
-        sendCode.fulfilled,
-        (state, { payload: { data } }: { payload: PlaygroundPayload }) => {
+      .addCase(sendCode.fulfilled, (state, { payload: { data, error } }) => {
+        if (error) {
+          state.error = error;
+          state.status = "failed";
+        } else {
           state.data = {
-            content: data.content,
+            content: data?.content,
           };
           state.status = "succeeded";
         }
-      )
+      })
       // TODO: handle errors from api response
       .addCase(sendCode.rejected, (state, action) => {
         state.status = "failed";
@@ -58,8 +60,7 @@ export const playgroundSlice = createSlice({
       });
   },
 });
-export const selectPlaygroundData = (state: RootState) =>
-  state.playground.data;
+export const selectPlaygroundData = (state: RootState) => state.playground.data;
 export const selectPlaygroundError = (state: RootState) =>
   state.playground.error;
 export const selectPlaygroundStatus = (state: RootState) =>
