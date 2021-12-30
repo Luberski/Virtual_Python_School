@@ -44,11 +44,8 @@ export const playgroundSlice = createSlice({
       })
       .addCase(sendCode.fulfilled, (state, { payload: { data, error } }) => {
         if (error) {
-          state.error = error;
-          state.status = "failed";
-        } else {
           state.data = {
-            content: data?.content,
+            content: null,
           };
           state.error = error;
           state.status = "failed";
