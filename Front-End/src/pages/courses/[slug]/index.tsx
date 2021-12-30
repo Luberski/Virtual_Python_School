@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import NavBar from "../../../components/NavBar";
 import { useTranslations } from "next-intl";
+import { GetStaticPaths } from "next";
 
 export default function CoursePage() {
   const router = useRouter();
@@ -32,9 +33,9 @@ export async function getStaticProps({ locale }) {
   };
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   return {
-    paths: ["/courses/[slug]"],
-    fallback: true,
+    paths: [], //indicates that no page needs be created at build time
+    fallback: "blocking", //indicates the type of fallback
   };
-}
+};
