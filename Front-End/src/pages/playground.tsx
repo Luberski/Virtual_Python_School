@@ -73,14 +73,9 @@ export default function Playground() {
                 className="pl-1 pt-1 h-auto  font-mono text-xs bg-black"
                 id="console"
               >
-                {playgroundData?.content && (
-                  <pre className="pb-1 text-white">
-                    {playgroundData?.content}
-                  </pre>
-                )}
-                {!playgroundData?.content && playgroundError && (
-                  <pre className="pb-1 text-red-500">{playgroundError}</pre>
-                )}
+                <pre className="pb-1 text-white">
+                  {playgroundData?.content || playgroundError}
+                </pre>
               </div>
             </div>
           </div>
