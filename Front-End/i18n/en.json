@@ -17,15 +17,16 @@
     "home": "Home",
     "courses": "Courses",
     "learn-more": "Learn More",
-    "leading": "Python for everyone",
+    "leading": "Python for everyone"
+  },
+  "Courses": {
+    "enroll": "Enroll",
     "choose-skill-level": "Choose your skill level",
     "beginners": "Beginners",
     "beginners-info": "For beginers starting with programming.",
     "intermediate": "Intermediate",
-    "intermediate-info": "For people who know the basics of programming"
-  },
-  "Courses": {
-    "enroll": "Enroll"
+    "intermediate-info": "For people who know the basics of programming",
+    "courses-adjusted-skill-level": "Courses adjusted to your skill level"
   },
   "Playground": {
     "run": "Run",

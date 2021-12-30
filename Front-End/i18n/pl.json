@@ -17,15 +17,16 @@
     "home": "Strona Główna",
     "courses": "Kursy",
     "learn-more": "Dowiedz się więcej",
-    "leading": "Python dla każdego",
+    "leading": "Python dla każdego"
+  },
+  "Courses": {
+    "enroll": "Zapisz się",
     "choose-skill-level": "Wybierz swój poziom",
     "beginners": "Początkujący",
     "beginners-info": "Dla początkujących dopiero zaczynających przygodę z programowaniem.",
     "intermediate": "Średniozaawansowany",
-    "intermediate-info": "Dla średniozaawansowanych co znają podstawy programowania."
-  },
-  "Courses": {
-    "enroll": "Zapisz się"
+    "intermediate-info": "Dla średniozaawansowanych co znają podstawy programowania.",
+    "courses-adjusted-skill-level": "Kursy zostały dopasowane do Twojego poziomu umiejętności."
   },
   "Playground": {
     "run": "Uruchom",
