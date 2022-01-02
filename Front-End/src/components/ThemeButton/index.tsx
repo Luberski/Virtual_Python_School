@@ -27,7 +27,7 @@ export const ThemeButton = () => {
     <button
       onClick={onClick}
       id="switchTheme"
-      className="h-10 w-10 mx-4 flex justify-center items-center focus:outline-none hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+      className="h-10 w-10 mx-4 flex justify-center items-center focus:outline-none hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition ease-in-out duration-150"
       title={t("Home.switch-theme")}
     >
       {darkMode ? (

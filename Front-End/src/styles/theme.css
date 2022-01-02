@@ -41,12 +41,22 @@
 
 @layer components {
   .btn {
-    @apply px-6 py-2 text-center shadow rounded-xl cursor-pointer;
+    @apply px-6 py-2 text-center shadow rounded-xl cursor-pointer transition ease-in-out duration-150;
   }
   .btn-primary {
     @apply text-white bg-indigo-600 shadow-indigo-600/50 hover:bg-indigo-700;
   }
   .btn-secondary {
     @apply text-gray-900 bg-gray-50 shadow-gray-600/50 hover:bg-gray-100;
+  }
+
+  .menu-btn {
+    @apply px-6 py-2 text-sm font-medium cursor-pointer rounded-xl hover:no-underline transition ease-in-out duration-150;
+  }
+  .menu-btn-primary {
+    @apply text-indigo-800 bg-indigo-200 shadow-md shadow-indigo-200/50 hover:bg-indigo-300 hover:text-indigo-900;
+  }
+  .menu-btn-secondary {
+    @apply text-gray-800 dark:text-gray-200 hover:text-gray-500 dark:hover:text-gray-300;
   }
 }
