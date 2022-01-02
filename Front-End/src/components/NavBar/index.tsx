@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import NavBarMenu from "../NavBarMenu";
 import ButtonLink from "../ButtonLink";
 import { User } from "../../models/User";
+import { ThemeButton } from "../ThemeButton";
 
 type NavBarProps = {
   isLoggedIn?: boolean;
@@ -123,6 +124,7 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                     </Link>
                   </div>
                 )}
+                <ThemeButton />
               </div>
             </div>
           </div>

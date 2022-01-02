@@ -4,6 +4,7 @@ import "../styles/index.css";
 import { NextIntlProvider } from "next-intl";
 import { Provider } from "react-redux";
 import { store } from "../store";
+import Script from "next/script";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -12,6 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Virtual Python School</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
+      <Script strategy="beforeInteractive" src="/darkMode.js" />
       <Provider store={store}>
         <NextIntlProvider
           messages={pageProps.i18n}

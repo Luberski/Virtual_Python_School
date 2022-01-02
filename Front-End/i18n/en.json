@@ -17,7 +17,8 @@
     "home": "Home",
     "courses": "Courses",
     "learn-more": "Learn More",
-    "leading": "Python for everyone"
+    "leading": "Python for everyone",
+    "switch-theme": "Switch theme"
   },
   "Courses": {
     "enroll": "Enroll",
