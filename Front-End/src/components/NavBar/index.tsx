@@ -179,7 +179,7 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                       </a>
                     </Link>
                     <Link href="/register" passHref={true}>
-                      <a className="menu-btn menu-btn-secondary text-indigo-600">
+                      <a className="menu-btn menu-btn-secondary text-indigo-600 dark:text-indigo-300">
                         {t("Auth.register")}
                       </a>
                     </Link>

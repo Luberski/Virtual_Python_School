@@ -15,8 +15,7 @@ export default function RegisterPage() {
     <>
       <div className="absolute w-full h-full">
         <NavBar />
-
-        <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
+        <div className="container flex flex-col justify-center items-center px-6 pb-4 mx-auto my-6">
           <div>
             <h1 className="text-center">{t("Auth.create-new-account")}</h1>
           </div>

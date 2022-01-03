@@ -35,7 +35,7 @@ export default function Playground() {
     <>
       <div className="absolute w-full h-full">
         <NavBar />
-        <div className="container flex flex-col justify-center px-6 pb-4 mx-auto my-6 lg:my-12 lg:flex-row lg:items-center">
+        <div className="container flex flex-col justify-center items-center px-6 pb-4 mx-auto my-6">
           <div>
             <h1 className="text-center">{t("Playground.leading")}</h1>
           </div>
@@ -50,7 +50,7 @@ export default function Playground() {
             </Button>
           </div>
         </div>
-        <div className="flex px-6 ">
+        <div className="flex px-6">
           <Editor
             className="w-1/2 h-96"
             defaultLanguage="python"
@@ -61,7 +61,7 @@ export default function Playground() {
           <div className="w-full">
             <div className="w-full shadow-2xl subpixel-antialiased rounded h-96 bg-black border-black mx-auto">
               <div
-                className="flex items-center h-6 rounded-t bg-gray-300 dark:bg-gray-700 border-b border-gray-500 text-center text-black dark:text-white"
+                className="flex items-center h-6 rounded-t bg-gray-200 dark:bg-gray-800 border-b border-gray-500 text-center text-black dark:text-white"
                 id="headerTerminal"
               >
                 <div className="mx-auto" id="terminaltitle">
