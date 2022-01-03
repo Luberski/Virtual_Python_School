@@ -1,6 +1,5 @@
 from subprocess import Popen, PIPE
 
-
 class RemotePythonRunner:
     def run_code(self, code):
         bashcmd = f"python -c '{code}'"
