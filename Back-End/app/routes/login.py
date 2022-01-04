@@ -5,7 +5,6 @@ from app import api
 from app.db import db
 from app import models
 
-db.create_all()
 ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
 
 
@@ -16,6 +15,9 @@ def login():
         if ipa_.login(request.form["username"], request.form["password"]) is not None:
             ipa_user = api.User(ipa_.user_show(request.form["username"]))
             parsed_user_data = ipa_user.parse()
+            # # todo: find a better way to do this
+            db.create_all()
+            db.session.commit()
             # create user in database if not exists
             user = (
                 models.User()
