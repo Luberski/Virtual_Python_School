@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 
 from app import ipahttp
 from app import api
-import app.sshrequests as sshreq
+import app.pythonRunner as PR
 
 app = Flask(__name__)
 ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
@@ -12,8 +12,8 @@ ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
 def playground():
     if request.method == "POST":
         data = request.json
-        remote_python_runner = sshreq.RemotePythonRunner()
-        text, err = remote_python_runner.run_code(data["data"]["content"])
+        rpr = PR.RemotePythonRunner()
+        text, err = rpr.run_code(data["data"]["content"])
         if len(err) == 0:
             return jsonify({"data": {"content": text}})
         return jsonify({"error": err})
