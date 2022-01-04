@@ -15,14 +15,14 @@ export default function RegisterPage() {
     <>
       <div className="absolute w-full h-full">
         <NavBar />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 mx-auto my-6">
+        <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div>
             <h1 className="text-center">{t("Auth.create-new-account")}</h1>
           </div>
         </div>
         <div className="container px-6 mx-auto">
           <form
-            className="flex flex-col space-y-8 items-center justify-center"
+            className="flex flex-col items-center justify-center space-y-8"
             onSubmit={handleSubmit(onSubmit)}
           >
             <Input

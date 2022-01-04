@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 module.exports = {
   i18n: {
     locales: ["en", "pl"],

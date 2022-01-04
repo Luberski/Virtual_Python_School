@@ -16,7 +16,7 @@ export default function IndexPage() {
     <>
       <div className="absolute w-full h-full ">
         <NavBar user={user} isLoggedIn={isLoggedIn} />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 mx-auto my-6">
+        <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div className="space-y-2">
             <h1 className="text-center">{t("Home.leading")}</h1>
             <p className="text-xl text-center">

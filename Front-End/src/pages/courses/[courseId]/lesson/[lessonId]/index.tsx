@@ -40,15 +40,15 @@ export default function LessonPage() {
     <>
       <div className="absolute w-full h-full">
         <NavBar />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 mx-auto my-6">
+        <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <h1 className="text-center first-letter:uppercase">
             {lessonId} lesson page
           </h1>
-          <Button onClick={handleValue} className="btn-primary w-28 h-12 my-8">
+          <Button onClick={handleValue} className="h-12 my-8 btn-primary w-28">
             {t("Playground.run")}
           </Button>
-          <div className="flex xl:flex-row flex-col w-full">
-            <div className="flex flex-col p-8 m-2 bg-gray-200 dark:bg-gray-800 rounded-xl shadow-xl xl:w-1/2">
+          <div className="flex flex-col w-full xl:flex-row">
+            <div className="flex flex-col p-8 m-2 bg-gray-200 shadow-xl rounded-xl xl:w-1/2 dark:bg-gray-800">
               <h2>Intro</h2>
               <p>
                 Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
@@ -62,7 +62,7 @@ export default function LessonPage() {
               <h2>Instructions</h2>
               <p>Change text “Hello world” to your name.</p>
             </div>
-            <div className="flex flex-col flex-1 shadow-xl m-2">
+            <div className="flex flex-col flex-1 m-2 shadow-xl">
               <Editor
                 className="h-96"
                 defaultLanguage="python"
@@ -71,9 +71,9 @@ export default function LessonPage() {
                 theme="vs-dark"
               />
               <div>
-                <div className="shadow-2xl subpixel-antialiased rounded h-96 bg-black border-black mx-auto">
+                <div className="mx-auto subpixel-antialiased bg-black border-black rounded shadow-2xl h-96">
                   <div
-                    className="flex items-center h-6 rounded-t bg-gray-200 dark:bg-gray-800 border-b border-gray-500 text-center text-black dark:text-white"
+                    className="flex items-center h-6 text-center text-black bg-gray-200 border-b border-gray-500 rounded-t dark:bg-gray-800 dark:text-white"
                     id="headerTerminal"
                   >
                     <div className="mx-auto" id="terminaltitle">
@@ -81,7 +81,7 @@ export default function LessonPage() {
                     </div>
                   </div>
                   <div
-                    className="pl-1 pt-1 h-auto  font-mono text-xs bg-black"
+                    className="h-auto pt-1 pl-1 font-mono text-xs bg-black"
                     id="console"
                   >
                     <pre className="pb-1 text-white">

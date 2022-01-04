@@ -22,16 +22,16 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
   return (
     <Disclosure as="nav" className="w-full mx-auto">
       {({ open }) => (
-        <div className="container flex items-center justify-between xl:h-16 py-4 px-6 mx-auto lg:items-stretch">
+        <div className="container flex items-center justify-between px-6 py-4 mx-auto xl:h-16 lg:items-stretch">
           <div className="flex items-center h-full">
             <div className="mr-10">
               <Link href="/" passHref={true}>
-                <a className="ml-3 text-base font-bold text-indigo-700 dark:text-indigo-300 leading-tight tracking-normal block no-underline hover:no-underline">
+                <a className="block ml-3 text-base font-bold leading-tight tracking-normal text-indigo-700 no-underline dark:text-indigo-300 hover:no-underline">
                   Virtual Python School
                 </a>
               </Link>
             </div>
-            <ul className="hidden xl:flex items-center space-x-2">
+            <ul className="items-center hidden space-x-2 xl:flex">
               <Link href="/" passHref={true}>
                 <a
                   className={clsx(
@@ -60,7 +60,7 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
             </ul>
           </div>
 
-          <div className="hidden xl:flex items-center justify-end h-full">
+          <div className="items-center justify-end hidden h-full xl:flex">
             <div className="flex items-center w-full h-full">
               <div className="flex w-full h-full">
                 <div
@@ -69,7 +69,7 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                 >
                   {isLoggedIn && user ? (
                     <div className="flex">
-                      <p className="flex mx-4 text-sm items-center">
+                      <p className="flex items-center mx-4 text-sm">
                         {user.name} {user.lastName}
                       </p>
                       <Image
@@ -99,11 +99,11 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
               </div>
             </div>
           </div>
-          <div className="xl:hidden flex flex-col items-end">
+          <div className="flex flex-col items-end xl:hidden">
             {open ? (
               <Disclosure.Button className="xl:hidden">
                 <svg
-                  className="h-6 w-6"
+                  className="w-6 h-6"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -117,7 +117,7 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
             ) : (
               <Disclosure.Button className="xl:hidden">
                 <svg
-                  className="h-6 w-6"
+                  className="w-6 h-6"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -158,7 +158,7 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                 {isLoggedIn && user ? (
                   <div className="flex">
                     <div
-                      className="space-x-2 word-wrap truncate w-24 text-sm"
+                      className="w-24 space-x-2 text-sm truncate word-wrap"
                       title={`${user.name} ${user.lastName}`}
                     >
                       {user.name} {user.lastName}
@@ -179,7 +179,7 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                       </a>
                     </Link>
                     <Link href="/register" passHref={true}>
-                      <a className="menu-btn menu-btn-secondary text-indigo-600 dark:text-indigo-300">
+                      <a className="text-indigo-600 menu-btn menu-btn-secondary dark:text-indigo-300">
                         {t("Auth.register")}
                       </a>
                     </Link>

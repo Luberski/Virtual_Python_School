@@ -2,8 +2,13 @@ import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
 
 export const ThemeButton = () => {
-  const t = useTranslations();
+  const [isMounted, setIsMounted] = useState(false);
   const [darkMode, setDarkMode] = useState<boolean | undefined>(undefined);
+  const t = useTranslations();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     setDarkMode(document.documentElement.classList.contains("dark"));
@@ -19,21 +24,23 @@ export const ThemeButton = () => {
     }
   }, [darkMode]);
 
-  const onClick = () => {
-    setDarkMode(!darkMode);
+  const switchTheme = () => {
+    if (isMounted) {
+      setDarkMode(!darkMode);
+    }
   };
 
   return (
     <button
-      onClick={onClick}
+      onClick={switchTheme}
       id="switchTheme"
-      className="h-10 w-10 mx-4 flex justify-center items-center focus:outline-none hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition ease-in-out duration-150"
+      className="flex items-center justify-center w-10 h-10 mx-4 transition duration-150 ease-in-out focus:outline-none hover:bg-gray-200 rounded-xl dark:hover:bg-gray-700"
       title={t("Home.switch-theme")}
     >
       {darkMode ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-100"
+          className="w-5 h-5 text-gray-100"
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -42,7 +49,7 @@ export const ThemeButton = () => {
       ) : (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-yellow-500"
+          className="w-5 h-5 text-yellow-500"
           viewBox="0 0 20 20"
           fill="currentColor"
         >

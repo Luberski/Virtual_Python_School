@@ -13,7 +13,7 @@ export default function CoursePage() {
     <>
       <div className="absolute w-full h-full">
         <NavBar />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 mx-auto my-6">
+        <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div>
             <h1 className="text-center first-letter:uppercase">
               {courseId} course page

@@ -26,9 +26,9 @@ export default function FancyCard({
       className={`flex flex-col p-8 ${cardColor} shadow-md hover:shadow-xl ${hoverShadowColor} transition duration-500 ease-in-out hover:scale-110 ${shadowColor} rounded-xl text-gray-700`}
     >
       <h3 className="text-xl font-bold">{title}</h3>
-      <p className="max-w-xs h-8">{description}</p>
+      <p className="h-8 max-w-xs">{description}</p>
       <Link href={link} passHref={true}>
-        <ButtonLink className="btn-secondary mt-16 w-42">
+        <ButtonLink className="mt-16 btn-secondary w-42">
           {buttonText}
         </ButtonLink>
       </Link>
