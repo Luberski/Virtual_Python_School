@@ -1,9 +1,11 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt
 from . import routes
 from app import ipahttp
 from app import api
 from app.db import db
 from app import models
+from app import jwt
 
 ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
 
@@ -34,19 +36,29 @@ def login():
                 )
                 db.session.add(new_user)
                 db.session.commit()
+
+                access_token = create_access_token(identity=new_user.username)
+                refresh_token = create_refresh_token(identity=new_user.username)
+
                 return jsonify(
                     {
                         "data": {
-                            "username": user.username,
-                            "zutID": user.zut_id,
-                            "name": user.name,
-                            "lastName": user.last_name,
-                            "email": user.email,
+                            "username": new_user.username,
+                            "zutID": new_user.zut_id,
+                            "name": new_user.name,
+                            "lastName": new_user.last_name,
+                            "email": new_user.email,
+                            "token" : {
+                                "access_token" : access_token,
+                                "refresh_token" : refresh_token,
+                            },
                         },
                         "error": None,
                     }
                 )
             else:
+                access_token = create_access_token(identity=user.username)
+                refresh_token = create_refresh_token(identity=user.username)
                 return jsonify(
                     {
                         "data": {
@@ -55,9 +67,52 @@ def login():
                             "name": user.name,
                             "lastName": user.last_name,
                             "email": user.email,
+                            "token" : {
+                                "access_token" : access_token,
+                                "refresh_token" : refresh_token,
+                            },
                         },
                         "error": None,
                     }
                 )
         error = "404"
     return jsonify({"error": error})
+
+
+@routes.route("/api/logout/access", methods=["POST"])
+@jwt_required()
+def logoutAccess():
+    if request.method == "POST":
+        jti = get_jwt()['jti']
+        try:
+            revoked_token = RevokedTokenModel(jti=jti)
+            revoked_token.add()
+
+            return jsonify({"error": None})
+        except:
+            return jsonify({"error": 500})
+
+
+@routes.route("/api/logout/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def logoutRefresh():
+    if request.method == "POST":
+        jti = get_jwt()['jti']
+        try:
+            revoked_token = RevokedTokenModel(jti=jti)
+            revoked_token.add()
+            pdb.set_trace()
+
+            return jsonify({"error": None})
+        except:
+            return jsonify({"error": 500})
+
+
+@routes.route("/api/token/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def tokenRefresh():
+    if request.method == "POST":
+        current_user = get_jwt_identity()
+        access_token = create_access_token(identity=current_user)
+        return jsonify({"access_token": access_token})
+

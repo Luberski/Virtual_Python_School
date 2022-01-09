@@ -18,3 +18,5 @@ six==1.16.0
 SQLAlchemy==1.4.27
 urllib3==1.25.11
 Werkzeug==2.0.2
+passlib==1.7.4
+Flask-JWT-Extended==4.3.1
