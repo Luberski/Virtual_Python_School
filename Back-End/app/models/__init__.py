@@ -1,5 +1,4 @@
 from app.db import db
-
 from passlib.hash import pbkdf2_sha256 as sha256
 
 
@@ -13,10 +12,11 @@ class User(db.Model):
     last_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
 
-
+    @staticmethod
     def generate_hash(password):
         return sha256.hash(password)
 
+    @staticmethod
     def verify_hash(password, hash_):
         return sha256.verify(password, hash_)
 
@@ -24,7 +24,7 @@ class User(db.Model):
 class RevokedTokenModel(db.Model):
     __tablename__ = "revoked_tokens"
     id = db.Column(db.Integer, primary_key=True)
-    jti = db.Column(db.String(120)) #
+    jti = db.Column(db.String(120))
 
     def add(self):
         db.session.add(self)

@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt
+from flask_jwt_extended import jwt_required, create_access_token, create_refresh_token, get_jwt, get_jwt_identity
 from . import routes
 from app import ipahttp
 from app import api
@@ -81,11 +81,11 @@ def login():
 
 @routes.route("/api/logout/access", methods=["POST"])
 @jwt_required()
-def logoutAccess():
+def logout_access():
     if request.method == "POST":
         jti = get_jwt()['jti']
         try:
-            revoked_token = RevokedTokenModel(jti=jti)
+            revoked_token = models.RevokedTokenModel(jti=jti)
             revoked_token.add()
 
             return jsonify({"error": None})
@@ -95,13 +95,12 @@ def logoutAccess():
 
 @routes.route("/api/logout/refresh", methods=["POST"])
 @jwt_required(refresh=True)
-def logoutRefresh():
+def logout_refresh():
     if request.method == "POST":
         jti = get_jwt()['jti']
         try:
-            revoked_token = RevokedTokenModel(jti=jti)
+            revoked_token = models.RevokedTokenModel(jti=jti)
             revoked_token.add()
-            pdb.set_trace()
 
             return jsonify({"error": None})
         except:
@@ -110,7 +109,7 @@ def logoutRefresh():
 
 @routes.route("/api/token/refresh", methods=["POST"])
 @jwt_required(refresh=True)
-def tokenRefresh():
+def token_refresh():
     if request.method == "POST":
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user)
