@@ -5,9 +5,10 @@ from app import ipahttp
 from app import api
 from app.db import db
 from app import models
-from app import jwt
+from app.jwt import jwt
 
 ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
+
 
 
 @routes.route("/api/login", methods=["POST"])
@@ -17,13 +18,10 @@ def login():
         if ipa_.login(request.form["username"], request.form["password"]) is not None:
             ipa_user = api.User(ipa_.user_show(request.form["username"]))
             parsed_user_data = ipa_user.parse()
-            # # todo: find a better way to do this
-            db.create_all()
-            db.session.commit()
-            # create user in database if not exists
+
             user = (
                 models.User()
-                .query.filter_by(zut_id=parsed_user_data["data"]["zutID"])
+                .query.filter_by(username=parsed_user_data["data"]["zutID"])
                 .first()
             )
             if user is None:
@@ -113,5 +111,25 @@ def token_refresh():
     if request.method == "POST":
         current_user = get_jwt_identity()
         access_token = create_access_token(identity=current_user)
-        return jsonify({"access_token": access_token})
+        refresh_token = create_refresh_token(identity=current_user)
+        return jsonify(
+                    {
+                        "data": {
+                            "username": user.username,
+                            "token" : {
+                                "access_token" : access_token,
+                                "refresh_token" : refresh_token,
+                            },
+                        },
+                        "error": None,
+                    }
+                )
+
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blocklist(jwt_header, decrypted_token):
+    jti = decrypted_token['jti']
+    return models.RevokedTokenModel.is_jti_blacklisted(jti=jti)
+
 
