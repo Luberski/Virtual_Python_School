@@ -3,13 +3,15 @@ import apiClient from "../../apiClient";
 import type { RootState } from "../../store";
 import { User } from "../../models/User";
 import { ApiPayload } from "../../models/ApiPayload";
+import { Token } from "../../models/Token";
+import { HYDRATE } from "next-redux-wrapper";
 
 interface AuthPayload extends ApiPayload {
-  data: User;
+  data: User & { token: Token };
 }
 
 export type AuthState = {
-  token: string | null;
+  token: Token | null;
   user: User | null;
   isLoggedIn: boolean;
   status: "idle" | "pending" | "succeeded" | "failed";
@@ -34,6 +36,7 @@ export const loginUser = createAsyncThunk(
       const res = await apiClient.post("/login", formData);
       return res.data;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -42,13 +45,28 @@ export const loginUser = createAsyncThunk(
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    setToken: (state, action) => {
+      const { accessToken, refreshToken } = action.payload;
+      const token = {
+        accessToken,
+        refreshToken,
+      };
+      state.token = token;
+      state.isLoggedIn = true;
+    },
+  },
   extraReducers(builder) {
     builder
-      .addCase(loginUser.pending, (state, _action) => {
+      .addCase(HYDRATE, (state, action) => {
+        // @ts-ignore
+        console.log("HYDRATE", state, action.payload);
+        // @ts-ignore
+        return Object.assign({}, state, { ...action.payload.auth });
+      })
+      .addCase(loginUser.pending, (state) => {
         state.status = "pending";
       })
-      // TODO: recieve token
       .addCase(
         loginUser.fulfilled,
         (state, { payload: { data } }: { payload: AuthPayload }) => {
@@ -59,6 +77,10 @@ export const authSlice = createSlice({
             name: data.name,
             lastName: data.lastName,
             email: data.email,
+          };
+          state.token = {
+            accessToken: data.token["access_token"],
+            refreshToken: data.token["refresh_token"],
           };
           state.isLoggedIn = true;
           state.status = "succeeded";
@@ -76,5 +98,6 @@ export const selectAuthUser = (state: RootState) => state.auth.user;
 export const selectIsLogged = (state: RootState) => state.auth.isLoggedIn;
 export const selectAuthError = (state: RootState) => state.auth.error;
 export const selectAuthStatus = (state: RootState) => state.auth.status;
+export const selectAuthToken = (state: RootState) => state.auth.token;
 
 export default authSlice.reducer;

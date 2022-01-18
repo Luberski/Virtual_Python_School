@@ -28,6 +28,7 @@ export const sendCode = createAsyncThunk(
       const res = await apiClient.post("/playground", { data: { content } });
       return res.data;
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
@@ -39,7 +40,7 @@ export const playgroundSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(sendCode.pending, (state, _action) => {
+      .addCase(sendCode.pending, (state) => {
         state.status = "pending";
       })
       .addCase(sendCode.fulfilled, (state, { payload: { data, error } }) => {

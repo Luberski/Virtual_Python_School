@@ -9,12 +9,14 @@ import {
   selectPlaygroundError,
   sendCode,
 } from "../features/playground/playgroundSlice";
+import { selectAuthUser, selectIsLogged } from "../features/auth/authSlice";
 
 export default function Playground() {
   const dispatch = useAppDispatch();
   const t = useTranslations();
   const editorRef = useRef(null);
-
+  const user = useAppSelector(selectAuthUser);
+  const isLoggedIn = useAppSelector(selectIsLogged);
   const playgroundData = useAppSelector(selectPlaygroundData);
   const playgroundError = useAppSelector(selectPlaygroundError);
 
@@ -25,7 +27,7 @@ export default function Playground() {
   const handleValue = async () => {
     const value = editorRef.current.getValue();
     try {
-      await dispatch(sendCode({ content: value })).unwrap();
+      await dispatch(sendCode({ content: value }));
     } catch (error) {
       console.error(error);
     }
@@ -34,7 +36,7 @@ export default function Playground() {
   return (
     <>
       <div className="absolute w-full h-full">
-        <NavBar />
+        <NavBar user={user} isLoggedIn={isLoggedIn} />
         <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div>
             <h1 className="text-center">{t("Playground.leading")}</h1>

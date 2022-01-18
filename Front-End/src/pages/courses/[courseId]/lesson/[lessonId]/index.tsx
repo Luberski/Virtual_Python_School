@@ -11,6 +11,10 @@ import {
   sendCode,
 } from "../../../../../features/playground/playgroundSlice";
 import Button from "../../../../../components/Button";
+import {
+  selectAuthUser,
+  selectIsLogged,
+} from "../../../../../features/auth/authSlice";
 
 export default function LessonPage() {
   const dispatch = useAppDispatch();
@@ -19,18 +23,19 @@ export default function LessonPage() {
   const t = useTranslations();
 
   const editorRef = useRef(null);
-
+  const user = useAppSelector(selectAuthUser);
+  const isLoggedIn = useAppSelector(selectIsLogged);
   const playgroundData = useAppSelector(selectPlaygroundData);
   const playgroundError = useAppSelector(selectPlaygroundError);
 
-  const handleEditorDidMount = (editor, _monaco) => {
+  const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
   };
 
   const handleValue = async () => {
     const value = editorRef.current.getValue();
     try {
-      await dispatch(sendCode({ content: value })).unwrap();
+      await dispatch(sendCode({ content: value }));
     } catch (error) {
       console.error(error);
     }
@@ -39,7 +44,7 @@ export default function LessonPage() {
   return (
     <>
       <div className="absolute w-full h-full">
-        <NavBar />
+        <NavBar user={user} isLoggedIn={isLoggedIn} />
         <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <h1 className="text-center first-letter:uppercase">
             {lessonId} lesson page
@@ -109,10 +114,11 @@ export async function getStaticProps({ locale }) {
   };
 }
 
-export const getStaticPaths: GetStaticPaths<{ lessonId: string }> =
-  async () => {
-    return {
-      paths: [], //indicates that no page needs be created at build time
-      fallback: "blocking", //indicates the type of fallback
-    };
+export const getStaticPaths: GetStaticPaths<{
+  lessonId: string;
+}> = async () => {
+  return {
+    paths: [], //indicates that no page needs be created at build time
+    fallback: "blocking", //indicates the type of fallback
   };
+};

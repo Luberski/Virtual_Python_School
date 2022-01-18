@@ -65,13 +65,16 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
               <div className="flex w-full h-full">
                 <div
                   aria-haspopup="true"
-                  className="relative flex items-center justify-end w-full cursor-pointer"
+                  className="flex items-center justify-end w-full cursor-pointer"
                 >
                   {isLoggedIn && user ? (
                     <div className="flex">
-                      <p className="flex items-center mx-4 text-sm">
-                        {user.name} {user.lastName}
-                      </p>
+                      <div
+                        className="flex items-center w-24 space-x-2 text-sm truncate word-wrap"
+                        title={`${user?.name} ${user?.lastName}`}
+                      >
+                        {user?.name} {user?.lastName}
+                      </div>
                       <Image
                         className="object-cover w-10 h-10 rounded"
                         src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/3b/3b80afb3cc996edde4b3c8d599196c032410f754_full.jpg"
@@ -81,7 +84,7 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                       />
                     </div>
                   ) : (
-                    <div className="space-x-4">
+                    <div className="flex space-x-4">
                       <Link href="/login" passHref={true}>
                         <ButtonLink className="btn-secondary">
                           {t("Auth.login")}
@@ -158,10 +161,10 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                 {isLoggedIn && user ? (
                   <div className="flex">
                     <div
-                      className="w-24 space-x-2 text-sm truncate word-wrap"
-                      title={`${user.name} ${user.lastName}`}
+                      className="flex items-center w-24 space-x-2 text-sm truncate word-wrap"
+                      title={`${user?.name} ${user?.lastName}`}
                     >
-                      {user.name} {user.lastName}
+                      {user?.name} {user?.lastName}
                     </div>
                     <Image
                       className="object-cover w-10 h-10 rounded"

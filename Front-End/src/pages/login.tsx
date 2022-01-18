@@ -7,17 +7,20 @@ import ButtonInput from "../components/ButtonInput";
 import { useAppDispatch } from "../hooks";
 import { loginUser } from "../features/auth/authSlice";
 import NavBar from "../components/NavBar";
+import { useRouter } from "next/router";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const t = useTranslations();
   const { register, handleSubmit } = useForm();
+  const router = useRouter();
 
   const onSubmit = async (data) => {
     const { username, password } = data;
 
     try {
-      await dispatch(loginUser({ username, password })).unwrap();
+      await dispatch(loginUser({ username, password }));
+      router.push("/");
     } catch (error) {
       console.error(error);
     }
