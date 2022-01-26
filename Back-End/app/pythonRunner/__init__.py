@@ -3,7 +3,7 @@ from subprocess import Popen, PIPE
 
 class RemotePythonRunner:
     def run_code(self, code):
-        bashcmd = f"./test.sh test '{code}'"
+        bashcmd = f"~/test.sh test '{code}'"
         Popen(bashcmd, shell=True)
 
         bashcmd = f"lxc exec test -- cat log"
