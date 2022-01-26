@@ -1,4 +1,6 @@
 from app.db import db
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 from passlib.hash import pbkdf2_sha256 as sha256
 
 
@@ -11,6 +13,7 @@ class User(db.Model):
     name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
+    id_course = relationship("Courses_taken")
 
     @staticmethod
     def generate_hash(password):
@@ -34,3 +37,29 @@ class RevokedTokenModel(db.Model):
     def is_jti_blacklisted(cls, jti):
         query = cls.query.filter_by(jti=jti).first()
         return bool(query)
+
+class Courses_taken(db.Model):
+    __tablename__ = "Courses_taken"
+    id = db.Column(db.Integer, primary_key=True)
+    id_course = db.Column(db.Integer, ForeignKey("courses.id"))
+    id_user = db.Column(db.Integer, ForeignKey('user.id'))
+    start_date = db.Column(db.Date())
+    end_date = db.Column(db.Date())
+    section_number = db.Column(db.Integer)
+    completed = db.Column(db.String(100))
+
+    def add(self):
+        db.session.add(self)
+        db.session.commit()
+
+class Courses(db.Model):
+    __tablename__ = "courses"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(500))
+    sections = db.Column(db.String(1))
+    users_info = relationship("Courses_taken")
+
+    def add(self):
+        db.session.add(self)
+        db.session.commit()
