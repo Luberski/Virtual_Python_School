@@ -5,6 +5,7 @@ import { User } from "../../models/User";
 import { ApiPayload } from "../../models/ApiPayload";
 import { Token } from "../../models/Token";
 import { HYDRATE } from "next-redux-wrapper";
+import { setCookies } from "cookies-next";
 
 interface AuthPayload extends ApiPayload {
   data: User & { token: Token };
@@ -54,6 +55,16 @@ export const authSlice = createSlice({
       };
       state.token = token;
       state.isLoggedIn = true;
+    },
+    logout: (state) => {
+      state.isLoggedIn = false;
+      state.user = null;
+      state.token = null;
+      setCookies("token", "");
+      setCookies("accessToken", "");
+      setCookies("refreshToken", "");
+      setCookies("user", "");
+      setCookies("isLoggedIn", "");
     },
   },
   extraReducers(builder) {

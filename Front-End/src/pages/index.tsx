@@ -2,20 +2,26 @@ import React from "react";
 import Image from "next/image";
 import Footer from "../components/Footer";
 import { useTranslations } from "next-intl";
-import { useAppSelector } from "../hooks";
+import { useAppDispatch, useAppSelector } from "../hooks";
 import { selectIsLogged, selectAuthUser } from "../features/auth/authSlice";
 import NavBar from "../components/NavBar";
 import FancyCard from "../components/FancyCard";
 
 export default function IndexPage() {
   const t = useTranslations();
+  const dispatch = useAppDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
+
+  const handleLogout = () =>
+    dispatch({
+      type: "auth/logout",
+    });
 
   return (
     <>
       <div className="absolute w-full h-full ">
-        <NavBar user={user} isLoggedIn={isLoggedIn} />
+        <NavBar user={user} isLoggedIn={isLoggedIn} logout={handleLogout} />
         <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div className="space-y-2">
             <h1 className="text-center">{t("Home.leading")}</h1>
