@@ -8,13 +8,15 @@ import { ThemeButton } from "../ThemeButton";
 import { Disclosure } from "@headlessui/react";
 import clsx from "clsx";
 import { useRouter } from "next/router";
+import Button from "../Button";
 
 type NavBarProps = {
   isLoggedIn?: boolean;
   user?: User | null;
+  logout?: () => void;
 };
 
-const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
+const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
   const router = useRouter();
 
   const t = useTranslations();
@@ -82,6 +84,9 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                         width={40}
                         height={40}
                       />
+                      <Button className="menu-btn-danger ml-4" onClick={logout}>
+                        {t("Auth.logout")}
+                      </Button>
                     </div>
                   ) : (
                     <div className="flex space-x-4">
@@ -173,6 +178,9 @@ const NavBar = ({ user, isLoggedIn }: NavBarProps) => {
                       width={40}
                       height={40}
                     />
+                    <Button className="menu-btn-danger ml-4" onClick={logout}>
+                      {t("Auth.logout")}
+                    </Button>
                   </div>
                 ) : (
                   <div className="flex flex-col">

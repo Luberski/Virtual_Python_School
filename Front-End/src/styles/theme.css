@@ -59,4 +59,7 @@
   .menu-btn-secondary {
     @apply text-gray-800 hover:text-gray-500 dark:text-gray-200 dark:hover:text-gray-300;
   }
+  .menu-btn-danger {
+    @apply text-red-800 bg-red-200 shadow-md shadow-red-200/50 hover:bg-red-300 hover:text-red-900;
+  }
 }
