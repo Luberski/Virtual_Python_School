@@ -70,15 +70,15 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                   className="flex items-center justify-end w-full cursor-pointer"
                 >
                   {isLoggedIn && user ? (
-                    <div className="flex">
+                    <div className="flex items-center">
                       <div
-                        className="flex items-center w-24 space-x-2 text-sm truncate word-wrap"
+                        className="w-48 text-right text-sm word-wrap truncate mx-4"
                         title={`${user?.name} ${user?.lastName}`}
                       >
                         {user?.name} {user?.lastName}
                       </div>
                       <Image
-                        className="object-cover w-10 h-10 rounded"
+                        className="object-cover rounded"
                         src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/3b/3b80afb3cc996edde4b3c8d599196c032410f754_full.jpg"
                         alt="logo"
                         width={40}
@@ -164,15 +164,15 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                   </a>
                 </Link>
                 {isLoggedIn && user ? (
-                  <div className="flex">
+                  <div className="flex items-center">
                     <div
-                      className="flex items-center w-24 space-x-2 text-sm truncate word-wrap"
+                      className="w-20 text-right text-sm word-wrap truncate mx-4"
                       title={`${user?.name} ${user?.lastName}`}
                     >
                       {user?.name} {user?.lastName}
                     </div>
                     <Image
-                      className="object-cover w-10 h-10 rounded"
+                      className="object-cover rounded"
                       src="https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/3b/3b80afb3cc996edde4b3c8d599196c032410f754_full.jpg"
                       alt="logo"
                       width={40}
