@@ -38,11 +38,12 @@ class RevokedTokenModel(db.Model):
         query = cls.query.filter_by(jti=jti).first()
         return bool(query)
 
+
 class Courses_taken(db.Model):
     __tablename__ = "Courses_taken"
     id = db.Column(db.Integer, primary_key=True)
     id_course = db.Column(db.Integer, ForeignKey("courses.id"))
-    id_user = db.Column(db.Integer, ForeignKey('user.id'))
+    id_user = db.Column(db.Integer, ForeignKey("user.id"))
     start_date = db.Column(db.Date())
     end_date = db.Column(db.Date())
     section_number = db.Column(db.Integer)
@@ -51,6 +52,7 @@ class Courses_taken(db.Model):
     def add(self):
         db.session.add(self)
         db.session.commit()
+
 
 class Courses(db.Model):
     __tablename__ = "courses"
