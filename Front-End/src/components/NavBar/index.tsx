@@ -91,15 +91,15 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                   ) : (
                     <div className="flex space-x-4">
                       <Link href="/login" passHref={true}>
-                        <ButtonLink className="btn-secondary">
+                        <ButtonLink className="btn-primary">
                           {t("Auth.login")}
                         </ButtonLink>
                       </Link>
-                      <Link href="/register" passHref={true}>
+                      {/* <Link href="/register" passHref={true}>
                         <ButtonLink className="btn-primary">
                           {t("Auth.register")}
                         </ButtonLink>
-                      </Link>
+                      </Link> */}
                     </div>
                   )}
                   <ThemeButton />
@@ -189,11 +189,11 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                         {t("Auth.login")}
                       </a>
                     </Link>
-                    <Link href="/register" passHref={true}>
+                    {/* <Link href="/register" passHref={true}>
                       <a className="text-indigo-600 menu-btn menu-btn-secondary dark:text-indigo-300">
                         {t("Auth.register")}
                       </a>
-                    </Link>
+                    </Link> */}
                     <ThemeButton />
                   </div>
                 )}

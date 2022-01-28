@@ -4,8 +4,12 @@ import Input from "../components/Input";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import ButtonInput from "../components/ButtonInput";
-import { useAppDispatch } from "../hooks";
-import { loginUser } from "../features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import {
+  loginUser,
+  selectAuthError,
+  selectAuthStatus,
+} from "../features/auth/authSlice";
 import NavBar from "../components/NavBar";
 import { useRouter } from "next/router";
 
@@ -14,13 +18,17 @@ export default function LoginPage() {
   const t = useTranslations();
   const { register, handleSubmit } = useForm();
   const router = useRouter();
+  const error = useAppSelector(selectAuthError);
+  const status = useAppSelector(selectAuthStatus);
 
   const onSubmit = async (data) => {
     const { username, password } = data;
 
     try {
       await dispatch(loginUser({ username, password }));
-      router.push("/");
+      if (status === "succeeded") {
+        router.push("/");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -59,6 +67,11 @@ export default function LoginPage() {
               type="submit"
               value={t("Auth.login")}
             />
+            {status === "failed" && error && (
+              <div className="px-4 py-2 rounded-xl bg-red-300 text-red-700">
+                {error}
+              </div>
+            )}
           </form>
         </div>
 
