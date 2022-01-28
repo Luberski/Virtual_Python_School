@@ -5,3 +5,5 @@ requests
 flask_sqlalchemy
 mysql-connector-python
 passlib
+pytest
+pytest-dotenv

@@ -1,10 +1,9 @@
-import os
 from dotenv import load_dotenv
+
+load_dotenv()
 from .routes import *
 from .application import application as app
 
-load_dotenv()
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 app.register_blueprint(routes)
 
 

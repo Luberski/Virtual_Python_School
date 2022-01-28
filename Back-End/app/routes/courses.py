@@ -1,7 +1,6 @@
 import os
 from app import models
-from app.db import db
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt
 from . import routes
 
@@ -13,10 +12,10 @@ def create_course():
 
         username = get_jwt()["sub"]
         if username is None:
-            return jsonify({"error": 500})
-
+            return make_response(jsonify({"error": "Bad token"}), 403)
+        # todo: convert to get data from json body instead
         if request.form["key"] != os.getenv("MASTER_KEY"):
-            return jsonify({"error": 403})
+            return make_response(jsonify({"error": "Bad key"}), 403)
 
         new_course = models.Courses(
             name=request.form["name"],
@@ -26,13 +25,16 @@ def create_course():
 
         new_course.add()
 
-        return jsonify(
-            {
-                "data": {
-                    "name": new_course.name,
-                    "description": new_course.description,
-                    "sections": new_course.sections,
-                },
-                "error": None,
-            }
+        return make_response(
+            jsonify(
+                {
+                    "data": {
+                        "name": new_course.name,
+                        "description": new_course.description,
+                        "sections": new_course.sections,
+                    },
+                    "error": None,
+                }
+            ),
+            200,
         )

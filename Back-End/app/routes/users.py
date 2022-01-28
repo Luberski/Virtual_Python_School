@@ -1,24 +1,23 @@
 from app import models
-from flask import request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
+from flask import request, jsonify, make_response
+from flask_jwt_extended import jwt_required, get_jwt
 from . import routes
 
 
 @routes.route("/api/users/me", methods=["GET"])
 @jwt_required()
 def get_user_me():
-    if request.method == "GET":
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "User not found"}), 404)
 
-        username = get_jwt()["sub"]
-        if username is None:
-            return jsonify({"error": 403})
+    user = models.User().query.filter_by(username=username).first()
 
-        user = models.User().query.filter_by(username=username).first()
+    if user is None:
+        return make_response(jsonify({"error": "User not found"}), 404)
 
-        if user is None:
-            return jsonify({"error": 404})
-
-        return jsonify(
+    return make_response(
+        jsonify(
             {
                 "data": {
                     "username": user.username,
@@ -29,19 +28,23 @@ def get_user_me():
                 },
                 "error": None,
             }
-        )
+        ),
+        200,
+    )
 
 
 @routes.route("/api/users", methods=["POST"])
 def get_user_by_id():
-    if request.method == "POST":
+    # todo: convert to get data from json body instead
+    id = request.form["id"]
+    user = models.User().query.filter_by(username=id).first()
 
-        id = request.form["id"]
-        user = models.User().query.filter_by(username=id).first()
+    if user is None:
+        return make_response(jsonify({"error": "User not found"}), 404)
 
-        if user is None:
-            return jsonify({"error": 404})
-
-        return jsonify(
+    return make_response(
+        jsonify(
             {"data": {"username": user.username, "email": user.email,}, "error": None,}
-        )
+        ),
+        200,
+    )
