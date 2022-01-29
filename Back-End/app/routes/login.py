@@ -84,7 +84,7 @@ def login():
                 ),
                 200,
             )
-    return jsonify({"error": "Bad credentials"}), 401
+    return make_response(jsonify({"error": "Invalid credentials"}), 403)
 
 
 @routes.route("/api/logout/access", methods=["POST"])

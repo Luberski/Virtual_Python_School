@@ -35,8 +35,7 @@ def get_user_me():
 
 @routes.route("/api/users", methods=["POST"])
 def get_user_by_id():
-    # todo: convert to get data from json body instead
-    id = request.form["id"]
+    id = request.json["data"]["id"]
     user = models.User().query.filter_by(username=id).first()
 
     if user is None:

@@ -39,8 +39,8 @@ class RevokedTokenModel(db.Model):
         return bool(query)
 
 
-class Courses_taken(db.Model):
-    __tablename__ = "Courses_taken"
+class CoursesTaken(db.Model):
+    __tablename__ = "courses_taken"
     id = db.Column(db.Integer, primary_key=True)
     id_course = db.Column(db.Integer, ForeignKey("courses.id"))
     id_user = db.Column(db.Integer, ForeignKey("user.id"))
@@ -60,7 +60,7 @@ class Courses(db.Model):
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))
     sections = db.Column(db.String(1))
-    users_info = relationship("Courses_taken")
+    users_info = relationship("courses_taken")
 
     def add(self):
         db.session.add(self)

@@ -1,4 +1,3 @@
-from types import MethodType
 from flask import Flask
 import pytest
 import os

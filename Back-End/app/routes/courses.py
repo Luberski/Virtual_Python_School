@@ -13,14 +13,12 @@ def create_course():
         username = get_jwt()["sub"]
         if username is None:
             return make_response(jsonify({"error": "Bad token"}), 403)
-        # todo: convert to get data from json body instead
-        if request.form["key"] != os.getenv("MASTER_KEY"):
+        if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
             return make_response(jsonify({"error": "Bad key"}), 403)
-
         new_course = models.Courses(
-            name=request.form["name"],
-            description=request.form["description"],
-            sections=request.form["sections"],
+            name=request.json["data"]["name"],
+            description=request.json["data"]["description"],
+            sections=request.json["data"]["sections"],
         )
 
         new_course.add()
