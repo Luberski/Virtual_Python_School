@@ -13,7 +13,7 @@ class User(db.Model):
     name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
-    id_course = relationship("Courses_taken")
+    id_course = relationship("courses_taken")
 
     @staticmethod
     def generate_hash(password):
