@@ -13,7 +13,7 @@ class User(db.Model):
     name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
-    id_course = relationship("courses_taken")
+    id_course = relationship("CoursesTaken")
 
     @staticmethod
     def generate_hash(password):
@@ -60,7 +60,7 @@ class Courses(db.Model):
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))
     sections = db.Column(db.String(1))
-    users_info = relationship("courses_taken")
+    users_info = relationship("CoursesTaken")
 
     def add(self):
         db.session.add(self)
