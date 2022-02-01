@@ -2,7 +2,6 @@ from app import pythonRunner
 from flask import request, jsonify, make_response
 from . import routes
 
-
 @routes.route("/api/playground", methods=["POST"])
 def playground():
     data = request.json
