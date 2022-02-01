@@ -10,4 +10,4 @@ def playground():
     text, err = rpr.run_code(data["data"]["content"])
     if len(err) == 0:
         return make_response(jsonify({"data": {"content": text}}), 200)
-    return make_response(jsonify({"error": err}), 400)
+    return make_response(jsonify({"error": err}), 200)
