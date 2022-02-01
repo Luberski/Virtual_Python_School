@@ -71,8 +71,6 @@ export const authSlice = createSlice({
     builder
       .addCase(HYDRATE, (state, action) => {
         // @ts-ignore
-        console.log("HYDRATE", state, action.payload);
-        // @ts-ignore
         return Object.assign({}, state, { ...action.payload.auth });
       })
       .addCase(loginUser.pending, (state) => {

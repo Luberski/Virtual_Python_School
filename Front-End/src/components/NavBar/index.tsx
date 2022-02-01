@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -20,15 +20,14 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
   const router = useRouter();
   const t = useTranslations();
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
-    mounted && (
-      <Disclosure as="nav" className="w-full mx-auto">
-        {({ open }) => (
+    <Disclosure
+      as="nav"
+      className="w-full mx-auto"
+      suppressHydrationWarning={true}
+    >
+      {({ open }) =>
+        process.browser && (
           <div className="container flex items-center justify-between px-6 py-4 mx-auto xl:h-16 lg:items-stretch">
             <div className="flex items-center h-full">
               <div className="mr-10">
@@ -209,9 +208,9 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
               </Disclosure.Panel>
             </div>
           </div>
-        )}
-      </Disclosure>
-    )
+        )
+      }
+    </Disclosure>
   );
 };
 
