@@ -1,13 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import apiClient from "../../apiClient";
 import type { RootState } from "../../store";
-import { ApiPayload } from "../../models/ApiPayload";
 import { Playground } from "../../models/Playground";
-
-interface PlaygroundPayload extends ApiPayload {
-  data: { content: string | null };
-  error: string | null;
-}
 
 export type PlaygroundState = {
   data: Playground;

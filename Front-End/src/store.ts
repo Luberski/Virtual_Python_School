@@ -24,9 +24,10 @@ export const store = wrapMakeStore(() =>
             subtrees: ["auth.user", "auth.token", "auth.isLoggedIn"],
           })
         )
-        .concat(logger),
+        .concat(process.env.NODE_ENV === "development" ? [logger] : []),
   })
 );
+
 export const wrapper = createWrapper(store);
 
 export type RootState = {

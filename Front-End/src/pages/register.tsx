@@ -17,7 +17,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <div className="absolute w-full h-full">
+      <div className="w-full h-full">
         <NavBar user={user} isLoggedIn={isLoggedIn} />
         <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div>

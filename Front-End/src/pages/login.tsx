@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
 import { useTranslations } from "next-intl";
@@ -9,6 +9,8 @@ import {
   loginUser,
   selectAuthError,
   selectAuthStatus,
+  selectAuthUser,
+  selectIsLogged,
 } from "../features/auth/authSlice";
 import NavBar from "../components/NavBar";
 import { useRouter } from "next/router";
@@ -20,6 +22,14 @@ export default function LoginPage() {
   const router = useRouter();
   const error = useAppSelector(selectAuthError);
   const status = useAppSelector(selectAuthStatus);
+  const user = useAppSelector(selectAuthUser);
+  const isLoggedIn = useAppSelector(selectIsLogged);
+
+  useEffect(() => {
+    if (user && isLoggedIn) {
+      router.push("/");
+    }
+  }, [user, isLoggedIn, router]);
 
   const onSubmit = async (data) => {
     const { username, password } = data;
@@ -36,7 +46,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="absolute w-full h-ful">
+      <div className="w-full h-full">
         <NavBar />
         <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div>

@@ -27,10 +27,19 @@
     "beginners-info": "Dla początkujących dopiero zaczynających przygodę z programowaniem.",
     "intermediate": "Średniozaawansowany",
     "intermediate-info": "Dla średniozaawansowanych co znają podstawy programowania.",
-    "courses-adjusted-skill-level": "Kursy zostały dopasowane do Twojego poziomu umiejętności."
+    "courses-adjusted-skill-level": "Kursy zostały dopasowane do Twojego poziomu umiejętności.",
+    "list-of-courses": "Lista kursów"
   },
   "Playground": {
     "run": "Uruchom",
     "leading": "Code Playground"
+  },
+  "Manage": {
+    "manage": "Zarządzaj",
+    "manage-courses": "Zarządzaj kursami",
+    "manage-lessons": "Zarządzaj lekcjami",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "add": "Dodaj"
   }
 }

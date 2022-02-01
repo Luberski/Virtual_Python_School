@@ -27,10 +27,19 @@
     "beginners-info": "For beginers starting with programming.",
     "intermediate": "Intermediate",
     "intermediate-info": "For people who know the basics of programming",
-    "courses-adjusted-skill-level": "Courses adjusted to your skill level"
+    "courses-adjusted-skill-level": "Courses adjusted to your skill level",
+    "list-of-courses": "List of courses"
   },
   "Playground": {
     "run": "Run",
     "leading": "Code Playground"
+  },
+  "Manage": {
+    "manage": "Manage",
+    "manage-courses": "Manage courses",
+    "manage-lessons": "Manage lessons",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add"
   }
 }

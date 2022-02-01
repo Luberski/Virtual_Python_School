@@ -43,8 +43,16 @@ export default function LessonPage() {
 
   return (
     <>
-      <div className="absolute w-full h-full">
-        <NavBar user={user} isLoggedIn={isLoggedIn} />
+      <div className="w-full h-full">
+        <NavBar
+          user={user}
+          isLoggedIn={isLoggedIn}
+          logout={() =>
+            dispatch({
+              type: "auth/logout",
+            })
+          }
+        />
         <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <h1 className="text-center first-letter:uppercase">
             {lessonId} lesson page

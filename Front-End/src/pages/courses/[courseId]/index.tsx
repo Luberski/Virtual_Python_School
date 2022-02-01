@@ -2,10 +2,14 @@ import React from "react";
 import { useRouter } from "next/router";
 import NavBar from "../../../components/NavBar";
 import { GetStaticPaths } from "next";
-import { selectAuthUser, selectIsLogged } from "../../../features/auth/authSlice";
-import { useAppSelector } from "../../../hooks";
+import {
+  selectAuthUser,
+  selectIsLogged,
+} from "../../../features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../../../hooks";
 
 export default function CoursePage() {
+  const dispatch = useAppDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const router = useRouter();
@@ -13,8 +17,16 @@ export default function CoursePage() {
 
   return (
     <>
-      <div className="absolute w-full h-full">
-        <NavBar user={user} isLoggedIn={isLoggedIn} />
+      <div className="w-full h-full">
+        <NavBar
+          user={user}
+          isLoggedIn={isLoggedIn}
+          logout={() =>
+            dispatch({
+              type: "auth/logout",
+            })
+          }
+        />
         <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div>
             <h1 className="text-center first-letter:uppercase">

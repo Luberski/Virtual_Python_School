@@ -4,17 +4,26 @@ import { useTranslations } from "next-intl";
 import NavBar from "../../components/NavBar";
 import FancyCard from "../../components/FancyCard";
 import { selectAuthUser, selectIsLogged } from "../../features/auth/authSlice";
-import { useAppSelector } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 
 export default function CoursesPage() {
+  const dispatch = useAppDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const t = useTranslations();
 
   return (
     <>
-      <div className="absolute w-full h-full">
-        <NavBar user={user} isLoggedIn={isLoggedIn} />
+      <div className="w-full h-full">
+        <NavBar
+          user={user}
+          isLoggedIn={isLoggedIn}
+          logout={() =>
+            dispatch({
+              type: "auth/logout",
+            })
+          }
+        />
         <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
           <div className="space-y-2">
             <h1 className="text-center">{t("Home.courses")}</h1>
