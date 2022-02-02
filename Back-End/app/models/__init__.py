@@ -22,6 +22,7 @@ class User(db.Model):
     @staticmethod
     def verify_hash(password, hash_):
         return sha256.verify(password, hash_)
+        
 
 
 class RevokedTokenModel(db.Model):
@@ -44,14 +45,15 @@ class CoursesTaken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_course = db.Column(db.Integer, ForeignKey("courses.id"))
     id_user = db.Column(db.Integer, ForeignKey("user.id"))
-    start_date = db.Column(db.Date())
-    end_date = db.Column(db.Date())
+    start_date = db.Column(db.DateTime())
+    end_date = db.Column(db.DateTime())
     section_number = db.Column(db.Integer)
     completed = db.Column(db.String(100))
 
     def add(self):
         db.session.add(self)
         db.session.commit()
+
 
 
 class Courses(db.Model):
