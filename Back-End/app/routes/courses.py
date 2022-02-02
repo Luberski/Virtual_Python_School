@@ -52,15 +52,15 @@ def edit_course():
     course_edit = models.Courses().query.filter_by(id=id_course).first()
 
     to_commit = False
-    if request.json["data"]["name"] != "None":
+    if request.json["data"]["name"] != "":
         course_edit.name = request.json["data"]["name"]
         to_commit = True
 
-    if request.json["data"]["description"] != "None":
+    if request.json["data"]["description"] != "":
         course_edit.description = request.json["data"]["description"]
         to_commit = True
 
-    if request.json["data"]["sections"] != "None":
+    if request.json["data"]["sections"] != "":
         course_edit.sections = request.json["data"]["sections"]
         to_commit = True
 
