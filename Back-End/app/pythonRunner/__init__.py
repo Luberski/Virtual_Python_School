@@ -7,6 +7,7 @@ from subprocess import Popen, PIPE
 # timeout na maszynę jesli nie używana przez jakiś czas
 # try except na parse
 
+
 class RemotePythonRunner:
     def run_code(self, code):
         code = self.parse(code)
@@ -21,9 +22,9 @@ class RemotePythonRunner:
 
     def parse(self, code):
         code = code.replace("\'", "\"")
-        
+
         for i in code.split(' '):
             if(i.lower() == 'import'):
-                return 1 , "You cannot import modules!"
+                return 1, "You cannot import modules!"
 
         return 0, code
