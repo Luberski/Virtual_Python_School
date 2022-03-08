@@ -11,4 +11,8 @@ module.exports = {
       },
     ];
   },
+  images: {
+    domains: ["preview.redd.it"],
+  },
+  swcMinify: true,
 };

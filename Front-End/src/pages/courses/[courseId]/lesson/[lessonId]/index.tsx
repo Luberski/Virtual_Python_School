@@ -10,7 +10,7 @@ import {
   selectPlaygroundError,
   sendCode,
 } from "../../../../../features/playground/playgroundSlice";
-import Button from "../../../../../components/Button";
+import Button, { ButtonVariant } from "../../../../../components/Button";
 import {
   selectAuthUser,
   selectIsLogged,
@@ -57,7 +57,7 @@ export default function LessonPage() {
           <h1 className="text-center first-letter:uppercase">
             {lessonId} lesson page
           </h1>
-          <Button onClick={handleValue} className="h-12 my-8 btn-primary w-28">
+          <Button onClick={handleValue} variant={ButtonVariant.PRIMARY} className="h-12 my-8 w-28">
             {t("Playground.run")}
           </Button>
           <div className="flex flex-col w-full xl:flex-row">

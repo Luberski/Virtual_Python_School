@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import Input from "../components/Input";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
-import ButtonInput from "../components/ButtonInput";
+import ButtonInput, { ButtonInputVariant } from "../components/ButtonInput";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import {
   loginUser,
@@ -73,7 +73,8 @@ export default function LoginPage() {
               required
             />
             <ButtonInput
-              className="btn-primary w-36"
+              variant={ButtonInputVariant.PRIMARY}
+              className="w-36"
               type="submit"
               value={t("Auth.login")}
             />

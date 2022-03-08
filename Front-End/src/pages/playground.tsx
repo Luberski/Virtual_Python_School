@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import Editor from "@monaco-editor/react";
-import Button from "../components/Button";
+import Button, { ButtonVariant } from "../components/Button";
 import NavBar from "../components/NavBar";
 import { useTranslations } from "use-intl";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -54,7 +54,8 @@ export default function Playground() {
           <div className="grid items-center grid-cols-2">
             <Button
               onClick={handleValue}
-              className="h-12 my-8 btn-primary w-28"
+              variant={ButtonVariant.PRIMARY}
+              className="h-12 my-8 w-28"
             >
               {t("Playground.run")}
             </Button>

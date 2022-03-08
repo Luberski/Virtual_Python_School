@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import ButtonLink from "../ButtonLink";
+import ButtonLink, { ButtonLinkVariant } from "../ButtonLink";
 import { User } from "../../models/User";
 import { ThemeButton } from "../ThemeButton";
 import { Disclosure } from "@headlessui/react";
@@ -94,7 +94,9 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                   ) : (
                     <div className="flex space-x-4">
                       <Link href="/login" passHref={true}>
-                        <ButtonLink>{t("Auth.login")}</ButtonLink>
+                        <ButtonLink variant={ButtonLinkVariant.SECONDARY}>
+                          {t("Auth.login")}
+                        </ButtonLink>
                       </Link>
                       {/* <Link href="/register" passHref={true}>
                         <ButtonLink className="btn-primary">
