@@ -24,7 +24,9 @@ class RemotePythonRunner:
 
     def create_file(self, code, imports=''):
         bashcmd = "lxc exec test -- echo {} > script.py".format(code)
-        Popen(bashcmd, shell=True)
+        pipe = Popen(bashcmd, stdout=PIPE, stderr=PIPE, shell=True)
+        text = pipe.communicate()[0].decode("ascii")
+        err = pipe.communicate()[1].decode("ascii")
 
     def parse(self, code):
         code = code.replace("\'", "\"")
