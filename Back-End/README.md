@@ -35,7 +35,7 @@ flask run
 pytest
 ```
 
-## Pulling to server
+## Pulling changes to server
 ```Killing:
 pm2 delete all
 pkill gunicorn
