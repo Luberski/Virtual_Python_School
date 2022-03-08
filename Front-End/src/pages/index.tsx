@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Footer from "../components/Footer";
 import { useTranslations } from "next-intl";
+import { useHotkeys } from "react-hotkeys-hook";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { selectIsLogged, selectAuthUser } from "../features/auth/authSlice";
 import NavBar from "../components/NavBar";
@@ -12,6 +13,11 @@ export default function IndexPage() {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
+  const [magic, setMagic] = useState(false);
+
+  useHotkeys("ctrl+m", () => {
+    setMagic(!magic);
+  });
 
   return (
     <>
@@ -57,7 +63,11 @@ export default function IndexPage() {
         </div>
         <div className="flex items-center justify-center my-16">
           <Image
-            src="/undraw_online_test_gba7.png"
+            src={
+              magic
+                ? "https://preview.redd.it/wvzoz6ejs8v51.jpg?auto=webp&s=bbe9c737a52630a15573a0f461e316e757a26aa1"
+                : "/undraw_online_test_gba7.png"
+            }
             alt="online_test"
             width="601"
             height="278"
