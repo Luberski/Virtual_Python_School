@@ -1,5 +1,3 @@
-const fs = require("fs");
-
 module.exports = {
   i18n: {
     locales: ["en", "pl"],
@@ -12,8 +10,5 @@ module.exports = {
         destination: "http://localhost:5000/api/:slug*",
       },
     ];
-  },
-  images: {
-    domains: ["cdn.cloudflare.steamstatic.com"],
   },
 };

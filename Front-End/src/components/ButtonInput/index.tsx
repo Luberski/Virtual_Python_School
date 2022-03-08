@@ -1,26 +1,35 @@
 import clsx from "clsx";
+import React from "react";
+
+export enum ButtonInputVariant {
+  PRIMARY = "btn-primary",
+  SECONDARY = "btn-secondary",
+  OUTLINE = "btn-outline",
+  OUTLINE_PRIMARY = "btn-outline-primary",
+  DANGER = "btn-danger",
+  SUCCESS = "btn-success",
+}
+
+export enum ButtonInputSize {
+  DEFAULT = "",
+  NORMAL = "w-24",
+  MEDIUM = "w-32",
+  LARGE = "w-40",
+  EXTRA_LARGE = "w-48",
+}
 
 type ButtonInputProps = {
-  className?: string;
-  value?: string;
-  type?: string;
+  variant?: ButtonInputVariant;
+  sizeType?: ButtonInputSize;
 };
 
 const ButtonInput = ({
   className,
-  value,
-  type,
+  variant = ButtonInputVariant.SECONDARY,
+  sizeType = ButtonInputSize.DEFAULT,
   ...props
-}: ButtonInputProps) => (
-  <input
-    className={clsx(
-      "btn",
-      className
-    )}
-    type={type}
-    value={value}
-    {...props}
-  />
+}: ButtonInputProps & React.HTMLProps<HTMLInputElement>) => (
+  <input className={clsx("btn", variant, sizeType, className)} {...props} />
 );
 
 export default ButtonInput;
