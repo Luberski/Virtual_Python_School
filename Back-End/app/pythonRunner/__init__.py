@@ -22,7 +22,7 @@ class RemotePythonRunner:
         err = pipe.communicate()[1].decode("ascii")
         return text, err
 
-    def create_file(self, imports, code):
+    def create_file(self, code, imports=''):
         bashcmd = "lxc exec test -- echo {} > script.py".format(code)
         Popen(bashcmd, shell=True)
 
