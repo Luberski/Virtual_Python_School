@@ -19,7 +19,6 @@ def create_course():
     new_course = models.Courses(
         name=request.json["data"]["name"],
         description=request.json["data"]["description"],
-        sections=request.json["data"]["sections"],
     )
 
     new_course.add()
@@ -30,7 +29,6 @@ def create_course():
                 "data": {
                     "name": new_course.name,
                     "description": new_course.description,
-                    "sections": new_course.sections,
                 },
                 "error": None,
             }
@@ -52,16 +50,12 @@ def edit_course():
     course_edit = models.Courses().query.filter_by(id=id_course).first()
 
     to_commit = False
-    if request.json["data"]["name"] != "":
+    if request.json["data"]["name"] != "None":
         course_edit.name = request.json["data"]["name"]
         to_commit = True
 
-    if request.json["data"]["description"] != "":
+    if request.json["data"]["description"] != "None":
         course_edit.description = request.json["data"]["description"]
-        to_commit = True
-
-    if request.json["data"]["sections"] != "":
-        course_edit.sections = request.json["data"]["sections"]
         to_commit = True
 
     if to_commit is True:
@@ -73,7 +67,6 @@ def edit_course():
                 "data": {
                     "name": course_edit.name,
                     "description": course_edit.description,
-                    "sections": course_edit.sections,
                 },
                 "error": None,
             }
@@ -94,6 +87,8 @@ def delete_course():
     id_course = request.json["data"]["id_course"]
     # change this after add sections + find better option to save completed courses
     models.CoursesTaken().query.filter_by(id_course=id_course).delete()
+
+    models.Lessons().query.filter_by(id_course=id_course).delete()
 
     models.Courses().query.filter_by(id=id_course).delete()
 
@@ -374,3 +369,398 @@ def close_course_id():
         ),
         200,
     )
+
+
+@routes.route("/api/lessons/add", methods=["POST"])
+@jwt_required()
+def create_lesson():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
+        return make_response(jsonify({"error": "Bad key"}), 403)
+    
+    course = models.Courses().query.filter_by(id=request.json["data"]["id_course"]).first()
+    if course is None:
+        return make_response(jsonify({"error": "Course not found"}), 404)
+
+
+    new_lesson = models.Lessons(
+        name=request.json["data"]["name"],
+        description=request.json["data"]["description"],
+        id_course=request.json["data"]["id_course"],
+        type=request.json["data"]["type"],
+        number_of_answers=request.json["data"]["number_of_answers"],
+    )
+
+    new_lesson.add()
+
+    return make_response(
+        jsonify(
+            {
+                "data": {
+                    "name": new_lesson.name,
+                    "description": new_lesson.description,
+                    "id_course": new_lesson.id_course,
+                    "type": new_lesson.type,
+                    "number_of_answers": new_lesson.number_of_answers,
+                },
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+
+@routes.route("/api/lessons/edit", methods=["POST"])
+@jwt_required()
+def edit_lesson():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
+        return make_response(jsonify({"error": "Bad key"}), 403)
+
+    lesson_id = request.json["data"]["lesson_id"]
+    lesson_edit = models.Lessons().query.filter_by(id=lesson_id).first()
+
+    to_commit = False
+    if request.json["data"]["name"] != "None":
+        lesson_edit.name = request.json["data"]["name"]
+        to_commit = True
+
+    if request.json["data"]["description"] != "None":
+        lesson_edit.description = request.json["data"]["description"]
+        to_commit = True
+
+    if request.json["data"]["id_course"] != "None":
+        lesson_edit.id_course = request.json["data"]["id_course"]
+        to_commit = True
+    
+    if request.json["data"]["type"] != "None":
+        lesson_edit.type = request.json["data"]["type"]
+        to_commit = True
+
+    if request.json["data"]["number_of_answers"] != "None":
+        lesson_edit.number_of_answers = request.json["data"]["number_of_answers"]
+        to_commit = True
+
+    if to_commit is True:
+        db.session.commit()
+
+    return make_response(
+        jsonify(
+            {
+                "data": {
+                    "name": lesson_edit.name,
+                    "description": lesson_edit.description,
+                    "id_course": lesson_edit.id_course,
+                    "type": lesson_edit.type,
+                    "number_of_answers": lesson_edit.number_of_answers,
+                },
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+@routes.route("/api/lessons/delete", methods=["POST"])
+@jwt_required()
+def delete_lesson():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
+        return make_response(jsonify({"error": "Bad key"}), 403)
+
+    id_lesson = request.json["data"]["id_lesson"]
+    # change this after add sections + find better option to save completed courses
+
+    models.Answers().query.filter_by(id_lesson=id_lesson).delete()
+    models.Lessons().query.filter_by(id=id_lesson).delete()
+
+
+    db.session.commit()
+
+    return make_response(jsonify({"data": "Lesson deleted", "error": None, }), 200,)
+
+
+@routes.route("/api/lessons", methods=["GET"])
+@jwt_required()
+def get_lessons():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    lessons = models.Lessons().query.filter_by(id_course=request.json["data"]["id_course"]).all()
+    if lessons == None:
+        return make_response(jsonify({"error": "Lessons not found"}), 404)
+
+    # find better solution
+    lessons_all = []
+    for lesson in lessons:
+        lessons_all.append(
+            {
+                "lesson_course": {
+                    "name": lesson.name,
+                    "description": lesson.description,
+                    "id_course": lesson.id_course,
+                    "type": lesson.type,
+                    "number_of_answers": lesson.number_of_answers,
+                }
+            }
+        )
+
+    return make_response(jsonify({"data": lessons_all, "error": None}), 200, )
+
+
+
+@routes.route("/api/answers/add", methods=["POST"])
+@jwt_required()
+def create_answer():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
+        return make_response(jsonify({"error": "Bad key"}), 403)
+    
+    lesson = models.Lessons().query.filter_by(id=request.json["data"]["id_lesson"]).first()
+    if lesson is None:
+        return make_response(jsonify({"error": "Lesson not found"}), 404)
+
+
+    new_answer = models.Answers(
+        final_answer=request.json["data"]["final_answer"],
+        id_lesson=request.json["data"]["id_lesson"]
+    )
+
+    new_answer.add()
+
+    return make_response(
+        jsonify(
+            {
+                "data": {
+                    "final_answer": new_answer.final_answer,
+                    "id_lesson": new_answer.id_lesson
+                },
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+
+@routes.route("/api/answers/edit", methods=["POST"])
+@jwt_required()
+def edit_answer():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
+        return make_response(jsonify({"error": "Bad key"}), 403)
+
+    answer_id = request.json["data"]["answer_id"]
+    answer_edit = models.Answers().query.filter_by(id=answer_id).first()
+
+    to_commit = False
+    if request.json["data"]["final_answer"] != "None":
+        answer_edit.final_answer = request.json["data"]["final_answer"]
+        to_commit = True
+
+    if request.json["data"]["id_lesson"] != "None":
+        answer_edit.id_lesson = request.json["data"]["id_lesson"]
+        to_commit = True
+
+    if to_commit is True:
+        db.session.commit()
+
+    return make_response(
+        jsonify(
+            {
+                "data": {
+                    "final_answer": answer_edit.final_answer,
+                    "id_lesson": answer_edit.id_lesson,
+                },
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+@routes.route("/api/answers/delete", methods=["POST"])
+@jwt_required()
+def delete_answer():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
+        return make_response(jsonify({"error": "Bad key"}), 403)
+
+    id_answer = request.json["data"]["id_answer"]
+    # change this after add sections + find better option to save completed courses
+
+    models.Answers().query.filter_by(id=id_answer).delete()
+
+
+    db.session.commit()
+
+    return make_response(jsonify({"data": "Answer deleted", "error": None, }), 200,)
+
+
+@routes.route("/api/answers", methods=["GET"])
+@jwt_required()
+def get_answers():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    answers = models.Answers().query.filter_by(id_lesson=request.json["data"]["id_lesson"]).all()
+    if answers == None:
+        return make_response(jsonify({"error": "Answers not found"}), 404)
+
+    # find better solution
+    answers_all = []
+    for answer in answers:
+        answers_all.append(
+            {
+                "answer_data": {
+                    "id": answer.id,
+                    "final_answer": answer.final_answer,
+                    "id_lesson": answer.id_lesson,
+                }
+            }
+        )
+
+    return make_response(jsonify({"data": answers_all, "error": None}), 200,)
+    
+
+
+@routes.route("/api/comments/add", methods=["POST"])
+@jwt_required()
+def create_comment():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    
+    lesson = models.Lessons().query.filter_by(id=request.json["data"]["id_lesson"]).first()
+    if lesson is None:
+        return make_response(jsonify({"error": "Lesson not found"}), 404)
+
+
+    user_index = models.User().query.filter_by(username=username).first()
+
+
+    new_comment = models.Comments(
+        user_id=user_index.id,
+        id_lesson=request.json["data"]["id_lesson"],
+        data_published= datetime.now(),
+        content=request.json["data"]["content"]
+    )
+
+    new_comment.add()
+
+    return make_response(
+        jsonify(
+            {
+                "data": {
+                    "id": new_comment.id,
+                    "user_id": new_comment.user_id,
+                    "id_lesson": new_comment.id_lesson,
+                    "data_published": new_comment.data_published,
+                    "content": new_comment.content,
+                },
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+
+@routes.route("/api/comments/edit", methods=["POST"])
+@jwt_required()
+def edit_comment():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
+        return make_response(jsonify({"error": "Bad key"}), 403)
+
+    comment_id = request.json["data"]["id"]
+    comment_edit = models.Comments().query.filter_by(id=comment_id).first()
+
+    to_commit = False
+    if request.json["data"]["content"] != "None":
+        comment_edit.content = request.json["data"]["content"]
+        to_commit = True
+
+
+    if to_commit is True:
+        db.session.commit()
+
+    return make_response(
+        jsonify(
+            {
+                "data": {
+                    "id": comment_edit.id,
+                    "user_id": comment_edit.user_id,
+                    "id_lesson": comment_edit.id_lesson,
+                    "data_published": comment_edit.data_published,
+                    "content": comment_edit.content,
+                },
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+@routes.route("/api/comments/delete", methods=["POST"])
+@jwt_required()
+def delete_comment():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
+        return make_response(jsonify({"error": "Bad key"}), 403)
+
+    id_comment = request.json["data"]["id_comment"]
+    # change this after add sections + find better option to save completed courses
+
+    models.Comments().query.filter_by(id=id_comment).delete()
+
+
+    db.session.commit()
+
+    return make_response(jsonify({"data": "Comment deleted :)", "error": None, }), 200,)
+
+
+@routes.route("/api/comments", methods=["GET"])
+@jwt_required()
+def get_comments():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    comments = models.Comments().query.filter_by(id_lesson=request.json["data"]["id_lesson"]).all()
+    if comments == None:
+        return make_response(jsonify({"error": "Comments not found"}), 404)
+
+    # find better solution
+    comments_all = []
+    for comment in comments:
+        comments_all.append(
+            {
+                "answer_data": {
+                    "id": comment.id,
+                    "user_id": comment.user_id,
+                    "id_lesson": comment.id_lesson,
+                    "data_published": comment.data_published,
+                    "content": comment.content,
+                }
+            }
+        )
+
+    return make_response(jsonify({"data": comments_all, "error": None}), 200,)
+    

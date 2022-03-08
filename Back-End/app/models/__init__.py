@@ -14,6 +14,7 @@ class User(db.Model):
     last_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
     id_course = relationship("CoursesTaken")
+    is_admin = db.Column(db.Integer)
 
     @staticmethod
     def generate_hash(password):
@@ -61,9 +62,52 @@ class Courses(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))
-    sections = db.Column(db.String(1))
     users_info = relationship("CoursesTaken")
+    lessions_info = relationship("Lessons")
 
     def add(self):
         db.session.add(self)
         db.session.commit()
+
+
+class Lessons(db.Model):
+    __tablename__ = "lessons"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(500))
+    id_course = db.Column(db.Integer, ForeignKey("courses.id"))
+    type = db.Column(db.Integer)
+    number_of_answers = db.Column(db.Integer)
+    answers_info = relationship("Answers")
+    comments_info = relationship("Comments")
+
+
+    def add(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+class Answers(db.Model):
+    __tablename__ = "answers"
+    id = db.Column(db.Integer, primary_key=True)
+    final_answer = db.Column(db.String(500))
+    id_lesson = db.Column(db.Integer, ForeignKey("lessons.id"))
+
+    def add(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+class Comments(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    id_lesson = db.Column(db.Integer, ForeignKey("lessons.id"))
+    data_published = db.Column(db.DateTime())
+    content = db.Column(db.String(500))
+
+
+    def add(self):
+        db.session.add(self)
+        db.session.commit()
+
