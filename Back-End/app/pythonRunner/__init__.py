@@ -13,7 +13,7 @@ class RemotePythonRunner:
         code = self.parse(code)
         if(code[0] == 1):
             return code[1], ''
-
+ 
         self.create_file(code=code)
         # bashcmd = "lxc exec test -- python -c '{}'".format(code[1])
         bashcmd = "lxc exec test -- python script.py"
