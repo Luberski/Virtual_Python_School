@@ -3,7 +3,7 @@
 pm2 delete all
 pkill gunicorn
 
-cd /var/www
+cd /var/www/html
 git pull
 
 cd Front-End/
