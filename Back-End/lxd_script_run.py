@@ -16,6 +16,7 @@ def search_for_illegal(script):
         keywords_papaj = ["papaj", "papież", "zawadiaka", "papiez", "jp2", "jp2gmd", "2137"]
         illegal_keywords = ["import", "from"]
         for item in script:
+                print(item)
                 if(item.lower()) in keywords_papaj:
                         return 2
                 elif(item.lower()) in illegal_keywords:
@@ -29,9 +30,11 @@ if __name__ == "__main__":
         with open('script.py') as f:
                 lines = f.readlines()
 
-        if(search_for_illegal(lines) == 1):
+        err = search_for_illegal(lines)
+        print(err)
+        if(err == 1):
                 print("Illegal imports detected")
-        elif(search_for_illegal(lines) == 2):
+        elif(err == 2):
                 print("Tak jak Pan Jezus powiedział...")
         else:
                 exec_script()
