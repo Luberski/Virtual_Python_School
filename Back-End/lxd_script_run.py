@@ -15,22 +15,23 @@ def exec_script():
 def search_for_illegal(script):
         keywords_papaj = ["papaj", "papież", "zawadiaka", "papiez", "jp2", "jp2gmd", "2137"]
         illegal_keywords = ["import", "from"]
-        for item in script:
-                if(item.lower()) in keywords_papaj:
-                        return 2
-                elif(item.lower()) in illegal_keywords:
-                        return 1
-                else:
-                        return 0
+        script = list(map(lambda x:x.strip(),script))
+        ret = 0
+        for line in script:
+                for item in line.split(' '):
+                        if(item.lower()) in keywords_papaj:
+                                return 2
+                        elif(item.lower()) in illegal_keywords:
+                                return 1
+        return ret
 
 if __name__ == "__main__":
         lines = []
-        
         with open('script.py') as f:
                 lines = f.readlines()
 
         err = search_for_illegal(lines)
-        
+
         if(err == 1):
                 print("Illegal imports detected")
         elif(err == 2):
