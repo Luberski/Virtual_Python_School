@@ -31,8 +31,8 @@ class RemotePythonRunner:
         text = stdout.readlines()
         err = stderr.readlines()
 
-        if(len(err)):
-            del err[0:11]
+        # if(len(err)):
+        #     del err[0:11]
 
         ssh.close()
         return text, err
