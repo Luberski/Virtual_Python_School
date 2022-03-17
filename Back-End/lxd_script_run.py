@@ -13,20 +13,11 @@ def exec_script():
         exec(open('script.py').read())
 
 def search_for_illegal(script):
+        keywords_papaj = ["papaj", "papież", "zawadiaka", "papiez", "jp2", "jp2gmd", "2137"]
         for item in script:
-                if(item == "Papaj" or 
-                item == "papaj" or 
-                item == "Papaj" or 
-                item == "Papież" or 
-                item == "papież" or 
-                item == "jp2" or 
-                item == "JP2" or
-                item == "JP2GMD" or
-                item == "jp2gmd" or
-                item == "Zawadiaka" or
-                item == "zawadiaka"):
+                if(item.lower()) in keywords_papaj:
                         return 2
-                elif(item == "import"):
+                elif(item.lower() == "import"):
                         return 1
                 else:
                         return 0
