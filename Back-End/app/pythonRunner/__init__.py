@@ -32,7 +32,7 @@ class RemotePythonRunner:
         err = stderr.readlines()
 
         if(len(err)):
-            del err[0:9]
+            del err[0:11]
 
         ssh.close()
         return text, err
