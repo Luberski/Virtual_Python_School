@@ -14,10 +14,11 @@ def exec_script():
 
 def search_for_illegal(script):
         keywords_papaj = ["papaj", "papież", "zawadiaka", "papiez", "jp2", "jp2gmd", "2137"]
+        illegal_keywords = ["import", "from"]
         for item in script:
                 if(item.lower()) in keywords_papaj:
                         return 2
-                elif(item.lower() == "import"):
+                elif(item.lower()) in illegal_keywords:
                         return 1
                 else:
                         return 0
