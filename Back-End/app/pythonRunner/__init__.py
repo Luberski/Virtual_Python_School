@@ -26,7 +26,7 @@ class RemotePythonRunner:
         ssh = self.connect(username)
         self.put_code(ssh, code)
 
-        stdin, stdout, stderr = ssh.exec_command('python3 script.py')
+        stdin, stdout, stderr = ssh.exec_command('python3 script_run.py')
         stdin.close()
         text = stdout.readlines()
         err = stderr.readlines()
