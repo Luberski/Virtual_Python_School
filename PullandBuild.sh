@@ -6,6 +6,11 @@ pkill gunicorn
 cd /var/www/html
 git pull
 
+while [ $? != 0 ]
+do
+    git pull
+done
+
 cd Front-End/
 npm i
 npm run build
