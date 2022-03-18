@@ -57,11 +57,15 @@ export default function LessonPage() {
           <h1 className="text-center first-letter:uppercase">
             {lessonId} lesson page
           </h1>
-          <Button onClick={handleValue} variant={ButtonVariant.PRIMARY} className="h-12 my-8 w-28">
+          <Button
+            onClick={handleValue}
+            variant={ButtonVariant.PRIMARY}
+            className="h-12 my-8 w-28"
+          >
             {t("Playground.run")}
           </Button>
           <div className="flex flex-col w-full xl:flex-row">
-            <div className="flex flex-col p-8 m-2 bg-gray-200 shadow-xl rounded-xl xl:w-1/2 dark:bg-gray-800">
+            <div className="flex flex-col p-8 m-2 bg-gray-200 shadow-xl rounded-lg xl:w-1/2 dark:bg-gray-800">
               <h2>Intro</h2>
               <p>
                 Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum

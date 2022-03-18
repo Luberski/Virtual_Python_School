@@ -26,7 +26,7 @@ export default function ManageCoursesPage() {
       />
       <div className="container px-6 mx-auto">
         <div className="flex flex-row">
-          <ul className="p-6 my-6 bg-gray-100 border border-gray-300 rounded-xl dark:border-gray-600 dark:bg-gray-700">
+          <ul className="p-6 my-6 bg-gray-100 border border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-700">
             <li className="flex items-center justify-between w-full mb-6 menu-btn menu-btn-primary">
               <div className="flex items-center">
                 <span className="text-sm">{t("Manage.manage-courses")}</span>

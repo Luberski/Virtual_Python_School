@@ -31,7 +31,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
           <div className="flex items-center h-full">
             <div className="mr-10">
               <Link href="/" passHref={true}>
-                <a className="block ml-3 text-base font-bold leading-tight tracking-normal text-indigo-700 no-underline dark:text-indigo-300 hover:no-underline">
+                <a className="block ml-3 text-base font-bold leading-tight tracking-normal text-gray-700 no-underline dark:text-gray-300 hover:no-underline">
                   Virtual Python School
                 </a>
               </Link>

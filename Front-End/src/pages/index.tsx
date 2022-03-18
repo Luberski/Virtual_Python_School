@@ -45,18 +45,18 @@ export default function IndexPage() {
               title={t("Courses.beginners")}
               description={t("Courses.beginners-info")}
               link="/courses"
-              cardColor="bg-emerald-200"
-              shadowColor="shadow-emerald-200/50"
-              hoverShadowColor="hover:shadow-emerald-400/50"
+              cardColor="bg-gray-50"
+              shadowColor="shadow-emerald-500/50"
+              hoverShadowColor="hover:shadow-emerald-500/50"
               buttonText={t("Home.learn-more")}
             />
             <FancyCard
               title={t("Courses.intermediate")}
               description={t("Courses.intermediate-info")}
               link="/courses"
-              cardColor="bg-indigo-200"
-              shadowColor="shadow-indigo-200/50"
-              hoverShadowColor="hover:shadow-indigo-400/50"
+              cardColor="bg-gray-50"
+              shadowColor="shadow-indigo-500/50"
+              hoverShadowColor="hover:shadow-indigo-500/50"
               buttonText={t("Home.learn-more")}
             />
           </div>

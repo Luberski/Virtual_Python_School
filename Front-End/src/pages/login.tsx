@@ -79,7 +79,7 @@ export default function LoginPage() {
               value={t("Auth.login")}
             />
             {status === "failed" && error && (
-              <div className="px-4 py-2 rounded-xl bg-red-300 text-red-700">
+              <div className="px-4 py-2 rounded-lg bg-red-300 text-red-700">
                 {error}
               </div>
             )}
