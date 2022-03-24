@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Footer from "../components/Footer";
 import { useTranslations } from "next-intl";
@@ -7,17 +7,22 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { selectIsLogged, selectAuthUser } from "../features/auth/authSlice";
 import NavBar from "../components/NavBar";
 import FancyCard from "../components/FancyCard";
+import { useTheme } from "next-themes";
 
 export default function IndexPage() {
+  const [isMounted, setIsMounted] = useState(false);
   const t = useTranslations();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const [magic, setMagic] = useState(false);
+  const { theme } = useTheme();
 
-  useHotkeys("ctrl+m", () => {
-    setMagic(!magic);
-  });
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useHotkeys("ctrl+m", () => setMagic((prev) => !prev));
 
   return (
     <>
@@ -64,8 +69,10 @@ export default function IndexPage() {
         <div className="flex items-center justify-center my-16">
           <Image
             src={
-              magic
+              isMounted && magic && theme === "light"
                 ? "https://preview.redd.it/wvzoz6ejs8v51.jpg?auto=webp&s=bbe9c737a52630a15573a0f461e316e757a26aa1"
+                : magic && isMounted && theme === "dark"
+                ? "https://cdn.discordapp.com/attachments/897896380616572948/956540022423715850/unknown.png"
                 : "/undraw_online_test_gba7.png"
             }
             alt="online_test"

@@ -35,7 +35,7 @@
 
 @layer components {
   .btn {
-    @apply px-6 py-2 text-center font-medium border transition duration-150 ease-in-out cursor-pointer rounded-lg;
+    @apply px-6 py-2 text-center font-medium border dark:border-none transition duration-150 ease-in-out cursor-pointer rounded-lg;
   }
   .btn:disabled,
   .btn[disabled] {

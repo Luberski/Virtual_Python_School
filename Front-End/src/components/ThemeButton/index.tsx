@@ -1,32 +1,19 @@
 import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 
 export const ThemeButton = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const [darkMode, setDarkMode] = useState<boolean | undefined>(undefined);
   const t = useTranslations();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  useEffect(() => {
-    setDarkMode(document.documentElement.classList.contains("dark"));
-  }, []);
-
-  useEffect(() => {
-    if (darkMode) {
-      window.document.documentElement.classList.add("dark");
-      localStorage.setItem("darkMode", "true");
-    } else {
-      window.document.documentElement.classList.remove("dark");
-      localStorage.setItem("darkMode", "false");
-    }
-  }, [darkMode]);
+  const { theme, setTheme } = useTheme();
 
   const switchTheme = () => {
     if (isMounted) {
-      setDarkMode(!darkMode);
+      setTheme(theme === "light" ? "dark" : "light");
     }
   };
 
@@ -37,7 +24,7 @@ export const ThemeButton = () => {
       className="flex items-center justify-center w-10 h-10 mx-4 transition duration-150 ease-in-out focus:outline-none hover:bg-gray-200 rounded-lg dark:hover:bg-gray-700"
       title={t("Home.switch-theme")}
     >
-      {darkMode ? (
+      {isMounted && theme === "dark" ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="w-5 h-5 text-gray-100"
