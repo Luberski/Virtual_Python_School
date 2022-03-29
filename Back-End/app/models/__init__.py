@@ -14,7 +14,7 @@ class User(db.Model):
     last_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
     id_course = relationship("CoursesTaken")
-    is_admin = db.Column(db.Integer)
+    role_id = db.Column(db.Integer, ForeignKey("roles.id"))
 
     @staticmethod
     def generate_hash(password):
@@ -111,3 +111,14 @@ class Comments(db.Model):
         db.session.add(self)
         db.session.commit()
 
+
+class Roles(db.Model):
+    __tablename__ = "roles"
+    id = db.Column(db.Integer, primary_key=True)
+    role_name = db.Column(db.String(100), unique=True)
+    user_info = relationship("User")
+
+
+    def add(self):
+        db.session.add(self)
+        db.session.commit()

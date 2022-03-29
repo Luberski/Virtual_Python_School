@@ -1,3 +1,4 @@
+from ast import Not
 from flask import request, jsonify, make_response
 from flask_jwt_extended import (
     jwt_required,
@@ -29,20 +30,30 @@ def login():
             .query.filter_by(username=parsed_user_data["data"]["zutID"])
             .first()
         )
+
         if user is None:
+
+            basic_role = models.Roles().query.filter_by(id=1).first()
+            if (basic_role) is None:
+                basic_role= models.Roles(role_name="user")
+                basic_role.add()
+
             new_user = models.User(
                 username=parsed_user_data["data"]["zutID"],
                 zut_id=parsed_user_data["data"]["zutID"],
                 name=parsed_user_data["data"]["name"],
                 last_name=parsed_user_data["data"]["lastName"],
                 email=parsed_user_data["data"]["email"],
+                role_id=basic_role.id,
             )
+
             db.session.add(new_user)
             db.session.commit()
 
             access_token = create_access_token(identity=new_user.username)
             refresh_token = create_refresh_token(identity=new_user.username)
 
+            
             return make_response(
                 jsonify(
                     {
@@ -56,6 +67,10 @@ def login():
                                 "access_token": access_token,
                                 "refresh_token": refresh_token,
                             },
+                            "role": {
+                                "role_id": basic_role.id,
+                                "role_name": basic_role.role_name,
+                            },
                         },
                         "error": None,
                     }
@@ -65,6 +80,8 @@ def login():
         else:
             access_token = create_access_token(identity=user.username)
             refresh_token = create_refresh_token(identity=user.username)
+            role= models.Roles().query.filter_by(id=user.role_id).first()
+            
             return make_response(
                 jsonify(
                     {
@@ -77,6 +94,10 @@ def login():
                             "token": {
                                 "access_token": access_token,
                                 "refresh_token": refresh_token,
+                            },
+                            "role": {
+                                "role_id": role.id,
+                                "role_name": role.role_name,
                             },
                         },
                         "error": None,
@@ -142,4 +163,5 @@ def token_refresh():
 def check_if_token_in_blocklist(jwt_header, decrypted_token):
     jti = decrypted_token["jti"]
     return models.RevokedTokenModel.is_jti_blacklisted(jti=jti)
+
 
