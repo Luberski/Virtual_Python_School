@@ -51,8 +51,8 @@ export default function IndexPage() {
               description={t("Courses.beginners-info")}
               link="/courses"
               cardColor="bg-gray-50"
-              shadowColor="shadow-emerald-500/50"
-              hoverShadowColor="hover:shadow-emerald-500/50"
+              shadowColor="shadow-gray-500/50"
+              hoverShadowColor="hover:shadow-gray-500/50"
               buttonText={t("Home.learn-more")}
             />
             <FancyCard
@@ -60,8 +60,8 @@ export default function IndexPage() {
               description={t("Courses.intermediate-info")}
               link="/courses"
               cardColor="bg-gray-50"
-              shadowColor="shadow-indigo-500/50"
-              hoverShadowColor="hover:shadow-indigo-500/50"
+              shadowColor="shadow-gray-500/50"
+              hoverShadowColor="hover:shadow-gray-500/50"
               buttonText={t("Home.learn-more")}
             />
           </div>
@@ -73,11 +73,11 @@ export default function IndexPage() {
                 ? "https://preview.redd.it/wvzoz6ejs8v51.jpg?auto=webp&s=bbe9c737a52630a15573a0f461e316e757a26aa1"
                 : magic && isMounted && theme === "dark"
                 ? "https://cdn.discordapp.com/attachments/897896380616572948/956540022423715850/unknown.png"
-                : "/undraw_online_test_gba7.png"
+                : "/undraw_online_learning_re_qw08.svg"
             }
-            alt="online_test"
-            width="601"
-            height="278"
+            alt="online_learning"
+            width="466"
+            height="330"
           />
         </div>
         <Footer />

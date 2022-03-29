@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Footer from "../components/Footer";
 import Input from "../components/Input";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import ButtonInput, { ButtonInputVariant } from "../components/ButtonInput";
@@ -85,7 +86,14 @@ export default function LoginPage() {
             )}
           </form>
         </div>
-
+        <div className="flex items-center justify-center my-16">
+          <Image
+            src={"/undraw_login_re_4vu2.svg"}
+            alt="login"
+            width="466"
+            height="330"
+          />
+        </div>
         <Footer />
       </div>
     </>

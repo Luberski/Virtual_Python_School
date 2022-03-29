@@ -5,6 +5,7 @@ import NavBar from "../../components/NavBar";
 import FancyCard from "../../components/FancyCard";
 import { selectAuthUser, selectIsLogged } from "../../features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import Image from "next/image";
 
 export default function CoursesPage() {
   const dispatch = useAppDispatch();
@@ -39,8 +40,8 @@ export default function CoursesPage() {
               description={t("Courses.beginners-info")}
               link="/courses"
               cardColor="bg-gray-50"
-              shadowColor="shadow-emerald-500/50"
-              hoverShadowColor="hover:shadow-emerald-500/50"
+              shadowColor="shadow-gray-500/50"
+              hoverShadowColor="hover:shadow-gray-500/50"
               buttonText={t("Courses.enroll")}
             />
             <FancyCard
@@ -48,11 +49,19 @@ export default function CoursesPage() {
               description={t("Courses.intermediate-info")}
               link="/courses"
               cardColor="bg-gray-50"
-              shadowColor="shadow-indigo-500/50"
-              hoverShadowColor="hover:shadow-indigo-500/50"
+              shadowColor="shadow-gray-500/50"
+              hoverShadowColor="hover:shadow-gray-500/50"
               buttonText={t("Courses.enroll")}
             />
           </div>
+        </div>
+        <div className="flex items-center justify-center my-16">
+          <Image
+            src={"/undraw_knowledge_re_5v9l.svg"}
+            alt="login"
+            width="466"
+            height="330"
+          />
         </div>
         <Footer />
       </div>
