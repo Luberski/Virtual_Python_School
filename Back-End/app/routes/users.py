@@ -47,3 +47,39 @@ def get_user_by_id():
         ),
         200,
     )
+
+
+@routes.route("/api/role", methods=["POST"])
+@jwt_required()
+def create_role():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    #Change this later
+    admin_id = 1
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
+
+    
+    if (models.Roles().query.filter_by(role_name=request.json["data"]["role_name"]).first()) is not None:
+        return make_response(jsonify({"error": "Role exits"}), 403)
+
+
+    new_role = models.Roles(
+        role_name=request.json["data"]["role_name"],
+    )
+
+    new_role.add()
+
+    return make_response(
+        jsonify(
+            {
+                "data": {
+                    "id": new_role.id,
+                    "role_name": new_role.role_name,
+                },
+                "error": None,
+            }
+        ),
+        200,
+    )

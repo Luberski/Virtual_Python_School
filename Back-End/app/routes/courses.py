@@ -8,14 +8,16 @@ from flask_jwt_extended import jwt_required, get_jwt
 from . import routes
 
 
+admin_id = 1
+
 @routes.route("/api/courses", methods=["POST"])
 @jwt_required()
 def create_course():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
     new_course = models.Courses(
         name=request.json["data"]["name"],
         description=request.json["data"]["description"],
@@ -43,8 +45,8 @@ def edit_course():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_course = request.json["data"]["id_course"]
     course_edit = models.Courses().query.filter_by(id=id_course).first()
@@ -81,8 +83,8 @@ def delete_course():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_course = request.json["data"]["id_course"]
     # change this after add sections + find better option to save completed courses
@@ -217,12 +219,13 @@ def join_course_me():
 @routes.route("/api/course/id", methods=["POST"])
 @jwt_required()
 def join_course_id():
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
 
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
+
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id = request.json["data"]["id"]
     user = models.User().query.filter_by(username=id).first()
@@ -329,12 +332,13 @@ def close_course_me():
 @routes.route("/api/course/close", methods=["POST"])
 @jwt_required()
 def close_course_id():
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
 
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
+
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id = request.json["data"]["id"]
     user = models.User().query.filter_by(username=id).first()
@@ -389,8 +393,8 @@ def create_lesson():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     course = (
         models.Courses().query.filter_by(id=request.json["data"]["id_course"]).first()
@@ -431,8 +435,8 @@ def edit_lesson():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     lesson_id = request.json["data"]["lesson_id"]
     lesson_edit = models.Lessons().query.filter_by(id=lesson_id).first()
@@ -484,8 +488,8 @@ def delete_lesson():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_lesson = request.json["data"]["id_lesson"]
     # change this after add sections + find better option to save completed courses
@@ -536,8 +540,8 @@ def create_answer():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     lesson = (
         models.Lessons().query.filter_by(id=request.json["data"]["id_lesson"]).first()
@@ -572,8 +576,8 @@ def edit_answer():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     answer_id = request.json["data"]["answer_id"]
     answer_edit = models.Answers().query.filter_by(id=answer_id).first()
@@ -610,8 +614,8 @@ def delete_answer():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_answer = request.json["data"]["id_answer"]
     # change this after add sections + find better option to save completed courses
@@ -700,8 +704,8 @@ def edit_comment():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     comment_id = request.json["data"]["id"]
     comment_edit = models.Comments().query.filter_by(id=comment_id).first()
@@ -737,8 +741,8 @@ def delete_comment():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if request.json["data"]["key"] != os.getenv("MASTER_KEY"):
-        return make_response(jsonify({"error": "Bad key"}), 403)
+    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+        return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_comment = request.json["data"]["id_comment"]
     # change this after add sections + find better option to save completed courses
