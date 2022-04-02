@@ -1,4 +1,3 @@
-from ast import Not
 from flask import request, jsonify, make_response
 from flask_jwt_extended import (
     jwt_required,
@@ -7,12 +6,12 @@ from flask_jwt_extended import (
     get_jwt,
     get_jwt_identity,
 )
-from . import routes
 from app import ipahttp
 from app import api
 from app.db import db
 from app import models
 from app.jwt import jwt
+from . import routes
 
 # todo: switch between ipa2 and ipa1 if one of them is not available
 ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
@@ -35,7 +34,7 @@ def login():
 
             basic_role = models.Roles().query.filter_by(id=1).first()
             if (basic_role) is None:
-                basic_role= models.Roles(role_name="user")
+                basic_role = models.Roles(role_name="user")
                 basic_role.add()
 
             new_user = models.User(
@@ -53,7 +52,6 @@ def login():
             access_token = create_access_token(identity=new_user.username)
             refresh_token = create_refresh_token(identity=new_user.username)
 
-            
             return make_response(
                 jsonify(
                     {
@@ -80,8 +78,8 @@ def login():
         else:
             access_token = create_access_token(identity=user.username)
             refresh_token = create_refresh_token(identity=user.username)
-            role= models.Roles().query.filter_by(id=user.role_id).first()
-            
+            role = models.Roles().query.filter_by(id=user.role_id).first()
+
             return make_response(
                 jsonify(
                     {
@@ -95,10 +93,7 @@ def login():
                                 "access_token": access_token,
                                 "refresh_token": refresh_token,
                             },
-                            "role": {
-                                "role_id": role.id,
-                                "role_name": role.role_name,
-                            },
+                            "role": {"role_id": role.id, "role_name": role.role_name,},
                         },
                         "error": None,
                     }
@@ -163,5 +158,4 @@ def token_refresh():
 def check_if_token_in_blocklist(jwt_header, decrypted_token):
     jti = decrypted_token["jti"]
     return models.RevokedTokenModel.is_jti_blacklisted(jti=jti)
-
 

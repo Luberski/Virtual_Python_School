@@ -1,4 +1,3 @@
-from subprocess import Popen, PIPE
 import paramiko
 
 # TODO
@@ -18,20 +17,20 @@ class RemotePythonRunner:
 
     def put_code(self, ssh, data):
         sftp = ssh.open_sftp()
-        f = sftp.open('script.py', 'w')
+        f = sftp.open("script.py", "w")
         f.write(data)
         f.close()
 
-    def run_code(self, code, username='test'):
+    def run_code(self, code, username="test"):
         ssh = self.connect(username)
         self.put_code(ssh, code)
 
-        stdin, stdout, stderr = ssh.exec_command('python3 script_run.py')
+        stdin, stdout, stderr = ssh.exec_command("python3 script_run.py")
         stdin.close()
         text = stdout.readlines()
         err = stderr.readlines()
 
-        if(len(err)):
+        if len(err):
             del err[0:11]
 
         ssh.close()

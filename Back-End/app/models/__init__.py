@@ -1,7 +1,7 @@
-from app.db import db
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from passlib.hash import pbkdf2_sha256 as sha256
+from app.db import db
 
 
 class User(db.Model):
@@ -23,7 +23,6 @@ class User(db.Model):
     @staticmethod
     def verify_hash(password, hash_):
         return sha256.verify(password, hash_)
-        
 
 
 class RevokedTokenModel(db.Model):
@@ -56,7 +55,6 @@ class CoursesTaken(db.Model):
         db.session.commit()
 
 
-
 class Courses(db.Model):
     __tablename__ = "courses"
     id = db.Column(db.Integer, primary_key=True)
@@ -80,7 +78,6 @@ class Lessons(db.Model):
     number_of_answers = db.Column(db.Integer)
     answers_info = relationship("Answers")
     comments_info = relationship("Comments")
-
 
     def add(self):
         db.session.add(self)
@@ -106,7 +103,6 @@ class Comments(db.Model):
     data_published = db.Column(db.DateTime())
     content = db.Column(db.String(500))
 
-
     def add(self):
         db.session.add(self)
         db.session.commit()
@@ -117,7 +113,6 @@ class Roles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(100), unique=True)
     user_info = relationship("User")
-
 
     def add(self):
         db.session.add(self)

@@ -1,14 +1,13 @@
-from datetime import date, datetime
-import os
-from unittest import result
-from app.db import db
-from app import models
+from datetime import datetime
 from flask import request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt
+from app.db import db
+from app import models
 from . import routes
 
 
-admin_id = 1
+ADMIN_ID = 1
+
 
 @routes.route("/api/courses", methods=["POST"])
 @jwt_required()
@@ -16,7 +15,7 @@ def create_course():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
     new_course = models.Courses(
         name=request.json["data"]["name"],
@@ -45,7 +44,7 @@ def edit_course():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_course = request.json["data"]["id_course"]
@@ -83,7 +82,7 @@ def delete_course():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_course = request.json["data"]["id_course"]
@@ -224,7 +223,7 @@ def join_course_id():
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
 
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id = request.json["data"]["id"]
@@ -337,7 +336,7 @@ def close_course_id():
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
 
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id = request.json["data"]["id"]
@@ -393,7 +392,7 @@ def create_lesson():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     course = (
@@ -435,7 +434,7 @@ def edit_lesson():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     lesson_id = request.json["data"]["lesson_id"]
@@ -488,7 +487,7 @@ def delete_lesson():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_lesson = request.json["data"]["id_lesson"]
@@ -540,7 +539,7 @@ def create_answer():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     lesson = (
@@ -576,7 +575,7 @@ def edit_answer():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     answer_id = request.json["data"]["answer_id"]
@@ -614,7 +613,7 @@ def delete_answer():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_answer = request.json["data"]["id_answer"]
@@ -704,7 +703,7 @@ def edit_comment():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     comment_id = request.json["data"]["id"]
@@ -741,7 +740,7 @@ def delete_comment():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    if models.User().query.filter_by(username=username).first().role_id != admin_id:
+    if models.User().query.filter_by(username=username).first().role_id != ADMIN_ID:
         return make_response(jsonify({"error": "Access is denied"}), 403)
 
     id_comment = request.json["data"]["id_comment"]

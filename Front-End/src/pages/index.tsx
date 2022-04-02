@@ -26,7 +26,7 @@ export default function IndexPage() {
 
   return (
     <>
-      <div className="w-full h-full ">
+      <div className="w-full h-full">
         <NavBar
           user={user}
           isLoggedIn={isLoggedIn}
