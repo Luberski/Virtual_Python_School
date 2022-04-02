@@ -100,13 +100,40 @@ def delete_course():
 
 @routes.route("/api/courses", methods=["GET"])
 @jwt_required()
-def get_course_me():
+def get_courses_all():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    courses = models.Courses().query.all()
+    if courses is None:
+        return make_response(jsonify({"error": "Courses not found"}), 404)
+    return make_response(
+        jsonify(
+            {
+                "data": [
+                    {
+                        "id": course.id,
+                        "name": course.name,
+                        "description": course.description,
+                    }
+                    for course in courses
+                ],
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+@routes.route("/api/courses/me", methods=["GET"])
+@jwt_required()
+def get_courses_me():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
     user = models.User().query.filter_by(username=username).first()
     courses = models.CoursesTaken().query.filter_by(id_user=user.id).all()
-    if courses == None:
+    if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
     # find better solution
@@ -138,7 +165,7 @@ def get_course_id():
         return make_response(jsonify({"error": "User not found"}), 404)
 
     courses = models.CoursesTaken().query.filter_by(id_user=user.id).all()
-    if courses == None:
+    if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
     # find better solution

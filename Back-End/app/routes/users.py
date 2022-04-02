@@ -25,6 +25,7 @@ def get_user_me():
                     "name": user.name,
                     "lastName": user.last_name,
                     "email": user.email,
+                    "roleId": user.role_id,
                 },
                 "error": None,
             }
