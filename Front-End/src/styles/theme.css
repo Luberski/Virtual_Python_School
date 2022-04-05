@@ -64,12 +64,12 @@
     @apply px-6 py-2 text-sm font-medium transition duration-150 ease-in-out cursor-pointer rounded-lg hover:no-underline;
   }
   .menu-btn-primary {
-    @apply text-white bg-indigo-600 shadow shadow-indigo-600/50 hover:bg-indigo-700;
+    @apply text-white bg-indigo-600 shadow-indigo-600/50 hover:bg-indigo-700;
   }
   .menu-btn-secondary {
     @apply text-gray-800 hover:text-gray-500 dark:text-gray-200 dark:hover:text-gray-300;
   }
   .menu-btn-danger {
-    @apply text-white bg-red-600 shadow shadow-red-600/50 hover:bg-red-700;
+    @apply text-white bg-red-600 shadow-red-600/50 hover:bg-red-700;
   }
 }
