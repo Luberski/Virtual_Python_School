@@ -8,6 +8,8 @@ from . import routes
 
 ADMIN_ID = 1
 
+# TODO: add ability to mark course as featured for homepage. Max 2-3 courses can be featured.
+
 
 @routes.route("/api/courses", methods=["POST"])
 @jwt_required()

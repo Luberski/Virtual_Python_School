@@ -9,6 +9,7 @@ import NavBar from "../components/NavBar";
 import FancyCard from "../components/FancyCard";
 import { useTheme } from "next-themes";
 
+// TODO: get featured courses from server
 export default function IndexPage() {
   const [isMounted, setIsMounted] = useState(false);
   const t = useTranslations();
@@ -16,6 +17,7 @@ export default function IndexPage() {
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const [magic, setMagic] = useState(false);
+  const [magic2, setMagic2] = useState(false);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -23,10 +25,21 @@ export default function IndexPage() {
   }, []);
 
   useHotkeys("ctrl+m", () => setMagic((prev) => !prev));
+  useHotkeys("ctrl+b", () => setMagic2((prev) => !prev));
 
   return (
     <>
-      <div className="w-full h-full">
+      <div
+        className="w-full h-full"
+        style={
+          magic2
+            ? {
+                backgroundImage:
+                  "url('https://img7.dmty.pl/uploads/201209/1348243292_by_whereswally_600.jpg')",
+              }
+            : {}
+        }
+      >
         <NavBar
           user={user}
           isLoggedIn={isLoggedIn}

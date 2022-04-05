@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Footer from "../../components/Footer";
 import { useTranslations } from "next-intl";
 import NavBar from "../../components/NavBar";
@@ -6,12 +6,25 @@ import FancyCard from "../../components/FancyCard";
 import { selectAuthUser, selectIsLogged } from "../../features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import Image from "next/image";
+import {
+  fetchCourses,
+  selectCoursesData,
+} from "../../features/courses/coursesSlice";
 
 export default function CoursesPage() {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const t = useTranslations();
+  // TODO: refactor to server side fetching
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(fetchCourses());
+    };
+
+    fetchData().catch(console.error);
+  }, [dispatch]);
+  const courses = useAppSelector(selectCoursesData);
 
   return (
     <>
@@ -34,35 +47,43 @@ export default function CoursesPage() {
           </div>
         </div>
         <div className="container px-6 mx-auto">
-          <div className="flex justify-center w-full h-full space-x-12">
-            <FancyCard
-              title={t("Courses.beginners")}
-              description={t("Courses.beginners-info")}
-              link="/courses"
-              cardColor="bg-gray-50"
-              shadowColor="shadow-gray-500/50"
-              hoverShadowColor="hover:shadow-gray-500/50"
-              buttonText={t("Courses.enroll")}
-            />
-            <FancyCard
-              title={t("Courses.intermediate")}
-              description={t("Courses.intermediate-info")}
-              link="/courses"
-              cardColor="bg-gray-50"
-              shadowColor="shadow-gray-500/50"
-              hoverShadowColor="hover:shadow-gray-500/50"
-              buttonText={t("Courses.enroll")}
+          {courses && courses.length > 0 ? (
+            <div className="grid grid-cols-3 gap-4 sm:gap-12">
+              {courses.map((course) => (
+                <FancyCard
+                  key={course.id}
+                  title={course.name}
+                  description={course.description}
+                  link={`/courses/${course.id}`}
+                  cardColor="bg-gray-50"
+                  shadowColor="shadow-gray-500/50"
+                  hoverShadowColor="hover:shadow-gray-500/50"
+                  buttonText={t("Courses.enroll")}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col w-full h-full items-center justify-center">
+              <p className="font-medium pb-8 text-lg">No courses found :(</p>
+              <Image
+                src="/undraw_no_data_re_kwbl.svg"
+                alt="No data"
+                width={200}
+                height={200}
+              />
+            </div>
+          )}
+        </div>
+        {courses && courses.length > 0 && (
+          <div className="flex items-center justify-center my-16">
+            <Image
+              src={"/undraw_knowledge_re_5v9l.svg"}
+              alt="login"
+              width="466"
+              height="330"
             />
           </div>
-        </div>
-        <div className="flex items-center justify-center my-16">
-          <Image
-            src={"/undraw_knowledge_re_5v9l.svg"}
-            alt="login"
-            width="466"
-            height="330"
-          />
-        </div>
+        )}
         <Footer />
       </div>
     </>
