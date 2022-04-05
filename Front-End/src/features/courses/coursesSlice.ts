@@ -35,6 +35,30 @@ export const fetchCourses = createAsyncThunk(
   }
 );
 
+export const deleteCourse = createAsyncThunk(
+  "api/courses/delete",
+  async (id: string | number, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.delete(`/courses`, {
+        data: {
+          data: {
+            id_course: id,
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 export const coursesSlice = createSlice({
   name: "courses",
   initialState,
@@ -61,6 +85,11 @@ export const coursesSlice = createSlice({
       .addCase(fetchCourses.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(deleteCourse.fulfilled, (state, { payload }) => {
+        state.data = state.data.filter(
+          (course) => course.id !== payload.data.id
+        );
       });
   },
 });

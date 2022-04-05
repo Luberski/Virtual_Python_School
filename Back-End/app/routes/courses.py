@@ -95,7 +95,7 @@ def delete_course():
 
     db.session.commit()
 
-    return make_response(jsonify({"data": "Course deleted", "error": None,}), 200,)
+    return make_response(jsonify({"data": {"id": id_course}, "error": None}), 200)
 
 
 @routes.route("/api/courses", methods=["GET"])
@@ -136,7 +136,6 @@ def get_courses_me():
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
-
     return make_response(
         jsonify(
             {
@@ -155,7 +154,7 @@ def get_courses_me():
             }
         ),
         200,
-    )    
+    )
 
 
 @routes.route("/api/courses/id", methods=["POST"])
@@ -171,19 +170,17 @@ def get_course_id():
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
-
-
     return make_response(
         jsonify(
             {
                 "data": [
                     {
-                    "username": user.username,
-                    "id_course": course.id_course,
-                    "start_date": course.start_date,
-                    "end_date": course.end_date,
-                    "section_number": course.section_number,
-                    "completed": course.completed,
+                        "username": user.username,
+                        "id_course": course.id_course,
+                        "start_date": course.start_date,
+                        "end_date": course.end_date,
+                        "section_number": course.section_number,
+                        "completed": course.completed,
                     }
                     for course in courses
                 ],
@@ -191,7 +188,7 @@ def get_course_id():
             }
         ),
         200,
-    ) 
+    )
 
 
 @routes.route("/api/course", methods=["POST"])
@@ -322,12 +319,12 @@ def close_course_me():
 
     course_wanted = request.json["data"]["id_course"]
 
-    if course_wanted == None:
+    if course_wanted is None:
         return make_response(jsonify({"error": "Course does not exist"}), 403)
 
     course_query = models.Courses().query.filter_by(id=course_wanted).first()
 
-    if course_query == None:
+    if course_query is None:
         return make_response(jsonify({"error": "Course not found"}), 404)
 
     course_to_close = (
@@ -546,7 +543,7 @@ def get_lessons():
         .query.filter_by(id_course=request.json["data"]["id_course"])
         .all()
     )
-    if lessons == None:
+    if lessons is None:
         return make_response(jsonify({"error": "Lessons not found"}), 404)
 
     return make_response(
@@ -554,11 +551,11 @@ def get_lessons():
             {
                 "data": [
                     {
-                    "name": lesson.name,
-                    "description": lesson.description,
-                    "id_course": lesson.id_course,
-                    "type": lesson.type,
-                    "number_of_answers": lesson.number_of_answers,
+                        "name": lesson.name,
+                        "description": lesson.description,
+                        "id_course": lesson.id_course,
+                        "type": lesson.type,
+                        "number_of_answers": lesson.number_of_answers,
                     }
                     for lesson in lessons
                 ],
@@ -566,9 +563,7 @@ def get_lessons():
             }
         ),
         200,
-    ) 
-
-
+    )
 
 
 @routes.route("/api/answers", methods=["PATCH"])
@@ -675,7 +670,7 @@ def get_answers():
         .query.filter_by(id_lesson=request.json["data"]["id_lesson"])
         .all()
     )
-    if answers == None:
+    if answers is None:
         return make_response(jsonify({"error": "Answers not found"}), 404)
 
     return make_response(
@@ -683,9 +678,9 @@ def get_answers():
             {
                 "data": [
                     {
-                    "id": answer.id,
-                    "final_answer": answer.final_answer,
-                    "id_lesson": answer.id_lesson,
+                        "id": answer.id,
+                        "final_answer": answer.final_answer,
+                        "id_lesson": answer.id_lesson,
                     }
                     for answer in answers
                 ],
@@ -693,7 +688,7 @@ def get_answers():
             }
         ),
         200,
-    )  
+    )
 
 
 @routes.route("/api/comments", methods=["POST"])
@@ -807,17 +802,16 @@ def get_comments():
     if comments == None:
         return make_response(jsonify({"error": "Comments not found"}), 404)
 
-
     return make_response(
         jsonify(
             {
                 "data": [
                     {
-                    "id": comment.id,
-                    "user_id": comment.user_id,
-                    "id_lesson": comment.id_lesson,
-                    "data_published": comment.data_published,
-                    "content": comment.content,
+                        "id": comment.id,
+                        "user_id": comment.user_id,
+                        "id_lesson": comment.id_lesson,
+                        "data_published": comment.data_published,
+                        "content": comment.content,
                     }
                     for comment in comments
                 ],
@@ -825,5 +819,5 @@ def get_comments():
             }
         ),
         200,
-    ) 
+    )
 

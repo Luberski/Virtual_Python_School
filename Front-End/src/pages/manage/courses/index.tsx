@@ -6,11 +6,12 @@ import {
   selectAuthUser,
 } from "../../../features/auth/authSlice";
 import {
+  deleteCourse,
   fetchCourses,
   selectCoursesData,
 } from "../../../features/courses/coursesSlice";
-
 import NavBar from "../../../components/NavBar";
+import Button from "../../../components/Button";
 
 export default function ManageCoursesPage() {
   const t = useTranslations();
@@ -19,7 +20,7 @@ export default function ManageCoursesPage() {
   const isLoggedIn = useAppSelector(selectIsLogged);
   const courses = useAppSelector(selectCoursesData);
 
-  // todo: refactor to server side fetching
+  // TODO: refactor to server side fetching
   useEffect(() => {
     const fetchData = async () => {
       await dispatch(fetchCourses());
@@ -27,6 +28,10 @@ export default function ManageCoursesPage() {
 
     fetchData().catch(console.error);
   }, [dispatch]);
+
+  const handleDeleteCourse = (id: string | number) => async (e) => {
+    await dispatch(deleteCourse(id));
+  };
 
   return (
     <div className="w-full h-full">
@@ -90,9 +95,12 @@ export default function ManageCoursesPage() {
                               </a>
                             </td>
                             <td className="px-6 py-4">
-                              <a href="#" className="menu-btn menu-btn-danger">
+                              <Button
+                                className="menu-btn menu-btn-danger"
+                                onClick={handleDeleteCourse(course.id)}
+                              >
                                 {t("Manage.delete")}
-                              </a>
+                              </Button>
                             </td>
                           </tr>
                         </React.Fragment>
