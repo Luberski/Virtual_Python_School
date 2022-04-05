@@ -136,23 +136,26 @@ def get_courses_me():
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
-    # find better solution
-    courses_taken = []
-    for course in courses:
-        courses_taken.append(
-            {
-                "data_course": {
-                    "username": username,
-                    "id_course": course.id_course,
-                    "start_date": course.start_date,
-                    "end_date": course.end_date,
-                    "section_number": course.section_number,
-                    "completed": course.completed,
-                }
-            }
-        )
 
-    return make_response(jsonify({"data": courses_taken, "error": None}), 200,)
+    return make_response(
+        jsonify(
+            {
+                "data": [
+                    {
+                        "username": username,
+                        "id_course": course.id_course,
+                        "start_date": course.start_date,
+                        "end_date": course.end_date,
+                        "section_number": course.section_number,
+                        "completed": course.completed,
+                    }
+                    for course in courses
+                ],
+                "error": None,
+            }
+        ),
+        200,
+    )    
 
 
 @routes.route("/api/courses/id", methods=["POST"])
@@ -168,23 +171,27 @@ def get_course_id():
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
-    # find better solution
-    courses_taken = []
-    for course in courses:
-        courses_taken.append(
+
+
+    return make_response(
+        jsonify(
             {
-                "data_course": {
+                "data": [
+                    {
                     "username": user.username,
                     "id_course": course.id_course,
                     "start_date": course.start_date,
                     "end_date": course.end_date,
                     "section_number": course.section_number,
                     "completed": course.completed,
-                }
+                    }
+                    for course in courses
+                ],
+                "error": None,
             }
-        )
-
-    return make_response(jsonify({"data": courses_taken, "error": None}), 200,)
+        ),
+        200,
+    ) 
 
 
 @routes.route("/api/course", methods=["POST"])
@@ -542,22 +549,26 @@ def get_lessons():
     if lessons == None:
         return make_response(jsonify({"error": "Lessons not found"}), 404)
 
-    # find better solution
-    lessons_all = []
-    for lesson in lessons:
-        lessons_all.append(
+    return make_response(
+        jsonify(
             {
-                "lesson_course": {
+                "data": [
+                    {
                     "name": lesson.name,
                     "description": lesson.description,
                     "id_course": lesson.id_course,
                     "type": lesson.type,
                     "number_of_answers": lesson.number_of_answers,
-                }
+                    }
+                    for lesson in lessons
+                ],
+                "error": None,
             }
-        )
+        ),
+        200,
+    ) 
 
-    return make_response(jsonify({"data": lessons_all, "error": None}), 200,)
+
 
 
 @routes.route("/api/answers", methods=["PATCH"])
@@ -667,20 +678,22 @@ def get_answers():
     if answers == None:
         return make_response(jsonify({"error": "Answers not found"}), 404)
 
-    # find better solution
-    answers_all = []
-    for answer in answers:
-        answers_all.append(
+    return make_response(
+        jsonify(
             {
-                "answer_data": {
+                "data": [
+                    {
                     "id": answer.id,
                     "final_answer": answer.final_answer,
                     "id_lesson": answer.id_lesson,
-                }
+                    }
+                    for answer in answers
+                ],
+                "error": None,
             }
-        )
-
-    return make_response(jsonify({"data": answers_all, "error": None}), 200,)
+        ),
+        200,
+    )  
 
 
 @routes.route("/api/comments", methods=["POST"])
@@ -794,20 +807,23 @@ def get_comments():
     if comments == None:
         return make_response(jsonify({"error": "Comments not found"}), 404)
 
-    # find better solution
-    comments_all = []
-    for comment in comments:
-        comments_all.append(
+
+    return make_response(
+        jsonify(
             {
-                "answer_data": {
+                "data": [
+                    {
                     "id": comment.id,
                     "user_id": comment.user_id,
                     "id_lesson": comment.id_lesson,
                     "data_published": comment.data_published,
                     "content": comment.content,
-                }
+                    }
+                    for comment in comments
+                ],
+                "error": None,
             }
-        )
-
-    return make_response(jsonify({"data": comments_all, "error": None}), 200,)
+        ),
+        200,
+    ) 
 
