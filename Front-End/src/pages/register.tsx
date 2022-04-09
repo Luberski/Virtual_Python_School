@@ -25,7 +25,7 @@ export default function RegisterPage() {
         </div>
         <div className="container px-6 mx-auto">
           <form
-            className="flex flex-col justify-center items-center space-y-8"
+            className="flex flex-col justify-center items-center space-y-6"
             onSubmit={handleSubmit(onSubmit)}>
             <Input
               label="email"

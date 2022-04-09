@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import {
@@ -13,6 +13,11 @@ import {
 import NavBar from '../../../components/NavBar';
 import Button from '../../../components/Button';
 import Image from 'next/image';
+import { Dialog, Transition } from '@headlessui/react';
+import IconButton, { IconButtonVariant } from '../../../components/IconButton';
+import { AcademicCapIcon, PlusSmIcon } from '@heroicons/react/outline';
+import Input from '../../../components/Input';
+import { useForm } from 'react-hook-form';
 
 export default function ManageCoursesPage() {
   const t = useTranslations();
@@ -20,6 +25,17 @@ export default function ManageCoursesPage() {
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const courses = useAppSelector(selectCoursesData);
+  const cancelButtonRef = useRef(null);
+  const { register } = useForm();
+  const [isOpen, setIsOpen] = useState(false);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
 
   // TODO: refactor to server side fetching
   useEffect(() => {
@@ -46,49 +62,126 @@ export default function ManageCoursesPage() {
         }
       />
       <div className="container px-4 mx-auto">
-        <div className="flex flex-col sm:flex-row">
-          <ul className="p-6 my-6 h-36 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
-            <li className="flex justify-between items-center mb-6 w-full menu-btn menu-btn-primary">
-              <div className="flex items-center">
-                <span className="text-sm">{t('Manage.manage-courses')}</span>
-              </div>
+        <div className="flex flex-col items-center sm:flex-row sm:items-start">
+          <ul className="p-6 my-6 w-64 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
+            <li className="mb-6 text-center menu-btn menu-btn-primary">
+              {t('Manage.manage-courses')}
             </li>
-            <li className="flex justify-between items-center mb-6 menu-btn menu-btn-secondary">
-              <div className="flex items-center">
-                <span className="text-sm">{t('Manage.manage-lessons')}</span>
-              </div>
+            <li className="mb-6 text-center menu-btn menu-btn-secondary">
+              {t('Manage.manage-lessons')}
             </li>
           </ul>
-          <div className="flex flex-col p-6 pb-4">
+          <div className="container flex flex-col p-6 pb-4">
             <h1 className="pb-4">{t('Manage.manage-courses')}</h1>
+            <div className="flex justify-between items-center">
+              <p className="text-xl font-medium">
+                {t('Courses.list-of-courses')}
+              </p>
+              <IconButton
+                onClick={openModal}
+                variant={IconButtonVariant.PRIMARY}
+                icon={<PlusSmIcon className="w-5 h-5" />}>
+                Create
+              </IconButton>
+            </div>
+            <Transition.Root show={isOpen} as={Fragment}>
+              <Dialog
+                as="div"
+                className="overflow-y-auto fixed inset-0 z-10"
+                initialFocus={cancelButtonRef}
+                onClose={setIsOpen}>
+                <div className="flex justify-center items-end px-4 pt-4 pb-20 min-h-screen text-center sm:block sm:p-0">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0">
+                    <Dialog.Overlay className="fixed inset-0 bg-gray-500 opacity-75 transition-opacity" />
+                  </Transition.Child>
+
+                  {/* This element is to trick the browser into centering the modal contents. */}
+                  <span
+                    className="hidden sm:inline-block sm:h-screen sm:align-middle"
+                    aria-hidden="true">
+                    &#8203;
+                  </span>
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                    <div className="inline-block overflow-hidden relative text-left align-bottom bg-gray-100 dark:bg-gray-900 rounded-lg shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+                      <div className="px-4 pt-5 pb-4 bg-gray-100 dark:bg-gray-900 sm:p-6 sm:pb-4">
+                        <div className="sm:flex sm:items-start">
+                          <div className="flex shrink-0 justify-center items-center mx-auto w-12 h-12 bg-indigo-100 rounded-full sm:mx-0 sm:w-10 sm:h-10">
+                            <AcademicCapIcon
+                              className="w-6 h-6 text-indigo-600"
+                              aria-hidden="true"
+                            />
+                          </div>
+                          <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <Dialog.Title
+                              as="h3"
+                              className="text-xl font-medium leading-6">
+                              Create new course
+                            </Dialog.Title>
+                            <div className="mt-6">
+                              <form className="flex flex-col justify-center items-start space-y-6">
+                                <Input
+                                  label={t('Courses.course-name')}
+                                  name="name"
+                                  type="text"
+                                  register={register}
+                                  placeholder={t('Courses.course-name')}
+                                />
+                                <Input
+                                  label={t('Courses.course-description')}
+                                  name="description"
+                                  type="text"
+                                  register={register}
+                                  placeholder={t('Courses.course-description')}
+                                />
+                                <div className="py-3">
+                                  <IconButton
+                                    variant={IconButtonVariant.PRIMARY}
+                                    ref={cancelButtonRef}
+                                    onClick={closeModal}>
+                                    {t('Courses.create-course')}
+                                  </IconButton>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Transition.Child>
+                </div>
+              </Dialog>
+            </Transition.Root>
+
             {courses && courses.length > 0 ? (
               <>
-                <p className="text-xl font-medium">
-                  {t('Courses.list-of-courses')}
-                </p>
                 <div className="overflow-auto my-6 rounded-lg border border-gray-300 dark:border-gray-600">
-                  <table className="divide-y divide-gray-200">
-                    <thead>
+                  <table className="divide-y divide-gray-200 table-auto">
+                    <thead className="font-medium text-left text-gray-500 uppercase">
                       <tr>
-                        <th
-                          scope="col"
-                          className="py-3 px-6 font-medium text-left text-gray-500 uppercase">
+                        <th scope="col" className="py-3 px-4">
                           ID
                         </th>
-                        <th
-                          scope="col"
-                          className="py-3 px-6 font-medium text-left text-gray-500 uppercase">
+                        <th scope="col" className="py-3 px-4">
                           Name
                         </th>
-                        <th
-                          scope="col"
-                          className="py-3 px-6 font-medium text-left text-gray-500 uppercase">
+                        <th scope="col" className="py-3 px-4 w-full">
                           Description
                         </th>
-                        <th
-                          scope="col"
-                          className="py-3 px-6 font-medium text-left text-gray-500 uppercase"
-                          colSpan={2}>
+                        <th scope="col" className="py-3 px-4" colSpan={2}>
                           {t('Manage.manage')}
                         </th>
                       </tr>
@@ -97,19 +190,19 @@ export default function ManageCoursesPage() {
                       {courses.map((course) => (
                         <Fragment key={course.id}>
                           <tr>
-                            <td className="py-4 px-6">{course.id}</td>
-                            <td className="py-4 px-6 max-w-xs break-words">
+                            <td className="p-4">{course.id}</td>
+                            <td className="p-4 max-w-xs break-words">
                               {course.name}
                             </td>
-                            <td className="py-4 px-6 max-w-xs break-words">
+                            <td className="p-4 max-w-xs break-words">
                               {course.description}
                             </td>
-                            <td className="py-4 px-6">
+                            <td className="p-4">
                               <a href="#" className="menu-btn menu-btn-primary">
                                 {t('Manage.edit')}
                               </a>
                             </td>
-                            <td className="py-4 px-6">
+                            <td className="py-4 pr-4">
                               <Button
                                 className="menu-btn menu-btn-danger"
                                 onClick={handleDeleteCourse(course.id)}>
