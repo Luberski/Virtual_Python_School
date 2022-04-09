@@ -12,6 +12,7 @@ import {
 } from "../../../features/courses/coursesSlice";
 import NavBar from "../../../components/NavBar";
 import Button from "../../../components/Button";
+import Image from "next/image";
 
 export default function ManageCoursesPage() {
   const t = useTranslations();
@@ -44,7 +45,7 @@ export default function ManageCoursesPage() {
           })
         }
       />
-      <div className="container px-6 mx-auto">
+      <div className="container px-6">
         <div className="flex flex-row">
           <ul className="p-6 my-6 bg-gray-100 border border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-700">
             <li className="flex items-center justify-between w-full mb-6 menu-btn menu-btn-primary">
@@ -60,24 +61,25 @@ export default function ManageCoursesPage() {
           </ul>
           <div className="flex flex-col p-6 pb-4">
             <h1 className="pb-4">{t("Manage.manage-courses")}</h1>
-            <p className="font-medium">{t("Courses.list-of-courses")}</p>
-            <div className="w-full my-4">
-              <div>
-                <table className="table-auto">
-                  <thead className="border border-gray-300 g-gray-100 dark:border-gray-600 dark:bg-gray-700">
-                    <tr>
-                      <th className="px-6 py-2 text-xs ">ID</th>
-                      <th className="px-6 py-2 text-xs ">Name</th>
-                      <th className="px-6 py-2 text-xs ">Description</th>
-                      <th className="px-6 py-2 text-xs" colSpan={2}>
-                        {t("Manage.manage")}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {courses &&
-                      courses.length > 0 &&
-                      courses.map((course) => (
+            {courses && courses.length > 0 ? (
+              <>
+                <p className="text-xl font-medium">
+                  {t("Courses.list-of-courses")}
+                </p>
+                <div className="w-full my-4">
+                  <table className="table-auto">
+                    <thead className="border border-gray-300 g-gray-100 dark:border-gray-600 dark:bg-gray-700">
+                      <tr>
+                        <th className="px-6 py-2 text-xs ">ID</th>
+                        <th className="px-6 py-2 text-xs ">Name</th>
+                        <th className="px-6 py-2 text-xs ">Description</th>
+                        <th className="px-6 py-2 text-xs" colSpan={2}>
+                          {t("Manage.manage")}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {courses.map((course) => (
                         <React.Fragment key={course.id}>
                           <tr className="whitespace-nowrap">
                             <td className="px-6 py-4 text-sm ">{course.id}</td>
@@ -105,10 +107,21 @@ export default function ManageCoursesPage() {
                           </tr>
                         </React.Fragment>
                       ))}
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col justify-center">
+                <p className="font-medium pb-8 text-lg">No courses found :(</p>
+                <Image
+                  src="/undraw_no_data_re_kwbl.svg"
+                  alt="No data"
+                  width={200}
+                  height={200}
+                />
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
