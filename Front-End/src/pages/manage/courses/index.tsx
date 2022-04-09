@@ -30,7 +30,7 @@ export default function ManageCoursesPage() {
     fetchData().catch(console.error);
   }, [dispatch]);
 
-  const handleDeleteCourse = (id: string | number) => async (e) => {
+  const handleDeleteCourse = (id: string | number) => async () => {
     await dispatch(deleteCourse(id));
   };
 
@@ -45,15 +45,15 @@ export default function ManageCoursesPage() {
           })
         }
       />
-      <div className="container px-6">
-        <div className="flex flex-row">
+      <div className="container px-4 mx-auto">
+        <div className="flex flex-col sm:flex-row">
           <ul className="p-6 my-6 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
             <li className="flex justify-between items-center mb-6 w-full menu-btn menu-btn-primary">
               <div className="flex items-center">
                 <span className="text-sm">{t('Manage.manage-courses')}</span>
               </div>
             </li>
-            <li className="flex justify-between items-center mb-6 w-full menu-btn menu-btn-secondary">
+            <li className="flex justify-between items-center mb-6 menu-btn menu-btn-secondary">
               <div className="flex items-center">
                 <span className="text-sm">{t('Manage.manage-lessons')}</span>
               </div>
@@ -66,29 +66,40 @@ export default function ManageCoursesPage() {
                 <p className="text-xl font-medium">
                   {t('Courses.list-of-courses')}
                 </p>
-                <div className="my-4 w-full">
-                  <table className="table-auto">
-                    <thead className="dark:bg-gray-700 border border-gray-300 dark:border-gray-600 g-gray-100">
+                <div className="overflow-auto my-6 rounded-lg border-b border-gray-200 shadow">
+                  <table className="divide-y divide-gray-200">
+                    <thead className="">
                       <tr>
-                        <th className="py-2 px-6 text-xs ">ID</th>
-                        <th className="py-2 px-6 text-xs ">Name</th>
-                        <th className="py-2 px-6 text-xs ">Description</th>
-                        <th className="py-2 px-6 text-xs" colSpan={2}>
+                        <th
+                          scope="col"
+                          className="py-3 px-6 text-xs font-medium text-left text-gray-500 uppercase">
+                          ID
+                        </th>
+                        <th
+                          scope="col"
+                          className="py-3 px-6 text-xs font-medium text-left text-gray-500 uppercase">
+                          Name
+                        </th>
+                        <th
+                          scope="col"
+                          className="py-3 px-6 text-xs font-medium text-left text-gray-500 uppercase">
+                          Description
+                        </th>
+                        <th
+                          scope="col"
+                          className="py-3 px-6 text-xs font-medium text-left text-gray-500 uppercase"
+                          colSpan={2}>
                           {t('Manage.manage')}
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-gray-200">
                       {courses.map((course) => (
                         <React.Fragment key={course.id}>
-                          <tr className="whitespace-nowrap">
-                            <td className="py-4 px-6 text-sm ">{course.id}</td>
-                            <td className="py-4 px-6">
-                              <div className="text-sm truncate">
-                                {course.name}
-                              </div>
-                            </td>
-                            <td className="py-4 px-6 text-sm truncate">
+                          <tr>
+                            <td className="py-4 px-6">{course.id}</td>
+                            <td className="py-4 px-6">{course.name}</td>
+                            <td className="py-4 px-6 truncate">
                               {course.description}
                             </td>
                             <td className="py-4 px-6">

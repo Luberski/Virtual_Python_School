@@ -57,7 +57,7 @@ export default function IndexPage() {
           </div>
         </div>
         <div className="container px-6 mx-auto">
-          <div className="flex justify-center space-x-12 w-full h-full">
+          <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
             <FancyCard
               title={t('Courses.beginners')}
               description={t('Courses.beginners-info')}

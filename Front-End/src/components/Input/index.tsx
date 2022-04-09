@@ -14,7 +14,7 @@ const Input = ({
 }: InputProps & React.HTMLProps<HTMLInputElement>) => (
   <input
     {...register(label, { required })}
-    className="p-3 w-96 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600"
+    className="p-3 w-72 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 sm:w-96"
     {...rest}
   />
 );

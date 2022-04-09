@@ -27,13 +27,15 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
       {({ open }) => (
         <div className="container flex justify-between items-center py-4 px-6 mx-auto lg:items-stretch xl:h-16">
           <div className="flex items-center h-full">
-            <div className="mr-10">
-              <Link href="/" passHref={true}>
-                <a className="block ml-3 text-base font-bold tracking-normal leading-tight text-gray-700 dark:text-gray-300 no-underline hover:no-underline">
-                  Virtual Python School
-                </a>
-              </Link>
-            </div>
+            {!open && (
+              <div className="sm:mr-10">
+                <Link href="/" passHref={true}>
+                  <a className="ml-3 text-base font-bold tracking-normal leading-tight text-gray-700 dark:text-gray-300 no-underline hover:no-underline">
+                    Virtual Python School
+                  </a>
+                </Link>
+              </div>
+            )}
             <ul className="hidden items-center space-x-2 xl:flex">
               <Link href="/" passHref={true}>
                 <a

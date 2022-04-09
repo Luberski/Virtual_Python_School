@@ -48,7 +48,7 @@ export default function CoursesPage() {
         </div>
         <div className="container px-6 mx-auto">
           {courses && courses.length > 0 ? (
-            <div className="grid grid-cols-3 gap-4 sm:gap-12">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-12">
               {courses.map((course) => (
                 <FancyCard
                   key={course.id}
