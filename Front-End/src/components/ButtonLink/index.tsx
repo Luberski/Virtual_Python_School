@@ -1,27 +1,29 @@
-import React, { forwardRef } from "react";
-import clsx from "clsx";
+import React, { forwardRef } from 'react';
+import clsx from 'clsx';
 
 export enum ButtonLinkVariant {
-  PRIMARY = "btn-primary",
-  SECONDARY = "btn-secondary",
-  OUTLINE = "btn-outline",
-  OUTLINE_PRIMARY = "btn-outline-primary",
-  DANGER = "btn-danger",
-  SUCCESS = "btn-success",
+  PRIMARY = 'btn-primary',
+  SECONDARY = 'btn-secondary',
+  OUTLINE = 'btn-outline',
+  OUTLINE_PRIMARY = 'btn-outline-primary',
+  DANGER = 'btn-danger',
+  SUCCESS = 'btn-success',
 }
 
 export enum ButtonLinkSize {
-  DEFAULT = "",
-  NORMAL = "w-24",
-  MEDIUM = "w-32",
-  LARGE = "w-40",
-  EXTRA_LARGE = "w-48",
+  DEFAULT = '',
+  NORMAL = 'w-24',
+  MEDIUM = 'w-32',
+  LARGE = 'w-40',
+  EXTRA_LARGE = 'w-48',
 }
 
 type ButtonLinkProps = {
   variant?: ButtonLinkVariant;
   disabled?: boolean;
   sizeType?: ButtonLinkSize;
+  href?: string;
+  className?: string;
 };
 
 const ButtonLink = forwardRef(function ButtonLink(
@@ -38,13 +40,12 @@ const ButtonLink = forwardRef(function ButtonLink(
     <a
       href={href}
       className={clsx(
-        "btn",
+        'btn',
         variant,
         sizeType,
-        "hover:no-underline",
+        'hover:no-underline',
         className
-      )}
-    >
+      )}>
       {children}
     </a>
   );

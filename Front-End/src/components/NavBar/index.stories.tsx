@@ -1,9 +1,8 @@
-import { ComponentMeta, ComponentStory } from "@storybook/react";
-import * as React from "react";
-import NavBar from ".";
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import NavBar from '.';
 
 export default {
-  title: "NavBar",
+  title: 'NavBar',
   component: NavBar,
 } as ComponentMeta<typeof NavBar>;
 
@@ -16,7 +15,7 @@ export const NavBarLoggedIn = Template.bind({});
 NavBarLoggedIn.args = {
   isLoggedIn: true,
   user: {
-    name: "Christopher",
-    lastName: "Adamson",
+    name: 'Christopher',
+    lastName: 'Adamson',
   },
 };

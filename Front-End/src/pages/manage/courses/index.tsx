@@ -1,18 +1,18 @@
-import React, { useEffect } from "react";
-import { useTranslations } from "next-intl";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+import React, { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
 import {
   selectIsLogged,
   selectAuthUser,
-} from "../../../features/auth/authSlice";
+} from '../../../features/auth/authSlice';
 import {
   deleteCourse,
   fetchCourses,
   selectCoursesData,
-} from "../../../features/courses/coursesSlice";
-import NavBar from "../../../components/NavBar";
-import Button from "../../../components/Button";
-import Image from "next/image";
+} from '../../../features/courses/coursesSlice';
+import NavBar from '../../../components/NavBar';
+import Button from '../../../components/Button';
+import Image from 'next/image';
 
 export default function ManageCoursesPage() {
   const t = useTranslations();
@@ -41,40 +41,40 @@ export default function ManageCoursesPage() {
         isLoggedIn={isLoggedIn}
         logout={() =>
           dispatch({
-            type: "auth/logout",
+            type: 'auth/logout',
           })
         }
       />
       <div className="container px-6">
         <div className="flex flex-row">
-          <ul className="p-6 my-6 bg-gray-100 border border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-700">
-            <li className="flex items-center justify-between w-full mb-6 menu-btn menu-btn-primary">
+          <ul className="p-6 my-6 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+            <li className="flex justify-between items-center mb-6 w-full menu-btn menu-btn-primary">
               <div className="flex items-center">
-                <span className="text-sm">{t("Manage.manage-courses")}</span>
+                <span className="text-sm">{t('Manage.manage-courses')}</span>
               </div>
             </li>
-            <li className="flex items-center justify-between w-full mb-6 menu-btn menu-btn-secondary">
+            <li className="flex justify-between items-center mb-6 w-full menu-btn menu-btn-secondary">
               <div className="flex items-center">
-                <span className="text-sm">{t("Manage.manage-lessons")}</span>
+                <span className="text-sm">{t('Manage.manage-lessons')}</span>
               </div>
             </li>
           </ul>
           <div className="flex flex-col p-6 pb-4">
-            <h1 className="pb-4">{t("Manage.manage-courses")}</h1>
+            <h1 className="pb-4">{t('Manage.manage-courses')}</h1>
             {courses && courses.length > 0 ? (
               <>
                 <p className="text-xl font-medium">
-                  {t("Courses.list-of-courses")}
+                  {t('Courses.list-of-courses')}
                 </p>
-                <div className="w-full my-4">
+                <div className="my-4 w-full">
                   <table className="table-auto">
-                    <thead className="border border-gray-300 g-gray-100 dark:border-gray-600 dark:bg-gray-700">
+                    <thead className="dark:bg-gray-700 border border-gray-300 dark:border-gray-600 g-gray-100">
                       <tr>
-                        <th className="px-6 py-2 text-xs ">ID</th>
-                        <th className="px-6 py-2 text-xs ">Name</th>
-                        <th className="px-6 py-2 text-xs ">Description</th>
-                        <th className="px-6 py-2 text-xs" colSpan={2}>
-                          {t("Manage.manage")}
+                        <th className="py-2 px-6 text-xs ">ID</th>
+                        <th className="py-2 px-6 text-xs ">Name</th>
+                        <th className="py-2 px-6 text-xs ">Description</th>
+                        <th className="py-2 px-6 text-xs" colSpan={2}>
+                          {t('Manage.manage')}
                         </th>
                       </tr>
                     </thead>
@@ -82,26 +82,25 @@ export default function ManageCoursesPage() {
                       {courses.map((course) => (
                         <React.Fragment key={course.id}>
                           <tr className="whitespace-nowrap">
-                            <td className="px-6 py-4 text-sm ">{course.id}</td>
-                            <td className="px-6 py-4">
+                            <td className="py-4 px-6 text-sm ">{course.id}</td>
+                            <td className="py-4 px-6">
                               <div className="text-sm truncate">
                                 {course.name}
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-sm truncate">
+                            <td className="py-4 px-6 text-sm truncate">
                               {course.description}
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="py-4 px-6">
                               <a href="#" className="menu-btn menu-btn-primary">
-                                {t("Manage.edit")}
+                                {t('Manage.edit')}
                               </a>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="py-4 px-6">
                               <Button
                                 className="menu-btn menu-btn-danger"
-                                onClick={handleDeleteCourse(course.id)}
-                              >
-                                {t("Manage.delete")}
+                                onClick={handleDeleteCourse(course.id)}>
+                                {t('Manage.delete')}
                               </Button>
                             </td>
                           </tr>
@@ -113,7 +112,7 @@ export default function ManageCoursesPage() {
               </>
             ) : (
               <div className="flex flex-col justify-center">
-                <p className="font-medium pb-8 text-lg">No courses found :(</p>
+                <p className="pb-8 text-lg font-medium">No courses found :(</p>
                 <Image
                   src="/undraw_no_data_re_kwbl.svg"
                   alt="No data"

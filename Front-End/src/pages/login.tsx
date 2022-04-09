@@ -1,20 +1,20 @@
-import React, { useEffect } from "react";
-import Footer from "../components/Footer";
-import Input from "../components/Input";
-import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
-import ButtonInput, { ButtonInputVariant } from "../components/ButtonInput";
-import { useAppDispatch, useAppSelector } from "../hooks";
+import { useEffect } from 'react';
+import Footer from '../components/Footer';
+import Input from '../components/Input';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+import ButtonInput, { ButtonInputVariant } from '../components/ButtonInput';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import {
   loginUser,
   selectAuthError,
   selectAuthStatus,
   selectAuthUser,
   selectIsLogged,
-} from "../features/auth/authSlice";
-import NavBar from "../components/NavBar";
-import { useRouter } from "next/router";
+} from '../features/auth/authSlice';
+import NavBar from '../components/NavBar';
+import { useRouter } from 'next/router';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -28,7 +28,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user && isLoggedIn) {
-      router.push("/");
+      router.push('/');
     }
   }, [user, isLoggedIn, router]);
 
@@ -37,8 +37,8 @@ export default function LoginPage() {
 
     try {
       await dispatch(loginUser({ username, password }));
-      if (status === "succeeded") {
-        router.push("/");
+      if (status === 'succeeded') {
+        router.push('/');
       }
     } catch (error) {
       console.error(error);
@@ -49,27 +49,26 @@ export default function LoginPage() {
     <>
       <div className="w-full h-full">
         <NavBar />
-        <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
+        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
           <div>
-            <h1 className="text-center">{t("Auth.welcome-back")}</h1>
+            <h1 className="text-center">{t('Auth.welcome-back')}</h1>
           </div>
         </div>
         <div className="container px-6 mx-auto">
           <form
-            className="flex flex-col items-center justify-center space-y-8"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+            className="flex flex-col justify-center items-center space-y-8"
+            onSubmit={handleSubmit(onSubmit)}>
             <Input
               label="username"
               type="username"
-              placeholder={t("Auth.username")}
+              placeholder={t('Auth.username')}
               register={register}
               required
             />
             <Input
               label="password"
               type="password"
-              placeholder={t("Auth.password")}
+              placeholder={t('Auth.password')}
               register={register}
               required
             />
@@ -77,18 +76,18 @@ export default function LoginPage() {
               variant={ButtonInputVariant.PRIMARY}
               className="w-36"
               type="submit"
-              value={t("Auth.login")}
+              value={t('Auth.login')}
             />
-            {status === "failed" && error && (
-              <div className="px-4 py-2 rounded-lg bg-red-300 text-red-700">
+            {status === 'failed' && error && (
+              <div className="py-2 px-4 text-red-700 bg-red-300 rounded-lg">
                 {error}
               </div>
             )}
           </form>
         </div>
-        <div className="flex items-center justify-center my-16">
+        <div className="flex justify-center items-center my-16">
           <Image
-            src={"/undraw_login_re_4vu2.svg"}
+            src={'/undraw_login_re_4vu2.svg'}
             alt="login"
             width="466"
             height="330"

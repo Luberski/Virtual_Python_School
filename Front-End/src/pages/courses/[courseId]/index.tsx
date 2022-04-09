@@ -1,12 +1,11 @@
-import React from "react";
-import { useRouter } from "next/router";
-import NavBar from "../../../components/NavBar";
-import { GetStaticPaths } from "next";
+import { useRouter } from 'next/router';
+import NavBar from '../../../components/NavBar';
+import { GetStaticPaths } from 'next';
 import {
   selectAuthUser,
   selectIsLogged,
-} from "../../../features/auth/authSlice";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+} from '../../../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../../hooks';
 
 export default function CoursePage() {
   const dispatch = useAppDispatch();
@@ -23,11 +22,11 @@ export default function CoursePage() {
           isLoggedIn={isLoggedIn}
           logout={() =>
             dispatch({
-              type: "auth/logout",
+              type: 'auth/logout',
             })
           }
         />
-        <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
+        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
           <div>
             <h1 className="text-center first-letter:uppercase">
               {courseId} course page
@@ -52,6 +51,6 @@ export const getStaticPaths: GetStaticPaths<{
 }> = async () => {
   return {
     paths: [], //indicates that no page needs be created at build time
-    fallback: "blocking", //indicates the type of fallback
+    fallback: 'blocking', //indicates the type of fallback
   };
 };

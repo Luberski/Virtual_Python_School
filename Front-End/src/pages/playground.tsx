@@ -1,15 +1,15 @@
-import React, { useRef } from "react";
-import Editor from "@monaco-editor/react";
-import Button, { ButtonVariant } from "../components/Button";
-import NavBar from "../components/NavBar";
-import { useTranslations } from "use-intl";
-import { useAppDispatch, useAppSelector } from "../hooks";
+import { useRef } from 'react';
+import Editor from '@monaco-editor/react';
+import Button, { ButtonVariant } from '../components/Button';
+import NavBar from '../components/NavBar';
+import { useTranslations } from 'use-intl';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
   sendCode,
-} from "../features/playground/playgroundSlice";
-import { selectAuthUser, selectIsLogged } from "../features/auth/authSlice";
+} from '../features/playground/playgroundSlice';
+import { selectAuthUser, selectIsLogged } from '../features/auth/authSlice';
 
 export default function Playground() {
   const dispatch = useAppDispatch();
@@ -41,23 +41,22 @@ export default function Playground() {
           isLoggedIn={isLoggedIn}
           logout={() =>
             dispatch({
-              type: "auth/logout",
+              type: 'auth/logout',
             })
           }
         />
-        <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
+        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
           <div>
-            <h1 className="text-center">{t("Playground.leading")}</h1>
+            <h1 className="text-center">{t('Playground.leading')}</h1>
           </div>
         </div>
         <div className="container px-6 mx-auto space-y-4">
-          <div className="grid items-center grid-cols-2">
+          <div className="grid grid-cols-2 items-center">
             <Button
               onClick={handleValue}
               variant={ButtonVariant.PRIMARY}
-              className="h-12 my-8 w-28"
-            >
-              {t("Playground.run")}
+              className="my-8 w-28 h-12">
+              {t('Playground.run')}
             </Button>
           </div>
         </div>
@@ -70,19 +69,17 @@ export default function Playground() {
             theme="vs-dark"
           />
           <div className="w-full">
-            <div className="w-full mx-auto subpixel-antialiased bg-black border-black rounded shadow-2xl h-96">
+            <div className="mx-auto w-full h-96 subpixel-antialiased bg-black rounded border-black shadow-2xl">
               <div
-                className="flex items-center h-6 text-center text-black bg-gray-200 border-b border-gray-500 rounded-t dark:bg-gray-800 dark:text-white"
-                id="headerTerminal"
-              >
+                className="flex items-center h-6 text-center text-black dark:text-white bg-gray-200 dark:bg-gray-800 rounded-t border-b border-gray-500"
+                id="headerTerminal">
                 <div className="mx-auto" id="terminaltitle">
                   <p className="text-center">Terminal output</p>
                 </div>
               </div>
               <div
-                className="h-auto pt-1 pl-1 font-mono text-xs bg-black"
-                id="console"
-              >
+                className="pt-1 pl-1 h-auto text-xs bg-black font-mono"
+                id="console">
                 <pre className="pb-1 text-white">
                   {playgroundData?.content || playgroundError}
                 </pre>

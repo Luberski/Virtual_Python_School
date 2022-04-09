@@ -1,14 +1,13 @@
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
-import ButtonLink, { ButtonLinkVariant } from "../ButtonLink";
-import { User } from "../../models/User";
-import { ThemeButton } from "../ThemeButton";
-import { Disclosure } from "@headlessui/react";
-import clsx from "clsx";
-import { useRouter } from "next/router";
-import Button from "../Button";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import ButtonLink, { ButtonLinkVariant } from '../ButtonLink';
+import { User } from '../../models/User';
+import { ThemeButton } from '../ThemeButton';
+import { Disclosure } from '@headlessui/react';
+import clsx from 'clsx';
+import { useRouter } from 'next/router';
+import Button from '../Button';
 
 type NavBarProps = {
   isLoggedIn?: boolean;
@@ -23,61 +22,56 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
   return (
     <Disclosure
       as="nav"
-      className="w-full mx-auto"
-      suppressHydrationWarning={true}
-    >
+      className="mx-auto w-full"
+      suppressHydrationWarning={true}>
       {({ open }) => (
-        <div className="container flex items-center justify-between px-6 py-4 mx-auto xl:h-16 lg:items-stretch">
+        <div className="container flex justify-between items-center py-4 px-6 mx-auto lg:items-stretch xl:h-16">
           <div className="flex items-center h-full">
             <div className="mr-10">
               <Link href="/" passHref={true}>
-                <a className="block ml-3 text-base font-bold leading-tight tracking-normal text-gray-700 no-underline dark:text-gray-300 hover:no-underline">
+                <a className="block ml-3 text-base font-bold tracking-normal leading-tight text-gray-700 dark:text-gray-300 no-underline hover:no-underline">
                   Virtual Python School
                 </a>
               </Link>
             </div>
-            <ul className="items-center hidden space-x-2 xl:flex">
+            <ul className="hidden items-center space-x-2 xl:flex">
               <Link href="/" passHref={true}>
                 <a
                   className={clsx(
-                    "menu-btn",
-                    router.pathname === "/"
-                      ? "menu-btn-primary"
+                    'menu-btn',
+                    router.pathname === '/'
+                      ? 'menu-btn-primary'
                       : `menu-btn-secondary`
-                  )}
-                >
-                  {t("Home.home")}
+                  )}>
+                  {t('Home.home')}
                 </a>
               </Link>
 
               <Link href="/courses" passHref={true}>
                 <a
                   className={clsx(
-                    "menu-btn",
-                    router.pathname === "/courses"
-                      ? "menu-btn-primary"
+                    'menu-btn',
+                    router.pathname === '/courses'
+                      ? 'menu-btn-primary'
                       : `menu-btn-secondary`
-                  )}
-                >
-                  {t("Home.courses")}
+                  )}>
+                  {t('Home.courses')}
                 </a>
               </Link>
             </ul>
           </div>
 
-          <div className="items-center justify-end hidden h-full xl:flex">
+          <div className="hidden justify-end items-center h-full xl:flex">
             <div className="flex items-center w-full h-full">
               <div className="flex w-full h-full">
                 <div
                   aria-haspopup="true"
-                  className="flex items-center justify-end w-full cursor-pointer"
-                >
+                  className="flex justify-end items-center w-full cursor-pointer">
                   {isLoggedIn && user ? (
-                    <div className="flex items-center">
+                    <div className="flex justify-center items-center">
                       <div
-                        className="w-48 text-right text-sm word-wrap truncate mx-4"
-                        title={`${user?.name} ${user?.lastName}`}
-                      >
+                        className="flex justify-end items-center mx-4 w-48 text-sm truncate"
+                        title={`${user?.name} ${user?.lastName}`}>
                         {user?.name} {user?.lastName}
                       </div>
                       <Image
@@ -87,22 +81,17 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                         width={40}
                         height={40}
                       />
-                      <Button className="menu-btn-danger ml-4" onClick={logout}>
-                        {t("Auth.logout")}
+                      <Button className="ml-4 menu-btn-danger" onClick={logout}>
+                        {t('Auth.logout')}
                       </Button>
                     </div>
                   ) : (
                     <div className="flex space-x-4">
                       <Link href="/login" passHref={true}>
                         <ButtonLink variant={ButtonLinkVariant.SECONDARY}>
-                          {t("Auth.login")}
+                          {t('Auth.login')}
                         </ButtonLink>
                       </Link>
-                      {/* <Link href="/register" passHref={true}>
-                        <ButtonLink className="btn-primary">
-                          {t("Auth.register")}
-                        </ButtonLink>
-                      </Link> */}
                     </div>
                   )}
                   <ThemeButton />
@@ -120,8 +109,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                   strokeLinejoin="round"
                   strokeWidth="2"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                  stroke="currentColor">
                   <path d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </Disclosure.Button>
@@ -134,8 +122,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                   strokeLinejoin="round"
                   strokeWidth="2"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                  stroke="currentColor">
                   <path d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </Disclosure.Button>
@@ -145,33 +132,30 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                 <Link href="/" passHref={true}>
                   <a
                     className={clsx(
-                      "menu-btn",
-                      router.pathname === "/"
-                        ? "menu-btn-primary"
+                      'menu-btn',
+                      router.pathname === '/'
+                        ? 'menu-btn-primary'
                         : `menu-btn-secondary`
-                    )}
-                  >
-                    {t("Home.home")}
+                    )}>
+                    {t('Home.home')}
                   </a>
                 </Link>
                 <Link href="/courses" passHref={true}>
                   <a
                     className={clsx(
-                      "menu-btn",
-                      router.pathname === "/courses"
-                        ? "menu-btn-primary"
+                      'menu-btn',
+                      router.pathname === '/courses'
+                        ? 'menu-btn-primary'
                         : `menu-btn-secondary`
-                    )}
-                  >
-                    {t("Home.courses")}
+                    )}>
+                    {t('Home.courses')}
                   </a>
                 </Link>
                 {isLoggedIn && user ? (
                   <div className="flex items-center">
                     <div
-                      className="w-20 text-right text-sm word-wrap truncate mx-4"
-                      title={`${user?.name} ${user?.lastName}`}
-                    >
+                      className="mx-4 w-20 text-sm truncate"
+                      title={`${user?.name} ${user?.lastName}`}>
                       {user?.name} {user?.lastName}
                     </div>
                     <Image
@@ -181,15 +165,15 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                       width={40}
                       height={40}
                     />
-                    <Button className="menu-btn-danger ml-4" onClick={logout}>
-                      {t("Auth.logout")}
+                    <Button className="ml-4 menu-btn-danger" onClick={logout}>
+                      {t('Auth.logout')}
                     </Button>
                   </div>
                 ) : (
                   <div className="flex flex-col">
                     <Link href="/login" passHref={true}>
                       <a className="menu-btn menu-btn-secondary">
-                        {t("Auth.login")}
+                        {t('Auth.login')}
                       </a>
                     </Link>
                     {/* <Link href="/register" passHref={true}>
