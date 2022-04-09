@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import {
@@ -47,7 +47,7 @@ export default function ManageCoursesPage() {
       />
       <div className="container px-4 mx-auto">
         <div className="flex flex-col sm:flex-row">
-          <ul className="p-6 my-6 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+          <ul className="p-6 my-6 h-36 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
             <li className="flex justify-between items-center mb-6 w-full menu-btn menu-btn-primary">
               <div className="flex items-center">
                 <span className="text-sm">{t('Manage.manage-courses')}</span>
@@ -66,28 +66,28 @@ export default function ManageCoursesPage() {
                 <p className="text-xl font-medium">
                   {t('Courses.list-of-courses')}
                 </p>
-                <div className="overflow-auto my-6 rounded-lg border-b border-gray-200 shadow">
+                <div className="overflow-auto my-6 rounded-lg border border-gray-300 dark:border-gray-600">
                   <table className="divide-y divide-gray-200">
-                    <thead className="">
+                    <thead>
                       <tr>
                         <th
                           scope="col"
-                          className="py-3 px-6 text-xs font-medium text-left text-gray-500 uppercase">
+                          className="py-3 px-6 font-medium text-left text-gray-500 uppercase">
                           ID
                         </th>
                         <th
                           scope="col"
-                          className="py-3 px-6 text-xs font-medium text-left text-gray-500 uppercase">
+                          className="py-3 px-6 font-medium text-left text-gray-500 uppercase">
                           Name
                         </th>
                         <th
                           scope="col"
-                          className="py-3 px-6 text-xs font-medium text-left text-gray-500 uppercase">
+                          className="py-3 px-6 font-medium text-left text-gray-500 uppercase">
                           Description
                         </th>
                         <th
                           scope="col"
-                          className="py-3 px-6 text-xs font-medium text-left text-gray-500 uppercase"
+                          className="py-3 px-6 font-medium text-left text-gray-500 uppercase"
                           colSpan={2}>
                           {t('Manage.manage')}
                         </th>
@@ -95,11 +95,13 @@ export default function ManageCoursesPage() {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {courses.map((course) => (
-                        <React.Fragment key={course.id}>
+                        <Fragment key={course.id}>
                           <tr>
                             <td className="py-4 px-6">{course.id}</td>
-                            <td className="py-4 px-6">{course.name}</td>
-                            <td className="py-4 px-6 truncate">
+                            <td className="py-4 px-6 max-w-xs break-words">
+                              {course.name}
+                            </td>
+                            <td className="py-4 px-6 max-w-xs break-words">
                               {course.description}
                             </td>
                             <td className="py-4 px-6">
@@ -115,7 +117,7 @@ export default function ManageCoursesPage() {
                               </Button>
                             </td>
                           </tr>
-                        </React.Fragment>
+                        </Fragment>
                       ))}
                     </tbody>
                   </table>
