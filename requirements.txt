@@ -9,3 +9,4 @@ pytest
 pytest-dotenv
 wrapt_timeout_decorator
 paramiko
+Flask-Migrate

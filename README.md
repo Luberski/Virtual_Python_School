@@ -52,3 +52,13 @@ pm2 start npm --name "virtual-school" -- start
 cd Back-End/
 gunicorn --daemon  --bind 0.0.0.0:5000 app:app
 ```
+
+## Updating the database
+```
+First time create migration:
+flask db init 
+
+Updating:
+flask db migrate -m "Initial migration."
+flask db upgrade
+```
