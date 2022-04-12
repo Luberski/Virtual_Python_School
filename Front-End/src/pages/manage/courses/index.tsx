@@ -16,9 +16,14 @@ import Button from '../../../components/Button';
 import Image from 'next/image';
 import { Dialog, Transition } from '@headlessui/react';
 import IconButton, { IconButtonVariant } from '../../../components/IconButton';
-import { AcademicCapIcon, PlusSmIcon } from '@heroicons/react/outline';
+import {
+  AcademicCapIcon,
+  InformationCircleIcon,
+  PlusSmIcon,
+} from '@heroicons/react/outline';
 import Input from '../../../components/Input';
 import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function ManageCoursesPage() {
   const t = useTranslations();
@@ -55,6 +60,7 @@ export default function ManageCoursesPage() {
     try {
       await dispatch(createCourse({ name, description }));
       closeModal();
+      notify();
     } catch (error) {
       console.error(error);
     }
@@ -63,6 +69,26 @@ export default function ManageCoursesPage() {
   const handleDeleteCourse = (id: string | number) => async () => {
     await dispatch(deleteCourse(id));
   };
+
+  const notify = () =>
+    toast.custom(
+      (to) => (
+        <>
+          <div
+            className="py-3 px-4 text-indigo-900 bg-indigo-200 rounded-lg border-indigo-500 shadow"
+            role="alert"
+            onClick={() => toast.dismiss(to.id)}>
+            <div className="flex justify-center space-x-1">
+              <InformationCircleIcon className="w-6 h-6 text-indigo-500" />
+              <div>
+                <p className="font-bold">{t('Courses.new-course-added')}</p>
+              </div>
+            </div>
+          </div>
+        </>
+      ),
+      { id: 'unique-notification', position: 'top-center' }
+    );
 
   return (
     <div className="w-full h-full">
@@ -182,7 +208,7 @@ export default function ManageCoursesPage() {
                 </div>
               </Dialog>
             </Transition.Root>
-
+            <Toaster />
             {courses && courses.length > 0 ? (
               <>
                 <div className="overflow-auto my-6 rounded-lg border border-gray-300 dark:border-gray-600">

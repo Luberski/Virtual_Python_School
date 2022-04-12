@@ -32,7 +32,8 @@
     "course-name": "Course name",
     "course-description": "Course description",
     "create-course": "Create course",
-    "create-new-course": "Create new course"
+    "create-new-course": "Create new course",
+    "new-course-added": "New course added!"
   },
   "Playground": {
     "run": "Run",
