@@ -25,6 +25,9 @@ def create_course():
         featured=False,
     )
 
+    if request.json["data"]["featured"] != "None":
+        new_course.featured = request.json["data"]["featured"]
+
     new_course.add()
 
     return make_response(
