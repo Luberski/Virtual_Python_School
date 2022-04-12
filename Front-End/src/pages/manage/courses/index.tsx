@@ -191,6 +191,7 @@ export default function ManageCoursesPage() {
                                   required
                                   placeholder={t('Courses.course-name')}
                                 />
+                                {/* TODO: change to textarea */}
                                 <Input
                                   label="description"
                                   name="description"
@@ -239,15 +240,18 @@ export default function ManageCoursesPage() {
                           ID
                         </th>
                         <th scope="col" className="py-3 px-4">
-                          Name
+                          {t('Courses.course-name')}
                         </th>
                         <th scope="col" className="py-3 px-4">
-                          Featured
+                          {t('Courses.featured')}
                         </th>
                         <th scope="col" className="py-3 px-4 w-full">
-                          Description
+                          {t('Courses.course-description')}
                         </th>
-                        <th scope="col" className="py-3 px-4" colSpan={2}>
+                        <th
+                          scope="col"
+                          className="py-3 px-4 text-center"
+                          colSpan={2}>
                           {t('Manage.manage')}
                         </th>
                       </tr>

@@ -35,6 +35,27 @@ export const fetchCourses = createAsyncThunk(
   }
 );
 
+// TODO: move to new file with new state
+export const fetchFeaturedCourses = createAsyncThunk(
+  'api/courses/featured',
+  async (_: void, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.get('/courses/featured', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      return res.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 // TODO: handle errors
 export const deleteCourse = createAsyncThunk(
   'api/courses/delete',
