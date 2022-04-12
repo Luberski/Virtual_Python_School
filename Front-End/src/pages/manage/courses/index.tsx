@@ -32,7 +32,7 @@ export default function ManageCoursesPage() {
   const isLoggedIn = useAppSelector(selectIsLogged);
   const courses = useAppSelector(selectCoursesData);
   const cancelButtonRef = useRef(null);
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -59,6 +59,8 @@ export default function ManageCoursesPage() {
 
     try {
       await dispatch(createCourse({ name, description }));
+      setValue('name', '');
+      setValue('description', '');
       closeModal();
       notify();
     } catch (error) {
