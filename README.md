@@ -52,3 +52,25 @@ pm2 start npm --name "virtual-school" -- start
 cd Back-End/
 gunicorn --daemon  --bind 0.0.0.0:5000 app:app
 ```
+
+###
+Pages:
+Home (signed out)
+Home (signed in)
+Courses
+Log in
+Course overview
+Course creator
+Lesson creator
+Lesson page
+Profile
+
+
+Help
+Q&A
+
+Cards:
+Settings
+Achievements
+Courses enrolled
+Course certificates
