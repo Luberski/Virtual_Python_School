@@ -22,6 +22,7 @@ def create_course():
     new_course = models.Courses(
         name=request.json["data"]["name"],
         description=request.json["data"]["description"],
+        featured=False,
     )
 
     new_course.add()
@@ -33,6 +34,7 @@ def create_course():
                     "id": new_course.id,
                     "name": new_course.name,
                     "description": new_course.description,
+                    "featured": new_course.featured,
                 },
                 "error": None,
             }
@@ -62,6 +64,11 @@ def edit_course():
         course_edit.description = request.json["data"]["description"]
         to_commit = True
 
+    
+    if request.json["data"]["featured"] != "None":
+        course_edit.featured = request.json["data"]["featured"]
+        to_commit = True
+
     if to_commit is True:
         db.session.commit()
 
@@ -71,6 +78,7 @@ def edit_course():
                 "data": {
                     "name": course_edit.name,
                     "description": course_edit.description,
+                    "featured": course_edit.featured,
                 },
                 "error": None,
             }
@@ -118,6 +126,7 @@ def get_courses_all():
                         "id": course.id,
                         "name": course.name,
                         "description": course.description,
+                        "featured": course.featured,
                     }
                     for course in courses
                 ],
@@ -127,6 +136,33 @@ def get_courses_all():
         200,
     )
 
+
+@routes.route("/api/courses/featured", methods=["GET"])
+@jwt_required()
+def get_courses_all_featured():
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+    courses = models.Courses().query.filter_by(featured=True).all()
+    if courses is None:
+        return make_response(jsonify({"error": "Courses not found"}), 404)
+    return make_response(
+        jsonify(
+            {
+                "data": [
+                    {
+                        "id": course.id,
+                        "name": course.name,
+                        "description": course.description,
+                        "featured": course.featured,
+                    }
+                    for course in courses
+                ],
+                "error": None,
+            }
+        ),
+        200,
+    )
 
 @routes.route("/api/courses/me", methods=["GET"])
 @jwt_required()

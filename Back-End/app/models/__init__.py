@@ -60,8 +60,10 @@ class Courses(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))
+    featured = db.Column(db.Boolean, default=False, nullable=False)
     users_info = relationship("CoursesTaken")
     lessions_info = relationship("Lessons")
+
 
     def add(self):
         db.session.add(self)
