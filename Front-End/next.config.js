@@ -12,7 +12,7 @@ module.exports = {
     ];
   },
   images: {
-    domains: ["preview.redd.it"],
+    domains: ["preview.redd.it", "cdn.discordapp.com", "img7.dmty.pl"],
   },
   swcMinify: true,
 };

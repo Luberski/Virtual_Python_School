@@ -2,9 +2,15 @@
 
 pm2 delete all
 pkill gunicorn
+pip install -U -r /var/www/html/requirements.txt
 
 cd /var/www/html
 git pull
+
+while [ $? != 0 ]
+do
+    git pull
+done
 
 cd Front-End/
 npm i

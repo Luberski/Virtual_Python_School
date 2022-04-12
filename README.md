@@ -74,3 +74,21 @@ Settings
 Achievements
 Courses enrolled
 Course certificates
+
+## Updating the database
+```
+First time create migration:
+flask db init 
+
+Updating:
+flask db migrate -m "Initial migration."
+flask db upgrade
+
+If migrate doesn't work:
+1.
+You should remove old migration folder and create one.
+Also you have to delete 'alembic_version' tabele from mysql.
+
+2. Just delete record from 'alembic_version'
+delete from alembic_version where verion_num='e39d16e62810'
+```

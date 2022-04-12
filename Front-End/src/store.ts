@@ -7,10 +7,12 @@ import {
 import logger from "redux-logger";
 import authReducer from "./features/auth/authSlice";
 import playgroundReducer from "./features/playground/playgroundSlice";
+import coursesReducer from "./features/courses/coursesSlice";
 
 const combinedReducers = combineReducers({
   auth: authReducer,
   playground: playgroundReducer,
+  courses: coursesReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -33,4 +35,5 @@ export const wrapper = createWrapper(store);
 export type RootState = {
   auth: ReturnType<typeof authReducer>;
   playground: ReturnType<typeof playgroundReducer>;
+  courses: ReturnType<typeof coursesReducer>;
 };

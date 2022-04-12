@@ -1,4 +1,4 @@
-dotenv
+python-dotenv
 flask
 flask_jwt_extended
 requests
@@ -7,3 +7,6 @@ mysql-connector-python
 passlib
 pytest
 pytest-dotenv
+wrapt_timeout_decorator
+paramiko
+Flask-Migrate

@@ -1,50 +1,32 @@
-import React, { forwardRef } from "react";
-import clsx from "clsx";
+import React, { forwardRef } from 'react';
+import clsx from 'clsx';
+import { ButtonProps, ButtonSize, ButtonVariant } from '../Button';
 
-export enum ButtonLinkVariant {
-  PRIMARY = "btn-primary",
-  SECONDARY = "btn-secondary",
-  OUTLINE = "btn-outline",
-  OUTLINE_PRIMARY = "btn-outline-primary",
-  DANGER = "btn-danger",
-  SUCCESS = "btn-success",
-}
+export const ButtonLinkVariant = ButtonVariant;
+export const ButtonLinkSize = ButtonSize;
 
-export enum ButtonLinkSize {
-  DEFAULT = "",
-  NORMAL = "w-24",
-  MEDIUM = "w-32",
-  LARGE = "w-40",
-  EXTRA_LARGE = "w-48",
-}
-
-type ButtonLinkProps = {
-  variant?: ButtonLinkVariant;
-  disabled?: boolean;
-  sizeType?: ButtonLinkSize;
-};
+type ButtonLinkProps = ButtonProps;
 
 const ButtonLink = forwardRef(function ButtonLink(
   {
-    href,
     children,
     className,
     variant = ButtonLinkVariant.SECONDARY,
     sizeType = ButtonLinkSize.DEFAULT,
+    ...props
   }: ButtonLinkProps & React.HTMLProps<HTMLAnchorElement>,
   _ref
 ) {
   return (
     <a
-      href={href}
+      {...props}
       className={clsx(
-        "btn",
+        'btn',
         variant,
         sizeType,
-        "hover:no-underline",
+        'hover:no-underline',
         className
-      )}
-    >
+      )}>
       {children}
     </a>
   );

@@ -1,10 +1,9 @@
-import React from "react";
-import { Meta } from "@storybook/react/types-6-0";
-import { useForm } from "react-hook-form";
-import Input from ".";
+import { Meta } from '@storybook/react/types-6-0';
+import { useForm } from 'react-hook-form';
+import Input from '.';
 
 export default {
-  title: "Input",
+  title: 'Input',
   component: Input,
 } as Meta;
 

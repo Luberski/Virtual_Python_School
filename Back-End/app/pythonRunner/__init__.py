@@ -1,4 +1,4 @@
-from subprocess import Popen, PIPE
+import paramiko
 
 # TODO
 # Napisać parser
@@ -9,30 +9,37 @@ from subprocess import Popen, PIPE
 
 
 class RemotePythonRunner:
-    def run_code(self, code):
-        code = self.parse(code)
-        if(code[0] == 1):
-            return code[1], ''
- 
-        self.create_file(code=code)
-        bashcmd = 'lxc exec test -- sh -c "echo \'{}\' > script.py"'.format(code[1])
-        # bashcmd = "lxc exec test -- python script.py"
-        pipe = Popen(bashcmd, stdout=PIPE, stderr=PIPE, shell=True)
-        text = pipe.communicate()[0].decode("ascii")
-        err = pipe.communicate()[1].decode("ascii")
+    def connect(self, username):
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect("10.179.8.194", username="test", password="test")
+        return ssh
+
+    def put_code(self, ssh, data):
+        sftp = ssh.open_sftp()
+        f = sftp.open("script.py", "w")
+        f.write(data)
+        f.close()
+
+    def run_code(self, code, username="test"):
+        ssh = self.connect(username)
+        self.put_code(ssh, code)
+
+        stdin, stdout, stderr = ssh.exec_command("python3 script_run.py")
+        stdin.close()
+        text = stdout.readlines()
+        err = stderr.readlines()
+
+        if len(err):
+            del err[0:11]
+
+        ssh.close()
         return text, err
 
-    def create_file(self, code, imports=''):
-        bashcmd = "lxc exec test -- bash".format(code)
-        pipe = Popen(bashcmd, shell=True)
-        bashcmd = "echo {} > script.py".format(code)
-        pipe = Popen(bashcmd, shell=True)
+    # def parse(self, code):
 
-    def parse(self, code):
-        code = code.replace("\'", "\"")
+    #     for i in code.split(' '):
+    #         if(i.lower() == 'import'):
+    #             return 1, "You cannot import modules!"
 
-        for i in code.split(' '):
-            if(i.lower() == 'import'):
-                return 1, "You cannot import modules!"
-
-        return 0, code
+    #     return 0, code

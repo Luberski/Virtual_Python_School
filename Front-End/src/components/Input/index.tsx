@@ -1,9 +1,20 @@
-import React from "react";
+import React from 'react';
 
-const Input = ({ label, register, required, ...rest }) => (
+type InputProps = {
+  label: string;
+  register: (label: string, options?: unknown) => unknown;
+  required?: boolean;
+};
+
+const Input = ({
+  label,
+  register,
+  required,
+  ...rest
+}: InputProps & React.HTMLProps<HTMLInputElement>) => (
   <input
     {...register(label, { required })}
-    className="p-3 bg-gray-100 border border-gray-300 rounded-xl w-96 dark:border-gray-600 dark:bg-gray-700"
+    className="p-3 w-72 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 sm:w-96"
     {...rest}
   />
 );

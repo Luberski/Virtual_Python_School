@@ -28,7 +28,11 @@
     "intermediate": "Średniozaawansowany",
     "intermediate-info": "Dla średniozaawansowanych co znają podstawy programowania.",
     "courses-adjusted-skill-level": "Kursy zostały dopasowane do Twojego poziomu umiejętności.",
-    "list-of-courses": "Lista kursów"
+    "list-of-courses": "Lista kursów",
+    "course-name": "Nazwa kursu",
+    "course-description": "Opis kursu",
+    "create-course": "Utwórz kurs",
+    "create-new-course": "Utwórz nowy kurs"
   },
   "Playground": {
     "run": "Uruchom",
@@ -40,6 +44,7 @@
     "manage-lessons": "Zarządzaj lekcjami",
     "edit": "Edytuj",
     "delete": "Usuń",
-    "add": "Dodaj"
+    "add": "Dodaj",
+    "create": "Utwórz"
   }
 }

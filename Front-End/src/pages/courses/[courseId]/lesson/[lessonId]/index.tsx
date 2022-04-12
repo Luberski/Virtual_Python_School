@@ -1,20 +1,20 @@
-import React, { useRef } from "react";
-import { useRouter } from "next/router";
-import NavBar from "../../../../../components/NavBar";
-import { useTranslations } from "next-intl";
-import { GetStaticPaths } from "next";
-import Editor from "@monaco-editor/react";
-import { useAppDispatch, useAppSelector } from "../../../../../hooks";
+import { useRef } from 'react';
+import { useRouter } from 'next/router';
+import NavBar from '../../../../../components/NavBar';
+import { useTranslations } from 'next-intl';
+import { GetStaticPaths } from 'next';
+import Editor from '@monaco-editor/react';
+import { useAppDispatch, useAppSelector } from '../../../../../hooks';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
   sendCode,
-} from "../../../../../features/playground/playgroundSlice";
-import Button, { ButtonVariant } from "../../../../../components/Button";
+} from '../../../../../features/playground/playgroundSlice';
+import Button, { ButtonVariant } from '../../../../../components/Button';
 import {
   selectAuthUser,
   selectIsLogged,
-} from "../../../../../features/auth/authSlice";
+} from '../../../../../features/auth/authSlice';
 
 export default function LessonPage() {
   const dispatch = useAppDispatch();
@@ -49,19 +49,22 @@ export default function LessonPage() {
           isLoggedIn={isLoggedIn}
           logout={() =>
             dispatch({
-              type: "auth/logout",
+              type: 'auth/logout',
             })
           }
         />
-        <div className="container flex flex-col items-center justify-center px-6 pb-4 mx-auto my-6">
+        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
           <h1 className="text-center first-letter:uppercase">
             {lessonId} lesson page
           </h1>
-          <Button onClick={handleValue} variant={ButtonVariant.PRIMARY} className="h-12 my-8 w-28">
-            {t("Playground.run")}
+          <Button
+            onClick={handleValue}
+            variant={ButtonVariant.PRIMARY}
+            className="my-8 w-28 h-12">
+            {t('Playground.run')}
           </Button>
           <div className="flex flex-col w-full xl:flex-row">
-            <div className="flex flex-col p-8 m-2 bg-gray-200 shadow-xl rounded-xl xl:w-1/2 dark:bg-gray-800">
+            <div className="flex flex-col p-8 m-2 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-xl xl:w-1/2">
               <h2>Intro</h2>
               <p>
                 Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
@@ -84,19 +87,17 @@ export default function LessonPage() {
                 theme="vs-dark"
               />
               <div>
-                <div className="mx-auto subpixel-antialiased bg-black border-black rounded shadow-2xl h-96">
+                <div className="mx-auto h-96 subpixel-antialiased bg-black rounded border-black shadow-2xl">
                   <div
-                    className="flex items-center h-6 text-center text-black bg-gray-200 border-b border-gray-500 rounded-t dark:bg-gray-800 dark:text-white"
-                    id="headerTerminal"
-                  >
+                    className="flex items-center h-6 text-center text-black dark:text-white bg-gray-200 dark:bg-gray-800 rounded-t border-b border-gray-500"
+                    id="headerTerminal">
                     <div className="mx-auto" id="terminaltitle">
                       <p className="text-center">Terminal output</p>
                     </div>
                   </div>
                   <div
-                    className="h-auto pt-1 pl-1 font-mono text-xs bg-black"
-                    id="console"
-                  >
+                    className="pt-1 pl-1 h-auto text-xs bg-black font-mono"
+                    id="console">
                     <pre className="pb-1 text-white">
                       {playgroundData?.content || playgroundError}
                     </pre>
@@ -127,6 +128,6 @@ export const getStaticPaths: GetStaticPaths<{
 }> = async () => {
   return {
     paths: [], //indicates that no page needs be created at build time
-    fallback: "blocking", //indicates the type of fallback
+    fallback: 'blocking', //indicates the type of fallback
   };
 };

@@ -1,9 +1,8 @@
-import { ComponentMeta, ComponentStory } from "@storybook/react";
-import * as React from "react";
-import Button, { ButtonVariant } from ".";
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import Button, { ButtonVariant } from '.';
 
 export default {
-  title: "Button",
+  title: 'Button',
   component: Button,
 } as ComponentMeta<typeof Button>;
 

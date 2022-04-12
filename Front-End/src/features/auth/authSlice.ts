@@ -1,11 +1,11 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import apiClient from "../../apiClient";
-import type { RootState } from "../../store";
-import { User } from "../../models/User";
-import { ApiPayload } from "../../models/ApiPayload";
-import { Token } from "../../models/Token";
-import { HYDRATE } from "next-redux-wrapper";
-import { setCookies } from "cookies-next";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import apiClient from '../../apiClient';
+import type { RootState } from '../../store';
+import { User } from '../../models/User';
+import { ApiPayload } from '../../models/ApiPayload';
+import { Token } from '../../models/Token';
+import { HYDRATE } from 'next-redux-wrapper';
+import { setCookies } from 'cookies-next';
 
 interface AuthPayload extends ApiPayload {
   data: User & { token: Token };
@@ -15,7 +15,7 @@ export type AuthState = {
   token: Token | null;
   user: User | null;
   isLoggedIn: boolean;
-  status: "idle" | "pending" | "succeeded" | "failed";
+  status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
@@ -23,18 +23,18 @@ const initialState: AuthState = {
   token: null,
   isLoggedIn: false,
   user: null,
-  status: "idle",
+  status: 'idle',
   error: null,
 };
 
 export const loginUser = createAsyncThunk(
-  "auth/login",
+  'auth/login',
   async ({ username, password }: { username: string; password: string }) => {
     try {
       const formData = new FormData();
-      formData.append("username", username);
-      formData.append("password", password);
-      const res = await apiClient.post("/login", formData);
+      formData.append('username', username);
+      formData.append('password', password);
+      const res = await apiClient.post('/login', formData);
       return res.data;
     } catch (error) {
       console.error(error);
@@ -44,7 +44,7 @@ export const loginUser = createAsyncThunk(
 );
 
 export const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     setToken: (state, action) => {
@@ -60,21 +60,22 @@ export const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
       state.token = null;
-      setCookies("token", "");
-      setCookies("accessToken", "");
-      setCookies("refreshToken", "");
-      setCookies("user", "");
-      setCookies("isLoggedIn", "");
+      setCookies('token', '');
+      setCookies('accessToken', '');
+      setCookies('refreshToken', '');
+      setCookies('user', '');
+      setCookies('isLoggedIn', '');
     },
   },
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         return Object.assign({}, state, { ...action.payload.auth });
       })
       .addCase(loginUser.pending, (state) => {
-        state.status = "pending";
+        state.status = 'pending';
       })
       .addCase(
         loginUser.fulfilled,
@@ -86,18 +87,19 @@ export const authSlice = createSlice({
             name: data.name,
             lastName: data.lastName,
             email: data.email,
+            roleId: data.roleId,
           };
           state.token = {
-            accessToken: data.token["access_token"],
-            refreshToken: data.token["refresh_token"],
+            accessToken: data.token['access_token'],
+            refreshToken: data.token['refresh_token'],
           };
           state.isLoggedIn = true;
-          state.status = "succeeded";
+          state.status = 'succeeded';
         }
       )
       // TODO: handle errors from api response
       .addCase(loginUser.rejected, (state, action) => {
-        state.status = "failed";
+        state.status = 'failed';
         state.error = action.error.message;
       });
   },

@@ -1,10 +1,10 @@
-from flask import Flask
-import pytest
 import os
-from dotenv import load_dotenv
-from app.routes import *
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
+from flask import Flask
+import pytest
+from dotenv import load_dotenv
+from app.routes import *
 
 load_dotenv()
 
