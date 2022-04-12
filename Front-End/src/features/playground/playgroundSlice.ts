@@ -1,25 +1,25 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import apiClient from "../../apiClient";
-import type { RootState } from "../../store";
-import { Playground } from "../../models/Playground";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import apiClient from '../../apiClient';
+import type { RootState } from '../../store';
+import { Playground } from '../../models/Playground';
 
 export type PlaygroundState = {
   data: Playground;
-  status: "idle" | "pending" | "succeeded" | "failed";
+  status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
 const initialState: PlaygroundState = {
   data: null,
-  status: "idle",
+  status: 'idle',
   error: null,
 };
 
 export const sendCode = createAsyncThunk(
-  "api/playground",
+  'api/playground',
   async ({ content }: { content: string }) => {
     try {
-      const res = await apiClient.post("/playground", { data: { content } });
+      const res = await apiClient.post('/playground', { data: { content } });
       return res.data;
     } catch (error) {
       console.error(error);
@@ -29,13 +29,13 @@ export const sendCode = createAsyncThunk(
 );
 
 export const playgroundSlice = createSlice({
-  name: "playground",
+  name: 'playground',
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
       .addCase(sendCode.pending, (state) => {
-        state.status = "pending";
+        state.status = 'pending';
       })
       .addCase(sendCode.fulfilled, (state, { payload: { data, error } }) => {
         if (error) {
@@ -43,17 +43,17 @@ export const playgroundSlice = createSlice({
             content: null,
           };
           state.error = error;
-          state.status = "failed";
+          state.status = 'failed';
         } else {
           state.data = {
             content: data?.content,
           };
           state.error = null;
-          state.status = "succeeded";
+          state.status = 'succeeded';
         }
       })
       .addCase(sendCode.rejected, (state, action) => {
-        state.status = "failed";
+        state.status = 'failed';
         state.error = action.error.message;
       });
   },

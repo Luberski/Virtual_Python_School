@@ -6,6 +6,7 @@ import {
   selectAuthUser,
 } from '../../../features/auth/authSlice';
 import {
+  createCourse,
   deleteCourse,
   fetchCourses,
   selectCoursesData,
@@ -26,7 +27,8 @@ export default function ManageCoursesPage() {
   const isLoggedIn = useAppSelector(selectIsLogged);
   const courses = useAppSelector(selectCoursesData);
   const cancelButtonRef = useRef(null);
-  const { register } = useForm();
+  const { register, handleSubmit } = useForm();
+
   const [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
@@ -45,6 +47,18 @@ export default function ManageCoursesPage() {
 
     fetchData().catch(console.error);
   }, [dispatch]);
+
+  // TODO: handle erros
+  const onSubmit = async (data) => {
+    const { name, description } = data;
+
+    try {
+      await dispatch(createCourse({ name, description }));
+      closeModal();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleDeleteCourse = (id: string | number) => async () => {
     await dispatch(deleteCourse(id));
@@ -81,7 +95,7 @@ export default function ManageCoursesPage() {
                 onClick={openModal}
                 variant={IconButtonVariant.PRIMARY}
                 icon={<PlusSmIcon className="w-5 h-5" />}>
-                Create
+                {t('Manage.create')}
               </IconButton>
             </div>
             <Transition.Root show={isOpen} as={Fragment}>
@@ -129,29 +143,32 @@ export default function ManageCoursesPage() {
                             <Dialog.Title
                               as="h3"
                               className="text-xl font-medium leading-6">
-                              Create new course
+                              {t('Courses.create-new-course')}
                             </Dialog.Title>
                             <div className="mt-6">
-                              <form className="flex flex-col justify-center items-start space-y-6">
+                              <form
+                                className="flex flex-col justify-center items-start space-y-6"
+                                onSubmit={handleSubmit(onSubmit)}>
                                 <Input
-                                  label={t('Courses.course-name')}
+                                  label="name"
                                   name="name"
                                   type="text"
                                   register={register}
+                                  required
                                   placeholder={t('Courses.course-name')}
                                 />
                                 <Input
-                                  label={t('Courses.course-description')}
+                                  label="description"
                                   name="description"
                                   type="text"
                                   register={register}
+                                  required
                                   placeholder={t('Courses.course-description')}
                                 />
                                 <div className="py-3">
                                   <IconButton
                                     variant={IconButtonVariant.PRIMARY}
-                                    ref={cancelButtonRef}
-                                    onClick={closeModal}>
+                                    type="submit">
                                     {t('Courses.create-course')}
                                   </IconButton>
                                 </div>

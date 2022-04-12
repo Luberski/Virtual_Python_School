@@ -31,7 +31,8 @@
     "list-of-courses": "Lista kursów",
     "course-name": "Nazwa kursu",
     "course-description": "Opis kursu",
-    "create-course": "Utwórz kurs"
+    "create-course": "Utwórz kurs",
+    "create-new-course": "Utwórz nowy kurs"
   },
   "Playground": {
     "run": "Uruchom",
@@ -43,6 +44,7 @@
     "manage-lessons": "Zarządzaj lekcjami",
     "edit": "Edytuj",
     "delete": "Usuń",
-    "add": "Dodaj"
+    "add": "Dodaj",
+    "create": "Utwórz"
   }
 }

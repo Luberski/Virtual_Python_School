@@ -30,6 +30,7 @@ def create_course():
         jsonify(
             {
                 "data": {
+                    "id": new_course.id,
                     "name": new_course.name,
                     "description": new_course.description,
                 },
@@ -531,7 +532,7 @@ def delete_lesson():
 
     db.session.commit()
 
-    return make_response(jsonify({"data":  {"id": id_lesson}, "error": None,}), 200,)
+    return make_response(jsonify({"data": {"id": id_lesson}, "error": None,}), 200,)
 
 
 @routes.route("/api/lessons", methods=["GET"])
@@ -604,6 +605,7 @@ def create_answer():
         200,
     )
 
+
 @routes.route("/api/answers", methods=["POST"])
 @jwt_required()
 def check_answer():
@@ -612,7 +614,7 @@ def check_answer():
         return make_response(jsonify({"error": "Bad token"}), 403)
     id_lesson = request.json["data"]["id_lesson"]
     answers = models.Answers().query.filter_by(id_lesson=id_lesson).all()
-    
+
     answer_valid = None
     status = False
     length_of_answers = len(answers)
@@ -624,31 +626,24 @@ def check_answer():
                 break
     elif length_of_answers == 1:
         if answers[0].final_answer == request.json["data"]["answer"]:
-            status = True  
+            status = True
             answer_valid = answers[0]
     else:
-        return make_response(jsonify({"error": {"id" : id_lesson},}), 404)
-
+        return make_response(jsonify({"error": {"id": id_lesson},}), 404)
 
     if status == False:
         return make_response(
-        jsonify(
-            {
-                "data": {
-                    "status": status,
-                    "id_lesson": id_lesson,
-                },
-                "error": None,
-            }
-        ),
-        200,
-    )
+            jsonify(
+                {"data": {"status": status, "id_lesson": id_lesson,}, "error": None,}
+            ),
+            200,
+        )
 
     return make_response(
         jsonify(
             {
                 "data": {
-                    "id" : answer_valid.id,
+                    "id": answer_valid.id,
                     "status": status,
                     "id_lesson": answer_valid.id_lesson,
                 },
@@ -657,6 +652,7 @@ def check_answer():
         ),
         200,
     )
+
 
 @routes.route("/api/answers", methods=["PATCH"])
 @jwt_required()
@@ -672,7 +668,6 @@ def edit_answer():
 
     if answer_edit is None:
         return make_response(jsonify({"error": "Answer not found"}), 404)
-
 
     to_commit = False
     if request.json["data"]["final_answer"] != "None":
@@ -690,7 +685,7 @@ def edit_answer():
         jsonify(
             {
                 "data": {
-                    "id" : id_answer,
+                    "id": id_answer,
                     "final_answer": answer_edit.final_answer,
                     "id_lesson": answer_edit.id_lesson,
                 },
@@ -846,7 +841,7 @@ def delete_comment():
 
     db.session.commit()
 
-    return make_response(jsonify({"data": {"id" : id_comment}, "error": None,}), 200,)
+    return make_response(jsonify({"data": {"id": id_comment}, "error": None,}), 200,)
 
 
 @routes.route("/api/comments", methods=["GET"])
