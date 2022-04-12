@@ -2,6 +2,7 @@
 
 pm2 delete all
 pkill gunicorn
+pip install -U -r /var/www/html/requirements.txt
 
 cd /var/www/html
 git pull
@@ -16,5 +17,5 @@ npm i
 npm run build
 #pm2 start npm --name "virtual-school" -- start # Nie działa uruchomione przez shell script
 
-#cd Back-End/
+cd ../Back-End/
 #gunicorn --daemon  --bind 0.0.0.0:5000 app:app
