@@ -33,7 +33,9 @@
     "course-description": "Opis kursu",
     "create-course": "Utwórz kurs",
     "create-new-course": "Utwórz nowy kurs",
-    "new-course-added": "Dodano nowy kurs!"
+    "new-course-added": "Dodano nowy kurs!",
+    "featured": "Wyróżniony",
+    "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej"
   },
   "Playground": {
     "run": "Uruchom",

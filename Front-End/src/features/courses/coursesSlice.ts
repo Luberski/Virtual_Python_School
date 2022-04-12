@@ -65,7 +65,11 @@ export const deleteCourse = createAsyncThunk(
 export const createCourse = createAsyncThunk(
   'api/courses/create',
   async (
-    { name, description }: { name: string; description: string },
+    {
+      name,
+      description,
+      featured = false,
+    }: { name: string; description: string; featured: boolean },
     thunkApi
   ) => {
     try {
@@ -74,7 +78,7 @@ export const createCourse = createAsyncThunk(
       const res = await apiClient.post(
         '/courses',
         {
-          data: { name, description },
+          data: { name, description, featured },
         },
         {
           headers: {

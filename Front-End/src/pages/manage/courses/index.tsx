@@ -32,7 +32,12 @@ export default function ManageCoursesPage() {
   const isLoggedIn = useAppSelector(selectIsLogged);
   const courses = useAppSelector(selectCoursesData);
   const cancelButtonRef = useRef(null);
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit, setValue } =
+    useForm<{
+      name: string;
+      description: string;
+      featured: boolean;
+    }>();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -55,12 +60,13 @@ export default function ManageCoursesPage() {
 
   // TODO: handle erros
   const onSubmit = async (data) => {
-    const { name, description } = data;
+    const { name, description, featured } = data;
 
     try {
-      await dispatch(createCourse({ name, description }));
+      await dispatch(createCourse({ name, description, featured }));
       setValue('name', '');
       setValue('description', '');
+      setValue('featured', false);
       closeModal();
       notify();
     } catch (error) {
@@ -193,6 +199,18 @@ export default function ManageCoursesPage() {
                                   required
                                   placeholder={t('Courses.course-description')}
                                 />
+                                <div className="flex items-center">
+                                  <input
+                                    id="featured"
+                                    name="featured"
+                                    type="checkbox"
+                                    {...register('featured')}
+                                    className="w-4 h-4 text-indigo-600 bg-gray-100 dark:bg-gray-700 rounded border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800"
+                                  />
+                                  <label htmlFor="featured" className="ml-2">
+                                    {t('Courses.featured-on-homepage')}
+                                  </label>
+                                </div>
                                 <div className="py-3">
                                   <IconButton
                                     variant={IconButtonVariant.PRIMARY}
@@ -223,6 +241,9 @@ export default function ManageCoursesPage() {
                         <th scope="col" className="py-3 px-4">
                           Name
                         </th>
+                        <th scope="col" className="py-3 px-4">
+                          Featured
+                        </th>
                         <th scope="col" className="py-3 px-4 w-full">
                           Description
                         </th>
@@ -238,6 +259,9 @@ export default function ManageCoursesPage() {
                             <td className="p-4">{course.id}</td>
                             <td className="p-4 max-w-xs break-words">
                               {course.name}
+                            </td>
+                            <td className="p-4 max-w-xs">
+                              {String(course.featured)}
                             </td>
                             <td className="p-4 max-w-xs break-words">
                               {course.description}
