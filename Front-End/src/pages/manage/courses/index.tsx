@@ -24,6 +24,7 @@ import {
 import Input from '../../../components/Input';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
+import TextArea from '../../../components/TextArea';
 
 export default function ManageCoursesPage() {
   const t = useTranslations();
@@ -189,15 +190,18 @@ export default function ManageCoursesPage() {
                                   type="text"
                                   register={register}
                                   required
+                                  maxLength={100}
                                   placeholder={t('Courses.course-name')}
                                 />
-                                {/* TODO: change to textarea */}
-                                <Input
+                                <TextArea
                                   label="description"
                                   name="description"
                                   type="text"
                                   register={register}
                                   required
+                                  className="resize-none"
+                                  rows={4}
+                                  maxLength={500}
                                   placeholder={t('Courses.course-description')}
                                 />
                                 <div className="flex items-center">
