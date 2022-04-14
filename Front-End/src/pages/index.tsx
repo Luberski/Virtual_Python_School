@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Footer from '../components/Footer';
 import { useTranslations } from 'next-intl';
