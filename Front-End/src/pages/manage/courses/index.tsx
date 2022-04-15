@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
 import {
-  selectIsLogged,
-  selectAuthUser,
-} from '../../../features/auth/authSlice';
+  useAppDispatch,
+  useAppSelector,
+  useAuthRedirect,
+} from '../../../hooks';
 import {
   createCourse,
   deleteCourse,
@@ -29,10 +29,10 @@ import Head from 'next/head';
 import { WEBSITE_TITLE } from '../../../constants';
 
 export default function ManageCoursesPage() {
-  const t = useTranslations();
+  const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectAuthUser);
-  const isLoggedIn = useAppSelector(selectIsLogged);
+
+  const t = useTranslations();
   const courses = useAppSelector(selectCoursesData);
   const cancelButtonRef = useRef(null);
   const { register, handleSubmit, setValue } =
@@ -100,6 +100,10 @@ export default function ManageCoursesPage() {
       ),
       { id: 'unique-notification', position: 'top-center' }
     );
+
+  if (!user && !isLoggedIn) {
+    return null;
+  }
 
   return (
     <>
