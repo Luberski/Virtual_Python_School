@@ -35,7 +35,8 @@
     "create-new-course": "Create new course",
     "new-course-added": "New course added!",
     "featured": "Featured",
-    "featured-on-homepage": "Set as featured on homepage"
+    "featured-on-homepage": "Set as featured on homepage",
+    "no-courses-found": "No courses found"
   },
   "Playground": {
     "run": "Run",
@@ -49,5 +50,15 @@
     "delete": "Delete",
     "add": "Add",
     "create": "Create"
+  },
+  "Meta": {
+    "title-home": "Home",
+    "title-courses": "Courses",
+    "title-playground": "Playground",
+    "title-manage": "Manage",
+    "title-login": "Log in",
+    "title-register": "Register",
+    "title-course": "Course",
+    "title-lesson": "Lesson"
   }
 }

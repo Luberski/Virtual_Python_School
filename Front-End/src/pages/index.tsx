@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from '../hooks';
 import { selectIsLogged, selectAuthUser } from '../features/auth/authSlice';
 import NavBar from '../components/NavBar';
 import FancyCard from '../components/FancyCard';
+import Head from 'next/head';
+import { WEBSITE_TITLE } from '../constants';
 
 // TODO: get featured courses from server
 export default function IndexPage() {
@@ -15,6 +17,11 @@ export default function IndexPage() {
 
   return (
     <>
+      <Head>
+        <title>
+          {t('Meta.title-home')} - {WEBSITE_TITLE}
+        </title>
+      </Head>
       <div className="w-full h-full">
         <NavBar
           user={user}

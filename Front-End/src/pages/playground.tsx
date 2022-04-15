@@ -10,6 +10,8 @@ import {
   sendCode,
 } from '../features/playground/playgroundSlice';
 import { selectAuthUser, selectIsLogged } from '../features/auth/authSlice';
+import { WEBSITE_TITLE } from '../constants';
+import Head from 'next/head';
 
 export default function Playground() {
   const dispatch = useAppDispatch();
@@ -35,6 +37,11 @@ export default function Playground() {
 
   return (
     <>
+      <Head>
+        <title>
+          {t('Meta.title-playground')} - {WEBSITE_TITLE}
+        </title>
+      </Head>
       <div className="w-full h-full">
         <NavBar
           user={user}

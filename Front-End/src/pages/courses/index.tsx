@@ -10,6 +10,8 @@ import {
   fetchCourses,
   selectCoursesData,
 } from '../../features/courses/coursesSlice';
+import { WEBSITE_TITLE } from '../../constants';
+import Head from 'next/head';
 
 export default function CoursesPage() {
   const dispatch = useAppDispatch();
@@ -28,6 +30,11 @@ export default function CoursesPage() {
 
   return (
     <>
+      <Head>
+        <title>
+          {t('Meta.title-courses')} - {WEBSITE_TITLE}
+        </title>
+      </Head>
       <div className="w-full h-full">
         <NavBar
           user={user}
@@ -64,7 +71,9 @@ export default function CoursesPage() {
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center w-full h-full">
-              <p className="pb-8 text-lg font-medium">No courses found :(</p>
+              <p className="pb-8 text-lg font-medium">
+                {t('Courses.no-courses-found')}
+              </p>
               <Image
                 src="/undraw_no_data_re_kwbl.svg"
                 alt="No data"

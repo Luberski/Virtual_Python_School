@@ -15,6 +15,8 @@ import {
 import NavBar from '../components/NavBar';
 import { useRouter } from 'next/router';
 import IconButton, { IconButtonVariant } from '../components/IconButton';
+import { WEBSITE_TITLE } from '../constants';
+import Head from 'next/head';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -47,6 +49,11 @@ export default function LoginPage() {
 
   return (
     <>
+      <Head>
+        <title>
+          {t('Meta.title-login')} - {WEBSITE_TITLE}
+        </title>
+      </Head>
       <div className="w-full h-full">
         <NavBar />
         <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">

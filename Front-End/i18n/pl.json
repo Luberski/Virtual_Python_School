@@ -35,7 +35,8 @@
     "create-new-course": "Utwórz nowy kurs",
     "new-course-added": "Dodano nowy kurs!",
     "featured": "Wyróżniony",
-    "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej"
+    "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej",
+    "no-courses-found": "Nie znaleziono kursów"
   },
   "Playground": {
     "run": "Uruchom",
@@ -49,5 +50,15 @@
     "delete": "Usuń",
     "add": "Dodaj",
     "create": "Utwórz"
+  },
+  "Meta": {
+    "title-home": "Strona główna",
+    "title-courses": "Kursy",
+    "title-playground": "Code Playground",
+    "title-manage": "Zarządzaj",
+    "title-login": "Logowanie",
+    "title-register": "Rejestracja",
+    "title-course": "Kurs",
+    "title-lesson": "Lekcja"
   }
 }
