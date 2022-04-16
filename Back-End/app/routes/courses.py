@@ -67,7 +67,6 @@ def edit_course():
         course_edit.description = request.json["data"]["description"]
         to_commit = True
 
-    
     if request.json["data"]["featured"] != "None":
         course_edit.featured = request.json["data"]["featured"]
         to_commit = True
@@ -141,11 +140,7 @@ def get_courses_all():
 
 
 @routes.route("/api/courses/featured", methods=["GET"])
-@jwt_required()
 def get_courses_all_featured():
-    username = get_jwt()["sub"]
-    if username is None:
-        return make_response(jsonify({"error": "Bad token"}), 403)
     courses = models.Courses().query.filter_by(featured=True).all()
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
@@ -166,6 +161,7 @@ def get_courses_all_featured():
         ),
         200,
     )
+
 
 @routes.route("/api/courses/me", methods=["GET"])
 @jwt_required()

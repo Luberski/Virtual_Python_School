@@ -7,6 +7,11 @@ import NavBar from '../components/NavBar';
 import FancyCard from '../components/FancyCard';
 import Head from 'next/head';
 import { WEBSITE_TITLE } from '../constants';
+import { useEffect } from 'react';
+import {
+  fetchFeaturedCourses,
+  selectFeaturedCoursesData,
+} from '../features/courses/featuredCoursesSlice';
 
 // TODO: get featured courses from server
 export default function IndexPage() {
@@ -14,6 +19,16 @@ export default function IndexPage() {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
+  const featuredCourses = useAppSelector(selectFeaturedCoursesData);
+
+  // TODO: refactor to server side fetching
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(fetchFeaturedCourses());
+    };
+
+    fetchData().catch(console.error);
+  }, [dispatch]);
 
   return (
     <>
@@ -41,26 +56,34 @@ export default function IndexPage() {
           </div>
         </div>
         <div className="container px-6 mx-auto">
-          <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
-            <FancyCard
-              title={t('Courses.beginners')}
-              description={t('Courses.beginners-info')}
-              link="/courses"
-              cardColor="bg-gray-50"
-              shadowColor="shadow-gray-500/50"
-              hoverShadowColor="hover:shadow-gray-500/50"
-              buttonText={t('Home.learn-more')}
-            />
-            <FancyCard
-              title={t('Courses.intermediate')}
-              description={t('Courses.intermediate-info')}
-              link="/courses"
-              cardColor="bg-gray-50"
-              shadowColor="shadow-gray-500/50"
-              hoverShadowColor="hover:shadow-gray-500/50"
-              buttonText={t('Home.learn-more')}
-            />
-          </div>
+          {featuredCourses && featuredCourses.length > 0 ? (
+            <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
+              {featuredCourses.map((course) => (
+                <FancyCard
+                  key={course.id}
+                  title={course.name}
+                  description={course.description}
+                  link={`/courses`}
+                  cardColor="bg-gray-50"
+                  shadowColor="shadow-gray-500/50"
+                  hoverShadowColor="hover:shadow-gray-500/50"
+                  buttonText={t('Home.learn-more')}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col justify-center items-center w-full h-full">
+              <p className="pb-8 text-lg font-medium">
+                {t('Courses.no-courses-found')}
+              </p>
+              <Image
+                src="/undraw_no_data_re_kwbl.svg"
+                alt="No data"
+                width={200}
+                height={200}
+              />
+            </div>
+          )}
         </div>
         <div className="flex justify-center items-center my-16">
           <Image

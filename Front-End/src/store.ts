@@ -1,18 +1,20 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { createWrapper } from "next-redux-wrapper";
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { createWrapper } from 'next-redux-wrapper';
 import {
   nextReduxCookieMiddleware,
   wrapMakeStore,
-} from "next-redux-cookie-wrapper";
-import logger from "redux-logger";
-import authReducer from "./features/auth/authSlice";
-import playgroundReducer from "./features/playground/playgroundSlice";
-import coursesReducer from "./features/courses/coursesSlice";
+} from 'next-redux-cookie-wrapper';
+import logger from 'redux-logger';
+import authReducer from './features/auth/authSlice';
+import playgroundReducer from './features/playground/playgroundSlice';
+import coursesReducer from './features/courses/coursesSlice';
+import featuredCoursesReducer from './features/courses/featuredCoursesSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
   playground: playgroundReducer,
   courses: coursesReducer,
+  featuredCourses: featuredCoursesReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -23,10 +25,10 @@ export const store = wrapMakeStore(() =>
         .prepend(
           nextReduxCookieMiddleware({
             // Here, set the cookie data you want to share between the client and the server. I set the following three data. Just set them according to your own needs
-            subtrees: ["auth.user", "auth.token", "auth.isLoggedIn"],
+            subtrees: ['auth.user', 'auth.token', 'auth.isLoggedIn'],
           })
         )
-        .concat(process.env.NODE_ENV === "development" ? [logger] : []),
+        .concat(process.env.NODE_ENV === 'development' ? [logger] : []),
   })
 );
 
@@ -36,4 +38,5 @@ export type RootState = {
   auth: ReturnType<typeof authReducer>;
   playground: ReturnType<typeof playgroundReducer>;
   courses: ReturnType<typeof coursesReducer>;
+  featuredCourses: ReturnType<typeof featuredCoursesReducer>;
 };

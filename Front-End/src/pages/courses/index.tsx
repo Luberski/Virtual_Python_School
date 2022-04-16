@@ -3,8 +3,7 @@ import Footer from '../../components/Footer';
 import { useTranslations } from 'next-intl';
 import NavBar from '../../components/NavBar';
 import FancyCard from '../../components/FancyCard';
-import { selectAuthUser, selectIsLogged } from '../../features/auth/authSlice';
-import { useAppDispatch, useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector, useAuthRedirect } from '../../hooks';
 import Image from 'next/image';
 import {
   fetchCourses,
@@ -14,10 +13,11 @@ import { WEBSITE_TITLE } from '../../constants';
 import Head from 'next/head';
 
 export default function CoursesPage() {
+  const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectAuthUser);
-  const isLoggedIn = useAppSelector(selectIsLogged);
   const t = useTranslations();
+  const courses = useAppSelector(selectCoursesData);
+
   // TODO: refactor to server side fetching
   useEffect(() => {
     const fetchData = async () => {
@@ -25,9 +25,11 @@ export default function CoursesPage() {
     };
 
     fetchData().catch(console.error);
-  }, [dispatch]);
-  const courses = useAppSelector(selectCoursesData);
+  }, [dispatch, isLoggedIn]);
 
+  if (!user && !isLoggedIn) {
+    return null;
+  }
   return (
     <>
       <Head>

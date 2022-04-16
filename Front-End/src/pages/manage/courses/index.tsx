@@ -59,7 +59,7 @@ export default function ManageCoursesPage() {
     };
 
     fetchData().catch(console.error);
-  }, [dispatch]);
+  }, [dispatch, isLoggedIn]);
 
   // TODO: handle erros
   const onSubmit = async (data) => {
