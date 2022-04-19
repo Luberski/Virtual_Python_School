@@ -1,15 +1,13 @@
 from datetime import datetime
 from flask import request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt
+from numpy import number
 from app.db import db
 from app import models
 from . import routes
 
 
 ADMIN_ID = 1
-
-# TODO: add ability to mark course as featured for homepage. Max 2-3 courses can be featured.
-
 
 @routes.route("/api/courses", methods=["POST"])
 @jwt_required()
@@ -115,9 +113,21 @@ def delete_course():
 @jwt_required()
 def get_courses_all():
     username = get_jwt()["sub"]
+
+    first_item = 1
+    number_of_items = 20
+
+    if request.json:
+        if request.json["data"].get("first_element"):
+            first_item = request.json["data"]["first_element"]
+        if request.json["data"].get("number_of_elements"):
+            number_of_items = request.json["data"]["number_of_elements"]
+        
+
+
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    courses = models.Courses().query.all()
+    courses = models.Courses().query.paginate(first_item, number_of_items, False).items
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
     return make_response(
@@ -141,7 +151,18 @@ def get_courses_all():
 
 @routes.route("/api/courses/featured", methods=["GET"])
 def get_courses_all_featured():
-    courses = models.Courses().query.filter_by(featured=True).all()
+
+    first_item = 1
+    number_of_items = 5
+
+    if request.json:
+        if request.json["data"].get("first_element"):
+            first_item = request.json["data"]["first_element"]
+        if request.json["data"].get("number_of_elements"):
+            number_of_items = request.json["data"]["number_of_elements"]
+
+
+    courses = models.Courses().query.filter_by(featured=True).paginate(first_item, number_of_items, False).items
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
     return make_response(
@@ -169,8 +190,22 @@ def get_courses_me():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
+
+
+    
+    first_item = 1
+    number_of_items = 20
+
+    
+    if request.json:
+        if request.json["data"].get("first_element"):
+            first_item = request.json["data"]["first_element"]
+        if request.json["data"].get("number_of_elements"):
+            number_of_items = request.json["data"]["number_of_elements"]
+
+    
     user = models.User().query.filter_by(username=username).first()
-    courses = models.CoursesTaken().query.filter_by(id_user=user.id).all()
+    courses = models.CoursesTaken().query.filter_by(id_user=user.id).paginate(first_item, number_of_items, False).items
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
@@ -194,7 +229,7 @@ def get_courses_me():
         200,
     )
 
-
+""" Get a list of courses taken by a user using his id """
 @routes.route("/api/courses/id", methods=["POST"])
 @jwt_required()
 def get_course_id():
@@ -204,7 +239,19 @@ def get_course_id():
     if user is None:
         return make_response(jsonify({"error": "User not found"}), 404)
 
-    courses = models.CoursesTaken().query.filter_by(id_user=user.id).all()
+       
+    first_item = 1
+    number_of_items = 20
+
+    
+    if request.json:
+        if request.json["data"].get("first_element"):
+            first_item = request.json["data"]["first_element"]
+        if request.json["data"].get("number_of_elements"):
+            number_of_items = request.json["data"]["number_of_elements"]
+
+
+    courses = models.CoursesTaken().query.filter_by(id_user=user.id).paginate(first_item, number_of_items, False).items
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
@@ -576,10 +623,22 @@ def get_lessons():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
+
+    first_item = 1
+    number_of_items = 20
+
+    
+    if request.json:
+        if request.json["data"].get("first_element"):
+            first_item = request.json["data"]["first_element"]
+        if request.json["data"].get("number_of_elements"):
+            number_of_items = request.json["data"]["number_of_elements"]  
+
+      
     lessons = (
         models.Lessons()
         .query.filter_by(id_course=request.json["data"]["id_course"])
-        .all()
+        .paginate(first_item, number_of_items, False).items
     )
     if lessons is None:
         return make_response(jsonify({"error": "Lessons not found"}), 404)
@@ -756,10 +815,21 @@ def get_answers():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
+
+    first_item = 1
+    number_of_items = 20
+
+    
+    if request.json:
+        if request.json["data"].get("first_element"):
+            first_item = request.json["data"]["first_element"]
+        if request.json["data"].get("number_of_elements"):
+            number_of_items = request.json["data"]["number_of_elements"]
+    
     answers = (
         models.Answers()
         .query.filter_by(id_lesson=request.json["data"]["id_lesson"])
-        .all()
+        .paginate(first_item, number_of_items, False).items
     )
     if answers is None:
         return make_response(jsonify({"error": "Answers not found"}), 404)
@@ -885,10 +955,22 @@ def get_comments():
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
+
+    first_item = 1
+    number_of_items = 5
+
+    
+    if request.json:
+        if request.json["data"].get("first_element"):
+            first_item = request.json["data"]["first_element"]
+        if request.json["data"].get("number_of_elements"):
+            number_of_items = request.json["data"]["number_of_elements"]
+    
     comments = (
         models.Comments()
         .query.filter_by(id_lesson=request.json["data"]["id_lesson"])
-        .all()
+        .paginate(first_item, number_of_items, False).items
+
     )
     if comments == None:
         return make_response(jsonify({"error": "Comments not found"}), 404)
