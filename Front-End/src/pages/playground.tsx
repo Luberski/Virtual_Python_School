@@ -22,7 +22,7 @@ export default function Playground() {
   const playgroundData = useAppSelector(selectPlaygroundData);
   const playgroundError = useAppSelector(selectPlaygroundError);
 
-  const handleEditorDidMount = (editor, _monaco) => {
+  const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
   };
 
@@ -99,7 +99,7 @@ export default function Playground() {
   );
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       i18n: Object.assign({}, await import(`../../i18n/${locale}.json`)),

@@ -10,7 +10,7 @@ export default {
 export const Default = (args) => {
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data: unknown) => console.log(data);
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
       <TextArea

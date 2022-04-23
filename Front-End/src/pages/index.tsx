@@ -13,7 +13,6 @@ import {
   selectFeaturedCoursesData,
 } from '../features/courses/featuredCoursesSlice';
 
-// TODO: get featured courses from server
 export default function IndexPage() {
   const t = useTranslations();
   const dispatch = useAppDispatch();
@@ -99,7 +98,7 @@ export default function IndexPage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       i18n: Object.assign({}, await import(`../../i18n/${locale}.json`)),

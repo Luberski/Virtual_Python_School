@@ -61,8 +61,12 @@ export default function ManageCoursesPage() {
     fetchData().catch(console.error);
   }, [dispatch, isLoggedIn]);
 
-  // TODO: handle erros
-  const onSubmit = async (data) => {
+  // TODO: handle errors
+  const onSubmit = async (data: {
+    name: string;
+    description: string;
+    featured: boolean;
+  }) => {
     const { name, description, featured } = data;
 
     try {
@@ -328,7 +332,7 @@ export default function ManageCoursesPage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       i18n: Object.assign({}, await import(`../../../../i18n/${locale}.json`)),

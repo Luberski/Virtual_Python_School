@@ -34,7 +34,7 @@ export default function LoginPage() {
     }
   }, [user, isLoggedIn, router]);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: { username: string; password: string }) => {
     const { username, password } = data;
 
     try {
@@ -135,7 +135,7 @@ export default function LoginPage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       i18n: Object.assign({}, await import(`../../i18n/${locale}.json`)),

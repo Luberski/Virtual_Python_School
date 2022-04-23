@@ -38,7 +38,7 @@ export default function CoursePage() {
   );
 }
 
-export async function getStaticProps({ locale }) {
+export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       i18n: Object.assign({}, await import(`../../../../i18n/${locale}.json`)),

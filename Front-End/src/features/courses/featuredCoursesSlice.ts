@@ -5,7 +5,7 @@ import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
 
 export type CourseState = {
-  data: Course[];
+  data: Course[] | null;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
@@ -60,7 +60,7 @@ export const featuredCoursesSlice = createSlice({
       )
       .addCase(fetchFeaturedCourses.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error = action.error.message ?? null;
       });
   },
 });

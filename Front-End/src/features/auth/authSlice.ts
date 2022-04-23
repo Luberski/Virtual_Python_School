@@ -97,10 +97,9 @@ export const authSlice = createSlice({
           state.status = 'succeeded';
         }
       )
-      // TODO: handle errors from api response
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error = action.error.message ?? null;
       });
   },
 });

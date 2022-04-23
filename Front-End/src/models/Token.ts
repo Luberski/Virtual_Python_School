@@ -1,4 +1,4 @@
 export type Token = {
-  accessToken: string | null;
-  refreshToken: string | null;
+  accessToken: string | 'access_token' | null;
+  refreshToken: string | 'refresh_token' | null;
 };
