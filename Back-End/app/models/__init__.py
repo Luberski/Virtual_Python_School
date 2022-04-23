@@ -64,7 +64,6 @@ class Courses(db.Model):
     users_info = relationship("CoursesTaken")
     lessions_info = relationship("Lessons")
 
-
     def add(self):
         db.session.add(self)
         db.session.commit()

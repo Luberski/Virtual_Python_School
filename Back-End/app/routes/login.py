@@ -158,4 +158,3 @@ def token_refresh():
 def check_if_token_in_blocklist(jwt_header, decrypted_token):
     jti = decrypted_token["jti"]
     return models.RevokedTokenModel.is_jti_blacklisted(jti=jti)
-

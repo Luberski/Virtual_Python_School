@@ -38,6 +38,16 @@
     "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej",
     "no-courses-found": "Nie znaleziono kursów"
   },
+  "Lessons": {
+    "lessons": "Lekcje",
+    "list-of-lessons": "Lista lekcji",
+    "create-new-lesson": "Utwórz nową lekcję",
+    "lesson-name": "Nazwa lekcji",
+    "lesson-description": "Opis lekcji",
+    "create-lesson": "Utwórz lekcję",
+    "no-lessons-found": "Nie znaleziono lekcji",
+    "new-lesson-added": "Dodano nową lekcję!"
+  },
   "Playground": {
     "run": "Uruchom",
     "leading": "Code Playground"

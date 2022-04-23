@@ -1,13 +1,13 @@
 from datetime import datetime
 from flask import request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt
-from numpy import number
 from app.db import db
 from app import models
 from . import routes
 
 
 ADMIN_ID = 1
+
 
 @routes.route("/api/courses", methods=["POST"])
 @jwt_required()
@@ -122,8 +122,6 @@ def get_courses_all():
             first_item = request.json["data"]["first_element"]
         if request.json["data"].get("number_of_elements"):
             number_of_items = request.json["data"]["number_of_elements"]
-        
-
 
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
@@ -161,8 +159,12 @@ def get_courses_all_featured():
         if request.json["data"].get("number_of_elements"):
             number_of_items = request.json["data"]["number_of_elements"]
 
-
-    courses = models.Courses().query.filter_by(featured=True).paginate(first_item, number_of_items, False).items
+    courses = (
+        models.Courses()
+        .query.filter_by(featured=True)
+        .paginate(first_item, number_of_items, False)
+        .items
+    )
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
     return make_response(
@@ -191,21 +193,22 @@ def get_courses_me():
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
 
-
-    
     first_item = 1
     number_of_items = 20
 
-    
     if request.json:
         if request.json["data"].get("first_element"):
             first_item = request.json["data"]["first_element"]
         if request.json["data"].get("number_of_elements"):
             number_of_items = request.json["data"]["number_of_elements"]
 
-    
     user = models.User().query.filter_by(username=username).first()
-    courses = models.CoursesTaken().query.filter_by(id_user=user.id).paginate(first_item, number_of_items, False).items
+    courses = (
+        models.CoursesTaken()
+        .query.filter_by(id_user=user.id)
+        .paginate(first_item, number_of_items, False)
+        .items
+    )
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
@@ -229,7 +232,12 @@ def get_courses_me():
         200,
     )
 
-""" Get a list of courses taken by a user using his id """
+
+"""
+# Get a list of courses taken by a user using his id
+"""
+
+
 @routes.route("/api/courses/id", methods=["POST"])
 @jwt_required()
 def get_course_id():
@@ -239,19 +247,21 @@ def get_course_id():
     if user is None:
         return make_response(jsonify({"error": "User not found"}), 404)
 
-       
     first_item = 1
     number_of_items = 20
 
-    
     if request.json:
         if request.json["data"].get("first_element"):
             first_item = request.json["data"]["first_element"]
         if request.json["data"].get("number_of_elements"):
             number_of_items = request.json["data"]["number_of_elements"]
 
-
-    courses = models.CoursesTaken().query.filter_by(id_user=user.id).paginate(first_item, number_of_items, False).items
+    courses = (
+        models.CoursesTaken()
+        .query.filter_by(id_user=user.id)
+        .paginate(first_item, number_of_items, False)
+        .items
+    )
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
 
@@ -286,12 +296,12 @@ def join_course_me():
 
     course_wanted = request.json["data"]["id_course"]
 
-    if course_wanted == None:
+    if course_wanted is None:
         return make_response(jsonify({"error": "Course does not exist"}), 403)
 
     course_query = models.Courses().query.filter_by(id=course_wanted).first()
 
-    if course_query == None:
+    if course_query is None:
         return make_response(jsonify({"error": "Course not found"}), 404)
 
     check_exist = (
@@ -349,12 +359,12 @@ def join_course_id():
 
     course_wanted = request.json["data"]["id_course"]
 
-    if course_wanted == None:
+    if course_wanted is None:
         return make_response(jsonify({"error": "Course does not exist"}), 403)
 
     course_query = models.Courses().query.filter_by(id=course_wanted).first()
 
-    if course_query == None:
+    if course_query is None:
         return make_response(jsonify({"error": "Course not found"}), 404)
 
     check_exist = (
@@ -462,12 +472,12 @@ def close_course_id():
 
     course_wanted = request.json["data"]["id_course"]
 
-    if course_wanted == None:
+    if course_wanted is None:
         return make_response(jsonify({"error": "Course does not exist"}), 403)
 
     course_query = models.Courses().query.filter_by(id=course_wanted).first()
 
-    if course_query == None:
+    if course_query is None:
         return make_response(jsonify({"error": "Course not found"}), 404)
 
     course_to_close = (
@@ -627,18 +637,17 @@ def get_lessons():
     first_item = 1
     number_of_items = 20
 
-    
     if request.json:
         if request.json["data"].get("first_element"):
             first_item = request.json["data"]["first_element"]
         if request.json["data"].get("number_of_elements"):
-            number_of_items = request.json["data"]["number_of_elements"]  
+            number_of_items = request.json["data"]["number_of_elements"]
 
-      
     lessons = (
         models.Lessons()
         .query.filter_by(id_course=request.json["data"]["id_course"])
-        .paginate(first_item, number_of_items, False).items
+        .paginate(first_item, number_of_items, False)
+        .items
     )
     if lessons is None:
         return make_response(jsonify({"error": "Lessons not found"}), 404)
@@ -819,17 +828,17 @@ def get_answers():
     first_item = 1
     number_of_items = 20
 
-    
     if request.json:
         if request.json["data"].get("first_element"):
             first_item = request.json["data"]["first_element"]
         if request.json["data"].get("number_of_elements"):
             number_of_items = request.json["data"]["number_of_elements"]
-    
+
     answers = (
         models.Answers()
         .query.filter_by(id_lesson=request.json["data"]["id_lesson"])
-        .paginate(first_item, number_of_items, False).items
+        .paginate(first_item, number_of_items, False)
+        .items
     )
     if answers is None:
         return make_response(jsonify({"error": "Answers not found"}), 404)
@@ -959,20 +968,19 @@ def get_comments():
     first_item = 1
     number_of_items = 5
 
-    
     if request.json:
         if request.json["data"].get("first_element"):
             first_item = request.json["data"]["first_element"]
         if request.json["data"].get("number_of_elements"):
             number_of_items = request.json["data"]["number_of_elements"]
-    
+
     comments = (
         models.Comments()
         .query.filter_by(id_lesson=request.json["data"]["id_lesson"])
-        .paginate(first_item, number_of_items, False).items
-
+        .paginate(first_item, number_of_items, False)
+        .items
     )
-    if comments == None:
+    if comments is None:
         return make_response(jsonify({"error": "Comments not found"}), 404)
 
     return make_response(

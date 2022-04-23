@@ -2,7 +2,7 @@ from flask import Blueprint
 from app.application import application as app
 
 routes = Blueprint("routes", __name__)
-
+# pylint: disable=C0413
 from .login import *
 from .users import *
 from .playground import *

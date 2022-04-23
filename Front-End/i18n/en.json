@@ -38,6 +38,16 @@
     "featured-on-homepage": "Set as featured on homepage",
     "no-courses-found": "No courses found"
   },
+  "Lessons": {
+    "lessons": "Lessons",
+    "list-of-lessons": "List of lessons",
+    "create-new-lesson": "Create new lesson",
+    "lesson-name": "Lesson name",
+    "lesson-description": "Lesson description",
+    "create-lesson": "Create lesson",
+    "no-lessons-found": "No lessons found",
+    "new-lesson-added": "New lesson added!"
+  },
   "Playground": {
     "run": "Run",
     "leading": "Code Playground"
