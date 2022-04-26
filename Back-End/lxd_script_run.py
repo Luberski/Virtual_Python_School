@@ -7,7 +7,6 @@ import re
 #                 f.seek(0, 0)
 #                 f.write(line.rstrip('\r\n') + '\n' + content)
 
-
 @timeout(5)
 def exec_script():
     exec(open("script.py", encoding="utf-8").read())
