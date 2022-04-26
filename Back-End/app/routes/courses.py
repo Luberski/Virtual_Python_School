@@ -627,10 +627,9 @@ def delete_lesson():
     return make_response(jsonify({"data": {"id": id_lesson}, "error": None,}), 200,)
 
 
-@routes.route("/api/lessons", methods=["GET"])
+@routes.route("/api/courses/<id_course>/lessons", methods=["GET"])
 @jwt_required()
-def get_lessons():
-    args = request.args
+def get_lessons(id_course):
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
@@ -646,7 +645,7 @@ def get_lessons():
 
     lessons = (
         models.Lessons()
-        .query.filter_by(id_course=args.get("id_course"))
+        .query.filter_by(id_course=id_course)
         .paginate(first_item, number_of_items, False)
         .items
     )
@@ -666,6 +665,38 @@ def get_lessons():
                         "number_of_answers": lesson.number_of_answers,
                     }
                     for lesson in lessons
+                ],
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+@routes.route("/api/courses/<id_course>/lessons/<lesson_id>", methods=["GET"])
+@jwt_required()
+def get_lesson(id_course, lesson_id):
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+
+    lesson = models.Lessons().query.filter_by(id_course=id_course, id=lesson_id).first()
+
+    if lesson is None:
+        return make_response(jsonify({"error": "Lesson not found"}), 404)
+
+    return make_response(
+        jsonify(
+            {
+                "data": [
+                    {
+                        "id": lesson.id,
+                        "name": lesson.name,
+                        "description": lesson.description,
+                        "id_course": lesson.id_course,
+                        "type": lesson.type,
+                        "number_of_answers": lesson.number_of_answers,
+                    }
                 ],
                 "error": None,
             }
