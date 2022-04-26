@@ -35,11 +35,3 @@ class RemotePythonRunner:
 
         ssh.close()
         return text, err
-
-    # def parse(self, code):
-
-    #     for i in code.split(' '):
-    #         if(i.lower() == 'import'):
-    #             return 1, "You cannot import modules!"
-
-    #     return 0, code
