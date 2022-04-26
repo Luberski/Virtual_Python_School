@@ -59,7 +59,9 @@
     "edit": "Edytuj",
     "delete": "Usuń",
     "add": "Dodaj",
-    "create": "Utwórz"
+    "create": "Utwórz",
+    "manage-lessons-for-course": "Zarządzaj lekcjami dla kursu",
+    "manage-course": "Zarządzaj kursem"
   },
   "Meta": {
     "title-home": "Strona główna",

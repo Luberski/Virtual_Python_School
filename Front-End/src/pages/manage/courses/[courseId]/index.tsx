@@ -4,44 +4,48 @@ import {
   useAppDispatch,
   useAppSelector,
   useAuthRedirect,
-} from '../../../hooks';
+} from '../../../../hooks';
 import {
-  createCourse,
-  deleteCourse,
-  fetchCourses,
-  selectCoursesData,
-} from '../../../features/courses/coursesSlice';
-import NavBar from '../../../components/NavBar';
-import Button from '../../../components/Button';
+  createLesson,
+  deleteLesson,
+  fetchLessons,
+  selectLessonsData,
+} from '../../../../features/lessons/lessonsSlice';
+import NavBar from '../../../../components/NavBar';
+import Button from '../../../../components/Button';
 import Image from 'next/image';
 import { Dialog, Transition } from '@headlessui/react';
-import IconButton, { IconButtonVariant } from '../../../components/IconButton';
+import IconButton, {
+  IconButtonVariant,
+} from '../../../../components/IconButton';
 import {
   AcademicCapIcon,
   InformationCircleIcon,
   PlusSmIcon,
 } from '@heroicons/react/outline';
-import Input from '../../../components/Input';
+import Input from '../../../../components/Input';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
-import TextArea from '../../../components/TextArea';
+import TextArea from '../../../../components/TextArea';
 import Head from 'next/head';
-import { WEBSITE_TITLE } from '../../../constants';
-import ButtonLink, { ButtonLinkVariant } from '../../../components/ButtonLink';
+import { WEBSITE_TITLE } from '../../../../constants';
+import { useRouter } from 'next/router';
+import { GetStaticPaths } from 'next';
 import Link from 'next/link';
 
-export default function ManageCoursesPage() {
+export default function ManageCourseAndLessonsPage() {
   const [user, isLoggedIn] = useAuthRedirect();
+  const router = useRouter();
+  const { courseId } = router.query as { courseId: string };
   const dispatch = useAppDispatch();
 
   const t = useTranslations();
-  const courses = useAppSelector(selectCoursesData);
+  const lessons = useAppSelector(selectLessonsData);
   const cancelButtonRef = useRef(null);
   const { register, handleSubmit, setValue } =
     useForm<{
       name: string;
       description: string;
-      featured: boolean;
     }>();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -57,25 +61,29 @@ export default function ManageCoursesPage() {
   // TODO: refactor to server side fetching
   useEffect(() => {
     const fetchData = async () => {
-      await dispatch(fetchCourses());
+      await dispatch(fetchLessons(courseId));
     };
 
     fetchData().catch(console.error);
-  }, [dispatch, isLoggedIn]);
+  }, [courseId, dispatch, isLoggedIn]);
 
   // TODO: handle errors
-  const onSubmit = async (data: {
-    name: string;
-    description: string;
-    featured: boolean;
-  }) => {
-    const { name, description, featured } = data;
+  const onSubmit = async (data: { name: string; description: string }) => {
+    const { name, description } = data;
 
     try {
-      await dispatch(createCourse({ name, description, featured }));
+      await dispatch(
+        createLesson({
+          courseId,
+          name,
+          description,
+          type: 1,
+          numberOfAnswers: 1,
+        })
+      );
       setValue('name', '');
       setValue('description', '');
-      setValue('featured', false);
+
       closeModal();
       notify();
     } catch (error) {
@@ -83,8 +91,8 @@ export default function ManageCoursesPage() {
     }
   };
 
-  const handleDeleteCourse = (id: string | number) => async () => {
-    await dispatch(deleteCourse(id));
+  const handleDeleteLesson = (id: string | number) => async () => {
+    await dispatch(deleteLesson(id));
   };
 
   const notify = () =>
@@ -98,7 +106,7 @@ export default function ManageCoursesPage() {
             <div className="flex justify-center space-x-1">
               <InformationCircleIcon className="w-6 h-6 text-indigo-500" />
               <div>
-                <p className="font-bold">{t('Courses.new-course-added')}</p>
+                <p className="font-bold">{t('Lessons.new-lesson-added')}</p>
               </div>
             </div>
           </div>
@@ -131,15 +139,17 @@ export default function ManageCoursesPage() {
         <div className="container px-4 mx-auto">
           <div className="flex flex-col items-center sm:flex-row sm:items-start">
             <ul className="p-6 my-6 w-64 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-600">
-              <li className="mb-6 text-center menu-btn menu-btn-primary">
+              <li className="mb-6 text-center menu-btn menu-btn-secondary">
                 <Link href="/manage/courses">{t('Manage.manage-courses')}</Link>
               </li>
             </ul>
             <div className="container flex flex-col p-6 pb-4">
-              <h1 className="pb-4">{t('Manage.manage-courses')}</h1>
+              <h1 className="pb-4">
+                {t('Manage.manage-course')}: #{courseId}
+              </h1>
               <div className="flex justify-between items-center">
                 <p className="text-xl font-medium">
-                  {t('Courses.list-of-courses')}
+                  {t('Lessons.list-of-lessons')}
                 </p>
                 <IconButton
                   onClick={openModal}
@@ -191,7 +201,7 @@ export default function ManageCoursesPage() {
                               <Dialog.Title
                                 as="h3"
                                 className="text-xl font-medium leading-6">
-                                {t('Courses.create-new-course')}
+                                {t('Lessons.create-new-lesson')}
                               </Dialog.Title>
                               <div className="mt-6">
                                 <form
@@ -204,7 +214,7 @@ export default function ManageCoursesPage() {
                                     register={register}
                                     required
                                     maxLength={100}
-                                    placeholder={t('Courses.course-name')}
+                                    placeholder={t('Lessons.lesson-name')}
                                   />
                                   <TextArea
                                     label="description"
@@ -216,26 +226,14 @@ export default function ManageCoursesPage() {
                                     rows={4}
                                     maxLength={500}
                                     placeholder={t(
-                                      'Courses.course-description'
+                                      'Lessons.lesson-description'
                                     )}
                                   />
-                                  <div className="flex items-center">
-                                    <input
-                                      id="featured"
-                                      name="featured"
-                                      type="checkbox"
-                                      {...register('featured')}
-                                      className="w-4 h-4 text-indigo-600 bg-gray-100 dark:bg-gray-700 rounded border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-gray-800"
-                                    />
-                                    <label htmlFor="featured" className="ml-2">
-                                      {t('Courses.featured-on-homepage')}
-                                    </label>
-                                  </div>
                                   <div className="py-3">
                                     <IconButton
                                       variant={IconButtonVariant.PRIMARY}
                                       type="submit">
-                                      {t('Courses.create-course')}
+                                      {t('Lessons.create-lesson')}
                                     </IconButton>
                                   </div>
                                 </form>
@@ -249,7 +247,7 @@ export default function ManageCoursesPage() {
                 </Dialog>
               </Transition.Root>
               <Toaster />
-              {courses && courses.length > 0 ? (
+              {lessons && lessons.length > 0 ? (
                 <>
                   <div className="overflow-auto my-6 rounded-lg border border-gray-300 dark:border-gray-600">
                     <table className="divide-y divide-gray-200 table-auto">
@@ -259,13 +257,10 @@ export default function ManageCoursesPage() {
                             ID
                           </th>
                           <th scope="col" className="py-3 px-4">
-                            {t('Courses.course-name')}
-                          </th>
-                          <th scope="col" className="py-3 px-4">
-                            {t('Courses.featured')}
+                            {t('Lessons.lesson-name')}
                           </th>
                           <th scope="col" className="py-3 px-4 w-full">
-                            {t('Courses.course-description')}
+                            {t('Lessons.lesson-description')}
                           </th>
                           <th
                             scope="col"
@@ -276,34 +271,27 @@ export default function ManageCoursesPage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        {courses.map((course) => (
-                          <Fragment key={course.id}>
+                        {lessons.map((lesson) => (
+                          <Fragment key={lesson.id}>
                             <tr>
-                              <td className="p-4">{course.id}</td>
+                              <td className="p-4">{lesson.id}</td>
                               <td className="p-4 max-w-xs break-words">
-                                {course.name}
-                              </td>
-                              <td className="p-4 max-w-xs">
-                                {String(course.featured)}
+                                {lesson.name}
                               </td>
                               <td className="p-4 max-w-xs break-words">
-                                {course.description}
+                                {lesson.description}
                               </td>
                               <td className="p-4">
-                                <Link
-                                  href={`/manage/courses/${course.id}`}
-                                  passHref={true}>
-                                  <ButtonLink
-                                    variant={ButtonLinkVariant.SECONDARY}
-                                    className="menu-btn menu-btn-primary">
-                                    {t('Manage.edit')}
-                                  </ButtonLink>
-                                </Link>
+                                <a
+                                  href="#"
+                                  className="menu-btn menu-btn-primary">
+                                  {t('Manage.edit')}
+                                </a>
                               </td>
                               <td className="py-4 pr-4">
                                 <Button
                                   className="menu-btn menu-btn-danger"
-                                  onClick={handleDeleteCourse(course.id)}>
+                                  onClick={handleDeleteLesson(lesson.id)}>
                                   {t('Manage.delete')}
                                 </Button>
                               </td>
@@ -317,7 +305,7 @@ export default function ManageCoursesPage() {
               ) : (
                 <div className="flex flex-col justify-center">
                   <p className="pb-8 text-lg font-medium">
-                    {t('Courses.no-courses-found')}
+                    {t('Lessons.no-lessons-found')}
                   </p>
                   <Image
                     src="/undraw_no_data_re_kwbl.svg"
@@ -338,7 +326,19 @@ export default function ManageCoursesPage() {
 export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
-      i18n: Object.assign({}, await import(`../../../../i18n/${locale}.json`)),
+      i18n: Object.assign(
+        {},
+        await import(`../../../../../i18n/${locale}.json`)
+      ),
     },
   };
 }
+
+export const getStaticPaths: GetStaticPaths<{
+  lessonId: string;
+}> = async () => {
+  return {
+    paths: [], //indicates that no page needs be created at build time
+    fallback: 'blocking', //indicates the type of fallback
+  };
+};

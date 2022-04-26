@@ -630,6 +630,7 @@ def delete_lesson():
 @routes.route("/api/lessons", methods=["GET"])
 @jwt_required()
 def get_lessons():
+    args = request.args
     username = get_jwt()["sub"]
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
@@ -645,7 +646,7 @@ def get_lessons():
 
     lessons = (
         models.Lessons()
-        .query.filter_by(id_course=request.json["data"]["id_course"])
+        .query.filter_by(id_course=args.get("id_course"))
         .paginate(first_item, number_of_items, False)
         .items
     )
@@ -657,6 +658,7 @@ def get_lessons():
             {
                 "data": [
                     {
+                        "id": lesson.id,
                         "name": lesson.name,
                         "description": lesson.description,
                         "id_course": lesson.id_course,

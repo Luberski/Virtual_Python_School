@@ -9,12 +9,14 @@ import authReducer from './features/auth/authSlice';
 import playgroundReducer from './features/playground/playgroundSlice';
 import coursesReducer from './features/courses/coursesSlice';
 import featuredCoursesReducer from './features/courses/featuredCoursesSlice';
+import lessonsReducer from './features/lessons/lessonsSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
   playground: playgroundReducer,
   courses: coursesReducer,
   featuredCourses: featuredCoursesReducer,
+  lessons: lessonsReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -39,4 +41,5 @@ export type RootState = {
   playground: ReturnType<typeof playgroundReducer>;
   courses: ReturnType<typeof coursesReducer>;
   featuredCourses: ReturnType<typeof featuredCoursesReducer>;
+  lessons: ReturnType<typeof lessonsReducer>;
 };
