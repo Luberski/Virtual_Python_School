@@ -4,13 +4,13 @@ import { RootState } from '../../store';
 import { Lesson } from '../../models/Lesson';
 import { HYDRATE } from 'next-redux-wrapper';
 
-export type LessonState = {
+export type LessonsState = {
   data: Lesson[];
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
-const initialState: LessonState = {
+const initialState: LessonsState = {
   data: null,
   status: 'idle',
   error: null,
@@ -22,30 +22,7 @@ export const fetchLessons = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`/courses/${courseId} /lessons`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      return res.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-);
-
-export const fetchLesson = createAsyncThunk(
-  'api/lesson',
-  async (courseId: string, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.get('/lessons', {
-        params: {
-          id_course: courseId,
-        },
+      const res = await apiClient.get(`/courses/${courseId}/lessons`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -165,13 +142,25 @@ export const lessonsSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
+      .addCase(deleteLesson.pending, (state) => {
+        state.status = 'pending';
+      })
       .addCase(deleteLesson.fulfilled, (state, { payload }) => {
         state.data = state.data.filter(
           (course) => course.id !== payload.data.id
         );
       })
+      .addCase(deleteLesson.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(createLesson.pending, (state) => {
+        state.status = 'pending';
+      })
       .addCase(createLesson.fulfilled, (state, { payload }) => {
         state.data = [...state.data, payload.data];
+      })
+      .addCase(createLesson.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });
