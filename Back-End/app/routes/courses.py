@@ -234,16 +234,19 @@ def get_courses_me():
 
 
 """
-# Get a list of courses taken by a user using his id
+# Get a list of courses taken by a user
 """
 
 
-@routes.route("/api/courses/id", methods=["POST"])
+@routes.route("/api/courses/enrolled", methods=["GET"])
 @jwt_required()
-def get_courses_taken_id():
+def get_enrolled_courses():
 
-    id = request.json["data"]["id"]
-    user = models.User().query.filter_by(username=id).first()
+    username = get_jwt()["sub"]
+    if username is None:
+        return make_response(jsonify({"error": "Bad token"}), 403)
+
+    user = models.User().query.filter_by(username=username).first()
     if user is None:
         return make_response(jsonify({"error": "User not found"}), 404)
 

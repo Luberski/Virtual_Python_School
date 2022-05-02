@@ -4,23 +4,29 @@ import { RootState } from '../../store';
 import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
 
-export type FeaturedCoursesState = {
+export type EnrolledCoursesState = {
   data: Course[] | null;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
-const initialState: FeaturedCoursesState = {
+const initialState: EnrolledCoursesState = {
   data: null,
   status: 'idle',
   error: null,
 };
 
-export const fetchFeaturedCourses = createAsyncThunk(
-  'api/courses/featured',
-  async (_: void) => {
+export const fetchEnrolledCourses = createAsyncThunk(
+  'api/courses/enrolled',
+  async (_: void, thunkApi) => {
     try {
-      const res = await apiClient.get('/courses/featured', {});
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.get('/courses/enrolled', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       return res.data;
     } catch (error) {
@@ -30,8 +36,8 @@ export const fetchFeaturedCourses = createAsyncThunk(
   }
 );
 
-export const featuredCoursesSlice = createSlice({
-  name: 'courses/featured',
+export const enrolledCoursesSlice = createSlice({
+  name: 'courses/enrolled',
   initialState,
   reducers: {},
   extraReducers(builder) {
@@ -41,11 +47,11 @@ export const featuredCoursesSlice = createSlice({
         // @ts-ignore
         return Object.assign({}, state, { ...action.payload.featuredCourses });
       })
-      .addCase(fetchFeaturedCourses.pending, (state) => {
+      .addCase(fetchEnrolledCourses.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        fetchFeaturedCourses.fulfilled,
+        fetchEnrolledCourses.fulfilled,
         (state, { payload: { data, error } }) => {
           if (error) {
             state.data = null;
@@ -58,18 +64,18 @@ export const featuredCoursesSlice = createSlice({
           }
         }
       )
-      .addCase(fetchFeaturedCourses.rejected, (state, action) => {
+      .addCase(fetchEnrolledCourses.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message ?? null;
       });
   },
 });
 
-export const selectFeaturedCoursesData = (state: RootState) =>
-  state.featuredCourses.data;
-export const selectFeaturedCoursesError = (state: RootState) =>
-  state.featuredCourses.error;
-export const selectFeaturedCoursesStatus = (state: RootState) =>
-  state.featuredCourses.status;
+export const selectEnrolledCoursesData = (state: RootState) =>
+  state.enrolledCourses.data;
+export const selectEnrolledCoursesError = (state: RootState) =>
+  state.enrolledCourses.error;
+export const selectEnrolledCoursesStatus = (state: RootState) =>
+  state.enrolledCourses.status;
 
-export default featuredCoursesSlice.reducer;
+export default enrolledCoursesSlice.reducer;

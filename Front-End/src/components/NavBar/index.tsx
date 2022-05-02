@@ -36,29 +36,45 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
               </div>
             )}
             <ul className="hidden items-center space-x-2 xl:flex">
-              <Link href="/" passHref={true}>
-                <a
-                  className={clsx(
-                    'menu-btn',
-                    router.pathname === '/'
-                      ? 'menu-btn-primary'
-                      : `menu-btn-secondary`
-                  )}>
-                  {t('Home.home')}
-                </a>
-              </Link>
-
-              <Link href="/courses" passHref={true}>
-                <a
-                  className={clsx(
-                    'menu-btn',
-                    router.pathname === '/courses'
-                      ? 'menu-btn-primary'
-                      : `menu-btn-secondary`
-                  )}>
-                  {t('Home.courses')}
-                </a>
-              </Link>
+              <li>
+                <Link href="/" passHref={true}>
+                  <a
+                    className={clsx(
+                      'menu-btn',
+                      router.pathname === '/'
+                        ? 'menu-btn-primary'
+                        : `menu-btn-secondary`
+                    )}>
+                    {t('Home.home')}
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/courses" passHref={true}>
+                  <a
+                    className={clsx(
+                      'menu-btn',
+                      router.pathname === '/courses'
+                        ? 'menu-btn-primary'
+                        : `menu-btn-secondary`
+                    )}>
+                    {t('Home.courses')}
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/courses/enrolled" passHref={true}>
+                  <a
+                    className={clsx(
+                      'menu-btn',
+                      router.pathname === '/courses/enrolled'
+                        ? 'menu-btn-primary'
+                        : `menu-btn-secondary`
+                    )}>
+                    {t('Meta.title-enrolled-courses')}
+                  </a>
+                </Link>
+              </li>
             </ul>
           </div>
 

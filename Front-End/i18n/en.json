@@ -37,6 +37,7 @@
     "featured": "Featured",
     "featured-on-homepage": "Set as featured on homepage",
     "no-courses-found": "No courses found",
+    "no-enrolled-courses-found": "No enrolled courses found",
     "course-not-found": "Course not found"
   },
   "Lessons": {
@@ -68,6 +69,7 @@
   "Meta": {
     "title-home": "Home",
     "title-courses": "Courses",
+    "title-enrolled-courses": "Enrolled courses",
     "title-playground": "Playground",
     "title-manage": "Manage",
     "title-login": "Log in",

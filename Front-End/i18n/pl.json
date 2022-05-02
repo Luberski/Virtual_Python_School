@@ -37,6 +37,7 @@
     "featured": "Wyróżniony",
     "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej",
     "no-courses-found": "Nie znaleziono kursów",
+    "no-enrolled-courses-found": "Nie znaleziono zapisanych kursów",
     "course-not-found": "Nie znaleziono kursu"
   },
   "Lessons": {
@@ -68,6 +69,7 @@
   "Meta": {
     "title-home": "Strona główna",
     "title-courses": "Kursy",
+    "title-enrolled-courses": "Zapisane kursy",
     "title-playground": "Code Playground",
     "title-manage": "Zarządzaj",
     "title-login": "Logowanie",
