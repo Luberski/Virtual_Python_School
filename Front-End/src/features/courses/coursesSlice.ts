@@ -4,13 +4,13 @@ import { RootState } from '../../store';
 import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
 
-export type CourseState = {
+export type CoursesState = {
   data: Course[];
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
-const initialState: CourseState = {
+const initialState: CoursesState = {
   data: null,
   status: 'idle',
   error: null,

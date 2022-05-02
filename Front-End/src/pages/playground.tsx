@@ -71,7 +71,7 @@ export default function Playground() {
           <Editor
             className="w-1/2 h-96"
             defaultLanguage="python"
-            defaultValue="# play with code"
+            defaultValue=""
             onMount={handleEditorDidMount}
             theme="vs-dark"
           />

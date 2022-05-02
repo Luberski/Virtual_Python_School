@@ -55,9 +55,9 @@ export default function CoursesPage() {
             </p>
           </div>
         </div>
-        <div className="container px-6 mx-auto">
+        <div className="container px-12 mx-auto">
           {courses && courses.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-12">
+            <div className="grid gap-6 sm:grid-flow-col sm:gap-12">
               {courses.map((course) => (
                 <FancyCard
                   key={course.id}
@@ -67,7 +67,7 @@ export default function CoursesPage() {
                   cardColor="bg-gray-50"
                   shadowColor="shadow-gray-500/50"
                   hoverShadowColor="hover:shadow-gray-500/50"
-                  buttonText={t('Courses.enroll')}
+                  buttonText={t('Home.learn-more')}
                 />
               ))}
             </div>

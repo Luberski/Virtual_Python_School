@@ -240,7 +240,7 @@ def get_courses_me():
 
 @routes.route("/api/courses/id", methods=["POST"])
 @jwt_required()
-def get_course_id():
+def get_courses_taken_id():
 
     id = request.json["data"]["id"]
     user = models.User().query.filter_by(username=id).first()
@@ -279,6 +279,30 @@ def get_course_id():
                     }
                     for course in courses
                 ],
+                "error": None,
+            }
+        ),
+        200,
+    )
+
+
+@routes.route("/api/courses/<id_course>", methods=["GET"])
+@jwt_required()
+def get_course_by_id(id_course):
+
+    course = models.Courses().query.filter_by(id=id_course).first()
+    if course is None:
+        return make_response(jsonify({"error": "Course not found"}), 404)
+
+    return make_response(
+        jsonify(
+            {
+                "data": {
+                    "id": course.id,
+                    "name": course.name,
+                    "description": course.description,
+                    "featured": course.featured,
+                },
                 "error": None,
             }
         ),
@@ -688,16 +712,14 @@ def get_lesson(id_course, lesson_id):
     return make_response(
         jsonify(
             {
-                "data": [
-                    {
-                        "id": lesson.id,
-                        "name": lesson.name,
-                        "description": lesson.description,
-                        "id_course": lesson.id_course,
-                        "type": lesson.type,
-                        "number_of_answers": lesson.number_of_answers,
-                    }
-                ],
+                "data": {
+                    "id": lesson.id,
+                    "name": lesson.name,
+                    "description": lesson.description,
+                    "id_course": lesson.id_course,
+                    "type": lesson.type,
+                    "number_of_answers": lesson.number_of_answers,
+                },
                 "error": None,
             }
         ),

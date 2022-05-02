@@ -8,6 +8,7 @@ import logger from 'redux-logger';
 import authReducer from './features/auth/authSlice';
 import playgroundReducer from './features/playground/playgroundSlice';
 import coursesReducer from './features/courses/coursesSlice';
+import courseReducer from './features/courses/courseSlice';
 import featuredCoursesReducer from './features/courses/featuredCoursesSlice';
 import lessonsReducer from './features/lessons/lessonsSlice';
 import lessonReducer from './features/lessons/lessonSlice';
@@ -16,6 +17,7 @@ const combinedReducers = combineReducers({
   auth: authReducer,
   playground: playgroundReducer,
   courses: coursesReducer,
+  course: courseReducer,
   featuredCourses: featuredCoursesReducer,
   lessons: lessonsReducer,
   lesson: lessonReducer,
@@ -42,6 +44,7 @@ export type RootState = {
   auth: ReturnType<typeof authReducer>;
   playground: ReturnType<typeof playgroundReducer>;
   courses: ReturnType<typeof coursesReducer>;
+  course: ReturnType<typeof courseReducer>;
   featuredCourses: ReturnType<typeof featuredCoursesReducer>;
   lessons: ReturnType<typeof lessonsReducer>;
   lesson: ReturnType<typeof lessonReducer>;
