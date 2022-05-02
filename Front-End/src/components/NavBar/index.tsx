@@ -161,6 +161,17 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                     {t('Home.courses')}
                   </a>
                 </Link>
+                <Link href="/courses/enrolled" passHref={true}>
+                  <a
+                    className={clsx(
+                      'menu-btn',
+                      router.pathname === '/courses/enrolled'
+                        ? 'menu-btn-primary'
+                        : `menu-btn-secondary`
+                    )}>
+                    {t('Meta.title-enrolled-courses')}
+                  </a>
+                </Link>
                 {isLoggedIn && user ? (
                   <div className="flex items-center">
                     <div
