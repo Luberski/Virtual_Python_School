@@ -11,12 +11,17 @@ import {
 } from '../../features/courses/coursesSlice';
 import { WEBSITE_TITLE } from '../../constants';
 import Head from 'next/head';
+import { enrollCourse } from '../../features/courses/courseSlice';
+import toast, { Toaster } from 'react-hot-toast';
+import { InformationCircleIcon } from '@heroicons/react/outline';
+import { useRouter } from 'next/router';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useAppDispatch();
   const t = useTranslations();
   const courses = useAppSelector(selectCoursesData);
+  const router = useRouter();
 
   // TODO: refactor to server side fetching
   useEffect(() => {
@@ -26,6 +31,32 @@ export default function CoursesPage() {
 
     fetchData().catch(console.error);
   }, [dispatch, isLoggedIn]);
+
+  const handleEnrollCourse = (courseId: string) => async () => {
+    await dispatch(enrollCourse(courseId));
+    notify();
+    router.push(`/courses/${courseId}`);
+  };
+
+  const notify = () =>
+    toast.custom(
+      (to) => (
+        <>
+          <div
+            className="py-3 px-4 text-indigo-900 bg-indigo-200 rounded-lg border-indigo-500 shadow"
+            role="alert"
+            onClick={() => toast.dismiss(to.id)}>
+            <div className="flex justify-center space-x-1">
+              <InformationCircleIcon className="w-6 h-6 text-indigo-500" />
+              <div>
+                <p className="font-bold">{t('Courses.course-enrolled')}</p>
+              </div>
+            </div>
+          </div>
+        </>
+      ),
+      { id: 'unique-notification', position: 'top-center' }
+    );
 
   if (!user && !isLoggedIn) {
     return null;
@@ -63,11 +94,11 @@ export default function CoursesPage() {
                   key={course.id}
                   title={course.name}
                   description={course.description}
-                  link={`/courses/${course.id}`}
                   cardColor="bg-gray-50"
                   shadowColor="shadow-gray-500/50"
                   hoverShadowColor="hover:shadow-gray-500/50"
-                  buttonText={t('Home.learn-more')}
+                  buttonText={t('Courses.enroll')}
+                  onClick={handleEnrollCourse(course.id)}
                 />
               ))}
             </div>
@@ -95,6 +126,7 @@ export default function CoursesPage() {
             />
           </div>
         )}
+        <Toaster />
         <Footer />
       </div>
     </>

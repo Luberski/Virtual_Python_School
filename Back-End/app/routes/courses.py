@@ -259,15 +259,17 @@ def get_enrolled_courses():
         if request.json["data"].get("number_of_elements"):
             number_of_items = request.json["data"]["number_of_elements"]
 
-    courses = (
+    # TODO: fetch data for course as additional attribute, fix relationship between CoursesTaken and Courses
+    courses_taken = (
         models.CoursesTaken()
         .query.filter_by(id_user=user.id)
+        .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
         .paginate(first_item, number_of_items, False)
         .items
     )
-    if courses is None:
-        return make_response(jsonify({"error": "Courses not found"}), 404)
 
+    if courses_taken is None:
+        return make_response(jsonify({"error": "Courses not found"}), 404)
     return make_response(
         jsonify(
             {
@@ -280,7 +282,7 @@ def get_enrolled_courses():
                         "section_number": course.section_number,
                         "completed": course.completed,
                     }
-                    for course in courses
+                    for course in courses_taken
                 ],
                 "error": None,
             }
@@ -355,7 +357,7 @@ def join_course_me():
                 "data": {
                     "username": username,
                     "id_user": course_taken.id_user,
-                    "id_course": course_taken.id_course,
+                    "id": course_taken.id_course,
                     "start_date": course_taken.start_date,
                     "end_date": course_taken.end_date,
                     "section_number": course_taken.section_number,

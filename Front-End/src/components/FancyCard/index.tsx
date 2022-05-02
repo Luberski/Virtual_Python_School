@@ -1,16 +1,18 @@
 import React from 'react';
 import Link from 'next/link';
+import Button, { ButtonVariant } from '../Button';
 import ButtonLink, { ButtonLinkVariant } from '../ButtonLink';
 
 type FancyCardProps = {
   title: string;
   description: string | React.ReactNode;
-  link: string;
+  link?: string;
   buttonText: string;
   cardColor?: string;
   darkCardColor?: string;
   shadowColor?: string;
   hoverShadowColor?: string;
+  onClick?: () => void;
 };
 
 export default function FancyCard({
@@ -22,6 +24,7 @@ export default function FancyCard({
   darkCardColor = 'dark:bg-gray-900',
   shadowColor = 'shadow-gray-200/50',
   hoverShadowColor = 'hover:shadow-gray-400/50',
+  onClick,
 }: FancyCardProps) {
   return (
     <div
@@ -30,11 +33,21 @@ export default function FancyCard({
         {title}
       </h3>
       <p className="max-w-xs h-full max-h-96 break-words">{description}</p>
-      <Link href={link} passHref={true}>
-        <ButtonLink variant={ButtonLinkVariant.SECONDARY} className="mt-16">
+
+      {link ? (
+        <Link href={link} passHref={true}>
+          <ButtonLink variant={ButtonLinkVariant.SECONDARY} className="mt-16">
+            {buttonText}
+          </ButtonLink>
+        </Link>
+      ) : (
+        <Button
+          variant={ButtonVariant.SECONDARY}
+          className="mt-16"
+          onClick={onClick}>
           {buttonText}
-        </ButtonLink>
-      </Link>
+        </Button>
+      )}
     </div>
   );
 }

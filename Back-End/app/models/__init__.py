@@ -1,5 +1,4 @@
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
 from passlib.hash import pbkdf2_sha256 as sha256
 from app.db import db
 
@@ -13,7 +12,7 @@ class User(db.Model):
     name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
     email = db.Column(db.String(100), unique=True)
-    id_course = relationship("CoursesTaken")
+    id_course = db.relationship("CoursesTaken")
     role_id = db.Column(db.Integer, ForeignKey("roles.id"))
 
     @staticmethod
@@ -61,8 +60,8 @@ class Courses(db.Model):
     name = db.Column(db.String(100))
     description = db.Column(db.String(500))
     featured = db.Column(db.Boolean, default=False, nullable=False)
-    users_info = relationship("CoursesTaken")
-    lessions_info = relationship("Lessons")
+    users_info = db.relationship("CoursesTaken")
+    lessions_info = db.relationship("Lessons")
 
     def add(self):
         db.session.add(self)
@@ -77,8 +76,8 @@ class Lessons(db.Model):
     id_course = db.Column(db.Integer, ForeignKey("courses.id"))
     type = db.Column(db.Integer)
     number_of_answers = db.Column(db.Integer)
-    answers_info = relationship("Answers")
-    comments_info = relationship("Comments")
+    answers_info = db.relationship("Answers")
+    comments_info = db.relationship("Comments")
 
     def add(self):
         db.session.add(self)
@@ -113,7 +112,7 @@ class Roles(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(100), unique=True)
-    user_info = relationship("User")
+    user_info = db.relationship("User")
 
     def add(self):
         db.session.add(self)

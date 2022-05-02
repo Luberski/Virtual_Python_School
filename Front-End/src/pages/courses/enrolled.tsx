@@ -60,7 +60,9 @@ export default function EnrolledCoursesPage() {
                   key={course.id}
                   title={course.name}
                   description={course.description}
-                  link={`/courses/${course.id}`}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  link={`/courses/${course.id_course}`}
                   cardColor="bg-gray-50"
                   shadowColor="shadow-gray-500/50"
                   hoverShadowColor="hover:shadow-gray-500/50"

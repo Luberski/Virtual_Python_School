@@ -73,7 +73,7 @@ export default function CoursePage() {
               <p className="leading-relaxed word-wrap">{course.description}</p>
               {lessons && lessons.length > 0 ? (
                 <>
-                  <div className="overflow-auto my-6 rounded-lg border border-gray-300 dark:border-gray-600">
+                  <div className="overflow-auto my-6 w-fit rounded-lg border border-gray-300 dark:border-gray-600">
                     <table className="divide-y divide-gray-200 table-auto">
                       <thead className="font-medium text-left text-gray-500 uppercase">
                         <tr>
@@ -83,12 +83,12 @@ export default function CoursePage() {
                           <th scope="col" className="py-3 px-4">
                             {t('Lessons.lesson-name')}
                           </th>
-                          <th scope="col" className="py-3 px-4 w-full">
+                          <th scope="col" className="py-3 px-4">
                             {t('Lessons.lesson-description')}
                           </th>
                           <th
                             scope="col"
-                            className="py-3 pr-4 text-center"
+                            className="py-3 px-4 text-center"
                             colSpan={2}>
                             {t('Manage.manage')}
                           </th>
@@ -105,14 +105,14 @@ export default function CoursePage() {
                               <td className="p-4 max-w-xs break-words">
                                 {lesson.description}
                               </td>
-                              <td className="py-4">
+                              <td className="p-4">
                                 <Link
                                   href={`/courses/${course.id}/lessons/${lesson.id}`}
                                   passHref={true}>
                                   <ButtonLink
                                     variant={ButtonLinkVariant.SECONDARY}
                                     className="menu-btn menu-btn-primary">
-                                    {t('Courses.enroll')}
+                                    {t('Lessons.join-lesson')}
                                   </ButtonLink>
                                 </Link>
                               </td>

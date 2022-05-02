@@ -38,7 +38,8 @@
     "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej",
     "no-courses-found": "Nie znaleziono kursów",
     "no-enrolled-courses-found": "Nie znaleziono zapisanych kursów",
-    "course-not-found": "Nie znaleziono kursu"
+    "course-not-found": "Nie znaleziono kursu",
+    "course-enrolled": "Zapisano do kursu"
   },
   "Lessons": {
     "lessons": "Lekcje",
@@ -49,7 +50,8 @@
     "create-lesson": "Utwórz lekcję",
     "no-lessons-found": "Nie znaleziono lekcji",
     "new-lesson-added": "Dodano nową lekcję!",
-    "lesson-not-found": "Nie znaleziono lekcji"
+    "lesson-not-found": "Nie znaleziono lekcji",
+    "join-lesson": "Dołącz do lekcji"
   },
   "Playground": {
     "run": "Uruchom",

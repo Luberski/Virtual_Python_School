@@ -38,7 +38,8 @@
     "featured-on-homepage": "Set as featured on homepage",
     "no-courses-found": "No courses found",
     "no-enrolled-courses-found": "No enrolled courses found",
-    "course-not-found": "Course not found"
+    "course-not-found": "Course not found",
+    "course-enrolled": "Course enrolled"
   },
   "Lessons": {
     "lessons": "Lessons",
@@ -49,7 +50,8 @@
     "create-lesson": "Create lesson",
     "no-lessons-found": "No lessons found",
     "new-lesson-added": "New lesson added!",
-    "lesson-not-found": "Lesson not found"
+    "lesson-not-found": "Lesson not found",
+    "join-lesson": "Join lesson"
   },
   "Playground": {
     "run": "Run",
