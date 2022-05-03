@@ -48,6 +48,7 @@ class CoursesTaken(db.Model):
     end_date = db.Column(db.DateTime())
     section_number = db.Column(db.Integer)
     completed = db.Column(db.String(100))
+    course = db.relationship("Courses")
 
     def add(self):
         db.session.add(self)
