@@ -74,6 +74,17 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                     {t('Meta.title-enrolled-courses')}
                   </a>
                 </Link>
+                <Link href="/playground" passHref={true}>
+                  <a
+                    className={clsx(
+                      'menu-btn',
+                      router.pathname === '/playground'
+                        ? 'menu-btn-primary'
+                        : `menu-btn-secondary`
+                    )}>
+                    {t('Meta.title-playground')}
+                  </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -170,6 +181,17 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                         : `menu-btn-secondary`
                     )}>
                     {t('Meta.title-enrolled-courses')}
+                  </a>
+                </Link>
+                <Link href="/playground" passHref={true}>
+                  <a
+                    className={clsx(
+                      'menu-btn',
+                      router.pathname === '/playground'
+                        ? 'menu-btn-primary'
+                        : `menu-btn-secondary`
+                    )}>
+                    {t('Meta.title-playground')}
                   </a>
                 </Link>
                 {isLoggedIn && user ? (
