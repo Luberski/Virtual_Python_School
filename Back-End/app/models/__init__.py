@@ -73,7 +73,7 @@ class Lessons(db.Model):
     __tablename__ = "lessons"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    description = db.Column(db.String(500))
+    description = db.Column(db.String(2000))
     id_course = db.Column(db.Integer, ForeignKey("courses.id"))
     type = db.Column(db.Integer)
     number_of_answers = db.Column(db.Integer)

@@ -64,11 +64,8 @@ Course creator
 Lesson creator
 Lesson page
 Profile
-
-
 Help
 Q&A
-
 Cards:
 Settings
 Achievements
@@ -77,6 +74,8 @@ Course certificates
 
 ## Updating the database
 ```
+/Back-End/
+
 First time create migration:
 flask db init 
 
@@ -87,7 +86,7 @@ flask db upgrade
 If migrate doesn't work:
 1.
 You should remove old migration folder and create one.
-Also you have to delete 'alembic_version' tabele from mysql.
+Also you have to delete 'alembic_version' table from mysql.
 
 2. Just delete record from 'alembic_version'
 delete from alembic_version where verion_num='e39d16e62810'

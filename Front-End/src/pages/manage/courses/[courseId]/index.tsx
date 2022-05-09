@@ -224,7 +224,7 @@ export default function ManageCourseAndLessonsPage() {
                                     required
                                     className="resize-none"
                                     rows={4}
-                                    maxLength={500}
+                                    maxLength={2000}
                                     placeholder={t(
                                       'Lessons.lesson-description'
                                     )}
