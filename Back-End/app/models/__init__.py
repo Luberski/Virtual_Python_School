@@ -59,7 +59,7 @@ class Courses(db.Model):
     __tablename__ = "courses"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    description = db.Column(db.String(500))
+    description = db.Column(db.String(2000))
     featured = db.Column(db.Boolean, default=False, nullable=False)
     users_info = db.relationship("CoursesTaken")
     lessions_info = db.relationship("Lessons")

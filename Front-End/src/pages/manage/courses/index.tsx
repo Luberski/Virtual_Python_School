@@ -214,7 +214,7 @@ export default function ManageCoursesPage() {
                                     required
                                     className="resize-none"
                                     rows={4}
-                                    maxLength={500}
+                                    maxLength={2000}
                                     placeholder={t(
                                       'Courses.course-description'
                                     )}
