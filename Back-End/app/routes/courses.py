@@ -23,7 +23,7 @@ def create_course():
         featured=False,
     )
 
-    if request.json["data"]["featured"] != "None":
+    if request.json["data"].get("featured"):
         new_course.featured = request.json["data"]["featured"]
 
     new_course.add()
@@ -57,15 +57,15 @@ def edit_course():
     course_edit = models.Courses().query.filter_by(id=id_course).first()
 
     to_commit = False
-    if request.json["data"]["name"] != "None":
+    if request.json["data"].get("name"):
         course_edit.name = request.json["data"]["name"]
         to_commit = True
 
-    if request.json["data"]["description"] != "None":
+    if request.json["data"].get("description"):
         course_edit.description = request.json["data"]["description"]
         to_commit = True
 
-    if request.json["data"]["featured"] != "None":
+    if request.json["data"].get("featured"):
         course_edit.featured = request.json["data"]["featured"]
         to_commit = True
 
@@ -597,23 +597,23 @@ def edit_lesson():
     lesson_edit = models.Lessons().query.filter_by(id=lesson_id).first()
 
     to_commit = False
-    if request.json["data"]["name"] != "None":
+    if request.json["data"].get("name"):
         lesson_edit.name = request.json["data"]["name"]
         to_commit = True
 
-    if request.json["data"]["description"] != "None":
+    if request.json["data"].get("description"):
         lesson_edit.description = request.json["data"]["description"]
         to_commit = True
 
-    if request.json["data"]["id_course"] != "None":
+    if request.json["data"].get("id_course"):
         lesson_edit.id_course = request.json["data"]["id_course"]
         to_commit = True
 
-    if request.json["data"]["type"] != "None":
+    if request.json["data"].get("type"):
         lesson_edit.type = request.json["data"]["type"]
         to_commit = True
 
-    if request.json["data"]["number_of_answers"] != "None":
+    if request.json["data"].get("number_of_answers"):
         lesson_edit.number_of_answers = request.json["data"]["number_of_answers"]
         to_commit = True
 
@@ -834,11 +834,11 @@ def edit_answer():
         return make_response(jsonify({"error": "Answer not found"}), 404)
 
     to_commit = False
-    if request.json["data"]["final_answer"] != "None":
+    if request.json["data"].get("final_answer"):
         answer_edit.final_answer = request.json["data"]["final_answer"]
         to_commit = True
 
-    if request.json["data"]["id_lesson"] != "None":
+    if request.json["data"].get("id_lesson"):
         answer_edit.id_lesson = request.json["data"]["id_lesson"]
         to_commit = True
 
@@ -976,7 +976,7 @@ def edit_comment():
     comment_edit = models.Comments().query.filter_by(id=comment_id).first()
 
     to_commit = False
-    if request.json["data"]["content"] != "None":
+    if request.json["data"].get("content"):
         comment_edit.content = request.json["data"]["content"]
         to_commit = True
 
