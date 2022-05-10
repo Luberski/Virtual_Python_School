@@ -32,6 +32,7 @@ import { WEBSITE_TITLE } from '../../../../constants';
 import { useRouter } from 'next/router';
 import { GetStaticPaths } from 'next';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown'
 
 export default function ManageCourseAndLessonsPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -279,7 +280,9 @@ export default function ManageCourseAndLessonsPage() {
                                 {lesson.name}
                               </td>
                               <td className="p-4 max-w-xs break-words">
-                                {lesson.description}
+                                <ReactMarkdown>
+                                  {lesson.description}
+                                </ReactMarkdown>
                               </td>
                               <td className="p-4">
                                 <a
