@@ -90,7 +90,7 @@ export default function LessonPage() {
               <div className="flex flex-col w-full xl:flex-row">
                 <div className="flex flex-col p-8 m-2 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-xl xl:w-1/2">
                   <h2>{t('Lessons.lesson-description')}</h2>
-                  <p>{lesson.description}</p>
+                  <p className='whitespace-pre-line'>{lesson.description}</p>
                 </div>
                 <div className="flex flex-col flex-1 m-2 shadow-xl">
                   <Editor
