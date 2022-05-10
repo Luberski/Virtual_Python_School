@@ -81,16 +81,24 @@ export default function LessonPage() {
               <h1 className="text-center first-letter:uppercase">
                 {t('Meta.title-lesson')}:&nbsp;{lesson.name}
               </h1>
-              <Button
-                onClick={handleValue}
-                variant={ButtonVariant.PRIMARY}
-                className="my-8 w-28 h-12">
-                {t('Playground.run')}
-              </Button>
+              <div className='space-x-4'>
+                <Button
+                  onClick={handleValue}
+                  variant={ButtonVariant.PRIMARY}
+                  className="my-8">
+                  {t('Playground.run')}
+                </Button>
+                <Button variant={ButtonVariant.SUCCESS} className="my-8">
+                  {t('Lessons.check-answer')}
+                </Button>
+              </div>
+
               <div className="flex flex-col w-full xl:flex-row">
                 <div className="flex flex-col p-8 m-2 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-xl xl:w-1/2">
                   <h2>{t('Lessons.lesson-description')}</h2>
-                  <p className='overflow-auto max-h-[664px] whitespace-pre-line'>{lesson.description}</p>
+                  <p className="overflow-auto max-h-[664px] whitespace-pre-line">
+                    {lesson.description}
+                  </p>
                 </div>
                 <div className="flex flex-col flex-1 m-2 shadow-xl">
                   <Editor

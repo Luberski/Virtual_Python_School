@@ -51,7 +51,8 @@
     "no-lessons-found": "Nie znaleziono lekcji",
     "new-lesson-added": "Dodano nową lekcję!",
     "lesson-not-found": "Nie znaleziono lekcji",
-    "join-lesson": "Dołącz do lekcji"
+    "join-lesson": "Dołącz do lekcji",
+    "check-answer": "Sprawdź odpowiedź"
   },
   "Playground": {
     "run": "Uruchom",
