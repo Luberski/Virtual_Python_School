@@ -20,8 +20,10 @@ ipa_ = ipahttp.ipa(ipa_url)
 if(ipa_.checkAvailability() != 200):
     if(ipa_url == "ipa2.zut.edu.pl"):
         ipa_ = ipahttp.ipa("ipa1.zut.edu.pl")
+        ipa_url = "ipa1.zut.edu.pl"
     else:
         ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
+        ipa_url = "ipa2.zut.edu.pl"
 
 
 
