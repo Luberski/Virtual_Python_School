@@ -52,7 +52,9 @@
     "new-lesson-added": "New lesson added!",
     "lesson-not-found": "Lesson not found",
     "join-lesson": "Join lesson",
-    "check-answer": "Check answer"
+    "check-answer": "Check answer",
+    "answer": "Answer",
+    "add-answer": "Add answer"
   },
   "Playground": {
     "run": "Run",
