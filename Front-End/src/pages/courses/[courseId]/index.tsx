@@ -83,9 +83,6 @@ export default function CoursePage() {
                           <th scope="col" className="py-3 px-4">
                             {t('Lessons.lesson-name')}
                           </th>
-                          <th scope="col" className="py-3 px-4">
-                            {t('Lessons.lesson-description')}
-                          </th>
                           <th
                             scope="col"
                             className="py-3 px-4 text-center"
@@ -101,9 +98,6 @@ export default function CoursePage() {
                               <td className="p-4">{lesson.id}</td>
                               <td className="p-4 max-w-xs break-words">
                                 {lesson.name}
-                              </td>
-                              <td className="p-4 max-w-xs break-words">
-                                {lesson.description}
                               </td>
                               <td className="p-4">
                                 <Link
