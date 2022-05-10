@@ -73,7 +73,7 @@ export default function CoursePage() {
               <p className="leading-relaxed word-wrap">{course.description}</p>
               {lessons && lessons.length > 0 ? (
                 <>
-                  <div className="overflow-auto my-6 w-fit rounded-lg border border-gray-300 dark:border-gray-600">
+                  <div className="overflow-auto my-6 mx-auto w-fit rounded-lg border border-gray-300 dark:border-gray-600">
                     <table className="divide-y divide-gray-200 table-auto">
                       <thead className="font-medium text-left text-gray-500 uppercase">
                         <tr>
