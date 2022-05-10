@@ -47,7 +47,7 @@ class ipa(object):
         return rv
 
     def checkAvailability(self):
-        retVal = requests.get("https://{0}/ipa/session/login_password".format(self.server), verify=self.sslverify)
+        retVal = requests.get("https://{0}/ipa/".format(self.server), verify=self.sslverify, timeout=5)
         return retVal.status_code
 
     def makeReq(self, pdict):
