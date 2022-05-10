@@ -733,7 +733,7 @@ def get_lesson(id_course, lesson_id):
     )
 
 
-@routes.route("/api/answers", methods=["PATCH"])
+@routes.route("/api/answers", methods=["POST"])
 @jwt_required()
 def create_answer():
     username = get_jwt()["sub"]
@@ -770,7 +770,7 @@ def create_answer():
     )
 
 
-@routes.route("/api/answers", methods=["POST"])
+@routes.route("/api/answers/check", methods=["POST"])
 @jwt_required()
 def check_answer():
     username = get_jwt()["sub"]

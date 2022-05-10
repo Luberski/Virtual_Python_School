@@ -46,6 +46,7 @@ export default function ManageCourseAndLessonsPage() {
     useForm<{
       name: string;
       description: string;
+      answer: string;
     }>();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -228,6 +229,15 @@ export default function ManageCourseAndLessonsPage() {
                                     placeholder={t(
                                       'Lessons.lesson-description'
                                     )}
+                                  />
+                                  <Input
+                                    label="answer"
+                                    name="answer"
+                                    type="text"
+                                    register={register}
+                                    required
+                                    maxLength={100}
+                                    placeholder={t('Lessons.add-answer')}
                                   />
                                   <div className="py-3">
                                     <IconButton
