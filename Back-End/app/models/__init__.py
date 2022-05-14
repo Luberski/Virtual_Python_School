@@ -61,8 +61,7 @@ class Courses(db.Model):
     name = db.Column(db.String(100))
     description = db.Column(db.String(2000))
     featured = db.Column(db.Boolean, default=False, nullable=False)
-    users_info = db.relationship("CoursesTaken")
-    lessions_info = db.relationship("Lessons")
+    lessons = db.relationship("Lessons")
 
     def add(self):
         db.session.add(self)
@@ -77,8 +76,8 @@ class Lessons(db.Model):
     id_course = db.Column(db.Integer, ForeignKey("courses.id"))
     type = db.Column(db.Integer)
     number_of_answers = db.Column(db.Integer)
-    answers_info = db.relationship("Answers")
-    comments_info = db.relationship("Comments")
+    answers = db.relationship("Answers")
+    comments = db.relationship("Comments")
 
     def add(self):
         db.session.add(self)
@@ -113,7 +112,7 @@ class Roles(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(100), unique=True)
-    user_info = db.relationship("User")
+    user = db.relationship("User")
 
     def add(self):
         db.session.add(self)

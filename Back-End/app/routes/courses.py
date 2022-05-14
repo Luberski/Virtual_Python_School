@@ -112,22 +112,69 @@ def delete_course():
 @routes.route("/api/courses", methods=["GET"])
 @jwt_required()
 def get_courses_all():
+    args = request.args
     username = get_jwt()["sub"]
 
     first_item = 1
     number_of_items = 20
+    include_lessons = False
 
-    if request.json:
-        if request.json["data"].get("first_element"):
-            first_item = request.json["data"]["first_element"]
-        if request.json["data"].get("number_of_elements"):
-            number_of_items = request.json["data"]["number_of_elements"]
+    if args.get("first_element"):
+        first_item = args.get("first_element", type=int)
+    if args.get("number_of_elements"):
+        number_of_items = args.get("number_of_elements", type=int)
+    include_lessons = args.get(
+        "include_lessons", default=False, type=lambda v: v.lower() == "true"
+    )
 
     if username is None:
         return make_response(jsonify({"error": "Bad token"}), 403)
-    courses = models.Courses().query.paginate(first_item, number_of_items, False).items
+
+    if include_lessons:
+        print("include lessons")
+        courses = (
+            models.Courses()
+            .query.join(models.Lessons, models.Courses.id == models.Lessons.id_course)
+            .paginate(first_item, number_of_items, False)
+            .items
+        )
+    else:
+        courses = (
+            models.Courses().query.paginate(first_item, number_of_items, False).items
+        )
+
     if courses is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
+
+    # TODO: add additional param if user attended course
+    if include_lessons:
+        return make_response(
+            jsonify(
+                {
+                    "data": [
+                        {
+                            "id": course.id,
+                            "name": course.name,
+                            "description": course.description,
+                            "featured": course.featured,
+                            "lessons": [
+                                {
+                                    "id": lesson.id,
+                                    "name": lesson.name,
+                                    "description": lesson.description,
+                                    "type": lesson.type,
+                                    "number_of_answers": lesson.number_of_answers,
+                                }
+                                for lesson in course.lessons
+                            ],
+                        }
+                        for course in courses
+                    ],
+                    "error": None,
+                }
+            ),
+            200,
+        )
     return make_response(
         jsonify(
             {
@@ -149,15 +196,14 @@ def get_courses_all():
 
 @routes.route("/api/courses/featured", methods=["GET"])
 def get_courses_all_featured():
-
+    args = request.args
     first_item = 1
     number_of_items = 5
 
-    if request.json:
-        if request.json["data"].get("first_element"):
-            first_item = request.json["data"]["first_element"]
-        if request.json["data"].get("number_of_elements"):
-            number_of_items = request.json["data"]["number_of_elements"]
+    if args.get("first_element"):
+        first_item = args.get("first_element", type=int)
+    if args.get("number_of_elements"):
+        number_of_items = args.get("number_of_elements", type=int)
 
     courses = (
         models.Courses()
@@ -269,6 +315,7 @@ def get_enrolled_courses():
 
     if courses_taken is None:
         return make_response(jsonify({"error": "Courses not found"}), 404)
+
     return make_response(
         jsonify(
             {
@@ -567,6 +614,12 @@ def create_lesson():
 
     new_lesson.add()
 
+    new_answer = models.Answers(
+        final_answer=request.json["data"]["final_answer"], id_lesson=new_lesson.id,
+    )
+
+    new_answer.add()
+
     return make_response(
         jsonify(
             {
@@ -576,6 +629,9 @@ def create_lesson():
                     "id_course": new_lesson.id_course,
                     "type": new_lesson.type,
                     "number_of_answers": new_lesson.number_of_answers,
+                    "answers": [
+                        {"id": new_answer.id, "final_answer": new_answer.final_answer,}
+                    ],
                 },
                 "error": None,
             }
@@ -725,6 +781,10 @@ def get_lesson(id_course, lesson_id):
                     "id_course": lesson.id_course,
                     "type": lesson.type,
                     "number_of_answers": lesson.number_of_answers,
+                    "answers": [
+                        {"id": answer.id, "final_answer": answer.final_answer,}
+                        for answer in lesson.answers
+                    ],
                 },
                 "error": None,
             }

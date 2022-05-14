@@ -52,7 +52,7 @@ export default function EnrolledCoursesPage() {
             <h1 className="text-center">{t('Meta.title-enrolled-courses')}</h1>
           </div>
         </div>
-        <div className="container px-12 mx-auto">
+        <div className="container px-12 mx-auto max-w-xs">
           {courses && courses.length > 0 ? (
             <div className="grid gap-6 sm:grid-flow-col sm:gap-12">
               {courses.map((course) => (

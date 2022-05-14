@@ -72,12 +72,14 @@ export const createLesson = createAsyncThunk(
       description,
       type,
       numberOfAnswers,
+      answer,
     }: {
       courseId: string;
       name: string;
       description: string;
       type: number;
       numberOfAnswers: number;
+      answer: string;
     },
     thunkApi
   ) => {
@@ -93,6 +95,7 @@ export const createLesson = createAsyncThunk(
             description,
             type,
             number_of_answers: numberOfAnswers,
+            final_answer: answer,
           },
         },
         {

@@ -69,8 +69,12 @@ export default function ManageCourseAndLessonsPage() {
   }, [courseId, dispatch, isLoggedIn]);
 
   // TODO: handle errors
-  const onSubmit = async (data: { name: string; description: string }) => {
-    const { name, description } = data;
+  const onSubmit = async (data: {
+    name: string;
+    description: string;
+    answer: string;
+  }) => {
+    const { name, description, answer } = data;
 
     try {
       await dispatch(
@@ -80,10 +84,12 @@ export default function ManageCourseAndLessonsPage() {
           description,
           type: 1,
           numberOfAnswers: 1,
+          answer,
         })
       );
       setValue('name', '');
       setValue('description', '');
+      setValue('answer', '');
 
       closeModal();
       notify();
@@ -237,7 +243,7 @@ export default function ManageCourseAndLessonsPage() {
                                     register={register}
                                     required
                                     maxLength={100}
-                                    placeholder={t('Lessons.add-answer')}
+                                    placeholder={t('Lessons.answer')}
                                   />
                                   <div className="py-3">
                                     <IconButton
