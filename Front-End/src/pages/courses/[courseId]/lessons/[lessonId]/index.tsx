@@ -34,6 +34,7 @@ import IconButton, {
   IconButtonVariant,
 } from '../../../../../components/IconButton';
 import ConfettiExplosion from 'react-confetti-explosion';
+import Footer from '../../../../../components/Footer';
 
 export default function LessonPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -72,6 +73,7 @@ export default function LessonPage() {
         notify(true);
         setIsExploding(true);
         setTimeout(() => {
+          setIsExploding(false);
           router.push(`/courses/${courseId}`);
         }, 3000);
       } else {
@@ -82,7 +84,15 @@ export default function LessonPage() {
     return () => {
       dispatch(reset());
     };
-  }, [dispatch, answerData, answerStatus, courseId, lessonId, router]);
+  }, [
+    dispatch,
+    answerData,
+    answerStatus,
+    courseId,
+    lessonId,
+    router,
+    isExploding,
+  ]);
 
   if (!user && !isLoggedIn) {
     return null;
@@ -194,11 +204,12 @@ export default function LessonPage() {
                   </p>
                   <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex space-x-4">
+                    className="flex flex-col space-y-4 w-full sm:flex-row sm:space-y-0 sm:space-x-4">
                     <Input
                       placeholder={t('Lessons.answer')}
                       label="answer"
                       name="answer"
+                      className="w-full"
                       required
                       register={register}
                     />
@@ -230,7 +241,15 @@ export default function LessonPage() {
                       }>
                       {t('Lessons.check-answer')}
                     </IconButton>
-                    {isExploding && <ConfettiExplosion />}
+                    {isExploding && (
+                      <ConfettiExplosion
+                        duration={1500}
+                        floorHeight={200}
+                        floorWidth={600}
+                        force={0.4}
+                        particleCount={100}
+                      />
+                    )}
                   </form>
                 </div>
                 <div className="flex flex-col flex-1 m-2 shadow-xl">
@@ -268,6 +287,7 @@ export default function LessonPage() {
             </h1>
           )}
         </div>
+        <Footer />
       </div>
       <Toaster />
     </>
