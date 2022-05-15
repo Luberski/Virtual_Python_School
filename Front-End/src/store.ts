@@ -14,6 +14,7 @@ import enrolledCoursesReducer from './features/courses/enrolledCoursesSlice';
 import lessonsReducer from './features/lessons/lessonsSlice';
 import lessonReducer from './features/lessons/lessonSlice';
 import answersReducer from './features/lessons/answersSlice';
+import answerReducer from './features/lessons/answerSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -25,6 +26,7 @@ const combinedReducers = combineReducers({
   lessons: lessonsReducer,
   lesson: lessonReducer,
   answers: answersReducer,
+  answer: answerReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -54,4 +56,5 @@ export type RootState = {
   lessons: ReturnType<typeof lessonsReducer>;
   lesson: ReturnType<typeof lessonReducer>;
   answers: ReturnType<typeof answersReducer>;
+  answer: ReturnType<typeof answerReducer>;
 };

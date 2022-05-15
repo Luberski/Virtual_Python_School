@@ -152,6 +152,9 @@ export default function ManageCourseAndLessonsPage() {
             </ul>
             <div className="container flex flex-col p-6 pb-4">
               <h1 className="pb-4">
+                {
+                  // TODO: display course name instead of courseId
+                }
                 {t('Manage.manage-course')}: #{courseId}
               </h1>
               <div className="flex justify-between items-center">

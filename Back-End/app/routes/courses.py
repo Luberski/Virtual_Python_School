@@ -855,7 +855,7 @@ def check_answer():
     else:
         return make_response(jsonify({"error": {"id": id_lesson},}), 404)
 
-    if status == False:
+    if status is False:
         return make_response(
             jsonify(
                 {"data": {"status": status, "id_lesson": id_lesson,}, "error": None,}

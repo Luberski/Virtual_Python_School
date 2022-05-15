@@ -37,7 +37,8 @@ export default function CoursesPage() {
     notify();
     router.push(`/courses/${courseId}`);
   };
-
+  
+  // TODO: move to component
   const notify = () =>
     toast.custom(
       (to) => (
