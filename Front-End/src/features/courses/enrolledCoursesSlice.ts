@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiClient from '../../apiClient';
 import { RootState } from '../../store';
 import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
+import apiClient from '../../apiClient';
 
 export type EnrolledCoursesState = {
   data: Course[] | null;
@@ -22,13 +22,15 @@ export const fetchEnrolledCourses = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get('/courses/enrolled', {
+      const res = await apiClient.get(`courses/enrolled`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      return res.data;
+      const data = await res.json();
+
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -45,7 +47,7 @@ export const enrolledCoursesSlice = createSlice({
       .addCase(HYDRATE, (state, action) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return Object.assign({}, state, { ...action.payload.featuredCourses });
+        return Object.assign({}, state, { ...action.payload.enrolledCourses });
       })
       .addCase(fetchEnrolledCourses.pending, (state) => {
         state.status = 'pending';

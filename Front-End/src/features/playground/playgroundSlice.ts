@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import apiClient from '../../apiClient';
 import type { RootState } from '../../store';
 import { Playground } from '../../models/Playground';
+import { HYDRATE } from 'next-redux-wrapper';
 
 export type PlaygroundState = {
   data: Playground;
@@ -19,8 +20,11 @@ export const sendCode = createAsyncThunk(
   'api/playground',
   async ({ content }: { content: string }) => {
     try {
-      const res = await apiClient.post('/playground', { data: { content } });
-      return res.data;
+      const res = await apiClient.post('playground', {
+        json: { data: { content } },
+      });
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -34,6 +38,11 @@ export const playgroundSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
+      .addCase(HYDRATE, (state, action) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return Object.assign({}, state, { ...action.payload.playground });
+      })
       .addCase(sendCode.pending, (state) => {
         state.status = 'pending';
       })

@@ -10,12 +10,8 @@ import { useTranslations } from 'next-intl';
 import { Fragment, useEffect } from 'react';
 import {
   selectCourseData,
-  fetchCourse,
+  fetchCourseWithLessons,
 } from '../../../features/courses/courseSlice';
-import {
-  fetchLessons,
-  selectLessonsData,
-} from '../../../features/lessons/lessonsSlice';
 import Image from 'next/image';
 import Link from 'next/link';
 import ButtonLink, { ButtonLinkVariant } from '../../../components/ButtonLink';
@@ -30,23 +26,13 @@ export default function CoursePage() {
   // TODO: refactor to server side fetching
   useEffect(() => {
     const fetchData = async () => {
-      await dispatch(fetchCourse(courseId));
+      await dispatch(fetchCourseWithLessons(courseId));
     };
 
     fetchData().catch(console.error);
   }, [dispatch, isLoggedIn, courseId]);
 
-  // TODO: refactor to server side fetching
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchLessons(courseId));
-    };
-
-    fetchData().catch(console.error);
-  }, [courseId, dispatch, isLoggedIn]);
-
   const course = useAppSelector(selectCourseData);
-  const lessons = useAppSelector(selectLessonsData);
 
   if (!user && !isLoggedIn) {
     return null;
@@ -71,7 +57,7 @@ export default function CoursePage() {
                 {t('Meta.title-course')}:&nbsp;{course.name}
               </h1>
               <p className="leading-relaxed word-wrap">{course.description}</p>
-              {lessons && lessons.length > 0 ? (
+              {course?.lessons && course?.lessons.length > 0 ? (
                 <>
                   <div className="overflow-auto my-6 mx-auto w-fit rounded-lg border border-gray-300 dark:border-gray-600">
                     <table className="divide-y divide-gray-200 table-auto">
@@ -92,7 +78,7 @@ export default function CoursePage() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        {lessons.map((lesson) => (
+                        {course?.lessons.map((lesson) => (
                           <Fragment key={lesson.id}>
                             <tr>
                               <td className="p-4">{lesson.id}</td>

@@ -20,9 +20,10 @@ export const fetchFeaturedCourses = createAsyncThunk(
   'api/courses/featured',
   async (_: void) => {
     try {
-      const res = await apiClient.get('/courses/featured', {});
+      const res = await apiClient.get('courses/featured', {});
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

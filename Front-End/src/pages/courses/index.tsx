@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import Footer from '../../components/Footer';
 import { useTranslations } from 'next-intl';
 import NavBar from '../../components/NavBar';
@@ -15,6 +14,7 @@ import { enrollCourse } from '../../features/courses/courseSlice';
 import toast, { Toaster } from 'react-hot-toast';
 import { InformationCircleIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
+import { wrapper } from '../../store';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -23,21 +23,12 @@ export default function CoursesPage() {
   const courses = useAppSelector(selectCoursesData);
   const router = useRouter();
 
-  // TODO: refactor to server side fetching
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchCourses());
-    };
-
-    fetchData().catch(console.error);
-  }, [dispatch, isLoggedIn]);
-
   const handleEnrollCourse = (courseId: string) => async () => {
     await dispatch(enrollCourse(courseId));
     notify();
     router.push(`/courses/${courseId}`);
   };
-  
+
   // TODO: move to component
   const notify = () =>
     toast.custom(
@@ -134,10 +125,15 @@ export default function CoursesPage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      i18n: Object.assign({}, await import(`../../../i18n/${locale}.json`)),
-    },
-  };
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ locale }) => {
+      await store.dispatch(fetchCourses());
+
+      return {
+        props: {
+          i18n: Object.assign({}, await import(`../../../i18n/${locale}.json`)),
+        },
+      };
+    }
+);

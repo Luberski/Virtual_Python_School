@@ -22,13 +22,14 @@ export const fetchLessons = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`/courses/${courseId}/lessons`, {
+      const res = await apiClient.get(`courses/${courseId}/lessons`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -43,8 +44,8 @@ export const deleteLesson = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.delete(`/lessons`, {
-        data: {
+      const res = await apiClient.delete(`lessons`, {
+        json: {
           data: {
             id_lesson: id,
           },
@@ -54,7 +55,8 @@ export const deleteLesson = createAsyncThunk(
         },
       });
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -86,9 +88,8 @@ export const createLesson = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post(
-        '/lessons',
-        {
+      const res = await apiClient.post('lessons', {
+        json: {
           data: {
             id_course: courseId,
             name,
@@ -98,14 +99,13 @@ export const createLesson = createAsyncThunk(
             final_answer: answer,
           },
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

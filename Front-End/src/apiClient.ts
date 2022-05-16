@@ -1,11 +1,7 @@
-import axios from "axios";
+import ky from 'ky-universal';
 
-const BASE_URL = `/api`;
+const BASE_URL = `http://localhost:3000/api`;
 
-export default axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
+export default ky.extend({
+  prefixUrl: BASE_URL,
 });

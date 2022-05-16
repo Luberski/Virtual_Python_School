@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import Footer from '../../components/Footer';
 import { useTranslations } from 'next-intl';
 import NavBar from '../../components/NavBar';
@@ -11,21 +10,13 @@ import {
 } from '../../features/courses/enrolledCoursesSlice';
 import { WEBSITE_TITLE } from '../../constants';
 import Head from 'next/head';
+import { wrapper } from '../../store';
 
 export default function EnrolledCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useAppDispatch();
   const t = useTranslations();
   const courses = useAppSelector(selectEnrolledCoursesData);
-
-  // TODO: refactor to server side fetching
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchEnrolledCourses());
-    };
-
-    fetchData().catch(console.error);
-  }, [dispatch, isLoggedIn]);
 
   if (!user && !isLoggedIn) {
     return null;
@@ -100,10 +91,15 @@ export default function EnrolledCoursesPage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      i18n: Object.assign({}, await import(`../../../i18n/${locale}.json`)),
-    },
-  };
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ locale }) => {
+      await store.dispatch(fetchEnrolledCourses());
+
+      return {
+        props: {
+          i18n: Object.assign({}, await import(`../../../i18n/${locale}.json`)),
+        },
+      };
+    }
+);

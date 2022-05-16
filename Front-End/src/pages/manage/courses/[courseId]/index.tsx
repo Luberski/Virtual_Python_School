@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   useAppDispatch,
@@ -29,14 +29,15 @@ import toast, { Toaster } from 'react-hot-toast';
 import TextArea from '../../../../components/TextArea';
 import Head from 'next/head';
 import { WEBSITE_TITLE } from '../../../../constants';
-import { useRouter } from 'next/router';
-import { GetStaticPaths } from 'next';
 import Link from 'next/link';
+import { wrapper } from '../../../../store';
 
-export default function ManageCourseAndLessonsPage() {
+type Props = {
+  courseId: string;
+};
+
+export default function ManageCourseAndLessonsPage({ courseId }: Props) {
   const [user, isLoggedIn] = useAuthRedirect();
-  const router = useRouter();
-  const { courseId } = router.query as { courseId: string };
   const dispatch = useAppDispatch();
 
   const t = useTranslations();
@@ -58,15 +59,6 @@ export default function ManageCourseAndLessonsPage() {
   function openModal() {
     setIsOpen(true);
   }
-
-  // TODO: refactor to server side fetching
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchLessons(courseId));
-    };
-
-    fetchData().catch(console.error);
-  }, [courseId, dispatch, isLoggedIn]);
 
   // TODO: handle errors
   const onSubmit = async (data: {
@@ -342,22 +334,20 @@ export default function ManageCourseAndLessonsPage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      i18n: Object.assign(
-        {},
-        await import(`../../../../../i18n/${locale}.json`)
-      ),
-    },
-  };
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ locale, params }) => {
+      const { courseId } = params as { courseId: string };
+      await store.dispatch(fetchLessons(courseId));
 
-export const getStaticPaths: GetStaticPaths<{
-  lessonId: string;
-}> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking', //indicates the type of fallback
-  };
-};
+      return {
+        props: {
+          courseId,
+          i18n: Object.assign(
+            {},
+            await import(`../../../../../i18n/${locale}.json`)
+          ),
+        },
+      };
+    }
+);

@@ -31,22 +31,20 @@ export const checkAnswer = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post(
-        '/answers/check',
-        {
+      const res = await apiClient.post('answers/check', {
+        json: {
           data: {
             id_lesson: lessonId,
             answer: answer,
           },
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

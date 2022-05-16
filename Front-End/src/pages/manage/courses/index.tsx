@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   useAppDispatch,
@@ -29,6 +29,7 @@ import Head from 'next/head';
 import { WEBSITE_TITLE } from '../../../constants';
 import ButtonLink, { ButtonLinkVariant } from '../../../components/ButtonLink';
 import Link from 'next/link';
+import { wrapper } from '../../../store';
 
 export default function ManageCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -53,15 +54,6 @@ export default function ManageCoursesPage() {
   function openModal() {
     setIsOpen(true);
   }
-
-  // TODO: refactor to server side fetching
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchCourses());
-    };
-
-    fetchData().catch(console.error);
-  }, [dispatch, isLoggedIn]);
 
   // TODO: handle errors
   const onSubmit = async (data: {
@@ -335,10 +327,18 @@ export default function ManageCoursesPage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      i18n: Object.assign({}, await import(`../../../../i18n/${locale}.json`)),
-    },
-  };
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ locale }) => {
+      await store.dispatch(fetchCourses());
+
+      return {
+        props: {
+          i18n: Object.assign(
+            {},
+            await import(`../../../../i18n/${locale}.json`)
+          ),
+        },
+      };
+    }
+);

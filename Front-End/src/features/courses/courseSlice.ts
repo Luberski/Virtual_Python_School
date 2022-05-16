@@ -22,13 +22,32 @@ export const fetchCourse = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`/courses/${id}`, {
+      const res = await apiClient.get(`courses/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
-      return res.data;
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+export const fetchCourseWithLessons = createAsyncThunk(
+  'api/course/with-lessons',
+  async (id: string | number, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.get(`courses/${id}?include_lessons=true`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -42,21 +61,17 @@ export const enrollCourse = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post(
-        '/course',
-        {
+      const res = await apiClient.post('course', {
+        json: {
           data: { id_course: id },
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-      return res.data;
-
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -111,6 +126,27 @@ export const courseSlice = createSlice({
         }
       )
       .addCase(enrollCourse.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(fetchCourseWithLessons.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        fetchCourseWithLessons.fulfilled,
+        (state, { payload: { data, error } }) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(fetchCourseWithLessons.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

@@ -7,11 +7,11 @@ import NavBar from '../components/NavBar';
 import FancyCard from '../components/FancyCard';
 import Head from 'next/head';
 import { WEBSITE_TITLE } from '../constants';
-import { useEffect } from 'react';
 import {
   fetchFeaturedCourses,
   selectFeaturedCoursesData,
 } from '../features/courses/featuredCoursesSlice';
+import { wrapper } from '../store';
 
 export default function IndexPage() {
   const t = useTranslations();
@@ -19,15 +19,6 @@ export default function IndexPage() {
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const featuredCourses = useAppSelector(selectFeaturedCoursesData);
-
-  // TODO: refactor to server side fetching
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchFeaturedCourses());
-    };
-
-    fetchData().catch(console.error);
-  }, [dispatch]);
 
   return (
     <>
@@ -98,10 +89,15 @@ export default function IndexPage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      i18n: Object.assign({}, await import(`../../i18n/${locale}.json`)),
-    },
-  };
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ locale }) => {
+      await store.dispatch(fetchFeaturedCourses());
+
+      return {
+        props: {
+          i18n: Object.assign({}, await import(`../../i18n/${locale}.json`)),
+        },
+      };
+    }
+);

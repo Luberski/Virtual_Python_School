@@ -8,7 +8,7 @@ import { ThemeProvider } from 'next-themes';
 function MyApp({
   Component,
   pageProps,
-}: AppProps & { Component: { theme: unknown } }) {
+}: AppProps & { Component: { theme: string } }) {
   return (
     <>
       <Head>

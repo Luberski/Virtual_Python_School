@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import NavBar from '../../../../../components/NavBar';
 import { useTranslations } from 'next-intl';
-import { GetStaticPaths } from 'next';
 import Editor from '@monaco-editor/react';
 import {
   useAppDispatch,
@@ -35,15 +34,17 @@ import IconButton, {
 } from '../../../../../components/IconButton';
 import ConfettiExplosion from 'react-confetti-explosion';
 import Footer from '../../../../../components/Footer';
+import { wrapper } from '../../../../../store';
 
-export default function LessonPage() {
+type Props = {
+  courseId: string;
+  lessonId: string;
+};
+
+export default function LessonPage({ courseId, lessonId }: Props) {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { courseId, lessonId } = router.query as {
-    courseId: string;
-    lessonId: string;
-  };
   const t = useTranslations();
 
   const editorRef = useRef(null);
@@ -58,15 +59,6 @@ export default function LessonPage() {
   const answerData = useAppSelector(selectAnswerData);
   const [isExploding, setIsExploding] = useState(false);
 
-  // TODO: refactor to server side fetching
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchLesson({ courseId, lessonId }));
-    };
-
-    fetchData().catch(console.error);
-  }, [dispatch, isLoggedIn, courseId, lessonId]);
-
   useEffect(() => {
     if (answerStatus === 'succeeded') {
       if (answerData?.status === true) {
@@ -75,7 +67,7 @@ export default function LessonPage() {
         setTimeout(() => {
           setIsExploding(false);
           router.push(`/courses/${courseId}`);
-        }, 3000);
+        }, 2000);
       } else {
         console.log('wrong answer');
         notify(false);
@@ -294,22 +286,24 @@ export default function LessonPage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      i18n: Object.assign(
-        {},
-        await import(`../../../../../../i18n/${locale}.json`)
-      ),
-    },
-  };
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ locale, params }) => {
+      const { courseId, lessonId } = params as {
+        courseId: string;
+        lessonId: string;
+      };
+      await store.dispatch(fetchLesson({ courseId, lessonId }));
 
-export const getStaticPaths: GetStaticPaths<{
-  lessonId: string;
-}> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking', //indicates the type of fallback
-  };
-};
+      return {
+        props: {
+          courseId,
+          lessonId,
+          i18n: Object.assign(
+            {},
+            await import(`../../../../../../i18n/${locale}.json`)
+          ),
+        },
+      };
+    }
+);

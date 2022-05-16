@@ -34,8 +34,12 @@ export const loginUser = createAsyncThunk(
       const formData = new FormData();
       formData.append('username', username);
       formData.append('password', password);
-      const res = await apiClient.post('/login', formData);
-      return res.data;
+      const res = await apiClient.post('login', {
+        body: formData,
+      });
+
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

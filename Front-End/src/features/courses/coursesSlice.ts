@@ -22,13 +22,14 @@ export const fetchCourses = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get('/courses', {
+      const res = await apiClient.get('courses', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -43,8 +44,8 @@ export const deleteCourse = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.delete(`/courses`, {
-        data: {
+      const res = await apiClient.delete(`courses`, {
+        json: {
           data: {
             id_course: id,
           },
@@ -54,7 +55,8 @@ export const deleteCourse = createAsyncThunk(
         },
       });
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
@@ -76,19 +78,17 @@ export const createCourse = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post(
-        '/courses',
-        {
+      const res = await apiClient.post('courses', {
+        json: {
           data: { name, description, featured },
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

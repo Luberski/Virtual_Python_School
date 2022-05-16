@@ -32,7 +32,7 @@ export const fetchLesson = createAsyncThunk(
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
       const res = await apiClient.get(
-        `/courses/${courseId}/lessons/${lessonId}`,
+        `courses/${courseId}/lessons/${lessonId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -40,7 +40,8 @@ export const fetchLesson = createAsyncThunk(
         }
       );
 
-      return res.data;
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

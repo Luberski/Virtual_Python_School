@@ -131,7 +131,6 @@ def get_courses_all():
         return make_response(jsonify({"error": "Bad token"}), 403)
 
     if include_lessons:
-        print("include lessons")
         courses = (
             models.Courses()
             .query.join(models.Lessons, models.Courses.id == models.Lessons.id_course)
@@ -342,10 +341,50 @@ def get_enrolled_courses():
 @routes.route("/api/courses/<id_course>", methods=["GET"])
 @jwt_required()
 def get_course_by_id(id_course):
+    args = request.args
+    include_lessons = False
+    include_lessons = args.get(
+        "include_lessons", default=False, type=lambda v: v.lower() == "true"
+    )
 
-    course = models.Courses().query.filter_by(id=id_course).first()
+    if include_lessons:
+        course = (
+            models.Courses()
+            .query.join(models.Lessons, models.Courses.id == models.Lessons.id_course)
+            .filter_by(id=id_course)
+            .first()
+        )
+    else:
+        course = models.Courses().query.filter_by(id=id_course).first()
+
     if course is None:
         return make_response(jsonify({"error": "Course not found"}), 404)
+
+    if include_lessons:
+        return make_response(
+            jsonify(
+                {
+                    "data": {
+                        "id": course.id,
+                        "name": course.name,
+                        "description": course.description,
+                        "featured": course.featured,
+                        "lessons": [
+                            {
+                                "id": lesson.id,
+                                "name": lesson.name,
+                                "description": lesson.description,
+                                "type": lesson.type,
+                                "number_of_answers": lesson.number_of_answers,
+                            }
+                            for lesson in course.lessons
+                        ],
+                    },
+                    "error": None,
+                }
+            ),
+            200,
+        )
 
     return make_response(
         jsonify(
