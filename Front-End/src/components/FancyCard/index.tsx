@@ -32,7 +32,9 @@ export default function FancyCard({
       <h3 title={title} className="text-xl font-bold break-words">
         {title}
       </h3>
-      <p className="max-w-xs h-full max-h-96 break-words">{description}</p>
+      <p className="max-w-xs h-full max-h-96 truncate break-words">
+        {description}
+      </p>
 
       {link ? (
         <Link href={link} passHref={true}>
