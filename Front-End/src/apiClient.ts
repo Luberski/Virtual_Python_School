@@ -4,4 +4,8 @@ const BASE_URL = `http://localhost:3000/api`;
 
 export default ky.extend({
   prefixUrl: BASE_URL,
+  headers: {
+    'Access-Control-Allow-Private-Network': '*',
+    'Access-Control-Allow-Origin': '*',
+  },
 });
