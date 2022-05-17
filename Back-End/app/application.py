@@ -3,6 +3,8 @@ from datetime import timedelta
 from flask import Flask
 from flask_cors import CORS
 
+cors = CORS()
+
 
 def create_app():
     application = Flask(__name__)
@@ -13,8 +15,11 @@ def create_app():
     application.config["JWT_BLOCKLIST_ENABLED"] = True
     application.config["JWT_BLOCKLIST_TOKEN_CHECKS"] = ["access", "refresh"]
     application.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=720)
-    CORS(
-        application, supports_credentials=True, resources={r"/api/*": {"origins": "*"}}
+
+    cors.init_app(
+        app=application,
+        supports_credentials=True,
+        resources={r"/api/*": {"origins": "*"}},
     )
     return application
 
