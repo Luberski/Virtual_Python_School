@@ -91,11 +91,11 @@ export default function LessonPage({ courseId, lessonId }: Props) {
   }
 
   // TODO: move to component
-  const notify = (isSucces = true) =>
-    toast.custom(
-      (to) => (
-        <>
-          {isSucces ? (
+  const notify = (isSucces = true) => {
+    if (isSucces) {
+      return toast.custom(
+        (to) => (
+          <>
             <div
               className={clsx(
                 to.visible ? 'animate-enter' : 'animate-leave',
@@ -110,7 +110,14 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                 </div>
               </div>
             </div>
-          ) : (
+          </>
+        ),
+        { position: 'top-center', duration: 500 }
+      );
+    } else {
+      return toast.custom(
+        (to) => (
+          <>
             <div
               className={clsx(
                 to.visible ? 'animate-enter' : 'animate-leave',
@@ -125,11 +132,12 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                 </div>
               </div>
             </div>
-          )}
-        </>
-      ),
-      { id: 'unique-notification', position: 'top-center', duration: 500 }
-    );
+          </>
+        ),
+        { position: 'top-center', duration: 500 }
+      );
+    }
+  };
 
   const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
