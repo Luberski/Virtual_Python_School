@@ -10,3 +10,4 @@ pytest-dotenv
 wrapt_timeout_decorator
 paramiko
 Flask-Migrate
+flask_cors
