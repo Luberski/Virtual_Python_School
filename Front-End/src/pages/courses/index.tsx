@@ -12,9 +12,9 @@ import { WEBSITE_TITLE } from '../../constants';
 import Head from 'next/head';
 import { enrollCourse } from '../../features/courses/courseSlice';
 import toast, { Toaster } from 'react-hot-toast';
-import { InformationCircleIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import { wrapper } from '../../store';
+import FancyToast from '../../components/FancyToast';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -29,23 +29,14 @@ export default function CoursesPage() {
     router.push(`/courses/${courseId}`);
   };
 
-  // TODO: move to component
   const notify = () =>
     toast.custom(
       (to) => (
-        <>
-          <div
-            className="py-3 px-4 text-indigo-900 bg-indigo-200 rounded-lg border-indigo-500 shadow"
-            role="alert"
-            onClick={() => toast.dismiss(to.id)}>
-            <div className="flex justify-center space-x-1">
-              <InformationCircleIcon className="w-6 h-6 text-indigo-500" />
-              <div>
-                <p className="font-bold">{t('Courses.course-enrolled')}</p>
-              </div>
-            </div>
-          </div>
-        </>
+        <FancyToast
+          message={t('Courses.course-enrolled')}
+          toastObject={to}
+          className="text-indigo-900 bg-indigo-200 border-indigo-500"
+        />
       ),
       { id: 'unique-notification', position: 'top-center' }
     );

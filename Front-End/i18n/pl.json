@@ -55,7 +55,9 @@
     "check-answer": "Sprawdź odpowiedź",
     "your-answer": "Twoja odpowiedź",
     "answer": "Odpowiedź",
-    "add-answer": "Dodaj odpowiedź"
+    "add-answer": "Dodaj odpowiedź",
+    "correct-answer": "Poprawna odpowiedź",
+    "incorrect-answer": "Niepoprawna odpowiedź"
   },
   "Playground": {
     "run": "Uruchom",

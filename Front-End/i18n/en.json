@@ -55,7 +55,9 @@
     "check-answer": "Check answer",
     "your-answer": "Your answer",
     "answer": "Answer",
-    "add-answer": "Add answer"
+    "add-answer": "Add answer",
+    "correct-answer": "Correct answer",
+    "incorrect-answer": "Incorrect answer"
   },
   "Playground": {
     "run": "Run",

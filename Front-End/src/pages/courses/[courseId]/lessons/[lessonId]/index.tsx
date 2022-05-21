@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import NavBar from '../../../../../components/NavBar';
 import { useTranslations } from 'next-intl';
@@ -27,14 +27,14 @@ import {
   selectAnswerStatus,
 } from '../../../../../features/lessons/answerSlice';
 import toast, { Toaster } from 'react-hot-toast';
-import { CheckIcon, InformationCircleIcon } from '@heroicons/react/outline';
-import clsx from 'clsx';
+import { CheckIcon } from '@heroicons/react/outline';
 import IconButton, {
   IconButtonVariant,
 } from '../../../../../components/IconButton';
 import ConfettiExplosion from 'react-confetti-explosion';
 import Footer from '../../../../../components/Footer';
 import { wrapper } from '../../../../../store';
+import FancyToast from '../../../../../components/FancyToast';
 
 type Props = {
   courseId: string;
@@ -58,6 +58,34 @@ export default function LessonPage({ courseId, lessonId }: Props) {
   const answerStatus = useAppSelector(selectAnswerStatus);
   const answerData = useAppSelector(selectAnswerData);
   const [isExploding, setIsExploding] = useState(false);
+
+  const notify = useCallback(
+    (isSucces = true) => {
+      if (isSucces) {
+        return toast.custom(
+          (to) => (
+            <FancyToast
+              message={t('Lessons.correct-answer')}
+              toastObject={to}
+            />
+          ),
+          { position: 'top-center', duration: 500 }
+        );
+      } else {
+        return toast.custom(
+          (to) => (
+            <FancyToast
+              message={t('Lessons.incorrect-answer')}
+              toastObject={to}
+              className="text-red-900 bg-red-200 border-red-500"
+            />
+          ),
+          { position: 'top-center', duration: 500 }
+        );
+      }
+    },
+    [t]
+  );
 
   useEffect(() => {
     if (answerStatus === 'succeeded') {
@@ -84,60 +112,12 @@ export default function LessonPage({ courseId, lessonId }: Props) {
     lessonId,
     router,
     isExploding,
+    notify,
   ]);
 
   if (!user && !isLoggedIn) {
     return null;
   }
-
-  // TODO: move to component
-  const notify = (isSucces = true) => {
-    if (isSucces) {
-      return toast.custom(
-        (to) => (
-          <>
-            <div
-              className={clsx(
-                to.visible ? 'animate-enter' : 'animate-leave',
-                'py-3 px-4 text-emerald-900 bg-emerald-200 rounded-lg border-emerald-500 shadow'
-              )}
-              role="alert"
-              onClick={() => toast.dismiss(to.id)}>
-              <div className="flex justify-center space-x-1">
-                <InformationCircleIcon className="w-6 h-6 text-emerald-500" />
-                <div>
-                  <p className="font-bold">Correct answer!</p>
-                </div>
-              </div>
-            </div>
-          </>
-        ),
-        { position: 'top-center', duration: 500 }
-      );
-    } else {
-      return toast.custom(
-        (to) => (
-          <>
-            <div
-              className={clsx(
-                to.visible ? 'animate-enter' : 'animate-leave',
-                'py-3 px-4 text-red-900 bg-red-200 rounded-lg border-red-500 shadow'
-              )}
-              role="alert"
-              onClick={() => toast.dismiss(to.id)}>
-              <div className="flex justify-center space-x-1">
-                <InformationCircleIcon className="w-6 h-6 text-red-500" />
-                <div>
-                  <p className="font-bold">Wrong answer!</p>
-                </div>
-              </div>
-            </div>
-          </>
-        ),
-        { position: 'top-center', duration: 500 }
-      );
-    }
-  };
 
   const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
