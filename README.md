@@ -20,6 +20,9 @@ Create `.env` file with the following variables:
 SQLALCHEMY_DATABASE_URI="mysql+mysqlconnector://yourdbusername:yourdbpassword@localhost/yourdb"
 TEST_SQLALCHEMY_DATABASE_URI="mysql+mysqlconnector://yourdbusername:yourdbpassword@localhost/yourdb_test"
 JWT_SECRET_KEY="yoursecrect"
+MASTER_KEY="masterkey"
+TEST_USER_IPA="login to ipa"
+TEST_PASS_IPA="password to ipa"
 
 ```
 
@@ -36,6 +39,7 @@ pytest
 ```
 
 ## Pulling changes to server
+
 ```Killing:
 pm2 delete all
 pkill gunicorn
@@ -53,7 +57,6 @@ cd Back-End/
 gunicorn --daemon  --bind 0.0.0.0:5000 app:app
 ```
 
-###
 Pages:
 Home (signed out)
 Home (signed in)
@@ -73,6 +76,7 @@ Courses enrolled
 Course certificates
 
 ## Updating the database
+
 ```
 /Back-End/
 
