@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import NavBar from '../../../../../components/NavBar';
 import { useTranslations } from 'next-intl';
@@ -35,6 +35,7 @@ import ConfettiExplosion from 'react-confetti-explosion';
 import Footer from '../../../../../components/Footer';
 import { wrapper } from '../../../../../store';
 import FancyToast from '../../../../../components/FancyToast';
+import debounce from 'debounce';
 
 type Props = {
   courseId: string;
@@ -115,37 +116,45 @@ export default function LessonPage({ courseId, lessonId }: Props) {
     notify,
   ]);
 
+  const onSubmit = useMemo(
+    () =>
+      debounce((data: { answer: string }) => {
+        const { answer } = data;
+        try {
+          dispatch(
+            checkAnswer({
+              lessonId,
+              answer,
+            })
+          );
+          reset();
+        } catch (error) {
+          console.error(error);
+        }
+      }, 500),
+    [dispatch, lessonId]
+  );
+
+  const handleValue = useMemo(
+    () =>
+      debounce(() => {
+        const value = editorRef.current.getValue();
+        try {
+          dispatch(sendCode({ content: value }));
+          setValue('answer', '');
+        } catch (error) {
+          console.error(error);
+        }
+      }, 1000),
+    [dispatch, setValue]
+  );
+
   if (!user && !isLoggedIn) {
     return null;
   }
 
   const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
-  };
-
-  const handleValue = async () => {
-    const value = editorRef.current.getValue();
-    try {
-      await dispatch(sendCode({ content: value }));
-      setValue('answer', '');
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const onSubmit = async (data: { answer: string }) => {
-    const { answer } = data;
-    try {
-      await dispatch(
-        checkAnswer({
-          lessonId,
-          answer,
-        })
-      );
-      reset();
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   return (

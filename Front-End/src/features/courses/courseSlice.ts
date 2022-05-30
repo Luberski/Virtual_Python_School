@@ -88,7 +88,7 @@ export const courseSlice = createSlice({
       .addCase(HYDRATE, (state, action) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return Object.assign({}, state, { ...action.payload.courses });
+        return Object.assign({}, state, { ...action.payload.course });
       })
       .addCase(fetchCourse.pending, (state) => {
         state.status = 'pending';

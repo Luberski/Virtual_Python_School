@@ -34,11 +34,11 @@ export default function LoginPage() {
     }
   }, [user, isLoggedIn, router]);
 
-  const onSubmit = async (data: { username: string; password: string }) => {
+  const onSubmit = (data: { username: string; password: string }) => {
     const { username, password } = data;
 
     try {
-      await dispatch(loginUser({ username, password }));
+      dispatch(loginUser({ username, password }));
       if (status === 'succeeded') {
         router.push('/');
       }

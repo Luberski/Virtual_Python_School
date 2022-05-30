@@ -13,21 +13,18 @@ from app import models
 from app.jwt import jwt
 from . import routes
 
-# todo: switch between ipa2 and ipa1 if one of them is not available
+# TODO: switch between ipa2 and ipa1 if one of them is not available
 ipa_url = "ipa2.zut.edu.pl"
 ipa_ = ipahttp.ipa(ipa_url)
 
-if(ipa_.checkAvailability() != 200):
-    if(ipa_url == "ipa2.zut.edu.pl"):
-        ipa_ = ipahttp.ipa("ipa1.zut.edu.pl")
-        ipa_url = "ipa1.zut.edu.pl"
-    else:
-        ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
-        ipa_url = "ipa2.zut.edu.pl"
-
-
-
-
+# TODO: FIX THIS
+# if(ipa_.checkAvailability() != 200):
+#     if(ipa_url == "ipa2.zut.edu.pl"):
+#         ipa_ = ipahttp.ipa("ipa1.zut.edu.pl")
+#         ipa_url = "ipa1.zut.edu.pl"
+#     else:
+#         ipa_ = ipahttp.ipa("ipa2.zut.edu.pl")
+#         ipa_url = "ipa2.zut.edu.pl"
 
 
 @routes.route("/api/login", methods=["POST"])
