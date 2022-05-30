@@ -1,13 +1,11 @@
-import { useRouter } from 'next/router';
 import NavBar from '../../../components/NavBar';
-import { GetStaticPaths } from 'next';
 import {
   useAppDispatch,
   useAppSelector,
   useAuthRedirect,
 } from '../../../hooks';
 import { useTranslations } from 'next-intl';
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import {
   selectCourseData,
   fetchCourseWithLessons,
@@ -15,22 +13,12 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import ButtonLink, { ButtonLinkVariant } from '../../../components/ButtonLink';
+import { wrapper } from '../../../store';
 
 export default function CoursePage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const t = useTranslations();
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { courseId } = router.query as { courseId: string };
-
-  // TODO: refactor to server side fetching
-  useEffect(() => {
-    const fetchData = async () => {
-      await dispatch(fetchCourseWithLessons(courseId));
-    };
-
-    fetchData().catch(console.error);
-  }, [dispatch, isLoggedIn, courseId]);
 
   const course = useAppSelector(selectCourseData);
 
@@ -130,19 +118,22 @@ export default function CoursePage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      i18n: Object.assign({}, await import(`../../../../i18n/${locale}.json`)),
-    },
-  };
-}
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) =>
+    async ({ locale, params }) => {
+      const { courseId } = params as {
+        courseId: string;
+      };
+      await store.dispatch(fetchCourseWithLessons(courseId));
 
-export const getStaticPaths: GetStaticPaths<{
-  courseId: string;
-}> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking', //indicates the type of fallback
-  };
-};
+      return {
+        props: {
+          courseId,
+          i18n: Object.assign(
+            {},
+            await import(`../../../../i18n/${locale}.json`)
+          ),
+        },
+      };
+    }
+);
