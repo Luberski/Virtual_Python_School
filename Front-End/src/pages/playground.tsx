@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import NavBar from '../components/NavBar';
 import { useTranslations } from 'use-intl';
@@ -15,6 +15,7 @@ import Head from 'next/head';
 import IconButton, { IconButtonVariant } from '../components/IconButton';
 import { PlayIcon } from '@heroicons/react/outline';
 import Footer from '../components/Footer';
+import debounce from 'debounce';
 
 export default function Playground() {
   const dispatch = useAppDispatch();
@@ -30,14 +31,18 @@ export default function Playground() {
     editorRef.current = editor;
   };
 
-  const handleValue = async () => {
-    const value = editorRef.current.getValue();
-    try {
-      await dispatch(sendCode({ content: value }));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const handleValue = useMemo(
+    () =>
+      debounce(() => {
+        const value = editorRef.current.getValue();
+        try {
+          dispatch(sendCode({ content: value }));
+        } catch (error) {
+          console.error(error);
+        }
+      }, 1000),
+    [dispatch]
+  );
 
   return (
     <>
