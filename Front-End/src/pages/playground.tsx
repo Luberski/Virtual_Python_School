@@ -70,7 +70,7 @@ export default function Playground() {
           <div className="grid grid-cols-2 items-center">
             <IconButton
               onClick={handleValue}
-              className="my-8 w-24 h-12"
+              className="my-8 max-w-fit h-12"
               variant={IconButtonVariant.PRIMARY}
               icon={
                 playgroundStatus === 'pending' ? (
