@@ -22,6 +22,7 @@ const IconButton = ({
   <button
     className={clsx('btn', variant, sizeType, className, 'flex items-center')}
     disabled={disabled}
+    // eslint-disable-next-line react/button-has-type
     type={type}
     {...props}>
     <div className="pr-1">{icon}</div>

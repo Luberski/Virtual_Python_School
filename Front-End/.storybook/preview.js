@@ -1,18 +1,19 @@
-import "../src/styles/index.css";
-import * as NextImage from "next/image";
-import { reactIntl } from "./reactIntl.js";
-import { NextIntlProvider } from "next-intl";
-import { RouterContext } from "next/dist/shared/lib/router-context";
+import '../src/styles/index.css';
+import * as NextImage from 'next/image';
+import { reactIntl } from './reactIntl.js';
+import { NextIntlProvider } from 'next-intl';
+import { RouterContext } from 'next/dist/shared/lib/router-context';
 
 const OriginalNextImage = NextImage.default;
 
-Object.defineProperty(NextImage, "default", {
+// eslint-disable-next-line no-import-assign
+Object.defineProperty(NextImage, 'default', {
   configurable: true,
   value: (props) => <OriginalNextImage {...props} unoptimized />,
 });
 
 export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
+  actions: { argTypesRegex: '^on[A-Z].*' },
   controls: {
     matchers: {
       color: /(background|color)$/i,
@@ -20,7 +21,7 @@ export const parameters = {
     },
   },
   previewTabs: {
-    "storybook/docs/panel": { index: -1 },
+    'storybook/docs/panel': { index: -1 },
   },
   nextRouter: {
     Provider: RouterContext.Provider,
@@ -31,8 +32,7 @@ export const parameters = {
 const withI18n = (storyFn) => (
   <NextIntlProvider
     locale={reactIntl.defaultLocale}
-    messages={reactIntl.messages}
-  >
+    messages={reactIntl.messages}>
     {storyFn()}
   </NextIntlProvider>
 );

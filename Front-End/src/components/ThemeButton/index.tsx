@@ -19,14 +19,15 @@ export const ThemeButton = () => {
 
   return (
     <button
+      type="button"
       onClick={switchTheme}
       id="switchTheme"
-      className="flex justify-center items-center mx-4 w-10 h-10 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg focus:outline-none transition duration-150 ease-in-out"
+      className="mx-4 flex h-10 w-10 items-center justify-center rounded-lg transition duration-150 ease-in-out hover:bg-gray-200 focus:outline-none dark:hover:bg-gray-700"
       title={t('Home.switch-theme')}>
       {isMounted && theme === 'dark' ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5 text-gray-100"
+          className="h-5 w-5 text-gray-100"
           viewBox="0 0 20 20"
           fill="currentColor">
           <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
@@ -34,7 +35,7 @@ export const ThemeButton = () => {
       ) : (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5 text-yellow-500"
+          className="h-5 w-5 text-yellow-500"
           viewBox="0 0 20 20"
           fill="currentColor">
           <path

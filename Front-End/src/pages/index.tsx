@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Footer from '../components/Footer';
 import { useTranslations } from 'next-intl';
-import { useAppDispatch, useAppSelector } from '../hooks';
+import { useAppSelector } from '../hooks';
 import { selectIsLogged, selectAuthUser } from '../features/auth/authSlice';
 import NavBar from '../components/NavBar';
 import FancyCard from '../components/FancyCard';
@@ -12,10 +12,11 @@ import {
   selectFeaturedCoursesData,
 } from '../features/courses/featuredCoursesSlice';
 import { wrapper } from '../store';
+import { useDispatch } from 'react-redux';
 
 export default function IndexPage() {
   const t = useTranslations();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const featuredCourses = useAppSelector(selectFeaturedCoursesData);
@@ -27,7 +28,7 @@ export default function IndexPage() {
           {t('Meta.title-home')} - {WEBSITE_TITLE}
         </title>
       </Head>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <NavBar
           user={user}
           isLoggedIn={isLoggedIn}
@@ -37,15 +38,15 @@ export default function IndexPage() {
             })
           }
         />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
+        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
           <div className="space-y-2">
             <h1 className="text-center">{t('Home.leading')}</h1>
-            <p className="text-xl text-center">
+            <p className="text-center text-xl">
               {t('Courses.courses-adjusted-skill-level')}
             </p>
           </div>
         </div>
-        <div className="container px-6 mx-auto">
+        <div className="container mx-auto px-6">
           {featuredCourses && featuredCourses.length > 0 ? (
             <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
               {featuredCourses.map((course) => (
@@ -62,7 +63,7 @@ export default function IndexPage() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col justify-center items-center w-full h-full">
+            <div className="flex h-full w-full flex-col items-center justify-center">
               <p className="pb-8 text-lg font-medium">
                 {t('Courses.no-courses-found')}
               </p>
@@ -75,7 +76,7 @@ export default function IndexPage() {
             </div>
           )}
         </div>
-        <div className="flex justify-center items-center my-16">
+        <div className="my-16 flex items-center justify-center">
           <Image
             src={'/undraw_online_learning_re_qw08.svg'}
             alt="online_learning"

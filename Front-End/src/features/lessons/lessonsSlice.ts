@@ -3,6 +3,7 @@ import apiClient from '../../apiClient';
 import { RootState } from '../../store';
 import { Lesson } from '../../models/Lesson';
 import { HYDRATE } from 'next-redux-wrapper';
+import { ApiPayload } from '../../models/ApiPayload';
 
 export type LessonsState = {
   data: Lesson[];
@@ -129,7 +130,10 @@ export const lessonsSlice = createSlice({
       })
       .addCase(
         fetchLessons.fulfilled,
-        (state, { payload: { data, error } }) => {
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
           if (error) {
             state.data = null;
             state.error = error;
@@ -148,20 +152,26 @@ export const lessonsSlice = createSlice({
       .addCase(deleteLesson.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(deleteLesson.fulfilled, (state, { payload }) => {
-        state.data = state.data.filter(
-          (course) => course.id !== payload.data.id
-        );
-      })
+      .addCase(
+        deleteLesson.fulfilled,
+        (state, { payload }: { payload: ApiPayload | any }) => {
+          state.data = state.data.filter(
+            (course) => course.id !== payload.data.id
+          );
+        }
+      )
       .addCase(deleteLesson.rejected, (state, action) => {
         state.error = action.error.message;
       })
       .addCase(createLesson.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(createLesson.fulfilled, (state, { payload }) => {
-        state.data = [...state.data, payload.data];
-      })
+      .addCase(
+        createLesson.fulfilled,
+        (state, { payload }: { payload: ApiPayload | any }) => {
+          state.data = [...state.data, payload.data];
+        }
+      )
       .addCase(createLesson.rejected, (state, action) => {
         state.error = action.error.message;
       });

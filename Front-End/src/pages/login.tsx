@@ -4,7 +4,7 @@ import Input from '../components/Input';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { useAppDispatch, useAppSelector } from '../hooks';
+import { useAppSelector } from '../hooks';
 import {
   loginUser,
   selectAuthError,
@@ -17,9 +17,10 @@ import { useRouter } from 'next/router';
 import IconButton, { IconButtonVariant } from '../components/IconButton';
 import { WEBSITE_TITLE } from '../constants';
 import Head from 'next/head';
+import { useDispatch } from 'react-redux';
 
 export default function LoginPage() {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const t = useTranslations();
   const { register, handleSubmit } = useForm();
   const router = useRouter();
@@ -54,16 +55,16 @@ export default function LoginPage() {
           {t('Meta.title-login')} - {WEBSITE_TITLE}
         </title>
       </Head>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <NavBar />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
+        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
           <div>
             <h1 className="text-center">{t('Auth.welcome-back')}</h1>
           </div>
         </div>
-        <div className="container px-6 mx-auto">
+        <div className="container mx-auto px-6">
           <form
-            className="flex flex-col justify-center items-center space-y-6"
+            className="flex flex-col items-center justify-center space-y-6"
             onSubmit={handleSubmit(onSubmit)}>
             <Input
               label="username"
@@ -85,7 +86,7 @@ export default function LoginPage() {
               icon={
                 status === 'pending' ? (
                   <svg
-                    className="mr-1 w-5 h-5 animate-spin"
+                    className="mr-1 h-5 w-5 animate-spin"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24">
@@ -115,13 +116,13 @@ export default function LoginPage() {
               {t('Auth.login')}
             </IconButton>
             {status === 'failed' && error && (
-              <div className="py-2 px-4 text-red-700 bg-red-300 rounded-lg">
+              <div className="rounded-lg bg-red-300 py-2 px-4 text-red-700">
                 {error}
               </div>
             )}
           </form>
         </div>
-        <div className="flex justify-center items-center my-16">
+        <div className="my-16 flex items-center justify-center">
           <Image
             src={'/undraw_login_re_4vu2.svg'}
             alt="login"

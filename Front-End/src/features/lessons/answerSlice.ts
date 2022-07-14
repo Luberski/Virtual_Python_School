@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import apiClient from '../../apiClient';
 import { RootState } from '../../store';
 import { HYDRATE } from 'next-redux-wrapper';
+import { ApiPayload } from '../../models/ApiPayload';
 
 export type AnswerState = {
   // TODO: move types to models folder
@@ -66,17 +67,23 @@ export const answerSlice = createSlice({
       .addCase(checkAnswer.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(checkAnswer.fulfilled, (state, { payload: { data, error } }) => {
-        if (error) {
-          state.data = null;
-          state.error = error;
-          state.status = 'failed';
-        } else {
-          state.data = data;
-          state.error = null;
-          state.status = 'succeeded';
+      .addCase(
+        checkAnswer.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
         }
-      })
+      )
       .addCase(checkAnswer.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;

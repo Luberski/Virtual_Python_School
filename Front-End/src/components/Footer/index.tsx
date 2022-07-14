@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 const Footer = () => (
-  <footer className="flex justify-center items-center p-4">
+  <footer className="flex items-center justify-center p-4">
     <Image
       src={'/ZUT_logo_kolor.svg'}
       alt="login"

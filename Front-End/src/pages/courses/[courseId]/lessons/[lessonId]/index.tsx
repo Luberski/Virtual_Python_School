@@ -3,11 +3,7 @@ import { useRouter } from 'next/router';
 import NavBar from '../../../../../components/NavBar';
 import { useTranslations } from 'next-intl';
 import Editor from '@monaco-editor/react';
-import {
-  useAppDispatch,
-  useAppSelector,
-  useAuthRedirect,
-} from '../../../../../hooks';
+import { useAppSelector, useAuthRedirect } from '../../../../../hooks';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
@@ -36,6 +32,7 @@ import Footer from '../../../../../components/Footer';
 import { wrapper } from '../../../../../store';
 import FancyToast from '../../../../../components/FancyToast';
 import debounce from 'debounce';
+import { useDispatch } from 'react-redux';
 
 type Props = {
   courseId: string;
@@ -44,7 +41,7 @@ type Props = {
 
 export default function LessonPage({ courseId, lessonId }: Props) {
   const [user, isLoggedIn] = useAuthRedirect();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
   const t = useTranslations();
 
@@ -78,7 +75,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
             <FancyToast
               message={t('Lessons.incorrect-answer')}
               toastObject={to}
-              className="text-red-900 bg-red-200 border-red-500"
+              className="border-red-500 bg-red-200 text-red-900"
             />
           ),
           { position: 'top-center', duration: 500 }
@@ -159,7 +156,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
 
   return (
     <>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <NavBar
           user={user}
           isLoggedIn={isLoggedIn}
@@ -170,7 +167,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
           }
         />
 
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
+        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
           {lesson ? (
             <>
               <h1 className="text-center first-letter:uppercase">
@@ -185,15 +182,15 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                 </Button>
               </div>
 
-              <div className="flex flex-col w-full xl:flex-row">
-                <div className="flex flex-col p-8 m-2 bg-gray-200 dark:bg-gray-800 rounded-lg shadow-xl xl:w-1/2">
+              <div className="flex w-full flex-col xl:flex-row">
+                <div className="m-2 flex flex-col rounded-lg bg-gray-200 p-8 shadow-xl dark:bg-gray-800 xl:w-1/2">
                   <h2>{t('Lessons.lesson-description')}</h2>
-                  <p className="overflow-auto h-[580px] whitespace-pre-line">
+                  <p className="h-[580px] overflow-auto whitespace-pre-line">
                     {lesson.description}
                   </p>
                   <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col space-y-4 w-full sm:flex-row sm:space-y-0 sm:space-x-4">
+                    className="flex w-full flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
                     <Input
                       placeholder={t('Lessons.answer')}
                       label="answer"
@@ -208,7 +205,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                       icon={
                         answerStatus === 'pending' ? (
                           <svg
-                            className="mr-1 w-5 h-5 animate-spin"
+                            className="mr-1 h-5 w-5 animate-spin"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24">
@@ -225,7 +222,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
                         ) : (
-                          <CheckIcon className="w-5 h-5" />
+                          <CheckIcon className="h-5 w-5" />
                         )
                       }>
                       {t('Lessons.check-answer')}
@@ -241,7 +238,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                     )}
                   </form>
                 </div>
-                <div className="flex flex-col flex-1 m-2 shadow-xl">
+                <div className="m-2 flex flex-1 flex-col shadow-xl">
                   <Editor
                     className="h-96"
                     defaultLanguage="python"
@@ -250,16 +247,16 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                     theme="vs-dark"
                   />
                   <div>
-                    <div className="mx-auto h-96 subpixel-antialiased bg-black rounded border-black shadow-2xl">
+                    <div className="mx-auto h-96 rounded border-black bg-black subpixel-antialiased shadow-2xl">
                       <div
-                        className="flex items-center h-6 text-center text-black dark:text-white bg-gray-200 dark:bg-gray-800 rounded-t border-b border-gray-500"
+                        className="flex h-6 items-center rounded-t border-b border-gray-500 bg-gray-200 text-center text-black dark:bg-gray-800 dark:text-white"
                         id="headerTerminal">
                         <div className="mx-auto" id="terminaltitle">
                           <p className="text-center">Terminal output</p>
                         </div>
                       </div>
                       <div
-                        className="pt-1 pl-1 h-auto text-xs bg-black font-mono"
+                        className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
                         id="console">
                         <pre className="pb-1 text-white">
                           {playgroundData?.content || playgroundError}

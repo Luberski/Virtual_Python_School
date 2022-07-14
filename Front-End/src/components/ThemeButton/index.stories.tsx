@@ -6,6 +6,6 @@ export default {
   component: ThemeButton,
 } as ComponentMeta<typeof ThemeButton>;
 
-export const Default: ComponentStory<typeof ThemeButton> = (args) => (
-  <ThemeButton {...args} />
+export const Default: ComponentStory<typeof ThemeButton> = () => (
+  <ThemeButton />
 );

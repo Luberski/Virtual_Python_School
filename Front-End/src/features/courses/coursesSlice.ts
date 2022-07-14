@@ -3,6 +3,7 @@ import apiClient from '../../apiClient';
 import { RootState } from '../../store';
 import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
+import { ApiPayload } from '../../models/ApiPayload';
 
 export type CoursesState = {
   data: Course[];
@@ -112,7 +113,10 @@ export const coursesSlice = createSlice({
       })
       .addCase(
         fetchCourses.fulfilled,
-        (state, { payload: { data, error } }) => {
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
           if (error) {
             state.data = null;
             state.error = error;
@@ -128,14 +132,20 @@ export const coursesSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-      .addCase(deleteCourse.fulfilled, (state, { payload }) => {
-        state.data = state.data.filter(
-          (course) => course.id !== payload.data.id
-        );
-      })
-      .addCase(createCourse.fulfilled, (state, { payload }) => {
-        state.data = [...state.data, payload.data];
-      });
+      .addCase(
+        deleteCourse.fulfilled,
+        (state, { payload }: { payload: ApiPayload | any }) => {
+          state.data = state.data.filter(
+            (course) => course.id !== payload.data.id
+          );
+        }
+      )
+      .addCase(
+        createCourse.fulfilled,
+        (state, { payload }: { payload: ApiPayload | any }) => {
+          state.data = [...state.data, payload.data];
+        }
+      );
   },
 });
 

@@ -3,6 +3,7 @@ import apiClient from '../../apiClient';
 import { RootState } from '../../store';
 import { Answer } from '../../models/Answer';
 import { HYDRATE } from 'next-redux-wrapper';
+import { ApiPayload } from '../../models/ApiPayload';
 
 export type AnswersState = {
   data: Answer[];
@@ -66,9 +67,12 @@ export const answersSlice = createSlice({
       .addCase(createAnswer.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(createAnswer.fulfilled, (state, { payload }) => {
-        state.data = [...state.data, payload.data];
-      })
+      .addCase(
+        createAnswer.fulfilled,
+        (state, { payload }: { payload: ApiPayload | any }) => {
+          state.data = [...state.data, payload.data];
+        }
+      )
       .addCase(createAnswer.rejected, (state, action) => {
         state.error = action.error.message;
       });

@@ -83,7 +83,7 @@ export const authSlice = createSlice({
       })
       .addCase(
         loginUser.fulfilled,
-        (state, { payload: { data } }: { payload: AuthPayload }) => {
+        (state, { payload: { data } }: { payload: AuthPayload | any }) => {
           state.user = {
             id: data.id,
             zutID: data.zutID,

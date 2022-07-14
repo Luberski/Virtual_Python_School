@@ -3,6 +3,7 @@ import apiClient from '../../apiClient';
 import type { RootState } from '../../store';
 import { Playground } from '../../models/Playground';
 import { HYDRATE } from 'next-redux-wrapper';
+import { ApiPayload } from '../../models/ApiPayload';
 
 export type PlaygroundState = {
   data: Playground;
@@ -46,21 +47,27 @@ export const playgroundSlice = createSlice({
       .addCase(sendCode.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(sendCode.fulfilled, (state, { payload: { data, error } }) => {
-        if (error) {
-          state.data = {
-            content: null,
-          };
-          state.error = error;
-          state.status = 'failed';
-        } else {
-          state.data = {
-            content: data?.content,
-          };
-          state.error = null;
-          state.status = 'succeeded';
+      .addCase(
+        sendCode.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = {
+              content: null,
+            };
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = {
+              content: data?.content,
+            };
+            state.error = null;
+            state.status = 'succeeded';
+          }
         }
-      })
+      )
       .addCase(sendCode.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;

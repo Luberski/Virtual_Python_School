@@ -5,15 +5,19 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
     'plugin:@next/next/recommended',
+    'plugin:jest/recommended',
     'plugin:testing-library/react',
-    'plugin:storybook/recommended',
+    'plugin:jsx-a11y/recommended',
     'plugin:tailwindcss/recommended',
+    'plugin:storybook/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
   plugins: [
     'react',
     'react-hooks',
+    'jsx-a11y',
+    'jest',
     'testing-library',
     'tailwindcss',
     '@typescript-eslint',
@@ -21,7 +25,7 @@ module.exports = {
   ],
   rules: {
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': 'error',
     'jsx-a11y/anchor-is-valid': 'off',
     '@typescript-eslint/quotes': [
       'error',
@@ -32,5 +36,18 @@ module.exports = {
       },
     ],
     'tailwindcss/no-custom-classname': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+    'testing-library/no-node-access': 'off',
+    'react/void-dom-elements-no-children': 'error',
+    'react/destructuring-assignment': ['error', 'always'],
+    'react/button-has-type': [
+      'error',
+      {
+        button: true,
+        submit: true,
+        reset: false,
+      },
+    ],
+    'react/jsx-no-useless-fragment': 'error',
   },
 };

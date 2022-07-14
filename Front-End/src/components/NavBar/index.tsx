@@ -24,12 +24,12 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
       className="mx-auto w-full"
       suppressHydrationWarning={true}>
       {({ open }) => (
-        <div className="container flex justify-between items-center py-4 px-6 mx-auto lg:items-stretch xl:h-16">
-          <div className="flex items-center h-full">
+        <div className="container mx-auto flex items-center justify-between py-4 px-6 lg:items-stretch xl:h-16">
+          <div className="flex h-full items-center">
             {!open && (
               <div className="sm:mr-10">
                 <Link href="/" passHref={true}>
-                  <a className="ml-3 text-base font-bold tracking-normal leading-tight text-gray-700 dark:text-gray-300 no-underline hover:no-underline">
+                  <a className="ml-3 text-base font-bold leading-tight tracking-normal text-gray-700 no-underline hover:no-underline dark:text-gray-300">
                     Virtual Python School
                   </a>
                 </Link>
@@ -89,20 +89,20 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             </ul>
           </div>
 
-          <div className="hidden justify-end items-center h-full xl:flex">
-            <div className="flex items-center w-full h-full">
-              <div className="flex w-full h-full">
+          <div className="hidden h-full items-center justify-end xl:flex">
+            <div className="flex h-full w-full items-center">
+              <div className="flex h-full w-full">
                 <div
                   aria-haspopup="true"
-                  className="flex justify-end items-center w-full cursor-pointer">
+                  className="flex w-full cursor-pointer items-center justify-end">
                   {isLoggedIn && user ? (
-                    <div className="flex justify-center items-center">
+                    <div className="flex items-center justify-center">
                       <div
-                        className="flex justify-end items-center mx-4 w-48 text-sm truncate"
+                        className="mx-4 flex w-48 items-center justify-end truncate text-sm"
                         title={`${user?.name} ${user?.lastName}`}>
                         {user?.name} {user?.lastName}
                       </div>
-                      <Button className="ml-4 menu-btn-danger" onClick={logout}>
+                      <Button className="menu-btn-danger ml-4" onClick={logout}>
                         {t('Auth.logout')}
                       </Button>
                     </div>
@@ -124,7 +124,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             {open ? (
               <Disclosure.Button className="xl:hidden">
                 <svg
-                  className="w-6 h-6"
+                  className="h-6 w-6"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -137,7 +137,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             ) : (
               <Disclosure.Button className="xl:hidden">
                 <svg
-                  className="w-6 h-6"
+                  className="h-6 w-6"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -197,11 +197,11 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                 {isLoggedIn && user ? (
                   <div className="flex items-center">
                     <div
-                      className="mx-4 w-20 text-sm truncate"
+                      className="mx-4 w-20 truncate text-sm"
                       title={`${user?.name} ${user?.lastName}`}>
                       {user?.name} {user?.lastName}
                     </div>
-                    <Button className="ml-4 menu-btn-danger" onClick={logout}>
+                    <Button className="menu-btn-danger ml-4" onClick={logout}>
                       {t('Auth.logout')}
                     </Button>
                   </div>

@@ -1,11 +1,10 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { TypedUseSelectorHook, useSelector } from 'react-redux';
 import { selectAuthUser, selectIsLogged } from './features/auth/authSlice';
 import { User } from './models/User';
 import type { RootState } from './store';
 
-export const useAppDispatch = () => useDispatch();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useAuthRedirect = (path = '/login'): [User, boolean] => {

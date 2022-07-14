@@ -15,9 +15,11 @@ const TextArea = ({
   ...rest
 }: TextAreaProps & React.HTMLProps<HTMLTextAreaElement>) => (
   <textarea
-    {...register(label, { required })}
+    {...(register(label, { required }) as {
+      (...unknown);
+    })}
     className={clsx(
-      'p-3 w-72 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 sm:w-96',
+      'w-72 rounded-lg border border-gray-300 bg-gray-100 p-3 dark:border-gray-600 dark:bg-gray-700 sm:w-96',
       className
     )}
     {...rest}

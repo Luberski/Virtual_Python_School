@@ -2,7 +2,7 @@ import Footer from '../../components/Footer';
 import { useTranslations } from 'next-intl';
 import NavBar from '../../components/NavBar';
 import FancyCard from '../../components/FancyCard';
-import { useAppDispatch, useAppSelector, useAuthRedirect } from '../../hooks';
+import { useAppSelector, useAuthRedirect } from '../../hooks';
 import Image from 'next/image';
 import {
   fetchEnrolledCourses,
@@ -11,10 +11,11 @@ import {
 import { WEBSITE_TITLE } from '../../constants';
 import Head from 'next/head';
 import { wrapper } from '../../store';
+import { useDispatch } from 'react-redux';
 
 export default function EnrolledCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const t = useTranslations();
   const courses = useAppSelector(selectEnrolledCoursesData);
 
@@ -28,7 +29,7 @@ export default function EnrolledCoursesPage() {
           {t('Meta.title-enrolled-courses')} - {WEBSITE_TITLE}
         </title>
       </Head>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <NavBar
           user={user}
           isLoggedIn={isLoggedIn}
@@ -38,12 +39,12 @@ export default function EnrolledCoursesPage() {
             })
           }
         />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
+        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
           <div className="space-y-2">
             <h1 className="text-center">{t('Meta.title-enrolled-courses')}</h1>
           </div>
         </div>
-        <div className="container px-12 mx-auto">
+        <div className="container mx-auto px-12">
           {courses && courses.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-12">
               {courses.map((course) => (
@@ -62,7 +63,7 @@ export default function EnrolledCoursesPage() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col justify-center items-center w-full h-full">
+            <div className="flex h-full w-full flex-col items-center justify-center">
               <p className="pb-8 text-lg font-medium">
                 {t('Courses.no-enrolled-courses-found')}
               </p>
@@ -76,7 +77,7 @@ export default function EnrolledCoursesPage() {
           )}
         </div>
         {courses && courses.length > 0 && (
-          <div className="flex justify-center items-center my-16">
+          <div className="my-16 flex items-center justify-center">
             <Image
               src={'/undraw_knowledge_re_5v9l.svg'}
               alt="login"

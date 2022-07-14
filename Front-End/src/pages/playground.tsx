@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import NavBar from '../components/NavBar';
 import { useTranslations } from 'use-intl';
-import { useAppDispatch, useAppSelector } from '../hooks';
+import { useAppSelector } from '../hooks';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
@@ -16,9 +16,10 @@ import IconButton, { IconButtonVariant } from '../components/IconButton';
 import { PlayIcon } from '@heroicons/react/outline';
 import Footer from '../components/Footer';
 import debounce from 'debounce';
+import { useDispatch } from 'react-redux';
 
 export default function Playground() {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const t = useTranslations();
   const editorRef = useRef(null);
   const user = useAppSelector(selectAuthUser);
@@ -51,7 +52,7 @@ export default function Playground() {
           {t('Meta.title-playground')} - {WEBSITE_TITLE}
         </title>
       </Head>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <NavBar
           user={user}
           isLoggedIn={isLoggedIn}
@@ -61,21 +62,21 @@ export default function Playground() {
             })
           }
         />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
+        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
           <div>
             <h1 className="text-center">{t('Playground.leading')}</h1>
           </div>
         </div>
-        <div className="container px-6 mx-auto space-y-4">
+        <div className="container mx-auto space-y-4 px-6">
           <div className="grid grid-cols-2 items-center">
             <IconButton
               onClick={handleValue}
-              className="my-8 max-w-fit h-12"
+              className="my-8 h-12 max-w-fit"
               variant={IconButtonVariant.PRIMARY}
               icon={
                 playgroundStatus === 'pending' ? (
                   <svg
-                    className="mr-1 w-5 h-5 animate-spin"
+                    className="mr-1 h-5 w-5 animate-spin"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24">
@@ -92,7 +93,7 @@ export default function Playground() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 ) : (
-                  <PlayIcon className="w-5 h-5" />
+                  <PlayIcon className="h-5 w-5" />
                 )
               }>
               {t('Playground.run')}
@@ -101,23 +102,23 @@ export default function Playground() {
         </div>
         <div className="flex px-6">
           <Editor
-            className="w-1/2 h-96"
+            className="h-96 w-1/2"
             defaultLanguage="python"
             defaultValue=""
             onMount={handleEditorDidMount}
             theme="vs-dark"
           />
           <div className="w-full">
-            <div className="mx-auto w-full h-96 subpixel-antialiased bg-black rounded border-black shadow-2xl">
+            <div className="mx-auto h-96 w-full rounded border-black bg-black subpixel-antialiased shadow-2xl">
               <div
-                className="flex items-center h-6 text-center text-black dark:text-white bg-gray-200 dark:bg-gray-800 rounded-t border-b border-gray-500"
+                className="flex h-6 items-center rounded-t border-b border-gray-500 bg-gray-200 text-center text-black dark:bg-gray-800 dark:text-white"
                 id="headerTerminal">
                 <div className="mx-auto" id="terminaltitle">
                   <p className="text-center">Terminal output</p>
                 </div>
               </div>
               <div
-                className="pt-1 pl-1 h-auto text-xs bg-black font-mono"
+                className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
                 id="console">
                 <pre className="pb-1 text-white">
                   {playgroundData?.content || playgroundError}

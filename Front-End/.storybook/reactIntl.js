@@ -1,4 +1,4 @@
-const locales = ["en", "pl"];
+const locales = ['en', 'pl'];
 
 const messages = locales.reduce(
   (acc, lang) => ({
@@ -11,7 +11,7 @@ const messages = locales.reduce(
 const formats = {}; // optional, if you have any formats
 
 export const reactIntl = {
-  defaultLocale: "en",
+  defaultLocale: 'en',
   locales,
   messages,
   formats,

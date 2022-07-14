@@ -38,6 +38,8 @@ const Button = ({
   ...props
 }: ButtonProps & React.HTMLProps<HTMLButtonElement>) => (
   <button
+    // eslint-disable-next-line react/button-has-type
+    type={type}
     className={clsx('btn', variant, sizeType, className)}
     onClick={onClick}
     disabled={disabled}

@@ -3,7 +3,7 @@ import { RootState } from '../../store';
 import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '../../apiClient';
-
+import { ApiPayload } from '../../models/ApiPayload';
 export type EnrolledCoursesState = {
   data: Course[] | null;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
@@ -54,7 +54,10 @@ export const enrolledCoursesSlice = createSlice({
       })
       .addCase(
         fetchEnrolledCourses.fulfilled,
-        (state, { payload: { data, error } }) => {
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
           if (error) {
             state.data = null;
             state.error = error;

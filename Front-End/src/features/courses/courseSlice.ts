@@ -3,6 +3,7 @@ import apiClient from '../../apiClient';
 import { RootState } from '../../store';
 import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
+import { ApiPayload } from '../../models/ApiPayload';
 
 export type CourseState = {
   data: Course;
@@ -93,17 +94,23 @@ export const courseSlice = createSlice({
       .addCase(fetchCourse.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(fetchCourse.fulfilled, (state, { payload: { data, error } }) => {
-        if (error) {
-          state.data = null;
-          state.error = error;
-          state.status = 'failed';
-        } else {
-          state.data = data;
-          state.error = null;
-          state.status = 'succeeded';
+      .addCase(
+        fetchCourse.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
         }
-      })
+      )
       .addCase(fetchCourse.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
@@ -113,7 +120,10 @@ export const courseSlice = createSlice({
       })
       .addCase(
         enrollCourse.fulfilled,
-        (state, { payload: { data, error } }) => {
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
           if (error) {
             state.data = null;
             state.error = error;
@@ -134,7 +144,10 @@ export const courseSlice = createSlice({
       })
       .addCase(
         fetchCourseWithLessons.fulfilled,
-        (state, { payload: { data, error } }) => {
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
           if (error) {
             state.data = null;
             state.error = error;

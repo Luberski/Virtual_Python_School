@@ -3,6 +3,7 @@ import apiClient from '../../apiClient';
 import { RootState } from '../../store';
 import { Lesson } from '../../models/Lesson';
 import { HYDRATE } from 'next-redux-wrapper';
+import { ApiPayload } from '../../models/ApiPayload';
 
 export type LessonState = {
   data: Lesson;
@@ -63,17 +64,23 @@ export const lessonSlice = createSlice({
       .addCase(fetchLesson.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(fetchLesson.fulfilled, (state, { payload: { data, error } }) => {
-        if (error) {
-          state.data = null;
-          state.error = error;
-          state.status = 'failed';
-        } else {
-          state.data = data;
-          state.error = null;
-          state.status = 'succeeded';
+      .addCase(
+        fetchLesson.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
         }
-      })
+      )
       .addCase(fetchLesson.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
