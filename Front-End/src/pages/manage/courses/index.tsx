@@ -12,21 +12,21 @@ import toast, { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { useAppSelector, useAuthRedirect } from '../../../hooks';
+import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   createCourse,
   deleteCourse,
   fetchCourses,
   selectCoursesData,
-} from '../../../features/courses/coursesSlice';
-import NavBar from '../../../components/NavBar';
-import Button from '../../../components/Button';
-import IconButton, { IconButtonVariant } from '../../../components/IconButton';
-import Input from '../../../components/Input';
-import TextArea from '../../../components/TextArea';
-import { WEBSITE_TITLE } from '../../../constants';
-import ButtonLink, { ButtonLinkVariant } from '../../../components/ButtonLink';
-import { wrapper } from '../../../store';
+} from '@app/features/courses/coursesSlice';
+import NavBar from '@app/components/NavBar';
+import Button from '@app/components/Button';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import Input from '@app/components/Input';
+import TextArea from '@app/components/TextArea';
+import { WEBSITE_TITLE } from '@app/constants';
+import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
+import { wrapper } from '@app/store';
 
 export default function ManageCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();

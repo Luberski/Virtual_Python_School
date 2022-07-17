@@ -56,4 +56,12 @@ module.exports = {
     'import/no-unresolved': ['off', { commonjs: true }],
     '@typescript-eslint/consistent-type-imports': 'warn',
   },
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [['@app', './src']],
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+      },
+    },
+  },
 };

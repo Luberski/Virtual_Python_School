@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiClient from '../../apiClient';
-import type { RootState } from '../../store';
-import { User } from '../../models/User';
-import { ApiPayload } from '../../models/ApiPayload';
-import { Token } from '../../models/Token';
 import { HYDRATE } from 'next-redux-wrapper';
 import { setCookies } from 'cookies-next';
+import apiClient from '@app/apiClient';
+import type { RootState } from '@app/store';
+import type { User } from '@app/models/User';
+import type { ApiPayload } from '@app/models/ApiPayload';
+import type { Token } from '@app/models/Token';
 
 interface AuthPayload extends ApiPayload {
   data: User & { token: Token };

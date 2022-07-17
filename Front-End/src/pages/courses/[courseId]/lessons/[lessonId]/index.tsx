@@ -8,31 +8,29 @@ import { CheckIcon } from '@heroicons/react/outline';
 import ConfettiExplosion from 'react-confetti-explosion';
 import debounce from 'debounce';
 import { useDispatch } from 'react-redux';
-import NavBar from '../../../../../components/NavBar';
-import { useAppSelector, useAuthRedirect } from '../../../../../hooks';
+import NavBar from '@app/components/NavBar';
+import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
   sendCode,
-} from '../../../../../features/playground/playgroundSlice';
-import Button, { ButtonVariant } from '../../../../../components/Button';
+} from '@app/features/playground/playgroundSlice';
+import Button, { ButtonVariant } from '@app/components/Button';
 import {
   fetchLesson,
   selectLessonData,
-} from '../../../../../features/lessons/lessonSlice';
-import Input from '../../../../../components/Input';
+} from '@app/features/lessons/lessonSlice';
+import Input from '@app/components/Input';
 import {
   checkAnswer,
   reset,
   selectAnswerData,
   selectAnswerStatus,
-} from '../../../../../features/lessons/answerSlice';
-import IconButton, {
-  IconButtonVariant,
-} from '../../../../../components/IconButton';
-import Footer from '../../../../../components/Footer';
-import { wrapper } from '../../../../../store';
-import FancyToast from '../../../../../components/FancyToast';
+} from '@app/features/lessons/answerSlice';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import Footer from '@app/components/Footer';
+import { wrapper } from '@app/store';
+import FancyToast from '@app/components/FancyToast';
 
 type Props = {
   courseId: string;

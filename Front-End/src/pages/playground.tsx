@@ -5,18 +5,18 @@ import Head from 'next/head';
 import { PlayIcon } from '@heroicons/react/outline';
 import debounce from 'debounce';
 import { useDispatch } from 'react-redux';
-import NavBar from '../components/NavBar';
-import { useAppSelector } from '../hooks';
+import NavBar from '@app/components/NavBar';
+import { useAppSelector } from '@app/hooks';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
   selectPlaygroundStatus,
   sendCode,
-} from '../features/playground/playgroundSlice';
-import { selectAuthUser, selectIsLogged } from '../features/auth/authSlice';
-import { WEBSITE_TITLE } from '../constants';
-import IconButton, { IconButtonVariant } from '../components/IconButton';
-import Footer from '../components/Footer';
+} from '@app/features/playground/playgroundSlice';
+import { selectAuthUser, selectIsLogged } from '@app/features/auth/authSlice';
+import { WEBSITE_TITLE } from '@app/constants';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import Footer from '@app/components/Footer';
 
 export default function Playground() {
   const dispatch = useDispatch();

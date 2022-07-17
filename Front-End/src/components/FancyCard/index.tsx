@@ -1,7 +1,7 @@
 import type React from 'react';
 import Link from 'next/link';
-import Button, { ButtonVariant } from '../Button';
-import ButtonLink, { ButtonLinkVariant } from '../ButtonLink';
+import Button, { ButtonVariant } from '@app/components/Button';
+import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
 
 type FancyCardProps = {
   title: string;

@@ -2,16 +2,16 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Head from 'next/head';
 import { useDispatch } from 'react-redux';
-import Footer from '../../components/Footer';
-import NavBar from '../../components/NavBar';
-import FancyCard from '../../components/FancyCard';
-import { useAppSelector, useAuthRedirect } from '../../hooks';
+import Footer from '@app/components/Footer';
+import NavBar from '@app/components/NavBar';
+import FancyCard from '@app/components/FancyCard';
+import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   fetchEnrolledCourses,
   selectEnrolledCoursesData,
-} from '../../features/courses/enrolledCoursesSlice';
-import { WEBSITE_TITLE } from '../../constants';
-import { wrapper } from '../../store';
+} from '@app/features/courses/enrolledCoursesSlice';
+import { WEBSITE_TITLE } from '@app/constants';
+import { wrapper } from '@app/store';
 
 export default function EnrolledCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();

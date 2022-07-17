@@ -4,18 +4,18 @@ import Head from 'next/head';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import Footer from '../../components/Footer';
-import NavBar from '../../components/NavBar';
-import FancyCard from '../../components/FancyCard';
-import { useAppSelector, useAuthRedirect } from '../../hooks';
+import Footer from '@app/components/Footer';
+import NavBar from '@app/components/NavBar';
+import FancyCard from '@app/components/FancyCard';
+import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   fetchCourses,
   selectCoursesData,
-} from '../../features/courses/coursesSlice';
-import { WEBSITE_TITLE } from '../../constants';
-import { enrollCourse } from '../../features/courses/courseSlice';
-import { wrapper } from '../../store';
-import FancyToast from '../../components/FancyToast';
+} from '@app/features/courses/coursesSlice';
+import { WEBSITE_TITLE } from '@app/constants';
+import { enrollCourse } from '@app/features/courses/courseSlice';
+import { wrapper } from '@app/store';
+import FancyToast from '@app/components/FancyToast';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();

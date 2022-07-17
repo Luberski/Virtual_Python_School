@@ -5,16 +5,16 @@ import {
   wrapMakeStore,
 } from 'next-redux-cookie-wrapper';
 import logger from 'redux-logger';
-import authReducer from './features/auth/authSlice';
-import playgroundReducer from './features/playground/playgroundSlice';
-import coursesReducer from './features/courses/coursesSlice';
-import courseReducer from './features/courses/courseSlice';
-import featuredCoursesReducer from './features/courses/featuredCoursesSlice';
-import enrolledCoursesReducer from './features/courses/enrolledCoursesSlice';
-import lessonsReducer from './features/lessons/lessonsSlice';
-import lessonReducer from './features/lessons/lessonSlice';
-import answersReducer from './features/lessons/answersSlice';
-import answerReducer from './features/lessons/answerSlice';
+import authReducer from '@app/features/auth/authSlice';
+import playgroundReducer from '@app/features/playground/playgroundSlice';
+import coursesReducer from '@app/features/courses/coursesSlice';
+import courseReducer from '@app/features/courses/courseSlice';
+import featuredCoursesReducer from '@app/features/courses/featuredCoursesSlice';
+import enrolledCoursesReducer from '@app/features/courses/enrolledCoursesSlice';
+import lessonsReducer from '@app/features/lessons/lessonsSlice';
+import lessonReducer from '@app/features/lessons/lessonSlice';
+import answersReducer from '@app/features/lessons/answersSlice';
+import answerReducer from '@app/features/lessons/answerSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,

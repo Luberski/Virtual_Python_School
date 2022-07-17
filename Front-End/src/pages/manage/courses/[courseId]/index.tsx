@@ -12,22 +12,20 @@ import toast, { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { useAppSelector, useAuthRedirect } from '../../../../hooks';
+import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   createLesson,
   deleteLesson,
   fetchLessons,
   selectLessonsData,
-} from '../../../../features/lessons/lessonsSlice';
-import NavBar from '../../../../components/NavBar';
-import Button from '../../../../components/Button';
-import IconButton, {
-  IconButtonVariant,
-} from '../../../../components/IconButton';
-import Input from '../../../../components/Input';
-import TextArea from '../../../../components/TextArea';
-import { WEBSITE_TITLE } from '../../../../constants';
-import { wrapper } from '../../../../store';
+} from '@app/features/lessons/lessonsSlice';
+import NavBar from '@app/components/NavBar';
+import Button from '@app/components/Button';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import Input from '@app/components/Input';
+import TextArea from '@app/components/TextArea';
+import { WEBSITE_TITLE } from '@app/constants';
+import { wrapper } from '@app/store';
 
 type Props = {
   courseId: string;

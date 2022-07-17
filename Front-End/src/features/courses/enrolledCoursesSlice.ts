@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
-import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
-import apiClient from '../../apiClient';
-import { ApiPayload } from '../../models/ApiPayload';
+import type { RootState } from '@app/store';
+import type { Course } from '@app/models/Course';
+import type { ApiPayload } from '@app/models/ApiPayload';
+import apiClient from '@app/apiClient';
+
 export type EnrolledCoursesState = {
   data: Course[] | null;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';

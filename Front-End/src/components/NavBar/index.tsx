@@ -3,10 +3,10 @@ import { useTranslations } from 'next-intl';
 import { Disclosure } from '@headlessui/react';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
-import ButtonLink, { ButtonLinkVariant } from '../ButtonLink';
-import type { User } from '../../models/User';
-import { ThemeButton } from '../ThemeButton';
-import Button from '../Button';
+import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
+import { ThemeButton } from '@app/components/ThemeButton';
+import Button from '@app/components/Button';
+import type { User } from '@app/models/User';
 
 type NavBarProps = {
   isLoggedIn?: boolean;

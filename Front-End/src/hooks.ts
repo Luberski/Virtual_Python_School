@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { TypedUseSelectorHook, useSelector } from 'react-redux';
-import { selectAuthUser, selectIsLogged } from './features/auth/authSlice';
-import { User } from './models/User';
-import type { RootState } from './store';
+import type { TypedUseSelectorHook} from 'react-redux';
+import { useSelector } from 'react-redux';
+import { selectAuthUser, selectIsLogged } from '@app/features/auth/authSlice';
+import type { User } from '@app/models/User';
+import type { RootState } from '@app/store';
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 

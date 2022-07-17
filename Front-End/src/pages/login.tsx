@@ -5,19 +5,19 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useDispatch } from 'react-redux';
-import Footer from '../components/Footer';
-import Input from '../components/Input';
-import { useAppSelector } from '../hooks';
+import Footer from '@app/components/Footer';
+import Input from '@app/components/Input';
+import { useAppSelector } from '@app/hooks';
 import {
   loginUser,
   selectAuthError,
   selectAuthStatus,
   selectAuthUser,
   selectIsLogged,
-} from '../features/auth/authSlice';
-import NavBar from '../components/NavBar';
-import IconButton, { IconButtonVariant } from '../components/IconButton';
-import { WEBSITE_TITLE } from '../constants';
+} from '@app/features/auth/authSlice';
+import NavBar from '@app/components/NavBar';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import { WEBSITE_TITLE } from '@app/constants';
 
 export default function LoginPage() {
   const dispatch = useDispatch();

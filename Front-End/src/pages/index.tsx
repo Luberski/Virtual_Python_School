@@ -2,17 +2,17 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import { useDispatch } from 'react-redux';
-import Footer from '../components/Footer';
-import { useAppSelector } from '../hooks';
-import { selectIsLogged, selectAuthUser } from '../features/auth/authSlice';
-import NavBar from '../components/NavBar';
-import FancyCard from '../components/FancyCard';
-import { WEBSITE_TITLE } from '../constants';
+import Footer from '@app/components/Footer';
+import { useAppSelector } from '@app/hooks';
+import { selectIsLogged, selectAuthUser } from '@app/features/auth/authSlice';
+import NavBar from '@app/components/NavBar';
+import FancyCard from '@app/components/FancyCard';
+import { WEBSITE_TITLE } from '@app/constants';
 import {
   fetchFeaturedCourses,
   selectFeaturedCoursesData,
-} from '../features/courses/featuredCoursesSlice';
-import { wrapper } from '../store';
+} from '@app/features/courses/featuredCoursesSlice';
+import { wrapper } from '@app/store';
 
 export default function IndexPage() {
   const t = useTranslations();

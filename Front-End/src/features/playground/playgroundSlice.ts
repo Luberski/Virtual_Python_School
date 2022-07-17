@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiClient from '../../apiClient';
-import type { RootState } from '../../store';
-import { Playground } from '../../models/Playground';
 import { HYDRATE } from 'next-redux-wrapper';
-import { ApiPayload } from '../../models/ApiPayload';
+import apiClient from '@app/apiClient';
+import type { RootState } from '@app/store';
+import type { Playground } from '@app/models/Playground';
+import type { ApiPayload } from '@app/models/ApiPayload';
 
 export type PlaygroundState = {
   data: Playground;

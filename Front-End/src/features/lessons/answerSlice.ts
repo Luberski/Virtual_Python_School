@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiClient from '../../apiClient';
-import { RootState } from '../../store';
 import { HYDRATE } from 'next-redux-wrapper';
-import { ApiPayload } from '../../models/ApiPayload';
+import apiClient from '@app/apiClient';
+import type { RootState } from '@app/store';
+import type { ApiPayload } from '@app/models/ApiPayload';
 
 export type AnswerState = {
   // TODO: move types to models folder

@@ -1,4 +1,4 @@
-import { Lesson } from './Lesson';
+import type { Lesson } from './Lesson';
 
 export type Course = {
   id: string;
