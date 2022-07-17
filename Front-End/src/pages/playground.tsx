@@ -1,7 +1,11 @@
 import { useMemo, useRef } from 'react';
 import Editor from '@monaco-editor/react';
-import NavBar from '../components/NavBar';
 import { useTranslations } from 'use-intl';
+import Head from 'next/head';
+import { PlayIcon } from '@heroicons/react/outline';
+import debounce from 'debounce';
+import { useDispatch } from 'react-redux';
+import NavBar from '../components/NavBar';
 import { useAppSelector } from '../hooks';
 import {
   selectPlaygroundData,
@@ -11,12 +15,8 @@ import {
 } from '../features/playground/playgroundSlice';
 import { selectAuthUser, selectIsLogged } from '../features/auth/authSlice';
 import { WEBSITE_TITLE } from '../constants';
-import Head from 'next/head';
 import IconButton, { IconButtonVariant } from '../components/IconButton';
-import { PlayIcon } from '@heroicons/react/outline';
 import Footer from '../components/Footer';
-import debounce from 'debounce';
-import { useDispatch } from 'react-redux';
 
 export default function Playground() {
   const dispatch = useDispatch();

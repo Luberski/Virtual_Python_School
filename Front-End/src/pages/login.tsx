@@ -1,9 +1,12 @@
 import { useEffect } from 'react';
-import Footer from '../components/Footer';
-import Input from '../components/Input';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
+import { useDispatch } from 'react-redux';
+import Footer from '../components/Footer';
+import Input from '../components/Input';
 import { useAppSelector } from '../hooks';
 import {
   loginUser,
@@ -13,11 +16,8 @@ import {
   selectIsLogged,
 } from '../features/auth/authSlice';
 import NavBar from '../components/NavBar';
-import { useRouter } from 'next/router';
 import IconButton, { IconButtonVariant } from '../components/IconButton';
 import { WEBSITE_TITLE } from '../constants';
-import Head from 'next/head';
-import { useDispatch } from 'react-redux';
 
 export default function LoginPage() {
   const dispatch = useDispatch();

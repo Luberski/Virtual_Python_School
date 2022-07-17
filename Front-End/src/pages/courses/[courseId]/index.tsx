@@ -1,15 +1,15 @@
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useDispatch } from 'react-redux';
 import NavBar from '../../../components/NavBar';
 import { useAppSelector, useAuthRedirect } from '../../../hooks';
-import { useTranslations } from 'next-intl';
 import {
   selectCourseData,
   fetchCourseWithLessons,
 } from '../../../features/courses/courseSlice';
-import Image from 'next/image';
-import Link from 'next/link';
 import ButtonLink, { ButtonLinkVariant } from '../../../components/ButtonLink';
 import { wrapper } from '../../../store';
-import { useDispatch } from 'react-redux';
 
 export default function CoursePage() {
   const [user, isLoggedIn] = useAuthRedirect();

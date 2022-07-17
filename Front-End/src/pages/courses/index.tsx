@@ -1,21 +1,21 @@
-import Footer from '../../components/Footer';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import Head from 'next/head';
+import toast, { Toaster } from 'react-hot-toast';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
 import FancyCard from '../../components/FancyCard';
 import { useAppSelector, useAuthRedirect } from '../../hooks';
-import Image from 'next/image';
 import {
   fetchCourses,
   selectCoursesData,
 } from '../../features/courses/coursesSlice';
 import { WEBSITE_TITLE } from '../../constants';
-import Head from 'next/head';
 import { enrollCourse } from '../../features/courses/courseSlice';
-import toast, { Toaster } from 'react-hot-toast';
-import { useRouter } from 'next/router';
 import { wrapper } from '../../store';
 import FancyToast from '../../components/FancyToast';
-import { useDispatch } from 'react-redux';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();

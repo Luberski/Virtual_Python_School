@@ -1,6 +1,7 @@
-import React from 'react';
+import type React from 'react';
 import clsx from 'clsx';
-import { ButtonSize, ButtonVariant, ButtonProps } from '../Button';
+import type { ButtonProps } from '../Button';
+import { ButtonSize, ButtonVariant } from '../Button';
 
 export const IconButtonVariant = ButtonVariant;
 export const IconButtonSize = ButtonSize;

@@ -1,17 +1,17 @@
-import Footer from '../../components/Footer';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import Head from 'next/head';
+import { useDispatch } from 'react-redux';
+import Footer from '../../components/Footer';
 import NavBar from '../../components/NavBar';
 import FancyCard from '../../components/FancyCard';
 import { useAppSelector, useAuthRedirect } from '../../hooks';
-import Image from 'next/image';
 import {
   fetchEnrolledCourses,
   selectEnrolledCoursesData,
 } from '../../features/courses/enrolledCoursesSlice';
 import { WEBSITE_TITLE } from '../../constants';
-import Head from 'next/head';
 import { wrapper } from '../../store';
-import { useDispatch } from 'react-redux';
 
 export default function EnrolledCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();

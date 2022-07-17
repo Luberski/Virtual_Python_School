@@ -1,9 +1,9 @@
 import Head from 'next/head';
-import { AppProps } from 'next/app';
+import type { AppProps } from 'next/app';
 import '../styles/index.css';
 import { NextIntlProvider } from 'next-intl';
-import { wrapper } from '../store';
 import { ThemeProvider } from 'next-themes';
+import { wrapper } from '../store';
 
 function MyApp({
   Component,

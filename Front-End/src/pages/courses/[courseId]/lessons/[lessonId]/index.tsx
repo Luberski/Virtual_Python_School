@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import NavBar from '../../../../../components/NavBar';
 import { useTranslations } from 'next-intl';
 import Editor from '@monaco-editor/react';
+import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
+import { CheckIcon } from '@heroicons/react/outline';
+import ConfettiExplosion from 'react-confetti-explosion';
+import debounce from 'debounce';
+import { useDispatch } from 'react-redux';
+import NavBar from '../../../../../components/NavBar';
 import { useAppSelector, useAuthRedirect } from '../../../../../hooks';
 import {
   selectPlaygroundData,
@@ -15,24 +21,18 @@ import {
   selectLessonData,
 } from '../../../../../features/lessons/lessonSlice';
 import Input from '../../../../../components/Input';
-import { useForm } from 'react-hook-form';
 import {
   checkAnswer,
   reset,
   selectAnswerData,
   selectAnswerStatus,
 } from '../../../../../features/lessons/answerSlice';
-import toast, { Toaster } from 'react-hot-toast';
-import { CheckIcon } from '@heroicons/react/outline';
 import IconButton, {
   IconButtonVariant,
 } from '../../../../../components/IconButton';
-import ConfettiExplosion from 'react-confetti-explosion';
 import Footer from '../../../../../components/Footer';
 import { wrapper } from '../../../../../store';
 import FancyToast from '../../../../../components/FancyToast';
-import debounce from 'debounce';
-import { useDispatch } from 'react-redux';
 
 type Props = {
   courseId: string;

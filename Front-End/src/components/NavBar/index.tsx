@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import ButtonLink, { ButtonLinkVariant } from '../ButtonLink';
-import { User } from '../../models/User';
-import { ThemeButton } from '../ThemeButton';
 import { Disclosure } from '@headlessui/react';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
+import ButtonLink, { ButtonLinkVariant } from '../ButtonLink';
+import type { User } from '../../models/User';
+import { ThemeButton } from '../ThemeButton';
 import Button from '../Button';
 
 type NavBarProps = {

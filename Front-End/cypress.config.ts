@@ -5,6 +5,7 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:3000',
     supportFile: 'cypress/support/index.js',
     videoUploadOnPasses: false,
+    video: false,
     defaultCommandTimeout: 50000,
   },
 });

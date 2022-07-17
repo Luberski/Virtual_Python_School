@@ -1,5 +1,17 @@
 import { Fragment, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
+import { Dialog, Transition } from '@headlessui/react';
+import {
+  AcademicCapIcon,
+  InformationCircleIcon,
+  PlusSmIcon,
+} from '@heroicons/react/outline';
+import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useDispatch } from 'react-redux';
 import { useAppSelector, useAuthRedirect } from '../../../../hooks';
 import {
   createLesson,
@@ -9,25 +21,13 @@ import {
 } from '../../../../features/lessons/lessonsSlice';
 import NavBar from '../../../../components/NavBar';
 import Button from '../../../../components/Button';
-import Image from 'next/image';
-import { Dialog, Transition } from '@headlessui/react';
 import IconButton, {
   IconButtonVariant,
 } from '../../../../components/IconButton';
-import {
-  AcademicCapIcon,
-  InformationCircleIcon,
-  PlusSmIcon,
-} from '@heroicons/react/outline';
 import Input from '../../../../components/Input';
-import { useForm } from 'react-hook-form';
-import toast, { Toaster } from 'react-hot-toast';
 import TextArea from '../../../../components/TextArea';
-import Head from 'next/head';
 import { WEBSITE_TITLE } from '../../../../constants';
-import Link from 'next/link';
 import { wrapper } from '../../../../store';
-import { useDispatch } from 'react-redux';
 
 type Props = {
   courseId: string;
