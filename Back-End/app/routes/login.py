@@ -103,7 +103,10 @@ def login():
                                 "access_token": access_token,
                                 "refresh_token": refresh_token,
                             },
-                            "role": {"role_id": role.id, "role_name": role.role_name,},
+                            "role": {
+                                "role_id": role.id,
+                                "role_name": role.role_name,
+                            },
                         },
                         "error": None,
                     }

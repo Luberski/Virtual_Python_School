@@ -654,7 +654,8 @@ def create_lesson():
     new_lesson.add()
 
     new_answer = models.Answers(
-        final_answer=request.json["data"]["final_answer"], id_lesson=new_lesson.id,
+        final_answer=request.json["data"]["final_answer"],
+        id_lesson=new_lesson.id,
     )
 
     new_answer.add()
@@ -669,7 +670,10 @@ def create_lesson():
                     "type": new_lesson.type,
                     "number_of_answers": new_lesson.number_of_answers,
                     "answers": [
-                        {"id": new_answer.id, "final_answer": new_answer.final_answer,}
+                        {
+                            "id": new_answer.id,
+                            "final_answer": new_answer.final_answer,
+                        }
                     ],
                 },
                 "error": None,
@@ -749,7 +753,15 @@ def delete_lesson():
 
     db.session.commit()
 
-    return make_response(jsonify({"data": {"id": id_lesson}, "error": None,}), 200,)
+    return make_response(
+        jsonify(
+            {
+                "data": {"id": id_lesson},
+                "error": None,
+            }
+        ),
+        200,
+    )
 
 
 @routes.route("/api/courses/<id_course>/lessons", methods=["GET"])
@@ -821,7 +833,10 @@ def get_lesson(id_course, lesson_id):
                     "type": lesson.type,
                     "number_of_answers": lesson.number_of_answers,
                     "answers": [
-                        {"id": answer.id, "final_answer": answer.final_answer,}
+                        {
+                            "id": answer.id,
+                            "final_answer": answer.final_answer,
+                        }
                         for answer in lesson.answers
                     ],
                 },
@@ -892,12 +907,25 @@ def check_answer():
             status = True
             answer_valid = answers[0]
     else:
-        return make_response(jsonify({"error": {"id": id_lesson},}), 404)
+        return make_response(
+            jsonify(
+                {
+                    "error": {"id": id_lesson},
+                }
+            ),
+            404,
+        )
 
     if status is False:
         return make_response(
             jsonify(
-                {"data": {"status": status, "id_lesson": id_lesson,}, "error": None,}
+                {
+                    "data": {
+                        "status": status,
+                        "id_lesson": id_lesson,
+                    },
+                    "error": None,
+                }
             ),
             200,
         )
@@ -975,7 +1003,15 @@ def delete_answer():
 
     db.session.commit()
 
-    return make_response(jsonify({"data": {"id": id_answer}, "error": None,}), 200,)
+    return make_response(
+        jsonify(
+            {
+                "data": {"id": id_answer},
+                "error": None,
+            }
+        ),
+        200,
+    )
 
 
 @routes.route("/api/answers", methods=["GET"])
@@ -1115,7 +1151,15 @@ def delete_comment():
 
     db.session.commit()
 
-    return make_response(jsonify({"data": {"id": id_comment}, "error": None,}), 200,)
+    return make_response(
+        jsonify(
+            {
+                "data": {"id": id_comment},
+                "error": None,
+            }
+        ),
+        200,
+    )
 
 
 @routes.route("/api/comments", methods=["GET"])
@@ -1161,4 +1205,3 @@ def get_comments():
         ),
         200,
     )
-

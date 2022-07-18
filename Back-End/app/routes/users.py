@@ -44,7 +44,13 @@ def get_user_by_id():
 
     return make_response(
         jsonify(
-            {"data": {"username": user.username, "email": user.email,}, "error": None,}
+            {
+                "data": {
+                    "username": user.username,
+                    "email": user.email,
+                },
+                "error": None,
+            }
         ),
         200,
     )
@@ -68,14 +74,19 @@ def create_role():
     ) is not None:
         return make_response(jsonify({"error": "Role exits"}), 403)
 
-    new_role = models.Roles(role_name=request.json["data"]["role_name"],)
+    new_role = models.Roles(
+        role_name=request.json["data"]["role_name"],
+    )
 
     new_role.add()
 
     return make_response(
         jsonify(
             {
-                "data": {"id": new_role.id, "role_name": new_role.role_name,},
+                "data": {
+                    "id": new_role.id,
+                    "role_name": new_role.role_name,
+                },
                 "error": None,
             }
         ),
