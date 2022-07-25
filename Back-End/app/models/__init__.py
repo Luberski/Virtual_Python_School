@@ -1,37 +1,34 @@
-from sqlalchemy import ForeignKey
-from passlib.hash import pbkdf2_sha256 as sha256
-from app.db import db
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+from passlib.hash import bcrypt_sha256
+from app.db.session import Base
 
 
-class User(db.Model):
+class User(Base):
     __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True)
-    zut_id = db.Column(db.String(255), unique=True)
-    username = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(100))
-    name = db.Column(db.String(100))
-    last_name = db.Column(db.String(100))
-    email = db.Column(db.String(100), unique=True)
-    id_course = db.relationship("CoursesTaken")
-    role_id = db.Column(db.Integer, ForeignKey("roles.id"))
+    id = Column(Integer, primary_key=True)
+    zut_id = Column(String(255), unique=True)
+    username = Column(String(100), unique=True)
+    password = Column(String(100))
+    name = Column(String(100))
+    last_name = Column(String(100))
+    email = Column(String(100), unique=True)
+    id_course = relationship("CoursesTaken")
+    role_id = Column(Integer, ForeignKey("roles.id"))
 
     @staticmethod
     def generate_hash(password):
-        return sha256.hash(password)
+        return bcrypt_sha256.hash(password)
 
     @staticmethod
     def verify_hash(password, hash_):
-        return sha256.verify(password, hash_)
+        return bcrypt_sha256.verify(password, hash_)
 
 
-class RevokedTokenModel(db.Model):
+class RevokedTokenModel(Base):
     __tablename__ = "revoked_tokens"
-    id = db.Column(db.Integer, primary_key=True)
-    jti = db.Column(db.String(120))
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+    id = Column(Integer, primary_key=True)
+    jti = Column(String(120))
 
     @classmethod
     def is_jti_blacklisted(cls, jti):
@@ -39,81 +36,47 @@ class RevokedTokenModel(db.Model):
         return bool(query)
 
 
-class CoursesTaken(db.Model):
+class CoursesTaken(Base):
     __tablename__ = "courses_taken"
-    id = db.Column(db.Integer, primary_key=True)
-    id_course = db.Column(db.Integer, ForeignKey("courses.id"))
-    id_user = db.Column(db.Integer, ForeignKey("user.id"))
-    start_date = db.Column(db.DateTime())
-    end_date = db.Column(db.DateTime())
-    section_number = db.Column(db.Integer)
-    completed = db.Column(db.String(100))
-    course = db.relationship("Courses")
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+    id = Column(Integer, primary_key=True)
+    id_course = Column(Integer, ForeignKey("courses.id"))
+    id_user = Column(Integer, ForeignKey("user.id"))
+    start_date = Column(DateTime())
+    end_date = Column(DateTime())
+    section_number = Column(Integer)
+    completed = Column(String(100))
+    course = relationship("Courses")
 
 
-class Courses(db.Model):
+class Courses(Base):
     __tablename__ = "courses"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    description = db.Column(db.String(2000))
-    featured = db.Column(db.Boolean, default=False, nullable=False)
-    lessons = db.relationship("Lessons")
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    description = Column(String(2000))
+    featured = Column(Boolean, default=False, nullable=False)
+    lessons = relationship("Lessons")
 
 
-class Lessons(db.Model):
+class Lessons(Base):
     __tablename__ = "lessons"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    description = db.Column(db.String(2000))
-    id_course = db.Column(db.Integer, ForeignKey("courses.id"))
-    type = db.Column(db.Integer)
-    number_of_answers = db.Column(db.Integer)
-    answers = db.relationship("Answers")
-    comments = db.relationship("Comments")
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    description = Column(String(2000))
+    id_course = Column(Integer, ForeignKey("courses.id"))
+    type = Column(Integer)
+    number_of_answers = Column(Integer)
+    answers = relationship("Answers")
 
 
-class Answers(db.Model):
+class Answers(Base):
     __tablename__ = "answers"
-    id = db.Column(db.Integer, primary_key=True)
-    final_answer = db.Column(db.String(500))
-    id_lesson = db.Column(db.Integer, ForeignKey("lessons.id"))
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+    id = Column(Integer, primary_key=True)
+    final_answer = Column(String(500))
+    id_lesson = Column(Integer, ForeignKey("lessons.id"))
 
 
-class Comments(db.Model):
-    __tablename__ = "comments"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
-    id_lesson = db.Column(db.Integer, ForeignKey("lessons.id"))
-    data_published = db.Column(db.DateTime())
-    content = db.Column(db.String(500))
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
-
-
-class Roles(db.Model):
+class Roles(Base):
     __tablename__ = "roles"
-    id = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.String(100), unique=True)
-    user = db.relationship("User")
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+    id = Column(Integer, primary_key=True)
+    role_name = Column(String(100), unique=True)
+    user = relationship("User")

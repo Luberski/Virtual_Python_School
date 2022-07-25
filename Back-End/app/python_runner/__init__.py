@@ -9,7 +9,7 @@ import paramiko
 
 
 class RemotePythonRunner:
-    def connect(self, username):
+    def connect(self, username: str):
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect("10.179.8.194", username="test", password="test")
@@ -21,7 +21,7 @@ class RemotePythonRunner:
         f.write(data)
         f.close()
 
-    def run_code(self, code, username="test"):
+    def run_code(self, code: str, username: str = "test"):
         ssh = self.connect(username)
         self.put_code(ssh, code)
 
@@ -34,4 +34,4 @@ class RemotePythonRunner:
             del err[0:11]
 
         ssh.close()
-        return text, err
+        return (text,)
