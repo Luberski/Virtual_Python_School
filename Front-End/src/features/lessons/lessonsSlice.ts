@@ -45,12 +45,7 @@ export const deleteLesson = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.delete(`lessons`, {
-        json: {
-          data: {
-            id_lesson: id,
-          },
-        },
+      const res = await apiClient.delete(`lessons/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
