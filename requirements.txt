@@ -10,6 +10,7 @@ pylint-pydantic
 pytest-dotenv
 wrapt_timeout_decorator
 paramiko
+alembic
 fastapi
 fastapi_jwt_auth
 pydantic[email]

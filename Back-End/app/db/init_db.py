@@ -4,9 +4,8 @@ from sqlalchemy.orm import Session
 from app.db.session import Base
 from app.models import (
     User,
-    RevokedTokenModel,
-    Roles,
     CoursesTaken,
+    Roles,
     Courses,
     Lessons,
     Answers,

@@ -25,17 +25,6 @@ class User(Base):
         return bcrypt_sha256.verify(password, hash_)
 
 
-class RevokedTokenModel(Base):
-    __tablename__ = "revoked_tokens"
-    id = Column(Integer, primary_key=True)
-    jti = Column(String(120))
-
-    @classmethod
-    def is_jti_blacklisted(cls, jti):
-        query = cls.query.filter_by(jti=jti).first()
-        return bool(query)
-
-
 class CoursesTaken(Base):
     __tablename__ = "courses_taken"
     id = Column(Integer, primary_key=True)
