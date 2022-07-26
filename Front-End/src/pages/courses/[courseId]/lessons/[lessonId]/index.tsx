@@ -93,7 +93,6 @@ export default function LessonPage({ courseId, lessonId }: Props) {
           router.push(`/courses/${courseId}`);
         }, 2000);
       } else {
-        console.log('wrong answer');
         notify(false);
       }
     }

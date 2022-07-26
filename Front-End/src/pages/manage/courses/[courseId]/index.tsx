@@ -104,7 +104,11 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
           </div>
         </button>
       ),
-      { id: 'unique-notification', position: 'top-center' }
+      {
+        id: 'new-lesson-added-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
     );
 
   if (!user && !isLoggedIn) {

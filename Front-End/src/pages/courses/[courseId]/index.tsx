@@ -5,9 +5,9 @@ import { useDispatch } from 'react-redux';
 import NavBar from '@app/components/NavBar';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
-  selectCourseData,
   fetchCourseWithLessons,
-} from '@app/features/courses/courseSlice';
+  selectCourseWithLessonsData,
+} from '@app/features/courses/courseWithLessonsSlice';
 import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
 import { wrapper } from '@app/store';
 
@@ -16,7 +16,7 @@ export default function CoursePage() {
   const t = useTranslations();
   const dispatch = useDispatch();
 
-  const course = useAppSelector(selectCourseData);
+  const course = useAppSelector(selectCourseWithLessonsData);
 
   if (!user && !isLoggedIn) {
     return null;

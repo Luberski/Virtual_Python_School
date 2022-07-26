@@ -13,7 +13,7 @@ import {
   selectCoursesData,
 } from '@app/features/courses/coursesSlice';
 import { WEBSITE_TITLE } from '@app/constants';
-import { enrollCourse } from '@app/features/courses/courseSlice';
+import { enrollCourse } from '@app/features/courses/enrollCourseSlice';
 import { wrapper } from '@app/store';
 import FancyToast from '@app/components/FancyToast';
 
@@ -27,19 +27,28 @@ export default function CoursesPage() {
   const handleEnrollCourse = (courseId: string) => async () => {
     await dispatch(enrollCourse(courseId));
     notify();
-    router.push(`/courses/${courseId}`);
+    // wait 1 second to show the toast
+    setTimeout(() => {
+      toast.remove('course-enrolled-notification');
+      router.push(`/courses/${courseId}`);
+    }, 1000);
   };
 
   const notify = () =>
     toast.custom(
-      (to) => (
-        <FancyToast
-          message={t('Courses.course-enrolled')}
-          toastObject={to}
-          className="border-indigo-500 bg-indigo-200 text-indigo-900"
-        />
-      ),
-      { id: 'unique-notification', position: 'top-center' }
+      (to) =>
+        to.visible && (
+          <FancyToast
+            message={t('Courses.course-enrolled')}
+            toastObject={to}
+            className="border-indigo-500 bg-indigo-200 text-indigo-900"
+          />
+        ),
+      {
+        id: 'course-enrolled-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
     );
 
   if (!user && !isLoggedIn) {

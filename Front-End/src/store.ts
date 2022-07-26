@@ -9,6 +9,8 @@ import authReducer from '@app/features/auth/authSlice';
 import playgroundReducer from '@app/features/playground/playgroundSlice';
 import coursesReducer from '@app/features/courses/coursesSlice';
 import courseReducer from '@app/features/courses/courseSlice';
+import enrollCourseReducer from '@app/features/courses/enrollCourseSlice';
+import courseWithLessonsReducer from '@app/features/courses/courseWithLessonsSlice';
 import featuredCoursesReducer from '@app/features/courses/featuredCoursesSlice';
 import enrolledCoursesReducer from '@app/features/courses/enrolledCoursesSlice';
 import lessonsReducer from '@app/features/lessons/lessonsSlice';
@@ -21,6 +23,8 @@ const combinedReducers = combineReducers({
   playground: playgroundReducer,
   courses: coursesReducer,
   course: courseReducer,
+  enrollCourse: enrollCourseReducer,
+  courseWithLessons: courseWithLessonsReducer,
   featuredCourses: featuredCoursesReducer,
   enrolledCourses: enrolledCoursesReducer,
   lessons: lessonsReducer,
@@ -51,6 +55,8 @@ export type RootState = {
   playground: ReturnType<typeof playgroundReducer>;
   courses: ReturnType<typeof coursesReducer>;
   course: ReturnType<typeof courseReducer>;
+  enrollCourse: ReturnType<typeof enrollCourseReducer>;
+  courseWithLessons: ReturnType<typeof courseWithLessonsReducer>;
   featuredCourses: ReturnType<typeof featuredCoursesReducer>;
   enrolledCourses: ReturnType<typeof enrolledCoursesReducer>;
   lessons: ReturnType<typeof lessonsReducer>;

@@ -91,7 +91,11 @@ export default function ManageCoursesPage() {
           </div>
         </button>
       ),
-      { id: 'unique-notification', position: 'top-center' }
+      {
+        id: 'new-course-added-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
     );
 
   if (!user && !isLoggedIn) {
