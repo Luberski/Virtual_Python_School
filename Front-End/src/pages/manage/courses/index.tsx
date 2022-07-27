@@ -121,7 +121,7 @@ export default function ManageCoursesPage() {
         />
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center sm:flex-row sm:items-start">
-            <ul className="my-6 w-64 rounded-lg border border-gray-300 bg-gray-100 p-6 dark:border-gray-600 dark:bg-gray-800">
+            <ul className="my-6 w-64 rounded-lg border border-neutral-300 bg-neutral-100 p-6 dark:border-neutral-600 dark:bg-neutral-800">
               <li className="menu-btn menu-btn-primary mb-6 text-center">
                 <Link href="/manage/courses">{t('Manage.manage-courses')}</Link>
               </li>
@@ -152,7 +152,7 @@ export default function ManageCoursesPage() {
                       leave="ease-in duration-200"
                       leaveFrom="opacity-100"
                       leaveTo="opacity-0">
-                      <Dialog.Overlay className="fixed inset-0 bg-gray-500 opacity-75 transition-opacity" />
+                      <Dialog.Overlay className="fixed inset-0 bg-neutral-500 opacity-75 transition-opacity" />
                     </Transition.Child>
 
                     {/* This element is to trick the browser into centering the modal contents. */}
@@ -169,8 +169,8 @@ export default function ManageCoursesPage() {
                       leave="ease-in duration-200"
                       leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                       leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                      <div className="relative inline-block overflow-hidden rounded-lg bg-gray-100 text-left align-bottom shadow-2xl transition-all dark:bg-gray-900 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-                        <div className="bg-gray-100 px-4 pt-5 pb-4 dark:bg-gray-900 sm:p-6 sm:pb-4">
+                      <div className="relative inline-block overflow-hidden rounded-lg bg-neutral-100 text-left align-bottom shadow-2xl transition-all dark:bg-neutral-900 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+                        <div className="bg-neutral-100 px-4 pt-5 pb-4 dark:bg-neutral-900 sm:p-6 sm:pb-4">
                           <div className="sm:flex sm:items-start">
                             <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
                               <AcademicCapIcon
@@ -216,7 +216,7 @@ export default function ManageCoursesPage() {
                                       name="featured"
                                       type="checkbox"
                                       {...register('featured')}
-                                      className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-indigo-600"
+                                      className="h-4 w-4 rounded border-neutral-300 bg-neutral-100 text-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:border-neutral-600 dark:bg-neutral-700 dark:ring-offset-neutral-800 dark:focus:ring-indigo-600"
                                     />
                                     <label htmlFor="featured" className="ml-2">
                                       {t('Courses.featured-on-homepage')}
@@ -241,9 +241,9 @@ export default function ManageCoursesPage() {
               </Transition.Root>
               <Toaster />
               {courses && courses.length > 0 ? (
-                <div className="my-6 overflow-auto rounded-lg border border-gray-300 dark:border-gray-600">
-                  <table className="table-auto divide-y divide-gray-200">
-                    <thead className="text-left font-medium uppercase text-gray-500">
+                <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
+                  <table className="table-auto divide-y divide-neutral-200">
+                    <thead className="text-left font-medium uppercase text-neutral-500">
                       <tr>
                         <th scope="col" className="py-3 px-4">
                           ID
@@ -265,7 +265,7 @@ export default function ManageCoursesPage() {
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-neutral-200">
                       {courses.map((course) => (
                         <tr key={course.id}>
                           <td className="p-4">{course.id}</td>

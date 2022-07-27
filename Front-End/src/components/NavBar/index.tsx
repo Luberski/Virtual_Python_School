@@ -1,11 +1,13 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Disclosure } from '@headlessui/react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
+import { LogoutIcon } from '@heroicons/react/outline';
+import { Fragment } from 'react';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
 import { ThemeButton } from '@app/components/ThemeButton';
-import Button from '@app/components/Button';
 import type { User } from '@app/models/User';
 
 type NavBarProps = {
@@ -29,7 +31,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             {!open && (
               <div className="sm:mr-10">
                 <Link href="/" passHref={true}>
-                  <a className="ml-3 text-base font-bold leading-tight tracking-normal text-gray-700 no-underline hover:no-underline dark:text-gray-300">
+                  <a className="ml-3 text-base font-bold leading-tight tracking-normal text-neutral-700 no-underline hover:no-underline dark:text-neutral-300">
                     Virtual Python School
                   </a>
                 </Link>
@@ -97,14 +99,43 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                   className="flex w-full cursor-pointer items-center justify-end">
                   {isLoggedIn && user ? (
                     <div className="flex items-center justify-center">
-                      <div
-                        className="mx-4 flex w-48 items-center justify-end truncate text-sm"
-                        title={`${user?.name} ${user?.lastName}`}>
-                        {user?.name} {user?.lastName}
-                      </div>
-                      <Button className="menu-btn-danger ml-4" onClick={logout}>
-                        {t('Auth.logout')}
-                      </Button>
+                      <Menu
+                        as="div"
+                        className="relative inline-block rounded-md text-left">
+                        <Menu.Button
+                          title="Expand menu"
+                          className="flex w-full items-center justify-center rounded-md py-2 px-4 font-medium hover:bg-neutral-200 dark:hover:bg-neutral-800">
+                          <div
+                            className="mx-4 flex items-center truncate text-sm"
+                            title={`${user?.name} ${user?.lastName}`}>
+                            {user?.name} {user?.lastName}
+                          </div>
+                        </Menu.Button>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95">
+                          <Menu.Items
+                            // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
+                            className="absolute right-0 mt-2 origin-top-right divide-y divide-neutral-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-800">
+                            <div className="flex justify-end p-2">
+                              <Menu.Item>
+                                <IconButton
+                                  type="button"
+                                  onClick={logout}
+                                  variant={IconButtonVariant.FLAT_DANGER}
+                                  icon={<LogoutIcon className="h-5 w-5" />}>
+                                  {t('Auth.logout')}
+                                </IconButton>
+                              </Menu.Item>
+                            </div>
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
                     </div>
                   ) : (
                     <div className="flex space-x-4">
@@ -201,9 +232,13 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                       title={`${user?.name} ${user?.lastName}`}>
                       {user?.name} {user?.lastName}
                     </div>
-                    <Button className="menu-btn-danger ml-4" onClick={logout}>
+                    <IconButton
+                      type="button"
+                      onClick={logout}
+                      variant={IconButtonVariant.FLAT_DANGER}
+                      icon={<LogoutIcon className="h-5 w-5" />}>
                       {t('Auth.logout')}
-                    </Button>
+                    </IconButton>
                   </div>
                 ) : (
                   <div className="flex flex-col">

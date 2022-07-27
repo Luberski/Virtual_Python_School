@@ -41,9 +41,9 @@ export default function CoursePage() {
             </h1>
             <p className="word-wrap leading-relaxed">{course.description}</p>
             {course?.lessons && course?.lessons.length > 0 ? (
-              <div className="my-6 mx-auto w-fit overflow-auto rounded-lg border border-gray-300 dark:border-gray-600">
-                <table className="table-auto divide-y divide-gray-200">
-                  <thead className="text-left font-medium uppercase text-gray-500">
+              <div className="my-6 mx-auto w-fit overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
+                <table className="table-auto divide-y divide-neutral-200">
+                  <thead className="text-left font-medium uppercase text-neutral-500">
                     <tr>
                       <th scope="col" className="py-3 px-4">
                         ID
@@ -59,7 +59,7 @@ export default function CoursePage() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-neutral-200">
                     {course?.lessons.map((lesson) => (
                       <tr key={lesson.id}>
                         <td className="p-4">{lesson.id}</td>

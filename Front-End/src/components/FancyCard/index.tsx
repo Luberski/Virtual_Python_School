@@ -20,15 +20,15 @@ export default function FancyCard({
   title,
   description,
   buttonText,
-  cardColor = 'bg-gray-200',
-  darkCardColor = 'dark:bg-gray-900',
-  shadowColor = 'shadow-gray-200/50',
-  hoverShadowColor = 'hover:shadow-gray-400/50',
+  cardColor = 'bg-neutral-200',
+  darkCardColor = 'dark:bg-neutral-900',
+  shadowColor = 'shadow-neutral-200/50',
+  hoverShadowColor = 'hover:shadow-neutral-400/50',
   onClick,
 }: FancyCardProps) {
   return (
     <div
-      className={`flex flex-col justify-between p-8 ${cardColor} ${darkCardColor} border shadow-md hover:shadow-lg dark:border-gray-400 ${hoverShadowColor} transition duration-500 ease-in-out hover:scale-110 ${shadowColor} rounded-lg text-gray-700 dark:text-gray-100`}>
+      className={`flex flex-col justify-between p-8 ${cardColor} ${darkCardColor} border shadow-md hover:shadow-lg dark:border-neutral-400 ${hoverShadowColor} transition duration-500 ease-in-out hover:scale-110 ${shadowColor} rounded-lg text-neutral-700 dark:text-neutral-100`}>
       <h3 title={title} className="break-words text-xl font-bold">
         {title}
       </h3>

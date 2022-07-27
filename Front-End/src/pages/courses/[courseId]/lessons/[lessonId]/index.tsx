@@ -180,7 +180,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
               </div>
 
               <div className="flex w-full flex-col xl:flex-row">
-                <div className="m-2 flex flex-col rounded-lg bg-gray-200 p-8 shadow-xl dark:bg-gray-800 xl:w-1/2">
+                <div className="m-2 flex flex-col rounded-lg bg-neutral-200 p-8 shadow-xl dark:bg-neutral-800 xl:w-1/2">
                   <h2>{t('Lessons.lesson-description')}</h2>
                   <p className="h-[580px] overflow-auto whitespace-pre-line">
                     {lesson.description}
@@ -246,7 +246,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                   <div>
                     <div className="mx-auto h-96 rounded border-black bg-black subpixel-antialiased shadow-2xl">
                       <div
-                        className="flex h-6 items-center rounded-t border-b border-gray-500 bg-gray-200 text-center text-black dark:bg-gray-800 dark:text-white"
+                        className="flex h-6 items-center rounded-t border-b border-neutral-500 bg-neutral-200 text-center text-black dark:bg-neutral-800 dark:text-white"
                         id="headerTerminal">
                         <div className="mx-auto" id="terminaltitle">
                           <p className="text-center">Terminal output</p>

@@ -20,7 +20,7 @@ const TextArea = ({
       (...unknown);
     })}
     className={clsx(
-      'w-72 rounded-lg border border-gray-300 bg-gray-100 p-3 dark:border-gray-600 dark:bg-gray-700 sm:w-96',
+      'w-72 rounded-lg border border-neutral-300 bg-neutral-100 p-3 dark:border-neutral-600 dark:bg-neutral-700 sm:w-96',
       className
     )}
     {...rest}

@@ -22,12 +22,12 @@ export const ThemeButton = () => {
       type="button"
       onClick={switchTheme}
       id="switchTheme"
-      className="mx-4 flex h-10 w-10 items-center justify-center rounded-lg transition duration-150 ease-in-out hover:bg-gray-200 focus:outline-none dark:hover:bg-gray-700"
+      className="mx-4 flex h-10 w-10 items-center justify-center rounded-lg transition duration-150 ease-in-out hover:bg-neutral-200 focus:outline-none dark:hover:bg-neutral-700"
       title={t('Home.switch-theme')}>
       {isMounted && theme === 'dark' ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-100"
+          className="h-5 w-5 text-neutral-100"
           viewBox="0 0 20 20"
           fill="currentColor">
           <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />

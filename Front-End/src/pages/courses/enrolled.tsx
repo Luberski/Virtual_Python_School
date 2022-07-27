@@ -55,9 +55,9 @@ export default function EnrolledCoursesPage() {
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   link={`/courses/${course.id_course}`}
-                  cardColor="bg-gray-50"
-                  shadowColor="shadow-gray-500/50"
-                  hoverShadowColor="hover:shadow-gray-500/50"
+                  cardColor="bg-neutral-50"
+                  shadowColor="shadow-neutral-500/50"
+                  hoverShadowColor="hover:shadow-neutral-500/50"
                   buttonText={t('Home.learn-more')}
                 />
               ))}

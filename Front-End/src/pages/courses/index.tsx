@@ -87,9 +87,9 @@ export default function CoursesPage() {
                   key={course.id}
                   title={course.name}
                   description={course.description}
-                  cardColor="bg-gray-50"
-                  shadowColor="shadow-gray-500/50"
-                  hoverShadowColor="hover:shadow-gray-500/50"
+                  cardColor="bg-neutral-50"
+                  shadowColor="shadow-neutral-500/50"
+                  hoverShadowColor="hover:shadow-neutral-500/50"
                   buttonText={t('Courses.enroll')}
                   onClick={handleEnrollCourse(course.id)}
                 />

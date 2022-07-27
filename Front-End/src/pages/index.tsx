@@ -55,9 +55,9 @@ export default function IndexPage() {
                   title={course.name}
                   description={course.description}
                   link={`/courses`}
-                  cardColor="bg-gray-50"
-                  shadowColor="shadow-gray-500/50"
-                  hoverShadowColor="hover:shadow-gray-500/50"
+                  cardColor="bg-neutral-50"
+                  shadowColor="shadow-neutral-500/50"
+                  hoverShadowColor="hover:shadow-neutral-500/50"
                   buttonText={t('Home.learn-more')}
                 />
               ))}
