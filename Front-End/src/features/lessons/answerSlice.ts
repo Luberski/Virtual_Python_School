@@ -56,7 +56,11 @@ export const checkAnswer = createAsyncThunk(
 export const answerSlice = createSlice({
   name: 'answer',
   initialState,
-  reducers: { reset: (state) => Object.assign(state, initialState) },
+  reducers: {
+    reset: () => {
+      return initialState;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
@@ -95,4 +99,5 @@ export const selectAnswerData = (state: RootState) => state.answer.data;
 export const selectAnswerError = (state: RootState) => state.answer.error;
 export const selectAnswerStatus = (state: RootState) => state.answer.status;
 export const { reset } = answerSlice.actions;
+
 export default answerSlice.reducer;
