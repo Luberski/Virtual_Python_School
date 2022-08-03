@@ -70,9 +70,7 @@ export default function CoursePage() {
                           <Link
                             href={`/courses/${course.id}/lessons/${lesson.id}`}
                             passHref={true}>
-                            <ButtonLink
-                              variant={ButtonLinkVariant.SECONDARY}
-                              className="menu-btn menu-btn-primary">
+                            <ButtonLink variant={ButtonLinkVariant.PRIMARY}>
                               {t('Lessons.join-lesson')}
                             </ButtonLink>
                           </Link>

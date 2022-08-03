@@ -20,7 +20,7 @@ import {
   selectCoursesData,
 } from '@app/features/courses/coursesSlice';
 import NavBar from '@app/components/NavBar';
-import Button from '@app/components/Button';
+import Button, { ButtonVariant } from '@app/components/Button';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import Input from '@app/components/Input';
 import TextArea from '@app/components/TextArea';
@@ -122,7 +122,7 @@ export default function ManageCoursesPage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center sm:flex-row sm:items-start">
             <ul className="my-6 w-64 rounded-lg border border-neutral-300 bg-neutral-100 p-6 dark:border-neutral-600 dark:bg-neutral-800">
-              <li className="menu-btn menu-btn-primary mb-6 text-center">
+              <li className="btn btn-primary mb-6 text-center">
                 <Link href="/manage/courses">{t('Manage.manage-courses')}</Link>
               </li>
             </ul>
@@ -282,16 +282,14 @@ export default function ManageCoursesPage() {
                             <Link
                               href={`/manage/courses/${course.id}`}
                               passHref={true}>
-                              <ButtonLink
-                                variant={ButtonLinkVariant.SECONDARY}
-                                className="menu-btn menu-btn-primary">
+                              <ButtonLink variant={ButtonLinkVariant.PRIMARY}>
                                 {t('Manage.edit')}
                               </ButtonLink>
                             </Link>
                           </td>
                           <td className="py-4 pr-4">
                             <Button
-                              className="menu-btn menu-btn-danger"
+                              variant={ButtonVariant.DANGER}
                               onClick={handleDeleteCourse(course.id)}>
                               {t('Manage.delete')}
                             </Button>

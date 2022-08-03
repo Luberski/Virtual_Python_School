@@ -46,6 +46,24 @@ export const Success: ComponentStory<typeof Button> = (args) => (
   </Button>
 );
 
+export const FlatSecondary: ComponentStory<typeof Button> = (args) => (
+  <Button {...args} variant={ButtonVariant.FLAT_SECONDARY}>
+    Button
+  </Button>
+);
+
+export const FlatPrimary: ComponentStory<typeof Button> = (args) => (
+  <Button {...args} variant={ButtonVariant.FLAT_PRIMARY}>
+    Button
+  </Button>
+);
+
+export const FlatDanger: ComponentStory<typeof Button> = (args) => (
+  <Button {...args} variant={ButtonVariant.FLAT_DANGER}>
+    Button
+  </Button>
+);
+
 export const Disabled: ComponentStory<typeof Button> = (args) => (
   <Button {...args} disabled>
     Button

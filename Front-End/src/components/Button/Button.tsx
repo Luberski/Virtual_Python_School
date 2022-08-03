@@ -9,6 +9,8 @@ export enum ButtonVariant {
   DANGER = 'btn-danger',
   SUCCESS = 'btn-success',
   FLAT_DANGER = 'btn-flat-danger',
+  FLAT_SECONDARY = 'btn-flat-secondary',
+  FLAT_PRIMARY = 'btn-flat-primary',
 }
 
 export enum ButtonSize {

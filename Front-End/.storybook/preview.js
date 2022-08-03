@@ -1,8 +1,8 @@
 import '../src/styles/index.css';
 import * as NextImage from 'next/image';
-import { reactIntl } from './reactIntl.js';
 import { NextIntlProvider } from 'next-intl';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
+import { reactIntl } from './reactIntl.js';
 
 const OriginalNextImage = NextImage.default;
 
@@ -27,6 +27,23 @@ export const parameters = {
     Provider: RouterContext.Provider,
   },
   reactIntl,
+  backgrounds: {
+    default: 'white',
+    values: [
+      {
+        name: 'white',
+        value: '#ffffff',
+      },
+      {
+        name: 'light',
+        value: '#fafafa',
+      },
+      {
+        name: 'dark',
+        value: '#171717',
+      },
+    ],
+  },
 };
 
 const withI18n = (storyFn) => (

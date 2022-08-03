@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { LogoutIcon } from '@heroicons/react/outline';
 import { Fragment } from 'react';
@@ -40,52 +39,48 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             <ul className="hidden items-center space-x-2 xl:flex">
               <li>
                 <Link href="/" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Home.home')}
-                  </a>
+                  </ButtonLink>
                 </Link>
               </li>
               <li>
                 <Link href="/courses" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/courses'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Home.courses')}
-                  </a>
+                  </ButtonLink>
                 </Link>
               </li>
               <li>
                 <Link href="/courses/enrolled" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/courses/enrolled'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Meta.title-enrolled-courses')}
-                  </a>
+                  </ButtonLink>
                 </Link>
                 <Link href="/playground" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/playground'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Meta.title-playground')}
-                  </a>
+                  </ButtonLink>
                 </Link>
               </li>
             </ul>
@@ -140,7 +135,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                   ) : (
                     <div className="flex space-x-4">
                       <Link href="/login" passHref={true}>
-                        <ButtonLink variant={ButtonLinkVariant.SECONDARY}>
+                        <ButtonLink variant={ButtonLinkVariant.PRIMARY}>
                           {t('Auth.login')}
                         </ButtonLink>
                       </Link>
@@ -182,48 +177,44 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             <Disclosure.Panel className="py-2 xl:hidden">
               <div className="flex flex-col space-y-2">
                 <Link href="/" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Home.home')}
-                  </a>
+                  </ButtonLink>
                 </Link>
                 <Link href="/courses" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/courses'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Home.courses')}
-                  </a>
+                  </ButtonLink>
                 </Link>
                 <Link href="/courses/enrolled" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/courses/enrolled'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Meta.title-enrolled-courses')}
-                  </a>
+                  </ButtonLink>
                 </Link>
                 <Link href="/playground" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/playground'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Meta.title-playground')}
-                  </a>
+                  </ButtonLink>
                 </Link>
                 {isLoggedIn && user ? (
                   <div className="flex items-center">
@@ -243,9 +234,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                 ) : (
                   <div className="flex flex-col">
                     <Link href="/login" passHref={true}>
-                      <a className="menu-btn menu-btn-secondary">
-                        {t('Auth.login')}
-                      </a>
+                      <ButtonLink>{t('Auth.login')}</ButtonLink>
                     </Link>
                     <ThemeButton />
                   </div>

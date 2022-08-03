@@ -135,7 +135,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center sm:flex-row sm:items-start">
             <ul className="my-6 w-64 rounded-lg border border-neutral-300 bg-neutral-100 p-6 dark:border-neutral-600 dark:bg-neutral-800">
-              <li className="menu-btn menu-btn-secondary mb-6 text-center">
+              <li className="btn btn-secondary mb-6 text-center">
                 <Link href="/manage/courses">{t('Manage.manage-courses')}</Link>
               </li>
             </ul>
@@ -289,13 +289,13 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                               {lesson.description}
                             </td>
                             <td className="p-4">
-                              <a href="#" className="menu-btn menu-btn-primary">
+                              <a href="#" className="btnbtn-primary">
                                 {t('Manage.edit')}
                               </a>
                             </td>
                             <td className="py-4 pr-4">
                               <Button
-                                className="menu-btn menu-btn-danger"
+                                variant={ButtonVariant.DANGER}
                                 onClick={handleDeleteLesson(lesson.id)}>
                                 {t('Manage.delete')}
                               </Button>
