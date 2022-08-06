@@ -4,7 +4,10 @@ import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import { LogoutIcon } from '@heroicons/react/outline';
 import { Fragment } from 'react';
-import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import IconButton, {
+  IconButtonSize,
+  IconButtonVariant,
+} from '@app/components/IconButton';
 import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
 import { ThemeButton } from '@app/components/ThemeButton';
 import type { User } from '@app/models/User';
@@ -30,7 +33,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             {!open && (
               <div className="sm:mr-10">
                 <Link href="/" passHref={true}>
-                  <a className="ml-3 text-base font-bold leading-tight tracking-normal text-neutral-700 no-underline hover:no-underline dark:text-neutral-300">
+                  <a className="ml-3 text-base font-bold leading-tight tracking-normal text-indigo-900 no-underline hover:no-underline dark:text-indigo-300">
                     Virtual Python School
                   </a>
                 </Link>
@@ -99,9 +102,9 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                         className="relative inline-block rounded-md text-left">
                         <Menu.Button
                           title="Expand menu"
-                          className="flex w-full items-center justify-center rounded-md py-2 px-4 font-medium hover:bg-neutral-200 dark:hover:bg-neutral-800">
+                          className="flex w-full items-center justify-center rounded-md p-2 font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700">
                           <div
-                            className="mx-4 flex items-center truncate text-sm"
+                            className="flex items-center truncate px-2"
                             title={`${user?.name} ${user?.lastName}`}>
                             {user?.name} {user?.lastName}
                           </div>
@@ -121,6 +124,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                               <Menu.Item>
                                 <IconButton
                                   type="button"
+                                  sizeType={IconButtonSize.MEDIUM}
                                   onClick={logout}
                                   variant={IconButtonVariant.FLAT_DANGER}
                                   icon={<LogoutIcon className="h-5 w-5" />}>
@@ -219,7 +223,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                 {isLoggedIn && user ? (
                   <div className="flex items-center">
                     <div
-                      className="mx-4 w-20 truncate text-sm"
+                      className="mx-4 w-20 truncate"
                       title={`${user?.name} ${user?.lastName}`}>
                       {user?.name} {user?.lastName}
                     </div>

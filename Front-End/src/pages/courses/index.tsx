@@ -73,7 +73,9 @@ export default function CoursesPage() {
         />
         <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
           <div className="space-y-2">
-            <h1 className="text-center">{t('Home.courses')}</h1>
+            <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+              {t('Home.courses')}
+            </h1>
             <p className="text-center text-xl">
               {t('Courses.choose-skill-level')}
             </p>
@@ -87,9 +89,9 @@ export default function CoursesPage() {
                   key={course.id}
                   title={course.name}
                   description={course.description}
-                  cardColor="bg-neutral-50"
-                  shadowColor="shadow-neutral-500/50"
-                  hoverShadowColor="hover:shadow-neutral-500/50"
+                  cardColor="bg-white"
+                  shadowColor="shadow-black/25"
+                  hoverShadowColor="hover:shadow-black/25"
                   buttonText={t('Courses.enroll')}
                   onClick={handleEnrollCourse(course.id)}
                 />

@@ -40,7 +40,9 @@ export default function IndexPage() {
         />
         <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
           <div className="space-y-2">
-            <h1 className="text-center">{t('Home.leading')}</h1>
+            <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+              {t('Home.leading')}
+            </h1>
             <p className="text-center text-xl">
               {t('Courses.courses-adjusted-skill-level')}
             </p>
@@ -55,9 +57,9 @@ export default function IndexPage() {
                   title={course.name}
                   description={course.description}
                   link={`/courses`}
-                  cardColor="bg-neutral-50"
-                  shadowColor="shadow-neutral-500/50"
-                  hoverShadowColor="hover:shadow-neutral-500/50"
+                  cardColor="bg-white"
+                  shadowColor="shadow-black/25"
+                  hoverShadowColor="hover:shadow-black/25"
                   buttonText={t('Home.learn-more')}
                 />
               ))}

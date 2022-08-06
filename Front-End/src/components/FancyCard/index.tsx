@@ -28,23 +28,25 @@ export default function FancyCard({
 }: FancyCardProps) {
   return (
     <div
-      className={`flex flex-col justify-between p-8 ${cardColor} ${darkCardColor} border shadow-md hover:shadow-lg dark:border-neutral-400 ${hoverShadowColor} transition duration-500 ease-in-out hover:scale-110 ${shadowColor} rounded-lg text-neutral-700 dark:text-neutral-100`}>
-      <h3 title={title} className="break-words text-xl font-bold">
+      className={`flex flex-col justify-between p-8 ${cardColor} ${darkCardColor} border shadow hover:shadow-md dark:border-neutral-400 ${hoverShadowColor} transition duration-500 ease-in-out hover:scale-110 ${shadowColor} rounded-lg text-neutral-700 dark:text-neutral-100`}>
+      <p title={title} className="break-words text-2xl font-bold">
         {title}
-      </h3>
+      </p>
       <p className="h-full max-h-96 max-w-xs truncate break-words">
         {description}
       </p>
 
       {link ? (
         <Link href={link} passHref={true}>
-          <ButtonLink variant={ButtonLinkVariant.SECONDARY} className="mt-16">
+          <ButtonLink
+            variant={ButtonLinkVariant.OUTLINE_PRIMARY}
+            className="mt-16">
             {buttonText}
           </ButtonLink>
         </Link>
       ) : (
         <Button
-          variant={ButtonVariant.SECONDARY}
+          variant={ButtonVariant.OUTLINE_PRIMARY}
           className="mt-16"
           onClick={onClick}>
           {buttonText}

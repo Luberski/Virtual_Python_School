@@ -33,13 +33,13 @@ export default function CoursePage() {
           })
         }
       />
-      <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
+      <div className="container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow dark:bg-neutral-800">
         {course ? (
           <div>
-            <h1 className="text-center first-letter:uppercase">
-              {t('Meta.title-course')}:&nbsp;{course.name}
+            <h1 className="text-indigo-900 dark:text-indigo-300">
+              {course.name}
             </h1>
-            <p className="word-wrap leading-relaxed">{course.description}</p>
+            <p className="word-wrap mt-6 text-2xl">{course.description}</p>
             {course?.lessons && course?.lessons.length > 0 ? (
               <div className="my-6 mx-auto w-fit overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
                 <table className="table-auto divide-y divide-neutral-200">

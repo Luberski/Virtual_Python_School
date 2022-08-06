@@ -20,7 +20,7 @@ import {
   selectLessonsData,
 } from '@app/features/lessons/lessonsSlice';
 import NavBar from '@app/components/NavBar';
-import Button from '@app/components/Button';
+import Button, { ButtonVariant } from '@app/components/Button';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import Input from '@app/components/Input';
 import TextArea from '@app/components/TextArea';
