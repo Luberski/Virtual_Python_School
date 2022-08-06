@@ -169,13 +169,16 @@ def get_courses_all(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
+    lessons_exist = False
     if include_lessons:
         courses = (
             db.query(models.Courses)
             .join(models.Lessons, models.Courses.id == models.Lessons.id_course)
             .all()
         )
-    else:
+        if courses is not None:
+            lessons_exist = True
+    if not lessons_exist:
         courses = db.query(models.Courses).all()
 
     if courses is None:
@@ -185,7 +188,7 @@ def get_courses_all(
         )
 
     # TODO: add additional param if user attended course
-    if include_lessons:
+    if lessons_exist:
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -352,14 +355,21 @@ def get_course_by_id(
     id_course: int = Path(title="id of the course"),
     include_lessons: Union[bool, None] = Query(default=False),
 ):
+    lessons_exist = False
     if include_lessons:
         course = (
             db.query(models.Courses)
-            .join(models.Lessons, models.Courses.id == models.Lessons.id_course)
+            .join(
+                models.Lessons,
+                models.Lessons.id_course == models.Courses.id,
+            )
             .filter_by(id=id_course)
             .first()
         )
-    else:
+        if course is not None:
+            lessons_exist = True
+
+    if not lessons_exist:
         course = db.query(models.Courses).filter_by(id=id_course).first()
 
     if course is None:
@@ -368,7 +378,7 @@ def get_course_by_id(
             content={"error": "Course not found"},
         )
 
-    if include_lessons:
+    if lessons_exist:
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
