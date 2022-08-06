@@ -4,7 +4,7 @@ import {
   nextReduxCookieMiddleware,
   wrapMakeStore,
 } from 'next-redux-cookie-wrapper';
-import logger from 'redux-logger';
+import NextReduxLogger from 'next-redux-logger';
 import authReducer from '@app/features/auth/authSlice';
 import playgroundReducer from '@app/features/playground/playgroundSlice';
 import coursesReducer from '@app/features/courses/coursesSlice';
@@ -44,7 +44,9 @@ export const store = wrapMakeStore(() =>
             subtrees: ['auth.user', 'auth.token', 'auth.isLoggedIn'],
           })
         )
-        .concat(process.env.NODE_ENV === 'development' ? [logger] : []),
+        .concat(
+          process.env.NODE_ENV === 'development' ? [NextReduxLogger] : []
+        ),
   })
 );
 
