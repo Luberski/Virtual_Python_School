@@ -274,7 +274,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                       <th scope="col" className="py-3 px-4">
                         {t('Lessons.lesson-name')}
                       </th>
-                      <th scope="col" className="w-full py-3 px-4">
+                      <th scope="col" className="py-3 px-4">
                         {t('Lessons.lesson-description')}
                       </th>
                       <th
@@ -288,7 +288,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                       <Fragment key={lesson.id}>
                         <tr>
                           <td className="p-4">{(key += 1)}</td>
-                          <td className="max-w-xs break-words p-4">
+                          <td className="break-words p-4">
                             {lesson.name}
                           </td>
                           <td className="max-w-xs break-words p-4">

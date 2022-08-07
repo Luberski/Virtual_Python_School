@@ -29,6 +29,7 @@ import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
 import Button, { ButtonVariant } from '@app/components/Button';
+import Checkbox from '@app/components/Checkbox';
 
 export default function ManageCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -207,12 +208,11 @@ export default function ManageCoursesPage() {
                                     )}
                                   />
                                   <div className="flex items-center">
-                                    <input
+                                    <Checkbox
                                       id="featured"
                                       name="featured"
-                                      type="checkbox"
-                                      {...register('featured')}
-                                      className="h-4 w-4 rounded border-neutral-300 bg-neutral-100 text-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:border-neutral-600 dark:bg-neutral-700 dark:ring-offset-neutral-800 dark:focus:ring-indigo-600"
+                                      label="featured"
+                                      register={register}
                                     />
                                     <label htmlFor="featured" className="ml-2">
                                       {t('Courses.featured-on-homepage')}
@@ -258,24 +258,29 @@ export default function ManageCoursesPage() {
                       <th scope="col" className="py-3 px-4">
                         {t('Courses.featured')}
                       </th>
-                      <th scope="col" className="w-full py-3 px-4">
+                      <th scope="col" className="py-3 px-4">
                         {t('Courses.course-description')}
                       </th>
                       <th
                         scope="col"
                         className="py-3 px-4 text-center"
-                        colSpan={2}></th>
+                        colSpan={2}
+                      />
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-200">
                     {courses.map((course, key) => (
                       <tr key={course.id}>
                         <td className="p-4">{(key += 1)}</td>
-                        <td className="max-w-xs break-words p-4">
-                          {course.name}
-                        </td>
-                        <td className="max-w-xs p-4">
-                          {String(course.featured)}
+                        <td className="break-words p-4">{course.name}</td>
+                        <td className="max-w-xs p-4 text-center">
+                          <Checkbox
+                            id="courseFeatured"
+                            name="courseFeatured"
+                            label="courseFeatured"
+                            disabled={true}
+                            checked={course.featured}
+                          />
                         </td>
                         <td className="max-w-xs break-words p-4">
                           {course.description}
