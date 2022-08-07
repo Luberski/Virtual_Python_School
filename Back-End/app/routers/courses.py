@@ -359,11 +359,12 @@ def get_course_by_id(
     if include_lessons:
         course = (
             db.query(models.Courses)
+            .filter_by(id=id_course)
             .join(
                 models.Lessons,
                 models.Lessons.id_course == models.Courses.id,
             )
-            .filter_by(id=id_course)
+            .filter_by(id_course=id_course)
             .first()
         )
         if course is not None:
