@@ -51,7 +51,7 @@
     @apply text-neutral-900 dark:text-neutral-200 bg-transparent border border-neutral-900 dark:border-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700;
   }
   .btn-outline-primary {
-    @apply text-indigo-900 dark:text-indigo-200 dark:hover:text-indigo-900 bg-transparent border border-indigo-900 dark:border-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-200;
+    @apply text-indigo-900 dark:text-indigo-200 dark:hover:text-indigo-900 bg-transparent border border-indigo-900 dark:border-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-200;
   }
   .btn-danger {
     @apply text-red-900 bg-red-50 brand-shadow shadow-red-900/25 hover:bg-red-200;

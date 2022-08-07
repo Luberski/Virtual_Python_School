@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { useTranslations } from 'use-intl';
 import Head from 'next/head';
-import { PlayIcon } from '@heroicons/react/outline';
+import { PlayIcon } from '@heroicons/react/solid';
 import debounce from 'debounce';
 import { useDispatch } from 'react-redux';
 import NavBar from '@app/components/NavBar';
@@ -62,67 +62,66 @@ export default function Playground() {
             })
           }
         />
-        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
-          <div>
-            <h1 className="text-center">{t('Playground.leading')}</h1>
-          </div>
-        </div>
-        <div className="container mx-auto space-y-4 px-6">
-          <div className="grid grid-cols-2 items-center">
-            <IconButton
-              onClick={handleValue}
-              className="my-8 h-12 max-w-fit"
-              variant={IconButtonVariant.PRIMARY}
-              icon={
-                playgroundStatus === 'pending' ? (
-                  <svg
-                    className="mr-1 h-5 w-5 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                ) : (
-                  <PlayIcon className="h-5 w-5" />
-                )
-              }>
-              {t('Playground.run')}
-            </IconButton>
-          </div>
-        </div>
-        <div className="flex px-6">
-          <Editor
-            className="h-96 w-1/2"
-            defaultLanguage="python"
-            defaultValue=""
-            onMount={handleEditorDidMount}
-            theme="vs-dark"
-          />
-          <div className="w-full">
-            <div className="mx-auto h-96 w-full rounded border-black bg-black subpixel-antialiased shadow-2xl">
-              <div
-                className="flex h-6 items-center rounded-t border-b border-neutral-500 bg-neutral-200 text-center text-black dark:bg-neutral-800 dark:text-white"
-                id="headerTerminal">
-                <div className="mx-auto" id="terminaltitle">
-                  <p className="text-center">Terminal output</p>
+        <div className="container mx-auto px-4">
+          <div className="container my-6 flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow dark:bg-neutral-800">
+            <h1 className="pb-4 text-center text-indigo-900 dark:text-indigo-300">
+              {t('Playground.leading')}
+            </h1>
+            <div className="my-9 self-end">
+              <IconButton
+                onClick={handleValue}
+                variant={IconButtonVariant.PRIMARY}
+                icon={
+                  playgroundStatus === 'pending' ? (
+                    <svg
+                      className="mr-1 h-5 w-5 animate-spin"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <PlayIcon className="h-5 w-5" />
+                  )
+                }>
+                {t('Playground.run')}
+              </IconButton>
+            </div>
+            <div className="flex w-full">
+              <Editor
+                className="h-96 w-1/2"
+                defaultLanguage="python"
+                defaultValue=""
+                onMount={handleEditorDidMount}
+                theme="vs-dark"
+              />
+              <div className="w-full">
+                <div className="mx-auto h-96 w-full rounded border-black bg-black subpixel-antialiased shadow-2xl">
+                  <div
+                    className="flex h-6 items-center rounded-t border-b border-neutral-500 bg-neutral-200 text-center text-black dark:bg-neutral-800 dark:text-white"
+                    id="headerTerminal">
+                    <div className="mx-auto" id="terminaltitle">
+                      <p className="text-center">Terminal output</p>
+                    </div>
+                  </div>
+                  <div
+                    className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
+                    id="console">
+                    <pre className="pb-1 text-white">
+                      {playgroundData?.content || playgroundError}
+                    </pre>
+                  </div>
                 </div>
-              </div>
-              <div
-                className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
-                id="console">
-                <pre className="pb-1 text-white">
-                  {playgroundData?.content || playgroundError}
-                </pre>
               </div>
             </div>
           </div>
