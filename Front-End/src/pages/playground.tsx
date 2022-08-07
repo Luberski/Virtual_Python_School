@@ -28,9 +28,9 @@ export default function Playground() {
   const playgroundError = useAppSelector(selectPlaygroundError);
   const playgroundStatus = useAppSelector(selectPlaygroundStatus);
 
-  const handleEditorDidMount = (editor) => {
+  function handleEditorDidMount(editor) {
     editorRef.current = editor;
-  };
+  }
 
   const handleValue = useMemo(
     () =>
