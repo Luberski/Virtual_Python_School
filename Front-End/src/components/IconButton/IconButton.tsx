@@ -6,7 +6,7 @@ import { ButtonSize, ButtonVariant } from '@app/components/Button';
 export const IconButtonVariant = ButtonVariant;
 export const IconButtonSize = ButtonSize;
 
-type IconButtonProps = ButtonProps & {
+export type IconButtonProps = ButtonProps & {
   icon?: React.ReactNode;
 };
 

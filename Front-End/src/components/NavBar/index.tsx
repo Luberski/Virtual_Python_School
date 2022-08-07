@@ -8,7 +8,10 @@ import IconButton, {
   IconButtonSize,
   IconButtonVariant,
 } from '@app/components/IconButton';
-import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
+import ButtonLink, {
+  ButtonLinkSize,
+  ButtonLinkVariant,
+} from '@app/components/ButtonLink';
 import { ThemeButton } from '@app/components/ThemeButton';
 import type { User } from '@app/models/User';
 
@@ -120,11 +123,20 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                           <Menu.Items
                             // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
                             className="absolute right-0 mt-2 origin-top-right divide-y divide-neutral-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-800">
-                            <div className="flex justify-end p-2">
+                            <div className="flex flex-col justify-end p-2">
+                              <Menu.Item>
+                                <Link href="/manage/courses">
+                                  <ButtonLink
+                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
+                                    {t('Manage.manage-courses')}
+                                  </ButtonLink>
+                                </Link>
+                              </Menu.Item>
                               <Menu.Item>
                                 <IconButton
                                   type="button"
-                                  sizeType={IconButtonSize.MEDIUM}
+                                  sizeType={IconButtonSize.EXTRA_LARGE}
                                   onClick={logout}
                                   variant={IconButtonVariant.FLAT_DANGER}
                                   icon={<LogoutIcon className="h-5 w-5" />}>

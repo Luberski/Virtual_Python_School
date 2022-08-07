@@ -6,7 +6,7 @@ import {
   AcademicCapIcon,
   InformationCircleIcon,
 } from '@heroicons/react/outline';
-import { PlusCircleIcon, TrashIcon } from '@heroicons/react/solid';
+import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/solid';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
@@ -24,8 +24,11 @@ import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import Input from '@app/components/Input';
 import TextArea from '@app/components/TextArea';
 import { WEBSITE_TITLE } from '@app/constants';
-import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
 import { wrapper } from '@app/store';
+import IconButtonLink, {
+  IconButtonLinkVariant,
+} from '@app/components/IconButtonLink';
+import Button, { ButtonVariant } from '@app/components/Button';
 
 export default function ManageCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -33,7 +36,6 @@ export default function ManageCoursesPage() {
 
   const t = useTranslations();
   const courses = useAppSelector(selectCoursesData);
-  const cancelButtonRef = useRef(null);
   const { register, handleSubmit, setValue } =
     useForm<{
       name: string;
@@ -42,14 +44,15 @@ export default function ManageCoursesPage() {
     }>();
 
   const [isOpen, setIsOpen] = useState(false);
+  const cancelButtonRef = useRef(null);
 
-  function closeModal() {
+  const closeModal = () => {
     setIsOpen(false);
-  }
+  };
 
-  function openModal() {
+  const openModal = () => {
     setIsOpen(true);
-  }
+  };
 
   // TODO: handle errors
   const onSubmit = async (data: {
@@ -140,96 +143,104 @@ export default function ManageCoursesPage() {
                 className="fixed inset-0 z-10 overflow-y-auto"
                 initialFocus={cancelButtonRef}
                 onClose={setIsOpen}>
-                <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0">
+                  <div className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                     <Dialog.Overlay className="fixed inset-0 bg-neutral-500 opacity-75 transition-opacity" />
-                  </Transition.Child>
-
-                  {/* This element is to trick the browser into centering the modal contents. */}
-                  <span
-                    className="hidden sm:inline-block sm:h-screen sm:align-middle"
-                    aria-hidden="true">
-                    &#8203;
-                  </span>
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                    <div className="relative inline-block overflow-hidden rounded-lg bg-neutral-100 text-left align-bottom shadow-2xl transition-all dark:bg-neutral-900 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-                      <div className="bg-neutral-100 px-4 pt-5 pb-4 dark:bg-neutral-900 sm:p-6 sm:pb-4">
-                        <div className="sm:flex sm:items-start">
-                          <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                            <AcademicCapIcon
-                              className="h-6 w-6 text-indigo-600"
-                              aria-hidden="true"
-                            />
-                          </div>
-                          <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                            <Dialog.Title
-                              as="h3"
-                              className="text-xl font-medium leading-6">
-                              {t('Courses.create-new-course')}
-                            </Dialog.Title>
-                            <div className="mt-6">
-                              <form
-                                className="flex flex-col items-start justify-center space-y-6"
-                                onSubmit={handleSubmit(onSubmit)}>
-                                <Input
-                                  label="name"
-                                  name="name"
-                                  type="text"
-                                  register={register}
-                                  required
-                                  maxLength={100}
-                                  placeholder={t('Courses.course-name')}
-                                />
-                                <TextArea
-                                  label="description"
-                                  name="description"
-                                  type="text"
-                                  register={register}
-                                  required
-                                  className="resize-none"
-                                  rows={4}
-                                  maxLength={2000}
-                                  placeholder={t('Courses.course-description')}
-                                />
-                                <div className="flex items-center">
-                                  <input
-                                    id="featured"
-                                    name="featured"
-                                    type="checkbox"
-                                    {...register('featured')}
-                                    className="h-4 w-4 rounded border-neutral-300 bg-neutral-100 text-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:border-neutral-600 dark:bg-neutral-700 dark:ring-offset-neutral-800 dark:focus:ring-indigo-600"
+                    {/* This element is to trick the browser into centering the modal contents. */}
+                    <span
+                      className="hidden sm:inline-block sm:h-screen sm:align-middle"
+                      aria-hidden="true">
+                      &#8203;
+                    </span>
+                    <Transition.Child
+                      as={Fragment}
+                      enter="ease-out duration-300"
+                      enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                      enterTo="opacity-100 translate-y-0 sm:scale-100"
+                      leave="ease-in duration-200"
+                      leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                      leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                      <div className="relative inline-block overflow-hidden rounded-lg bg-white text-left align-bottom shadow-2xl transition-all dark:bg-neutral-900 sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+                        <div className="bg-white px-4 pt-5 pb-4 dark:bg-neutral-900 sm:p-6 sm:pb-4">
+                          <div className="sm:flex sm:items-start">
+                            <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                              <AcademicCapIcon
+                                className="h-6 w-6 text-indigo-900"
+                                aria-hidden="true"
+                              />
+                            </div>
+                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                              <Dialog.Title
+                                as="h3"
+                                className="text-xl font-medium leading-6">
+                                {t('Courses.create-new-course')}
+                              </Dialog.Title>
+                              <div className="mt-6">
+                                <form
+                                  className="flex flex-col items-start justify-center space-y-6"
+                                  onSubmit={handleSubmit(onSubmit)}>
+                                  <Input
+                                    label="name"
+                                    name="name"
+                                    type="text"
+                                    register={register}
+                                    required
+                                    maxLength={100}
+                                    placeholder={t('Courses.course-name')}
                                   />
-                                  <label htmlFor="featured" className="ml-2">
-                                    {t('Courses.featured-on-homepage')}
-                                  </label>
-                                </div>
-                                <div className="py-3">
-                                  <IconButton
-                                    variant={IconButtonVariant.PRIMARY}
-                                    type="submit">
-                                    {t('Courses.create-course')}
-                                  </IconButton>
-                                </div>
-                              </form>
+                                  <TextArea
+                                    label="description"
+                                    name="description"
+                                    type="text"
+                                    register={register}
+                                    required
+                                    className="resize-none"
+                                    rows={4}
+                                    maxLength={2000}
+                                    placeholder={t(
+                                      'Courses.course-description'
+                                    )}
+                                  />
+                                  <div className="flex items-center">
+                                    <input
+                                      id="featured"
+                                      name="featured"
+                                      type="checkbox"
+                                      {...register('featured')}
+                                      className="h-4 w-4 rounded border-neutral-300 bg-neutral-100 text-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:border-neutral-600 dark:bg-neutral-700 dark:ring-offset-neutral-800 dark:focus:ring-indigo-600"
+                                    />
+                                    <label htmlFor="featured" className="ml-2">
+                                      {t('Courses.featured-on-homepage')}
+                                    </label>
+                                  </div>
+                                  <div className="flex justify-between space-x-4 py-3">
+                                    <IconButton
+                                      variant={IconButtonVariant.PRIMARY}
+                                      type="submit">
+                                      {t('Courses.create-course')}
+                                    </IconButton>
+                                    <Button
+                                      variant={ButtonVariant.FLAT_SECONDARY}
+                                      type="button"
+                                      onClick={closeModal}
+                                      ref={cancelButtonRef}>
+                                      {t('Manage.cancel')}
+                                    </Button>
+                                  </div>
+                                </form>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </Transition.Child>
-                </div>
+                    </Transition.Child>
+                  </div>
+                </Transition.Child>
               </Dialog>
             </Transition.Root>
             <Toaster />
@@ -239,7 +250,7 @@ export default function ManageCoursesPage() {
                   <thead className="text-left font-medium uppercase text-neutral-500">
                     <tr>
                       <th scope="col" className="py-3 px-4">
-                        ID
+                        No.
                       </th>
                       <th scope="col" className="py-3 px-4">
                         {t('Courses.course-name')}
@@ -253,15 +264,13 @@ export default function ManageCoursesPage() {
                       <th
                         scope="col"
                         className="py-3 px-4 text-center"
-                        colSpan={2}>
-                        {t('Manage.manage')}
-                      </th>
+                        colSpan={2}></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-200">
-                    {courses.map((course) => (
+                    {courses.map((course, key) => (
                       <tr key={course.id}>
-                        <td className="p-4">{course.id}</td>
+                        <td className="p-4">{(key += 1)}</td>
                         <td className="max-w-xs break-words p-4">
                           {course.name}
                         </td>
@@ -275,9 +284,11 @@ export default function ManageCoursesPage() {
                           <Link
                             href={`/manage/courses/${course.id}`}
                             passHref={true}>
-                            <ButtonLink variant={ButtonLinkVariant.PRIMARY}>
+                            <IconButtonLink
+                              variant={IconButtonLinkVariant.PRIMARY}
+                              icon={<PencilIcon className="h-5 w-5" />}>
                               {t('Manage.edit')}
-                            </ButtonLink>
+                            </IconButtonLink>
                           </Link>
                         </td>
                         <td className="py-4 pr-4">
