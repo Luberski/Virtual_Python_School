@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
-import Editor from '@monaco-editor/react';
 import { useTranslations } from 'use-intl';
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
 import { PlayIcon } from '@heroicons/react/solid';
 import debounce from 'debounce';
 import { useDispatch } from 'react-redux';
@@ -17,6 +17,10 @@ import { selectAuthUser, selectIsLogged } from '@app/features/auth/authSlice';
 import { WEBSITE_TITLE } from '@app/constants';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import Footer from '@app/components/Footer';
+
+const Editor = dynamic(() => import('@monaco-editor/react'), {
+  ssr: false,
+});
 
 export default function Playground() {
   const dispatch = useDispatch();
