@@ -265,22 +265,19 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
             <Toaster />
             {lessons && lessons?.length > 0 ? (
               <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
-                <table className="table-auto divide-y divide-neutral-200">
+                <table className="w-full table-auto divide-y divide-neutral-200">
                   <thead className="text-left font-medium uppercase text-neutral-500">
                     <tr>
                       <th scope="col" className="py-3 px-4">
-                        No.
+                        {t('Manage.no-short')}
                       </th>
                       <th scope="col" className="py-3 px-4">
-                        {t('Lessons.lesson-name')}
+                        {t('Manage.name')}
                       </th>
-                      <th scope="col" className="py-3 px-4">
-                        {t('Lessons.lesson-description')}
+                      <th scope="col" className="max-w-full py-3 px-4">
+                        {t('Manage.description')}
                       </th>
-                      <th
-                        scope="col"
-                        className="py-3 px-4 text-center"
-                        colSpan={2}></th>
+                      <th scope="col" className="py-3 px-4" />
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-200">
@@ -288,20 +285,16 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                       <Fragment key={lesson.id}>
                         <tr>
                           <td className="p-4">{(key += 1)}</td>
+                          <td className="break-words p-4">{lesson.name}</td>
                           <td className="break-words p-4">
-                            {lesson.name}
-                          </td>
-                          <td className="max-w-xs break-words p-4">
                             {lesson.description}
                           </td>
-                          <td className="p-4">
+                          <td className="flex space-x-4 py-4 pr-4">
                             <IconButtonLink
                               variant={IconButtonLinkVariant.PRIMARY}
                               icon={<PencilIcon className="h-5 w-5" />}>
                               {t('Manage.edit')}
                             </IconButtonLink>
-                          </td>
-                          <td className="py-4 pr-4">
                             <IconButton
                               variant={IconButtonVariant.DANGER}
                               icon={<TrashIcon className="h-5 w-5" />}

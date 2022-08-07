@@ -73,7 +73,10 @@
     "create": "Create",
     "manage-lessons-for-course": "Manage lessons for course",
     "manage-course": "Manage course",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "name": "Name",
+    "description": "Description",
+    "no-short": "No."
   },
   "Meta": {
     "title-home": "Home",

@@ -26,6 +26,7 @@ import TextArea from '@app/components/TextArea';
 import { WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
 import IconButtonLink, {
+  IconButtonLinkSize,
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
 import Button, { ButtonVariant } from '@app/components/Button';
@@ -246,26 +247,22 @@ export default function ManageCoursesPage() {
             <Toaster />
             {courses && courses.length > 0 ? (
               <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
-                <table className="table-auto divide-y divide-neutral-200">
+                <table className="w-full table-auto divide-y divide-neutral-200">
                   <thead className="text-left font-medium uppercase text-neutral-500">
                     <tr>
                       <th scope="col" className="py-3 px-4">
-                        No.
+                        {t('Manage.no-short')}
                       </th>
                       <th scope="col" className="py-3 px-4">
-                        {t('Courses.course-name')}
+                        {t('Manage.name')}
                       </th>
-                      <th scope="col" className="py-3 px-4">
+                      <th scope="col" className="py-3 px-4 text-center">
                         {t('Courses.featured')}
                       </th>
-                      <th scope="col" className="py-3 px-4">
-                        {t('Courses.course-description')}
+                      <th scope="col" className="max-w-full py-3 px-4">
+                        {t('Manage.description')}
                       </th>
-                      <th
-                        scope="col"
-                        className="py-3 px-4 text-center"
-                        colSpan={2}
-                      />
+                      <th scope="col" className="py-3 px-4" />
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-200">
@@ -273,7 +270,7 @@ export default function ManageCoursesPage() {
                       <tr key={course.id}>
                         <td className="p-4">{(key += 1)}</td>
                         <td className="break-words p-4">{course.name}</td>
-                        <td className="max-w-xs p-4 text-center">
+                        <td className="p-4 text-center">
                           <Checkbox
                             id="courseFeatured"
                             name="courseFeatured"
@@ -282,21 +279,20 @@ export default function ManageCoursesPage() {
                             checked={course.featured}
                           />
                         </td>
-                        <td className="max-w-xs break-words p-4">
+                        <td className="break-words p-4">
                           {course.description}
                         </td>
-                        <td className="p-4">
+                        <td className="flex space-x-4 py-4 pr-4">
                           <Link
                             href={`/manage/courses/${course.id}`}
                             passHref={true}>
                             <IconButtonLink
                               variant={IconButtonLinkVariant.PRIMARY}
+                              sizeType={IconButtonLinkSize.NORMAL}
                               icon={<PencilIcon className="h-5 w-5" />}>
                               {t('Manage.edit')}
                             </IconButtonLink>
                           </Link>
-                        </td>
-                        <td className="py-4 pr-4">
                           <IconButton
                             variant={IconButtonVariant.DANGER}
                             icon={<TrashIcon className="h-5 w-5" />}

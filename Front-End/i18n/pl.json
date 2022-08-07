@@ -73,7 +73,10 @@
     "create": "Utwórz",
     "manage-lessons-for-course": "Zarządzaj lekcjami dla kursu",
     "manage-course": "Zarządzaj kursem",
-    "cancel": "Anuluj"
+    "cancel": "Anuluj",
+    "name": "Nazwa",
+    "description": "Opis",
+    "no-short": "Lp."
   },
   "Meta": {
     "title-home": "Strona główna",
