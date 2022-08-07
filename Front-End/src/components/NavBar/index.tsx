@@ -78,6 +78,8 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                     {t('Meta.title-enrolled-courses')}
                   </ButtonLink>
                 </Link>
+              </li>
+              <li>
                 <Link href="/playground" passHref={true}>
                   <ButtonLink
                     variant={
