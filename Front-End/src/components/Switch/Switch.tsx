@@ -1,4 +1,5 @@
 import { Switch as HeadlessSwitch } from '@headlessui/react';
+import clsx from 'clsx';
 
 type SwitchProps = {
   checked: boolean;
@@ -24,16 +25,20 @@ export default function Switch({
       name={name}
       onChange={onChange}
       value={value}
-      className={`${
-        checked ? 'bg-indigo-50' : 'bg-neutral-50'
-      } relative inline-flex h-10 w-16 items-center rounded-lg disabled:cursor-not-allowed disabled:opacity-50`}>
+      className={clsx(
+        checked
+          ? 'bg-indigo-50 shadow-indigo-900/25'
+          : 'bg-neutral-50 shadow-black/25',
+        'brand-shadow relative inline-flex h-10 w-16 items-center rounded-lg disabled:cursor-not-allowed disabled:opacity-50'
+      )}>
       <span className="sr-only">{label}</span>
       <span
-        className={`${
+        className={clsx(
           checked
             ? 'translate-x-9 bg-indigo-900'
-            : 'translate-x-2 bg-neutral-300'
-        } inline-block h-5 w-5 rounded-lg`}
+            : 'translate-x-2 bg-neutral-300',
+          'inline-block h-5 w-5 rounded-lg'
+        )}
       />
     </HeadlessSwitch>
   );
