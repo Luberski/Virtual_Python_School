@@ -13,6 +13,7 @@ import {
   selectFeaturedCoursesData,
 } from '@app/features/courses/featuredCoursesSlice';
 import { wrapper } from '@app/store';
+import DynamicCourseCard from '@app/components/DynamicCourseCard';
 
 export default function IndexPage() {
   const t = useTranslations();
@@ -63,6 +64,7 @@ export default function IndexPage() {
                   buttonText={t('Home.learn-more')}
                 />
               ))}
+              <DynamicCourseCard />
             </div>
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center">

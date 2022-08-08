@@ -16,6 +16,7 @@ import { WEBSITE_TITLE } from '@app/constants';
 import { enrollCourse } from '@app/features/courses/enrollCourseSlice';
 import { wrapper } from '@app/store';
 import FancyToast from '@app/components/FancyToast';
+import DynamicCourseCard from '@app/components/DynamicCourseCard';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -83,7 +84,7 @@ export default function CoursesPage() {
         </div>
         <div className="container mx-auto px-12">
           {courses && courses.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-12">
+            <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
               {courses.map((course) => (
                 <FancyCard
                   key={course.id}
@@ -96,6 +97,7 @@ export default function CoursesPage() {
                   onClick={handleEnrollCourse(course.id)}
                 />
               ))}
+              <DynamicCourseCard />
             </div>
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center">

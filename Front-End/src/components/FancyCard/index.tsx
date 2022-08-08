@@ -28,7 +28,7 @@ export default function FancyCard({
 }: FancyCardProps) {
   return (
     <div
-      className={`flex flex-col justify-between p-8 ${cardColor} ${darkCardColor} border shadow hover:shadow-md dark:border-neutral-400 ${hoverShadowColor} transition duration-500 ease-in-out hover:scale-110 ${shadowColor} rounded-lg text-neutral-700 dark:text-neutral-100`}>
+      className={`flex flex-col justify-between p-6 ${cardColor} ${darkCardColor} brand-shadow2 border shadow-black/25 dark:border-neutral-400 ${hoverShadowColor} transition duration-500 ease-in-out ${shadowColor} rounded-lg text-neutral-700 dark:text-neutral-100`}>
       <p title={title} className="break-words text-2xl font-bold">
         {title}
       </p>
