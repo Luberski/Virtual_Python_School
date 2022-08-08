@@ -21,7 +21,7 @@ export default function FancyCard({
   description,
   buttonText,
   cardColor = 'bg-neutral-200',
-  darkCardColor = 'dark:bg-neutral-900',
+  darkCardColor = 'dark:bg-neutral-800',
   shadowColor = 'shadow-neutral-200/50',
   hoverShadowColor = 'hover:shadow-neutral-400/50',
   onClick,
