@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import { useDispatch } from 'react-redux';
+import Link from 'next/link';
 import Footer from '@app/components/Footer';
 import { useAppSelector } from '@app/hooks';
 import { selectIsLogged, selectAuthUser } from '@app/features/auth/authSlice';
@@ -14,6 +15,7 @@ import {
 } from '@app/features/courses/featuredCoursesSlice';
 import { wrapper } from '@app/store';
 import DynamicCourseCard from '@app/components/DynamicCourseCard';
+import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
 
 export default function IndexPage() {
   const t = useTranslations();
@@ -57,11 +59,16 @@ export default function IndexPage() {
                   key={course.id}
                   title={course.name}
                   description={course.description}
-                  link={`/courses`}
                   cardColor="bg-white"
                   shadowColor="shadow-black/25"
                   hoverShadowColor="hover:shadow-black/25"
-                  buttonText={t('Home.learn-more')}
+                  bottomControls={
+                    <Link href={`/courses`} passHref={true}>
+                      <ButtonLink variant={ButtonLinkVariant.OUTLINE_PRIMARY}>
+                        {t('Home.learn-more')}
+                      </ButtonLink>
+                    </Link>
+                  }
                 />
               ))}
               <DynamicCourseCard />

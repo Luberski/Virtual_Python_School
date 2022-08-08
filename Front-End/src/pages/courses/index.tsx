@@ -4,6 +4,7 @@ import Head from 'next/head';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
+import { CheckCircleIcon } from '@heroicons/react/solid';
 import Footer from '@app/components/Footer';
 import NavBar from '@app/components/NavBar';
 import FancyCard from '@app/components/FancyCard';
@@ -17,6 +18,7 @@ import { enrollCourse } from '@app/features/courses/enrollCourseSlice';
 import { wrapper } from '@app/store';
 import FancyToast from '@app/components/FancyToast';
 import DynamicCourseCard from '@app/components/DynamicCourseCard';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -93,8 +95,14 @@ export default function CoursesPage() {
                   cardColor="bg-white"
                   shadowColor="shadow-black/25"
                   hoverShadowColor="hover:shadow-black/25"
-                  buttonText={t('Courses.enroll')}
-                  onClick={handleEnrollCourse(course.id)}
+                  bottomControls={
+                    <IconButton
+                      variant={IconButtonVariant.PRIMARY}
+                      icon={<CheckCircleIcon className="h-5 w-5" />}
+                      onClick={handleEnrollCourse(course.id)}>
+                      {t('Courses.enroll')}
+                    </IconButton>
+                  }
                 />
               ))}
               <DynamicCourseCard />
