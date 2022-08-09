@@ -112,7 +112,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       const { courseId } = params as {
         courseId: string;
       };
-      await store.dispatch(fetchCourseWithLessons(courseId));
+      await store.dispatch(fetchCourseWithLessons({ id: courseId }));
 
       return {
         props: {

@@ -19,11 +19,18 @@ const initialState: CourseState = {
 
 export const fetchCourseWithLessons = createAsyncThunk(
   'api/course/with-lessons',
-  async (id: string | number, thunkApi) => {
+  async (
+    { id, limitLessons }: { id: string | number; limitLessons?: number | null },
+    thunkApi
+  ) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`courses/${id}?include_lessons=true`, {
+      let endpoint = `courses/${id}?include_lessons=true`;
+      if (limitLessons) {
+        endpoint = `courses/${id}?include_lessons=true&limit_lessons=${limitLessons}`;
+      }
+      const res = await apiClient.get(endpoint, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

@@ -328,7 +328,7 @@ export default function ManageCoursesPage() {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale }) => {
-      await store.dispatch(fetchCourses());
+      await store.dispatch(fetchCourses({}));
 
       return {
         props: {

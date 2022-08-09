@@ -156,7 +156,12 @@ export default function CoursesPage() {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale }) => {
-      await store.dispatch(fetchCourses());
+      await store.dispatch(
+        fetchCourses({
+          includeLessons: true,
+          limitLessons: 3,
+        })
+      );
 
       return {
         props: {

@@ -404,6 +404,7 @@ def get_course_by_id(
     db: Session = Depends(deps.get_db),
     id_course: int = Path(title="id of the course"),
     include_lessons: Union[bool, None] = Query(default=False),
+    limit_lessons: Union[int, None] = Query(default=None, gt=0),
 ):
     lessons_exist = False
     if include_lessons:
@@ -446,7 +447,7 @@ def get_course_by_id(
                             "type": lesson.type,
                             "number_of_answers": lesson.number_of_answers,
                         }
-                        for lesson in course.lessons
+                        for lesson in course.lessons.limit(limit_lessons)
                     ],
                 },
                 "error": None,
