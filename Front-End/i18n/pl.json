@@ -17,6 +17,7 @@
     "home": "Strona Główna",
     "courses": "Kursy",
     "learn-more": "Dowiedz się więcej",
+    "more": "Więcej",
     "leading": "Python dla każdego",
     "switch-theme": "Zmień motyw"
   },
@@ -39,7 +40,8 @@
     "no-courses-found": "Nie znaleziono kursów",
     "no-enrolled-courses-found": "Nie znaleziono zapisanych kursów",
     "course-not-found": "Nie znaleziono kursu",
-    "course-enrolled": "Zapisano do kursu"
+    "course-enrolled": "Zapisano do kursu",
+    "enrolled": "Zapisany"
   },
   "Lessons": {
     "lessons": "Lekcje",

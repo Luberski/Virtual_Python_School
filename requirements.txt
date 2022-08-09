@@ -13,6 +13,8 @@ paramiko
 alembic
 fastapi
 fastapi_jwt_auth
+pydantic
 pydantic[email]
+pydantic-collections
 uvicorn[standard]
 python-multipart

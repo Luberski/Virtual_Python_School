@@ -17,6 +17,7 @@
     "home": "Home",
     "courses": "Courses",
     "learn-more": "Learn More",
+    "more": "More",
     "leading": "Python for everyone",
     "switch-theme": "Switch theme"
   },
@@ -39,7 +40,8 @@
     "no-courses-found": "No courses found",
     "no-enrolled-courses-found": "No enrolled courses found",
     "course-not-found": "Course not found",
-    "course-enrolled": "Course enrolled"
+    "course-enrolled": "Course enrolled",
+    "enrolled":"Enrolled"
   },
   "Lessons": {
     "lessons": "Lessons",

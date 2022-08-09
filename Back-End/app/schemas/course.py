@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel
+from pydantic_collections import BaseCollectionModel
 from app.schemas.base import BaseJSONRequest, BaseJSONResponse
 
 
@@ -80,3 +81,21 @@ class CourseCloseByIdData(BaseModel):
 
 class CourseCloseByIdRequest(BaseJSONRequest):
     data: CourseCloseByIdData
+
+
+class CoursesAllResponseData(BaseModel):
+    id: int
+    name: str
+    description: str
+    featured: Optional[bool] = False
+    enrolled: Optional[bool] = False
+    lessons: Optional[Any] = []
+
+
+class CoursesAllResponseDataCollection(BaseCollectionModel[CoursesAllResponseData]):
+    class Config:
+        validate_assignment_strict = False
+
+
+class CoursesAllResponse(BaseJSONResponse):
+    data: list[CoursesAllResponseData]

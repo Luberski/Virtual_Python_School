@@ -1,10 +1,11 @@
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Head from 'next/head';
+import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { CheckCircleIcon } from '@heroicons/react/solid';
+import { BadgeCheckIcon, CheckCircleIcon } from '@heroicons/react/solid';
 import Footer from '@app/components/Footer';
 import NavBar from '@app/components/NavBar';
 import FancyCard from '@app/components/FancyCard';
@@ -19,6 +20,9 @@ import { wrapper } from '@app/store';
 import FancyToast from '@app/components/FancyToast';
 import DynamicCourseCard from '@app/components/DynamicCourseCard';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import IconButtonLink, {
+  IconButtonLinkVariant,
+} from '@app/components/IconButtonLink';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -96,12 +100,23 @@ export default function CoursesPage() {
                   shadowColor="shadow-black/25"
                   hoverShadowColor="hover:shadow-black/25"
                   bottomControls={
-                    <IconButton
-                      variant={IconButtonVariant.PRIMARY}
-                      icon={<CheckCircleIcon className="h-5 w-5" />}
-                      onClick={handleEnrollCourse(course.id)}>
-                      {t('Courses.enroll')}
-                    </IconButton>
+                    course.enrolled ? (
+                      <Link href={`/courses/${course.id}`} passHref={true}>
+                        <IconButtonLink
+                          className="w-fit"
+                          variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
+                          icon={<BadgeCheckIcon className="h-5 w-5" />}>
+                          {t('Courses.enrolled')}
+                        </IconButtonLink>
+                      </Link>
+                    ) : (
+                      <IconButton
+                        variant={IconButtonVariant.PRIMARY}
+                        icon={<CheckCircleIcon className="h-5 w-5" />}
+                        onClick={handleEnrollCourse(course.id)}>
+                        {t('Courses.enroll')}
+                      </IconButton>
+                    )
                   }
                 />
               ))}
@@ -124,10 +139,10 @@ export default function CoursesPage() {
         {courses && courses.length > 0 && (
           <div className="my-16 flex items-center justify-center">
             <Image
-              src={'/undraw_knowledge_re_5v9l.svg'}
-              alt="login"
-              width="466"
-              height="330"
+              src={'/undraw_online_learning_re_qw08.svg'}
+              alt="online_learning"
+              width="384"
+              height="276"
             />
           </div>
         )}

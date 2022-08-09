@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel
 
 
@@ -7,5 +7,5 @@ class BaseJSONRequest(BaseModel):
 
 
 class BaseJSONResponse(BaseModel):
-    data: dict
+    data: Any
     error: Optional[str] = None

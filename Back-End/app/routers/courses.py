@@ -15,6 +15,8 @@ from app.schemas.course import (
     CourseJoinByIdRequest,
     CourseJoinRequest,
     CourseJoinResponse,
+    CoursesAllResponse,
+    CoursesAllResponseDataCollection,
 )
 from app.settings import ADMIN_ID
 
@@ -156,7 +158,7 @@ def delete_course(
     )
 
 
-@router.get("/courses", tags=["courses"])
+@router.get("/courses", tags=["courses"], response_model=CoursesAllResponse)
 def get_courses_all(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
@@ -169,35 +171,28 @@ def get_courses_all(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    lessons_exist = False
+    user = db.query(models.User).filter_by(username=username).first()
+    courses_response_data: CoursesAllResponseDataCollection = (
+        CoursesAllResponseDataCollection()
+    )
+
     if include_lessons:
-        courses = (
-            db.query(models.Courses)
+        courses_taken_with_lessons = (
+            db.query(models.CoursesTaken)
+            .filter_by(id_user=user.id)
+            .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
             .join(models.Lessons, models.Courses.id == models.Lessons.id_course)
             .all()
         )
-        if courses is not None:
-            lessons_exist = True
-    if not lessons_exist:
-        courses = db.query(models.Courses).all()
-
-    if courses is None:
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"error": "Courses not found"},
-        )
-
-    # TODO: add additional param if user attended course
-    if lessons_exist:
-        return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={
-                "data": [
+        if courses_taken_with_lessons:
+            for course_taken in courses_taken_with_lessons:
+                courses_response_data.append(
                     {
-                        "id": course.id,
-                        "name": course.name,
-                        "description": course.description,
-                        "featured": course.featured,
+                        "id": course_taken.course.id,
+                        "name": course_taken.course.name,
+                        "description": course_taken.course.description,
+                        "featured": course_taken.course.featured,
+                        "enrolled": True,
                         "lessons": [
                             {
                                 "id": lesson.id,
@@ -206,28 +201,79 @@ def get_courses_all(
                                 "type": lesson.type,
                                 "number_of_answers": lesson.number_of_answers,
                             }
-                            for lesson in course.lessons
+                            for lesson in course_taken.course.lessons
                         ],
                     }
-                    for course in courses
-                ],
-                "error": None,
-            },
+                )
+
+        courses_with_lessons = (
+            db.query(models.Courses)
+            .join(models.Lessons, models.Courses.id == models.Lessons.id_course)
+            .all()
         )
+        if courses_with_lessons:
+            for course in courses_with_lessons:
+                if course.id not in [
+                    course_taken.course.id
+                    for course_taken in courses_taken_with_lessons
+                ]:
+                    courses_response_data.append(
+                        {
+                            "id": course.id,
+                            "name": course.name,
+                            "description": course.description,
+                            "featured": course.featured,
+                            "enrolled": False,
+                            "lessons": [
+                                {
+                                    "id": lesson.id,
+                                    "name": lesson.name,
+                                    "description": lesson.description,
+                                    "type": lesson.type,
+                                    "number_of_answers": lesson.number_of_answers,
+                                }
+                                for lesson in course.lessons
+                            ],
+                        }
+                    )
+    else:
+        courses_taken = (
+            db.query(models.CoursesTaken)
+            .filter_by(id_user=user.id)
+            .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
+            .all()
+        )
+        if courses_taken:
+            for course_taken in courses_taken:
+                courses_response_data.append(
+                    {
+                        "id": course_taken.course.id,
+                        "name": course_taken.course.name,
+                        "description": course_taken.course.description,
+                        "featured": course_taken.course.featured,
+                        "enrolled": True,
+                    }
+                )
+
+        courses = db.query(models.Courses).all()
+        if courses:
+            for course in courses:
+                if course.id not in [
+                    course_taken.course.id for course_taken in courses_taken
+                ]:
+                    courses_response_data.append(
+                        {
+                            "id": course.id,
+                            "name": course.name,
+                            "description": course.description,
+                            "featured": course.featured,
+                            "enrolled": False,
+                        }
+                    )
+
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={
-            "data": [
-                {
-                    "id": course.id,
-                    "name": course.name,
-                    "description": course.description,
-                    "featured": course.featured,
-                }
-                for course in courses
-            ],
-            "error": None,
-        },
+        content={"data": courses_response_data.dict(), "error": None},
     )
 
 
@@ -334,10 +380,11 @@ def get_enrolled_courses(
             "data": [
                 {
                     "username": user.username,
-                    "id_course": course_taken.id_course,
+                    "id": course_taken.id_course,
                     "start_date": str(course_taken.start_date),
                     "name": course_taken.course.name,
                     "description": course_taken.course.description,
+                    "enrolled": True,
                     "end_date": str(course_taken.end_date),
                     "section_number": course_taken.section_number,
                     "completed": course_taken.completed,
@@ -367,7 +414,7 @@ def get_course_by_id(
             .filter_by(id_course=id_course)
             .first()
         )
-        if course is not None:
+        if course:
             lessons_exist = True
 
     if not lessons_exist:
@@ -449,7 +496,7 @@ def join_course_me(
         .filter_by(id_user=user.id, id_course=course_wanted)
         .first()
     )
-    if check_exist is not None:
+    if check_exist:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"error": "User attends in course"},
@@ -529,7 +576,7 @@ def join_course_id(
         .first()
     )
 
-    if check_exist is not None:
+    if check_exist:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"error": "User attends in course"},

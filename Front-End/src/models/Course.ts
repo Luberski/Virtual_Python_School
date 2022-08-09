@@ -5,5 +5,6 @@ export type Course = {
   name: string;
   description: string;
   featured: boolean;
+  enrolled: boolean;
   lessons?: Lesson[];
 };

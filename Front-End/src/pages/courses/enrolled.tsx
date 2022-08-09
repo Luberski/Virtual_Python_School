@@ -1,7 +1,9 @@
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useDispatch } from 'react-redux';
+import { InformationCircleIcon } from '@heroicons/react/solid';
 import Footer from '@app/components/Footer';
 import NavBar from '@app/components/NavBar';
 import FancyCard from '@app/components/FancyCard';
@@ -12,6 +14,9 @@ import {
 } from '@app/features/courses/enrolledCoursesSlice';
 import { WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
+import IconButtonLink, {
+  IconButtonLinkVariant,
+} from '@app/components/IconButtonLink';
 
 export default function EnrolledCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -46,19 +51,25 @@ export default function EnrolledCoursesPage() {
         </div>
         <div className="container mx-auto px-12">
           {courses && courses.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-12">
+            <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
               {courses.map((course) => (
                 <FancyCard
                   key={course.id}
                   title={course.name}
                   description={course.description}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  link={`/courses/${course.id_course}`}
                   cardColor="bg-white"
                   shadowColor="shadow-black/25"
                   hoverShadowColor="hover:shadow-black/25"
-                  buttonText={t('Home.learn-more')}
+                  bottomControls={
+                    <Link href={`/courses/${course.id}`} passHref={true}>
+                      <IconButtonLink
+                        className="w-fit"
+                        variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
+                        icon={<InformationCircleIcon className="h-5 w-5" />}>
+                        {t('Home.more')}
+                      </IconButtonLink>
+                    </Link>
+                  }
                 />
               ))}
             </div>
