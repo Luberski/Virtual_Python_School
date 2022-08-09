@@ -127,7 +127,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                             className="absolute right-0 mt-2 origin-top-right divide-y divide-neutral-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-800">
                             <div className="flex flex-col justify-end p-2">
                               <Menu.Item>
-                                <Link href="/manage/courses">
+                                <Link href="/manage/courses" passHref={true}>
                                   <ButtonLink
                                     sizeType={ButtonLinkSize.EXTRA_LARGE}
                                     variant={ButtonLinkVariant.FLAT_PRIMARY}>

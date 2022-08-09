@@ -173,6 +173,11 @@ def get_courses_all(
             content={"error": "Unauthorized"},
         )
     user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
     courses_response_data: CoursesAllResponseDataCollection = (
         CoursesAllResponseDataCollection()
     )
@@ -349,6 +354,8 @@ def get_courses_me(
 def get_enrolled_courses(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
+    include_lessons: Union[bool, None] = Query(default=False),
+    limit_lessons: Union[int, None] = Query(default=None, gt=0),
 ):
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
@@ -363,39 +370,70 @@ def get_enrolled_courses(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-
-    courses_taken = (
-        db.query(models.CoursesTaken)
-        .filter_by(id_user=user.id)
-        .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
-        .all()
+    courses_response_data: CoursesAllResponseDataCollection = (
+        CoursesAllResponseDataCollection()
     )
 
-    if courses_taken is None:
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"error": "Courses not found"},
+    if include_lessons:
+        courses_taken_with_lessons = (
+            db.query(models.CoursesTaken)
+            .filter_by(id_user=user.id)
+            .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
+            .join(models.Lessons, models.Courses.id == models.Lessons.id_course)
+            .all()
         )
+        if courses_taken_with_lessons:
+            for course_taken in courses_taken_with_lessons:
+                courses_response_data.append(
+                    {
+                        "id": course_taken.course.id,
+                        "name": course_taken.course.name,
+                        "description": course_taken.course.description,
+                        "featured": course_taken.course.featured,
+                        "enrolled": True,
+                        "end_date": str(course_taken.end_date),
+                        "section_number": course_taken.section_number,
+                        "lessons": [
+                            {
+                                "id": lesson.id,
+                                "start_date": str(course_taken.start_date),
+                                "name": lesson.name,
+                                "description": lesson.description,
+                                "type": lesson.type,
+                                "number_of_answers": lesson.number_of_answers,
+                            }
+                            for lesson in course_taken.course.lessons.limit(
+                                limit_lessons
+                            )
+                        ],
+                    }
+                )
+
+    else:
+        courses_taken = (
+            db.query(models.CoursesTaken)
+            .filter_by(id_user=user.id)
+            .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
+            .all()
+        )
+        if courses_taken:
+            for course_taken in courses_taken:
+                courses_response_data.append(
+                    {
+                        "id": course_taken.course.id,
+                        "start_date": str(course_taken.start_date),
+                        "name": course_taken.course.name,
+                        "description": course_taken.course.description,
+                        "featured": course_taken.course.featured,
+                        "enrolled": True,
+                        "end_date": str(course_taken.end_date),
+                        "section_number": course_taken.section_number,
+                    }
+                )
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={
-            "data": [
-                {
-                    "username": user.username,
-                    "id": course_taken.id_course,
-                    "start_date": str(course_taken.start_date),
-                    "name": course_taken.course.name,
-                    "description": course_taken.course.description,
-                    "enrolled": True,
-                    "end_date": str(course_taken.end_date),
-                    "section_number": course_taken.section_number,
-                    "completed": course_taken.completed,
-                }
-                for course_taken in courses_taken
-            ],
-            "error": None,
-        },
+        content={"data": courses_response_data.dict(), "error": None},
     )
 
 

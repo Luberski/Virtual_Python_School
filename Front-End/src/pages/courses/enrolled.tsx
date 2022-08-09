@@ -46,7 +46,9 @@ export default function EnrolledCoursesPage() {
         />
         <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
           <div className="space-y-2">
-            <h1 className="text-center">{t('Meta.title-enrolled-courses')}</h1>
+            <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+              {t('Meta.title-enrolled-courses')}
+            </h1>
           </div>
         </div>
         <div className="container mx-auto px-12">
@@ -56,7 +58,28 @@ export default function EnrolledCoursesPage() {
                 <FancyCard
                   key={course.id}
                   title={course.name}
-                  description={course.description}
+                  description={
+                    <div className="flex flex-col">
+                      {course.description}
+                      <div>
+                        <div className="mt-4 mb-1 text-xs text-neutral-400">
+                          {t('Manage.name')}
+                        </div>
+                        {course.lessons?.length > 0 &&
+                          course.lessons?.map((lesson) => (
+                            <div key={lesson.id}>
+                              <Link
+                                href={`/courses/${course.id}/lessons/${lesson.id}`}>
+                                <a className="text-indigo-900 dark:text-indigo-300">
+                                  {lesson.name}
+                                </a>
+                              </Link>
+                            </div>
+                          ))}
+                        ...
+                      </div>
+                    </div>
+                  }
                   cardColor="bg-white"
                   shadowColor="shadow-black/25"
                   hoverShadowColor="hover:shadow-black/25"
@@ -90,10 +113,10 @@ export default function EnrolledCoursesPage() {
         {courses && courses.length > 0 && (
           <div className="my-16 flex items-center justify-center">
             <Image
-              src={'/undraw_knowledge_re_5v9l.svg'}
-              alt="login"
-              width="466"
-              height="330"
+              src="/undraw_online_learning_re_qw08.svg"
+              alt="online_learning"
+              width="384"
+              height="276"
             />
           </div>
         )}
@@ -106,7 +129,12 @@ export default function EnrolledCoursesPage() {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale }) => {
-      await store.dispatch(fetchEnrolledCourses());
+      await store.dispatch(
+        fetchEnrolledCourses({
+          includeLessons: true,
+          limitLessons: 3,
+        })
+      );
 
       return {
         props: {

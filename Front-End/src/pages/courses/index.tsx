@@ -95,7 +95,28 @@ export default function CoursesPage() {
                 <FancyCard
                   key={course.id}
                   title={course.name}
-                  description={course.description}
+                  description={
+                    <div className="flex flex-col">
+                      {course.description}
+                      <div>
+                        <div className="mt-4 mb-1 text-xs text-neutral-400">
+                          {t('Manage.name')}
+                        </div>
+                        {course.lessons?.length > 0 &&
+                          course.lessons?.map((lesson) => (
+                            <div key={lesson.id}>
+                              <Link
+                                href={`/courses/${course.id}/lessons/${lesson.id}`}>
+                                <a className="text-indigo-900 dark:text-indigo-300">
+                                  {lesson.name}
+                                </a>
+                              </Link>
+                            </div>
+                          ))}
+                        ...
+                      </div>
+                    </div>
+                  }
                   cardColor="bg-white"
                   shadowColor="shadow-black/25"
                   hoverShadowColor="hover:shadow-black/25"
@@ -139,7 +160,7 @@ export default function CoursesPage() {
         {courses && courses.length > 0 && (
           <div className="my-16 flex items-center justify-center">
             <Image
-              src={'/undraw_online_learning_re_qw08.svg'}
+              src="/undraw_online_learning_re_qw08.svg"
               alt="online_learning"
               width="384"
               height="276"
