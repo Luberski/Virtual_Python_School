@@ -43,7 +43,7 @@ class Courses(Base):
     name = Column(String(100))
     description = Column(String(2000))
     featured = Column(Boolean, default=False, nullable=False)
-    lessons = relationship("Lessons")
+    lessons = relationship("Lessons", lazy="dynamic")
 
 
 class Lessons(Base):

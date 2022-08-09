@@ -163,6 +163,7 @@ def get_courses_all(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
     include_lessons: Union[bool, None] = Query(default=False),
+    limit_lessons: Union[int, None] = Query(default=None, gt=0),
 ):
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
@@ -201,7 +202,9 @@ def get_courses_all(
                                 "type": lesson.type,
                                 "number_of_answers": lesson.number_of_answers,
                             }
-                            for lesson in course_taken.course.lessons
+                            for lesson in course_taken.course.lessons.limit(
+                                limit_lessons
+                            )
                         ],
                     }
                 )
@@ -232,7 +235,7 @@ def get_courses_all(
                                     "type": lesson.type,
                                     "number_of_answers": lesson.number_of_answers,
                                 }
-                                for lesson in course.lessons
+                                for lesson in course.lessons.limit(limit_lessons)
                             ],
                         }
                     )
