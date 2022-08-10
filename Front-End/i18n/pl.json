@@ -41,7 +41,9 @@
     "no-enrolled-courses-found": "Nie znaleziono zapisanych kursów",
     "course-not-found": "Nie znaleziono kursu",
     "course-enrolled": "Zapisano do kursu",
-    "enrolled": "Zapisano"
+    "enrolled": "Zapisano",
+    "edit-course": "Edytuj kurs",
+    "course-edited": "Kurs został edytowany"
   },
   "Lessons": {
     "lessons": "Lekcje",

@@ -41,7 +41,9 @@
     "no-enrolled-courses-found": "No enrolled courses found",
     "course-not-found": "Course not found",
     "course-enrolled": "Course enrolled",
-    "enrolled":"Enrolled"
+    "enrolled":"Enrolled",
+    "edit-course": "Edit course",
+    "course-edited": "Course edited"
   },
   "Lessons": {
     "lessons": "Lessons",

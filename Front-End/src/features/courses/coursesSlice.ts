@@ -70,7 +70,6 @@ export const deleteCourse = createAsyncThunk(
   }
 );
 
-// TODO: handle errors
 export const createCourse = createAsyncThunk(
   'api/courses/create',
   async (

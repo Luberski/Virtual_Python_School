@@ -102,7 +102,7 @@ def edit_course(
         course_edit.description = request_data.data.description
         to_commit = True
 
-    if request_data.data.featured:
+    if request_data.data.featured is not None:
         course_edit.featured = request_data.data.featured
         to_commit = True
 

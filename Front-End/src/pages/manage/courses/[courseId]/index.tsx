@@ -27,11 +27,13 @@ import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
 import {
+  editCourse,
   fetchCourse,
   selectCourseData,
 } from '@app/features/courses/courseSlice';
 import Button, { ButtonVariant } from '@app/components/Button';
 import StyledDialog from '@app/components/StyledDialog';
+import Checkbox from '@app/components/Checkbox';
 
 type Props = {
   courseId: string;
@@ -53,18 +55,34 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
       answer: string;
     }>();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const {
+    register: registerCourseEdit,
+    handleSubmit: handleCourseEditSubmit,
+    setValue: setValueCourseEdit,
+  } = useForm<{ name: string; description: string; featured: boolean }>();
+
+  const [isOpenCourseCreateDialog, setIsOpenCourseCreateDialog] =
+    useState(false);
+  const [isOpenCourseEditDialog, setIsOpenCourseEditDialog] = useState(false);
   const cancelButtonRef = useRef(null);
 
-  const closeModal = () => {
-    setIsOpen(false);
+  const closeCourseCreateDialog = () => {
+    setIsOpenCourseCreateDialog(false);
   };
 
-  const openModal = () => {
-    setIsOpen(true);
+  const openCourseCreateDialog = () => {
+    setIsOpenCourseCreateDialog(true);
   };
 
-  // TODO: handle errors
+  const closeCourseEditDialog = () => {
+    setIsOpenCourseEditDialog(false);
+  };
+
+  const openCourseEditDialog = () => {
+    setValueCourseEdit('featured', course?.featured);
+    setIsOpenCourseEditDialog(true);
+  };
+
   const onSubmit = async (data: {
     name: string;
     description: string;
@@ -87,10 +105,36 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
       setValue('description', '');
       setValue('answer', '');
 
-      closeModal();
+      closeCourseCreateDialog();
       notify();
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const onCourseEditSubmit = async (data: {
+    name: string;
+    description: string;
+    featured: boolean;
+  }) => {
+    const { name, description, featured } = data;
+    if (name.trim() || description.trim() || featured !== course?.featured) {
+      try {
+        dispatch(
+          editCourse({
+            courseId,
+            name,
+            description,
+            featured,
+          })
+        );
+        setValueCourseEdit('name', '');
+        setValueCourseEdit('description', '');
+        closeCourseEditDialog();
+        notifyCourseEdited();
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -103,7 +147,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
       (to) => (
         <button
           type="button"
-          className="rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow"
+          className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
             <InformationCircleIcon className="h-6 w-6 text-indigo-500" />
@@ -115,6 +159,28 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
       ),
       {
         id: 'new-lesson-added-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
+  const notifyCourseEdited = () =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6 text-indigo-500" />
+            <div>
+              <p className="font-bold">{t('Courses.course-edited')}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'course-edited-notification',
         position: 'top-center',
         duration: 1000,
       }
@@ -143,16 +209,24 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
         />
         <div className="container mx-auto px-4">
           <div className="container flex flex-col rounded-lg bg-white p-9 shadow dark:bg-neutral-800">
-            <h1 className="pb-4 text-indigo-900 dark:text-indigo-300">
-              {course?.name}
-            </h1>
+            <div className="flex items-center space-x-2">
+              <h1 className="pb-4 text-indigo-900 dark:text-indigo-300">
+                {course?.name}
+              </h1>
+              <Button
+                className="h-fit"
+                variant={ButtonVariant.FLAT_PRIMARY}
+                onClick={openCourseEditDialog}>
+                {t('Manage.edit')}
+              </Button>
+            </div>
             <p className="word-wrap mb-6 text-2xl">{course?.description}</p>
             <div className="flex items-center justify-between">
               <p className="text-xl font-medium">
                 {t('Lessons.list-of-lessons')}
               </p>
               <IconButton
-                onClick={openModal}
+                onClick={openCourseCreateDialog}
                 variant={IconButtonVariant.PRIMARY}
                 icon={<PlusCircleIcon className="h-5 w-5" />}>
                 {t('Manage.create')}
@@ -160,16 +234,15 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
             </div>
             <StyledDialog
               title={t('Lessons.create-new-lesson')}
-              isOpen={isOpen}
+              isOpen={isOpenCourseCreateDialog}
               icon={
                 <div className="h-fit rounded-lg bg-indigo-100 p-2">
-                  <AcademicCapIcon
-                    className="h-6 w-6 text-indigo-900"
-                    aria-hidden="true"
-                  />
+                  <AcademicCapIcon className="h-6 w-6 text-indigo-900" />
                 </div>
               }
-              onClose={() => setIsOpen(!isOpen)}>
+              onClose={() =>
+                setIsOpenCourseCreateDialog(!isOpenCourseCreateDialog)
+              }>
               <div className="mt-6">
                 <form
                   className="flex flex-col items-start justify-center space-y-6"
@@ -212,7 +285,68 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                     <Button
                       variant={ButtonVariant.FLAT_SECONDARY}
                       type="button"
-                      onClick={closeModal}
+                      onClick={closeCourseCreateDialog}
+                      ref={cancelButtonRef}>
+                      {t('Manage.cancel')}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </StyledDialog>
+            <StyledDialog
+              title={t('Courses.edit-course')}
+              isOpen={isOpenCourseEditDialog}
+              icon={
+                <div className="h-fit rounded-lg bg-indigo-100 p-2">
+                  <PencilIcon className="h-6 w-6 text-indigo-900" />
+                </div>
+              }
+              onClose={() =>
+                setIsOpenCourseEditDialog(!isOpenCourseEditDialog)
+              }>
+              <div className="mt-6">
+                <form
+                  className="flex flex-col items-start justify-center space-y-6"
+                  onSubmit={handleCourseEditSubmit(onCourseEditSubmit)}>
+                  <Input
+                    label="name"
+                    name="name"
+                    type="text"
+                    register={registerCourseEdit}
+                    maxLength={100}
+                    placeholder={t('Courses.course-name')}
+                  />
+                  <TextArea
+                    label="description"
+                    name="description"
+                    type="text"
+                    register={registerCourseEdit}
+                    className="resize-none"
+                    rows={4}
+                    maxLength={2000}
+                    placeholder={t('Courses.course-description')}
+                  />
+                  <div className="flex items-center">
+                    <Checkbox
+                      id="featured"
+                      name="featured"
+                      label="featured"
+                      register={registerCourseEdit}
+                    />
+                    <label htmlFor="featured" className="ml-2">
+                      {t('Courses.featured-on-homepage')}
+                    </label>
+                  </div>
+                  <div className="flex justify-between space-x-4 py-3">
+                    <IconButton
+                      variant={IconButtonVariant.PRIMARY}
+                      type="submit">
+                      {t('Courses.edit-course')}
+                    </IconButton>
+                    <Button
+                      variant={ButtonVariant.FLAT_SECONDARY}
+                      type="button"
+                      onClick={closeCourseEditDialog}
                       ref={cancelButtonRef}>
                       {t('Manage.cancel')}
                     </Button>

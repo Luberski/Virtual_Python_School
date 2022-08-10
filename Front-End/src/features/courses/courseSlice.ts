@@ -37,6 +37,48 @@ export const fetchCourse = createAsyncThunk(
   }
 );
 
+export const editCourse = createAsyncThunk(
+  'api/courses/edit',
+  async (
+    {
+      courseId,
+      name,
+      description,
+      featured,
+    }: {
+      courseId: string;
+      name?: string;
+      description?: string;
+      featured?: boolean;
+    },
+    thunkApi
+  ) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.patch('courses', {
+        json: {
+          data: {
+            id_course: courseId,
+            ...(name && { name }),
+            ...(description && { description }),
+            featured,
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 export const courseSlice = createSlice({
   name: 'course',
   initialState,
@@ -71,7 +113,13 @@ export const courseSlice = createSlice({
       .addCase(fetchCourse.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
-      });
+      })
+      .addCase(
+        editCourse.fulfilled,
+        (state, { payload }: { payload: ApiPayload | any }) => {
+          state.data = { ...state.data, ...payload.data };
+        }
+      );
   },
 });
 
