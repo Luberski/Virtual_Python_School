@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import {
   AcademicCapIcon,
+  ExclamationCircleIcon,
   InformationCircleIcon,
 } from '@heroicons/react/outline';
 import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/solid';
@@ -69,6 +70,8 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
     useState(false);
   const [isCourseEditDialogOpen, setIsCourseEditDialogOpen] = useState(false);
   const [isLessonEditDialogOpen, setIsLessonEditDialogOpen] = useState(false);
+  const [isLessonDeleteDialogOpen, setIsLessonDeleteDialogOpen] =
+    useState(false);
   const [currentLessonId, setCurrentLessonId] = useState<string>(null);
 
   const cancelButtonRef = useRef(null);
@@ -97,6 +100,15 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
   const openLessonEditDialog = (lessonId: string) => () => {
     setCurrentLessonId(lessonId);
     setIsLessonEditDialogOpen(true);
+  };
+
+  const closeLessonDeleteDialog = () => {
+    setIsLessonDeleteDialogOpen(false);
+  };
+
+  const openLessonDeleteDialog = (lessonId: string) => () => {
+    setCurrentLessonId(lessonId);
+    setIsLessonDeleteDialogOpen(true);
   };
 
   const onLessonCreateSubmit = async (data: {
@@ -189,8 +201,10 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
     }
   };
 
-  const handleDeleteLesson = (id: string | number) => async () => {
-    await dispatch(deleteLesson(id));
+  const handleDeleteLesson = async () => {
+    await dispatch(deleteLesson(currentLessonId));
+    closeLessonDeleteDialog();
+    notifyLessonDeleted();
   };
 
   const notify = () =>
@@ -262,6 +276,28 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
   if (!user && !isLoggedIn) {
     return null;
   }
+
+  const notifyLessonDeleted = () =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-red-500 bg-red-200 py-3 px-4 text-red-900 shadow-red-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6 text-red-500" />
+            <div>
+              <p className="font-bold">{t('Lessons.lesson-deleted')}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'lesson-deleted-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
 
   return (
     <>
@@ -485,6 +521,38 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                 </form>
               </div>
             </StyledDialog>
+            <StyledDialog
+              title={t('Lessons.delete-lesson')}
+              isOpen={isLessonDeleteDialogOpen}
+              icon={
+                <div className="h-fit rounded-lg bg-red-100 p-2">
+                  <ExclamationCircleIcon className="h-6 w-6 text-red-900" />
+                </div>
+              }
+              onClose={() =>
+                setIsLessonDeleteDialogOpen(!isLessonDeleteDialogOpen)
+              }>
+              <div className="my-2">
+                <p className="my-2 font-bold text-red-400">
+                  {t('Lessons.delete-lesson-confirmation')}
+                </p>
+                <div className="flex space-x-4 py-3">
+                  <Button
+                    type="button"
+                    variant={ButtonVariant.DANGER}
+                    onClick={handleDeleteLesson}>
+                    {t('Manage.delete')}
+                  </Button>
+                  <Button
+                    variant={ButtonVariant.FLAT_SECONDARY}
+                    type="button"
+                    onClick={closeLessonDeleteDialog}
+                    ref={cancelButtonRef}>
+                    {t('Manage.cancel')}
+                  </Button>
+                </div>
+              </div>
+            </StyledDialog>
             <Toaster />
             {lessons && lessons?.length > 0 ? (
               <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
@@ -519,10 +587,11 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                               icon={<PencilIcon className="h-5 w-5" />}>
                               {t('Manage.edit')}
                             </IconButton>
+
                             <IconButton
                               variant={IconButtonVariant.DANGER}
                               icon={<TrashIcon className="h-5 w-5" />}
-                              onClick={handleDeleteLesson(lesson.id)}>
+                              onClick={openLessonDeleteDialog(lesson.id)}>
                               {t('Manage.delete')}
                             </IconButton>
                           </td>

@@ -66,7 +66,10 @@
     "correct-answer": "Correct answer",
     "incorrect-answer": "Incorrect answer",
     "lesson-edited": "Lesson edited",
-    "edit-lesson": "Edit lesson"
+    "edit-lesson": "Edit lesson",
+    "delete-lesson": "Delete lesson",
+    "delete-lesson-confirmation": "Are you sure you want to DELETE this lesson?",
+    "lesson-deleted": "Lesson deleted"
   },
   "Playground": {
     "run": "Run",
