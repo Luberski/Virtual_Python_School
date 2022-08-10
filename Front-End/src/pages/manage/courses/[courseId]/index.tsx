@@ -65,38 +65,38 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
     setValue: setValueLessonEdit,
   } = useForm<{ name: string; description: string; answer: string }>();
 
-  const [isOpenLessonCreateDialog, setIsOpenLessonCreateDialog] =
+  const [isLessonCreateDialogOpen, setIsLessonCreateDialogOpen] =
     useState(false);
-  const [isOpenCourseEditDialog, setIsOpenCourseEditDialog] = useState(false);
-  const [isOpenLessonEditDialog, setIsOpenLessonEditDialog] = useState(false);
+  const [isCourseEditDialogOpen, setIsCourseEditDialogOpen] = useState(false);
+  const [isLessonEditDialogOpen, setIsLessonEditDialogOpen] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState<string>(null);
 
   const cancelButtonRef = useRef(null);
 
   const closeLessonCreateDialog = () => {
-    setIsOpenLessonCreateDialog(false);
+    setIsLessonCreateDialogOpen(false);
   };
 
   const openLessonCreateDialog = () => {
-    setIsOpenLessonCreateDialog(true);
+    setIsLessonCreateDialogOpen(true);
   };
 
   const closeCourseEditDialog = () => {
-    setIsOpenCourseEditDialog(false);
+    setIsCourseEditDialogOpen(false);
   };
 
   const openCourseEditDialog = () => {
     setValueCourseEdit('featured', course?.featured);
-    setIsOpenCourseEditDialog(true);
+    setIsCourseEditDialogOpen(true);
   };
 
   const closeLessonEditDialog = () => {
-    setIsOpenLessonEditDialog(false);
+    setIsLessonEditDialogOpen(false);
   };
 
   const openLessonEditDialog = (lessonId: string) => () => {
     setCurrentLessonId(lessonId);
-    setIsOpenLessonEditDialog(true);
+    setIsLessonEditDialogOpen(true);
   };
 
   const onLessonCreateSubmit = async (data: {
@@ -307,14 +307,14 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
             </div>
             <StyledDialog
               title={t('Lessons.create-new-lesson')}
-              isOpen={isOpenLessonCreateDialog}
+              isOpen={isLessonCreateDialogOpen}
               icon={
                 <div className="h-fit rounded-lg bg-indigo-100 p-2">
                   <AcademicCapIcon className="h-6 w-6 text-indigo-900" />
                 </div>
               }
               onClose={() =>
-                setIsOpenLessonCreateDialog(!isOpenLessonCreateDialog)
+                setIsLessonCreateDialogOpen(!isLessonCreateDialogOpen)
               }>
               <div className="mt-6">
                 <form
@@ -368,14 +368,14 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
             </StyledDialog>
             <StyledDialog
               title={t('Courses.edit-course')}
-              isOpen={isOpenCourseEditDialog}
+              isOpen={isCourseEditDialogOpen}
               icon={
                 <div className="h-fit rounded-lg bg-indigo-100 p-2">
                   <PencilIcon className="h-6 w-6 text-indigo-900" />
                 </div>
               }
               onClose={() =>
-                setIsOpenCourseEditDialog(!isOpenCourseEditDialog)
+                setIsCourseEditDialogOpen(!isCourseEditDialogOpen)
               }>
               <div className="mt-6">
                 <form
@@ -429,14 +429,14 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
             </StyledDialog>
             <StyledDialog
               title={t('Lessons.edit-lesson')}
-              isOpen={isOpenLessonEditDialog}
+              isOpen={isLessonEditDialogOpen}
               icon={
                 <div className="h-fit rounded-lg bg-indigo-100 p-2">
                   <PencilIcon className="h-6 w-6 text-indigo-900" />
                 </div>
               }
               onClose={() =>
-                setIsOpenLessonEditDialog(!isOpenLessonEditDialog)
+                setIsLessonEditDialogOpen(!isLessonEditDialogOpen)
               }>
               <div className="mt-6">
                 <form

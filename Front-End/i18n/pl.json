@@ -34,7 +34,7 @@
     "course-description": "Opis kursu",
     "create-course": "Utwórz kurs",
     "create-new-course": "Utwórz nowy kurs",
-    "new-course-added": "Dodano nowy kurs!",
+    "new-course-added": "Dodano nowy kurs",
     "featured": "Wyróżniony",
     "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej",
     "no-courses-found": "Nie znaleziono kursów",
@@ -43,7 +43,10 @@
     "course-enrolled": "Zapisano do kursu",
     "enrolled": "Zapisano",
     "edit-course": "Edytuj kurs",
-    "course-edited": "Kurs został edytowany"
+    "course-edited": "Kurs został edytowany",
+    "delete-course": "Usuń kurs",
+    "delete-course-confirmation": "Czy na pewno chcesz USUNĄĆ ten kurs?",
+    "course-deleted": "Kurs został usunięty"
   },
   "Lessons": {
     "lessons": "Lekcje",
@@ -53,7 +56,7 @@
     "lesson-description": "Opis lekcji",
     "create-lesson": "Utwórz lekcję",
     "no-lessons-found": "Nie znaleziono lekcji",
-    "new-lesson-added": "Dodano nową lekcję!",
+    "new-lesson-added": "Dodano nową lekcję",
     "lesson-not-found": "Nie znaleziono lekcji",
     "join-lesson": "Dołącz do lekcji",
     "check-answer": "Sprawdź odpowiedź",
