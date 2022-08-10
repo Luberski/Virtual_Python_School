@@ -14,6 +14,7 @@ import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   createLesson,
   deleteLesson,
+  editLesson,
   fetchLessons,
   selectLessonsData,
 } from '@app/features/lessons/lessonsSlice';
@@ -23,9 +24,6 @@ import Input from '@app/components/Input';
 import TextArea from '@app/components/TextArea';
 import { WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
-import IconButtonLink, {
-  IconButtonLinkVariant,
-} from '@app/components/IconButtonLink';
 import {
   editCourse,
   fetchCourse,
@@ -61,17 +59,26 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
     setValue: setValueCourseEdit,
   } = useForm<{ name: string; description: string; featured: boolean }>();
 
-  const [isOpenCourseCreateDialog, setIsOpenCourseCreateDialog] =
+  const {
+    register: registerLessonEdit,
+    handleSubmit: handleLessonEditSubmit,
+    setValue: setValueLessonEdit,
+  } = useForm<{ name: string; description: string; answer: string }>();
+
+  const [isOpenLessonCreateDialog, setIsOpenLessonCreateDialog] =
     useState(false);
   const [isOpenCourseEditDialog, setIsOpenCourseEditDialog] = useState(false);
+  const [isOpenLessonEditDialog, setIsOpenLessonEditDialog] = useState(false);
+  const [currentLessonId, setCurrentLessonId] = useState<string>(null);
+
   const cancelButtonRef = useRef(null);
 
-  const closeCourseCreateDialog = () => {
-    setIsOpenCourseCreateDialog(false);
+  const closeLessonCreateDialog = () => {
+    setIsOpenLessonCreateDialog(false);
   };
 
-  const openCourseCreateDialog = () => {
-    setIsOpenCourseCreateDialog(true);
+  const openLessonCreateDialog = () => {
+    setIsOpenLessonCreateDialog(true);
   };
 
   const closeCourseEditDialog = () => {
@@ -83,7 +90,16 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
     setIsOpenCourseEditDialog(true);
   };
 
-  const onSubmit = async (data: {
+  const closeLessonEditDialog = () => {
+    setIsOpenLessonEditDialog(false);
+  };
+
+  const openLessonEditDialog = (lessonId: string) => () => {
+    setCurrentLessonId(lessonId);
+    setIsOpenLessonEditDialog(true);
+  };
+
+  const onLessonCreateSubmit = async (data: {
     name: string;
     description: string;
     answer: string;
@@ -105,7 +121,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
       setValue('description', '');
       setValue('answer', '');
 
-      closeCourseCreateDialog();
+      closeLessonCreateDialog();
       notify();
     } catch (error) {
       console.error(error);
@@ -132,6 +148,41 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
         setValueCourseEdit('description', '');
         closeCourseEditDialog();
         notifyCourseEdited();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  // TODO: support more fields
+  const onLessonEditSubmit = async (data: {
+    name: string;
+    description: string;
+    answer: string;
+  }) => {
+    const { name, description, answer } = data;
+    if (
+      currentLessonId &&
+      (name.trim() || description.trim() || answer.trim())
+    ) {
+      try {
+        dispatch(
+          editLesson({
+            courseId,
+            lessonId: currentLessonId,
+            name,
+            description,
+            type: 1,
+            numberOfAnswers: 1,
+            answer,
+          })
+        );
+        setValueLessonEdit('name', '');
+        setValueLessonEdit('description', '');
+        setValueLessonEdit('answer', '');
+        setCurrentLessonId(null);
+        closeLessonEditDialog();
+        notifyLessonEdited();
       } catch (error) {
         console.error(error);
       }
@@ -186,6 +237,28 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
       }
     );
 
+  const notifyLessonEdited = () =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6 text-indigo-500" />
+            <div>
+              <p className="font-bold">{t('Lessons.lesson-edited')}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'lesson-edited-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
   if (!user && !isLoggedIn) {
     return null;
   }
@@ -226,7 +299,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                 {t('Lessons.list-of-lessons')}
               </p>
               <IconButton
-                onClick={openCourseCreateDialog}
+                onClick={openLessonCreateDialog}
                 variant={IconButtonVariant.PRIMARY}
                 icon={<PlusCircleIcon className="h-5 w-5" />}>
                 {t('Manage.create')}
@@ -234,19 +307,19 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
             </div>
             <StyledDialog
               title={t('Lessons.create-new-lesson')}
-              isOpen={isOpenCourseCreateDialog}
+              isOpen={isOpenLessonCreateDialog}
               icon={
                 <div className="h-fit rounded-lg bg-indigo-100 p-2">
                   <AcademicCapIcon className="h-6 w-6 text-indigo-900" />
                 </div>
               }
               onClose={() =>
-                setIsOpenCourseCreateDialog(!isOpenCourseCreateDialog)
+                setIsOpenLessonCreateDialog(!isOpenLessonCreateDialog)
               }>
               <div className="mt-6">
                 <form
                   className="flex flex-col items-start justify-center space-y-6"
-                  onSubmit={handleSubmit(onSubmit)}>
+                  onSubmit={handleSubmit(onLessonCreateSubmit)}>
                   <Input
                     label="name"
                     name="name"
@@ -285,7 +358,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                     <Button
                       variant={ButtonVariant.FLAT_SECONDARY}
                       type="button"
-                      onClick={closeCourseCreateDialog}
+                      onClick={closeLessonCreateDialog}
                       ref={cancelButtonRef}>
                       {t('Manage.cancel')}
                     </Button>
@@ -354,6 +427,64 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                 </form>
               </div>
             </StyledDialog>
+            <StyledDialog
+              title={t('Lessons.edit-lesson')}
+              isOpen={isOpenLessonEditDialog}
+              icon={
+                <div className="h-fit rounded-lg bg-indigo-100 p-2">
+                  <PencilIcon className="h-6 w-6 text-indigo-900" />
+                </div>
+              }
+              onClose={() =>
+                setIsOpenLessonEditDialog(!isOpenLessonEditDialog)
+              }>
+              <div className="mt-6">
+                <form
+                  className="flex flex-col items-start justify-center space-y-6"
+                  onSubmit={handleLessonEditSubmit(onLessonEditSubmit)}>
+                  <Input
+                    label="name"
+                    name="name"
+                    type="text"
+                    register={registerLessonEdit}
+                    maxLength={100}
+                    placeholder={t('Lessons.lesson-name')}
+                  />
+                  <TextArea
+                    label="description"
+                    name="description"
+                    type="text"
+                    register={registerLessonEdit}
+                    className="resize-none"
+                    rows={4}
+                    maxLength={2000}
+                    placeholder={t('Lessons.lesson-description')}
+                  />
+                  <Input
+                    label="answer"
+                    name="answer"
+                    type="text"
+                    register={registerLessonEdit}
+                    maxLength={100}
+                    placeholder={t('Lessons.answer')}
+                  />
+                  <div className="flex justify-between space-x-4 py-3">
+                    <IconButton
+                      variant={IconButtonVariant.PRIMARY}
+                      type="submit">
+                      {t('Lessons.edit-lesson')}
+                    </IconButton>
+                    <Button
+                      variant={ButtonVariant.FLAT_SECONDARY}
+                      type="button"
+                      onClick={closeLessonEditDialog}
+                      ref={cancelButtonRef}>
+                      {t('Manage.cancel')}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </StyledDialog>
             <Toaster />
             {lessons && lessons?.length > 0 ? (
               <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
@@ -382,11 +513,12 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                             {lesson.description}
                           </td>
                           <td className="flex space-x-4 py-4 pr-4">
-                            <IconButtonLink
-                              variant={IconButtonLinkVariant.PRIMARY}
+                            <IconButton
+                              variant={IconButtonVariant.PRIMARY}
+                              onClick={openLessonEditDialog(lesson.id)}
                               icon={<PencilIcon className="h-5 w-5" />}>
                               {t('Manage.edit')}
-                            </IconButtonLink>
+                            </IconButton>
                             <IconButton
                               variant={IconButtonVariant.DANGER}
                               icon={<TrashIcon className="h-5 w-5" />}

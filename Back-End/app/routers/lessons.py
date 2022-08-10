@@ -124,6 +124,12 @@ def edit_lesson(
     if request_data.data.number_of_answers:
         lesson_edit.number_of_answers = request_data.data.number_of_answers
         to_commit = True
+    
+    # TODO: support for multiple answers
+    if request_data.data.final_answer:
+        answer_edit = db.query(models.Answers).filter_by(id_lesson=lesson_id).first()
+        answer_edit.final_answer = request_data.data.final_answer
+        to_commit = True
 
     if to_commit:
         db.commit()
@@ -132,6 +138,7 @@ def edit_lesson(
         status_code=status.HTTP_200_OK,
         content={
             "data": {
+                "id": lesson_edit.id,
                 "name": lesson_edit.name,
                 "description": lesson_edit.description,
                 "id_course": lesson_edit.id_course,

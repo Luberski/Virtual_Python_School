@@ -61,7 +61,9 @@
     "answer": "Answer",
     "add-answer": "Add answer",
     "correct-answer": "Correct answer",
-    "incorrect-answer": "Incorrect answer"
+    "incorrect-answer": "Incorrect answer",
+    "lesson-edited": "Lesson edited",
+    "edit-lesson": "Edit lesson"
   },
   "Playground": {
     "run": "Run",

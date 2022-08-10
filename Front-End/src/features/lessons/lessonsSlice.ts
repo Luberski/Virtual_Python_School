@@ -109,6 +109,58 @@ export const createLesson = createAsyncThunk(
   }
 );
 
+// TODO: support more fields
+export const editLesson = createAsyncThunk(
+  'api/lessons/edit',
+  async (
+    {
+      courseId,
+      lessonId,
+      name,
+      description,
+      type,
+      numberOfAnswers,
+      answer,
+    }: {
+      courseId: string;
+      lessonId: string;
+      name?: string;
+      description?: string;
+      type?: number;
+      numberOfAnswers?: number;
+      answer?: string;
+    },
+    thunkApi
+  ) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.patch('lessons', {
+        json: {
+          data: {
+            id_course: courseId,
+            lesson_id: lessonId,
+            ...(name && { name }),
+            ...(description && { description }),
+            ...(type && { type }),
+            ...(numberOfAnswers && { number_of_answers: numberOfAnswers }),
+            ...(answer && { final_answer: answer }),
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 export const lessonsSlice = createSlice({
   name: 'lessons',
   initialState,
@@ -168,6 +220,25 @@ export const lessonsSlice = createSlice({
         }
       )
       .addCase(createLesson.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(editLesson.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        editLesson.fulfilled,
+        (state, { payload }: { payload: ApiPayload | any }) => {
+          state.data = state.data
+            .map((lesson) => {
+              if (lesson.id === payload.data.id) {
+                return payload.data;
+              }
+              return lesson;
+            })
+            .filter((lesson) => lesson);
+        }
+      )
+      .addCase(editLesson.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },
