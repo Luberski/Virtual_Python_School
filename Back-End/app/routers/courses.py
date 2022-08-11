@@ -550,7 +550,7 @@ def join_course_me(
         start_date=datetime.now(),
         end_date=None,
         section_number=0,
-        completed="False",
+        completed=False,
     )
     db.add(course_taken)
     db.commit()
@@ -629,7 +629,7 @@ def join_course_id(
         start_date=datetime.now(),
         end_date=None,
         section_number=0,
-        completed="False",
+        completed=False,
     )
     db.add(course_taken)
     db.commit()

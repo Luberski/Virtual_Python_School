@@ -33,7 +33,7 @@ class CoursesTaken(Base):
     start_date = Column(DateTime())
     end_date = Column(DateTime())
     section_number = Column(Integer)
-    completed = Column(String(100))
+    completed = Column(Boolean, default=False, nullable=False)
     course = relationship("Courses")
 
 
@@ -55,6 +55,17 @@ class Lessons(Base):
     type = Column(Integer)
     number_of_answers = Column(Integer)
     answers = relationship("Answers")
+
+
+class LessonsTaken(Base):
+    __tablename__ = "lessons_taken"
+    id = Column(Integer, primary_key=True)
+    id_lesson = Column(Integer, ForeignKey("lessons.id"))
+    id_user = Column(Integer, ForeignKey("user.id"))
+    start_date = Column(DateTime())
+    end_date = Column(DateTime())
+    completed = Column(Boolean, default=False, nullable=False)
+    lesson = relationship("Lessons")
 
 
 class Answers(Base):

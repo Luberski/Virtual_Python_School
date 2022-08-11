@@ -14,6 +14,7 @@ from app.models import (
     Courses,
     Lessons,
     Answers,
+    LessonsTaken,
 )
 
 # this is the Alembic Config object, which provides

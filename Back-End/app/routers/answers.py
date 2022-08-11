@@ -1,5 +1,4 @@
-from typing import Union
-from fastapi import APIRouter, Depends, Path, Query, status
+from fastapi import APIRouter, Depends, Path, status
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.orm import Session
@@ -8,7 +7,6 @@ from app import models
 from app.schemas.answer import (
     AnswerCheckRequest,
     AnswerCreateRequest,
-    AnswerDeleteRequest,
     AnswerEditRequest,
 )
 from app.settings import ADMIN_ID
@@ -74,6 +72,12 @@ def check_answer(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
+    user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
 
     id_lesson = request_data.data.id_lesson
     answers = db.query(models.Answers).filter_by(id_lesson=id_lesson).all()
@@ -99,7 +103,32 @@ def check_answer(
             },
         )
 
-    if answer_status is False:
+    if answer_status is True:
+        lesson_taken = (
+            db.query(models.LessonsTaken)
+            .filter_by(
+                id=request_data.data.id_lesson_taken,
+                id_user=user.id,
+                id_lesson=id_lesson,
+            )
+            .first()
+        )
+        lesson_taken.completed = True
+        db.commit()
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "data": {
+                    "id": answer_valid.id,
+                    "status": answer_status,
+                    "id_lesson": answer_valid.id_lesson,
+                    "completed": lesson_taken.completed,
+                },
+                "error": None,
+            },
+        )
+    else:
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -110,18 +139,6 @@ def check_answer(
                 "error": None,
             },
         )
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={
-            "data": {
-                "id": answer_valid.id,
-                "status": answer_status,
-                "id_lesson": answer_valid.id_lesson,
-            },
-            "error": None,
-        },
-    )
 
 
 @router.patch("/answers", tags=["answers"])

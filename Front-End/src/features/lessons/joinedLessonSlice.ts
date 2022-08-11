@@ -2,50 +2,44 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
+import type { JoinedLesson } from '@app/models/JoinedLesson';
 import type { ApiPayload } from '@app/models/ApiPayload';
 
-export type AnswerState = {
-  // TODO: move types to models folder
-  data: { id: string; status: boolean; id_lesson: string };
+export type JoinedLessonState = {
+  data: JoinedLesson;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
-const initialState: AnswerState = {
+const initialState: JoinedLessonState = {
   data: null,
   status: 'idle',
   error: null,
 };
 
-export const checkAnswer = createAsyncThunk(
-  'api/answer/check',
+export const fetchJoinedLesson = createAsyncThunk(
+  'api/courses/courseId/joinedLesson/joinedLessonId',
   async (
     {
       lessonId,
       joinedLessonId,
-      answer,
     }: {
       lessonId: string;
       joinedLessonId: string;
-      answer: string;
     },
     thunkApi
   ) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('answers/check', {
-        json: {
-          data: {
-            id_lesson: lessonId,
-            id_lesson_taken: joinedLessonId,
-            answer: answer,
+      const res = await apiClient.get(
+        `courses/lessons/${lessonId}/${joinedLessonId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+        }
+      );
 
       const data = await res.json();
       return data;
@@ -56,26 +50,22 @@ export const checkAnswer = createAsyncThunk(
   }
 );
 
-export const answerSlice = createSlice({
-  name: 'answer',
+export const joinedLessonSlice = createSlice({
+  name: 'joinedLesson',
   initialState,
-  reducers: {
-    reset: () => {
-      return initialState;
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return Object.assign({}, state, { ...action.payload.answer });
+        return Object.assign({}, state, { ...action.payload.joinedLesson });
       })
-      .addCase(checkAnswer.pending, (state) => {
+      .addCase(fetchJoinedLesson.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        checkAnswer.fulfilled,
+        fetchJoinedLesson.fulfilled,
         (
           state,
           { payload: { data, error } }: { payload: ApiPayload | any }
@@ -91,16 +81,18 @@ export const answerSlice = createSlice({
           }
         }
       )
-      .addCase(checkAnswer.rejected, (state, action) => {
+      .addCase(fetchJoinedLesson.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
   },
 });
 
-export const selectAnswerData = (state: RootState) => state.answer.data;
-export const selectAnswerError = (state: RootState) => state.answer.error;
-export const selectAnswerStatus = (state: RootState) => state.answer.status;
-export const { reset } = answerSlice.actions;
+export const selectJoinedLessonData = (state: RootState) =>
+  state.joinedLesson.data;
+export const selectJoinedLessonError = (state: RootState) =>
+  state.joinedLesson.error;
+export const selectJoinedLessonStatus = (state: RootState) =>
+  state.joinedLesson.status;
 
-export default answerSlice.reducer;
+export default joinedLessonSlice.reducer;

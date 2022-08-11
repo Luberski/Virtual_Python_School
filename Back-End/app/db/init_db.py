@@ -9,6 +9,7 @@ from app.models import (
     Courses,
     Lessons,
     Answers,
+    LessonsTaken,
 )
 
 

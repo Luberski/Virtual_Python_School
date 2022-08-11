@@ -17,6 +17,8 @@ import lessonsReducer from '@app/features/lessons/lessonsSlice';
 import lessonReducer from '@app/features/lessons/lessonSlice';
 import answersReducer from '@app/features/lessons/answersSlice';
 import answerReducer from '@app/features/lessons/answerSlice';
+import joinLessonReducer from '@app/features/lessons/joinLessonSlice';
+import joinedLessonReducer from '@app/features/lessons/joinedLessonSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -31,6 +33,8 @@ const combinedReducers = combineReducers({
   lesson: lessonReducer,
   answers: answersReducer,
   answer: answerReducer,
+  joinLesson: joinLessonReducer,
+  joinedLesson: joinedLessonReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -65,4 +69,6 @@ export type RootState = {
   lesson: ReturnType<typeof lessonReducer>;
   answers: ReturnType<typeof answersReducer>;
   answer: ReturnType<typeof answerReducer>;
+  joinLesson: ReturnType<typeof joinLessonReducer>;
+  joinedLesson: ReturnType<typeof joinedLessonReducer>;
 };

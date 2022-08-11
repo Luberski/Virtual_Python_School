@@ -18,9 +18,9 @@ import {
   sendCode,
 } from '@app/features/playground/playgroundSlice';
 import {
-  fetchLesson,
-  selectLessonData,
-} from '@app/features/lessons/lessonSlice';
+  fetchJoinedLesson,
+  selectJoinedLessonData,
+} from '@app/features/lessons/joinedLessonSlice';
 import Input from '@app/components/Input';
 import {
   checkAnswer,
@@ -40,9 +40,14 @@ const Editor = dynamic(() => import('@monaco-editor/react'), {
 type Props = {
   courseId: string;
   lessonId: string;
+  joinedLessonId: string;
 };
 
-export default function LessonPage({ courseId, lessonId }: Props) {
+export default function LessonPage({
+  courseId,
+  lessonId,
+  joinedLessonId,
+}: Props) {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useDispatch();
   const router = useRouter();
@@ -55,7 +60,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
     useForm<{
       answer: string;
     }>();
-  const lesson = useAppSelector(selectLessonData);
+  const joinedLesson = useAppSelector(selectJoinedLessonData);
   const answerStatus = useAppSelector(selectAnswerStatus);
   const answerData = useAppSelector(selectAnswerData);
   const [isExploding, setIsExploding] = useState(false);
@@ -108,11 +113,11 @@ export default function LessonPage({ courseId, lessonId }: Props) {
     dispatch,
     answerData,
     answerStatus,
-    courseId,
     lessonId,
     router,
     isExploding,
     notify,
+    courseId,
   ]);
 
   const onSubmit = useMemo(
@@ -123,6 +128,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
           dispatch(
             checkAnswer({
               lessonId,
+              joinedLessonId,
               answer,
             })
           );
@@ -131,7 +137,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
           console.error(error);
         }
       }, 500),
-    [dispatch, lessonId]
+    [dispatch, joinedLessonId, lessonId]
   );
 
   const handleValue = useMemo(
@@ -170,10 +176,10 @@ export default function LessonPage({ courseId, lessonId }: Props) {
         />
         <div className="container mx-auto px-4">
           <div className="brand-shadow2 container my-6 flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
-            {lesson ? (
+            {joinedLesson ? (
               <>
                 <h1 className="pb-4 text-center text-indigo-900 dark:text-indigo-300">
-                  {t('Meta.title-lesson')}:&nbsp;{lesson.name}
+                  {t('Meta.title-lesson')}:&nbsp;{joinedLesson.name}
                 </h1>
                 <div className="my-9 self-end">
                   <IconButton
@@ -210,7 +216,7 @@ export default function LessonPage({ courseId, lessonId }: Props) {
                   <div className="brand-shadow2 m-2 flex flex-col rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700 xl:w-1/2">
                     <h2>{t('Manage.description')}</h2>
                     <p className="h-[580px] overflow-auto whitespace-pre-line">
-                      {lesson.description}
+                      {joinedLesson.description}
                     </p>
                     <form
                       onSubmit={handleSubmit(onSubmit)}
@@ -308,19 +314,21 @@ export default function LessonPage({ courseId, lessonId }: Props) {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale, params }) => {
-      const { courseId, lessonId } = params as {
+      const { courseId, lessonId, joinedLessonId } = params as {
         courseId: string;
         lessonId: string;
+        joinedLessonId: string;
       };
-      await store.dispatch(fetchLesson({ courseId, lessonId }));
+      await store.dispatch(fetchJoinedLesson({ lessonId, joinedLessonId }));
 
       return {
         props: {
           courseId,
           lessonId,
+          joinedLessonId,
           i18n: Object.assign(
             {},
-            await import(`../../../../../../i18n/${locale}.json`)
+            await import(`../../../../../../../i18n/${locale}.json`)
           ),
         },
       };

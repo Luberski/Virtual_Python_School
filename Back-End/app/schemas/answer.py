@@ -15,6 +15,7 @@ class AnswerCreateRequest(BaseJSONRequest):
 
 class AnswerCheckData(BaseModel):
     id_lesson: int
+    id_lesson_taken: int
     answer: Union[str, list]
 
 

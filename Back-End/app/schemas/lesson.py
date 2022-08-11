@@ -1,6 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
-from app.schemas.base import BaseJSONRequest
+from app.schemas.base import BaseJSONRequest, BaseJSONResponse
 
 
 class LessonCreateData(BaseModel):
@@ -28,3 +28,23 @@ class LessonEditData(BaseModel):
 
 class LessonEditRequest(BaseJSONRequest):
     data: LessonEditData
+
+
+class LessonJoinResponseData(BaseModel):
+    id: int
+    id_user: int
+    start_date: str
+    end_date: str
+    completed: Optional[bool] = False
+
+
+class LessonJoinResponse(BaseJSONResponse):
+    data: LessonJoinResponseData
+
+
+class LessonJoinData(BaseModel):
+    id_lesson: int
+
+
+class LessonJoinRequest(BaseJSONRequest):
+    data: LessonJoinData

@@ -105,12 +105,9 @@ export default function CoursesPage() {
                         {course.lessons?.length > 0 &&
                           course.lessons?.map((lesson) => (
                             <div key={lesson.id}>
-                              <Link
-                                href={`/courses/${course.id}/lessons/${lesson.id}`}>
-                                <a className="text-indigo-900 dark:text-indigo-300">
-                                  {lesson.name}
-                                </a>
-                              </Link>
+                              <div className="text-indigo-900 dark:text-indigo-300">
+                                {lesson.name}
+                              </div>
                             </div>
                           ))}
                         ...

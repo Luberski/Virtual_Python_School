@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import NavBar from '@app/components/NavBar';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
@@ -8,15 +9,43 @@ import {
   fetchCourseWithLessons,
   selectCourseWithLessonsData,
 } from '@app/features/courses/courseWithLessonsSlice';
-import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
 import { wrapper } from '@app/store';
+import Button, { ButtonVariant } from '@app/components/Button';
+import {
+  joinLesson,
+  selectJoinLessonData,
+  selectJoinLessonStatus,
+} from '@app/features/lessons/joinLessonSlice';
 
 export default function CoursePage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const t = useTranslations();
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const course = useAppSelector(selectCourseWithLessonsData);
+  const joinLessonStatus = useAppSelector(selectJoinLessonStatus);
+  const joinLessonData = useAppSelector(selectJoinLessonData);
+  const [currentLessonId, setCurrentLessonId] = useState(null);
+
+  useEffect(() => {
+    if (joinLessonStatus === 'succeeded') {
+      router.push(
+        `/courses/${course.id}/lessons/${currentLessonId}/${joinLessonData.id}`
+      );
+    }
+  }, [
+    router,
+    course?.id,
+    currentLessonId,
+    joinLessonStatus,
+    joinLessonData?.id,
+  ]);
+
+  const handleJoinLesson = (lessonId: string) => async () => {
+    setCurrentLessonId(lessonId);
+    await dispatch(joinLesson(lessonId));
+  };
 
   if (!user && !isLoggedIn) {
     return null;
@@ -67,13 +96,11 @@ export default function CoursePage() {
                           {lesson.name}
                         </td>
                         <td className="p-4">
-                          <Link
-                            href={`/courses/${course.id}/lessons/${lesson.id}`}
-                            passHref={true}>
-                            <ButtonLink variant={ButtonLinkVariant.PRIMARY}>
-                              {t('Lessons.join-lesson')}
-                            </ButtonLink>
-                          </Link>
+                          <Button
+                            variant={ButtonVariant.PRIMARY}
+                            onClick={handleJoinLesson(lesson.id)}>
+                            {t('Lessons.join-lesson')}
+                          </Button>
                         </td>
                       </tr>
                     ))}
