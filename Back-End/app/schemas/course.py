@@ -89,6 +89,8 @@ class CoursesAllResponseData(BaseModel):
     description: str
     featured: Optional[bool] = False
     enrolled: Optional[bool] = False
+    total_lessons_count: Optional[int] = 0
+    total_completed_lessons_count: Optional[int] = 0
     lessons: Optional[Any] = []
 
 

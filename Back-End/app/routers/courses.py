@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, status, Query, Path
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.routers import deps
 from app import models
 from app.schemas.course import (
@@ -375,6 +376,24 @@ def get_enrolled_courses(
     )
 
     if include_lessons:
+        completed_lessons_count_query = (
+            db.query(
+                models.LessonsTaken.id,
+                models.LessonsTaken.id_lesson,
+                models.LessonsTaken.id_user,
+                func.count(models.LessonsTaken.completed).label(
+                    "completed_lessons_count"
+                ),
+            )
+            .filter(
+                models.LessonsTaken.id_user == user.id,
+                # pylint: disable=C0121
+                models.LessonsTaken.completed == True,
+            )
+            .distinct(models.LessonsTaken.id_lesson)
+            .group_by(models.LessonsTaken.id)
+            .all()
+        )
         courses_taken_with_lessons = (
             db.query(models.CoursesTaken)
             .filter_by(id_user=user.id)
@@ -384,6 +403,17 @@ def get_enrolled_courses(
         )
         if courses_taken_with_lessons:
             for course_taken in courses_taken_with_lessons:
+                total_lessons_count = 0
+                total_completed_lessons_count = 0
+                for lesson in course_taken.course.lessons:
+                    total_lessons_count += 1
+                    if lesson.id in [
+                        lesson_taken.id_lesson
+                        for lesson_taken in completed_lessons_count_query
+                        if lesson_taken.id_lesson == lesson.id
+                    ]:
+                        total_completed_lessons_count += 1
+
                 courses_response_data.append(
                     {
                         "id": course_taken.course.id,
@@ -393,6 +423,8 @@ def get_enrolled_courses(
                         "enrolled": True,
                         "end_date": str(course_taken.end_date),
                         "section_number": course_taken.section_number,
+                        "total_lessons_count": total_lessons_count,
+                        "total_completed_lessons_count": total_completed_lessons_count,
                         "lessons": [
                             {
                                 "id": lesson.id,

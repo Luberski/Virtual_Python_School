@@ -54,44 +54,63 @@ export default function EnrolledCoursesPage() {
         <div className="container mx-auto px-12">
           {courses && courses.length > 0 ? (
             <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
-              {courses.map((course) => (
-                <FancyCard
-                  key={course.id}
-                  title={course.name}
-                  description={
-                    <div className="flex flex-col">
-                      {course.description}
-                      <div>
-                        <div className="mt-4 mb-1 text-xs text-neutral-400">
-                          {t('Manage.name')}
+              {courses.map((course) => {
+                const lessonsCompletedPercentage =
+                  (course.total_completed_lessons_count /
+                    course.total_lessons_count) *
+                  100;
+                return (
+                  <FancyCard
+                    key={course.id}
+                    title={course.name}
+                    description={
+                      <div className="flex flex-col">
+                        <div className="flex space-x-2">
+                          <div className="my-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
+                            <div
+                              className="h-2 rounded-lg bg-indigo-600"
+                              style={{
+                                width: `${lessonsCompletedPercentage}%`,
+                              }}
+                            />
+                          </div>
+                          <div className="text-sm text-neutral-500">
+                            {lessonsCompletedPercentage}%
+                          </div>
                         </div>
-                        {course.lessons?.length > 0 &&
-                          course.lessons?.map((lesson) => (
-                            <div key={lesson.id}>
-                              <div className="text-indigo-900 dark:text-indigo-300">
-                                {lesson.name}
+                        {course.description}
+                        <div>
+                          <div className="mt-4 mb-1 text-xs text-neutral-400">
+                            {t('Manage.name')}
+                          </div>
+                          {course.lessons?.length > 0 &&
+                            course.lessons?.map((lesson) => (
+                              <div key={lesson.id}>
+                                <div className="text-indigo-900 dark:text-indigo-300">
+                                  {lesson.name}
+                                </div>
                               </div>
-                            </div>
-                          ))}
-                        ...
+                            ))}
+                          ...
+                        </div>
                       </div>
-                    </div>
-                  }
-                  cardColor="bg-white"
-                  shadowColor="shadow-black/25"
-                  hoverShadowColor="hover:shadow-black/25"
-                  bottomControls={
-                    <Link href={`/courses/${course.id}`} passHref={true}>
-                      <IconButtonLink
-                        className="w-fit"
-                        variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
-                        icon={<InformationCircleIcon className="h-5 w-5" />}>
-                        {t('Home.more')}
-                      </IconButtonLink>
-                    </Link>
-                  }
-                />
-              ))}
+                    }
+                    cardColor="bg-white"
+                    shadowColor="shadow-black/25"
+                    hoverShadowColor="hover:shadow-black/25"
+                    bottomControls={
+                      <Link href={`/courses/${course.id}`} passHref={true}>
+                        <IconButtonLink
+                          className="w-fit"
+                          variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
+                          icon={<InformationCircleIcon className="h-5 w-5" />}>
+                          {t('Home.more')}
+                        </IconButtonLink>
+                      </Link>
+                    }
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center">
