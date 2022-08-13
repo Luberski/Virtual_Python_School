@@ -119,7 +119,7 @@ export default function CoursesPage() {
                   hoverShadowColor="hover:shadow-black/25"
                   bottomControls={
                     course.enrolled ? (
-                      <Link href={`/courses/${course.id}`} passHref={true}>
+                      <Link href={`/courses/enrolled`} passHref={true}>
                         <IconButtonLink
                           className="w-fit"
                           variant={IconButtonLinkVariant.OUTLINE_PRIMARY}

@@ -59,7 +59,7 @@ export const editCourse = createAsyncThunk(
       const res = await apiClient.patch('courses', {
         json: {
           data: {
-            id_course: courseId,
+            course_id: courseId,
             ...(name && { name }),
             ...(description && { description }),
             featured,

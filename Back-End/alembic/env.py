@@ -9,12 +9,12 @@ from alembic import context
 from app.db.session import Base
 from app.models import (
     User,
-    CoursesTaken,
+    EnrolledCourses,
     Roles,
     Courses,
     Lessons,
     Answers,
-    LessonsTaken,
+    EnrolledLessons,
 )
 
 # this is the Alembic Config object, which provides

@@ -87,7 +87,7 @@ export const createLesson = createAsyncThunk(
       const res = await apiClient.post('lessons', {
         json: {
           data: {
-            id_course: courseId,
+            course_id: courseId,
             name,
             description,
             type,
@@ -138,7 +138,7 @@ export const editLesson = createAsyncThunk(
       const res = await apiClient.patch('lessons', {
         json: {
           data: {
-            id_course: courseId,
+            course_id: courseId,
             lesson_id: lessonId,
             ...(name && { name }),
             ...(description && { description }),

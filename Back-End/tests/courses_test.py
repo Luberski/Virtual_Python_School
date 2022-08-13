@@ -18,7 +18,7 @@ def test_create_course_should_return_status_code_201_if_admin_with_token():
     assert mocked_course.json()["data"]["description"] == "test_desc"
 
 
-def test_get_courses_by_id_should_return_status_code_200_if_with_token_and_id_course_is_1():
+def test_get_courses_by_id_should_return_status_code_200_if_with_token_and_course_id_is_1():
     token, _ = mock_login()
     mocked_course = mock_create_course(token, CREATE_COURSE_TEST_DATA)
     assert mocked_course.status_code == 201
@@ -34,7 +34,7 @@ def test_get_courses_by_id_should_return_status_code_200_if_with_token_and_id_co
     )
 
 
-def test_get_courses_by_id_should_return_status_code_404_if_with_token_and_id_course_is_not_in_database():
+def test_get_courses_by_id_should_return_status_code_404_if_with_token_and_course_id_is_not_in_database():
     token, _ = mock_login()
     response = client.get(
         "/api/courses/999",
@@ -43,26 +43,26 @@ def test_get_courses_by_id_should_return_status_code_404_if_with_token_and_id_co
     assert response.status_code == 404
 
 
-def test_join_course_me_should_return_status_code_200_if_not_joined_and_exist():
+def test_enroll_course_me_should_return_status_code_200_if_not_joined_and_exist():
     token, username = mock_login()
     mocked_course = mock_create_course(token, CREATE_COURSE_TEST_DATA)
     assert mocked_course.status_code == 201
     response = client.post(
         "/api/course",
-        json={"data": {"id_course": 1}},
+        json={"data": {"course_id": 1}},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
     assert response.json()["data"]["username"] == username
 
 
-def test_join_course_me_should_return_status_code_404_if_does_not_exist():
+def test_enroll_course_me_should_return_status_code_404_if_does_not_exist():
     token, _ = mock_login()
     mocked_course = mock_create_course(token, CREATE_COURSE_TEST_DATA)
     assert mocked_course.status_code == 201
     response = client.post(
         "/api/course",
-        json={"data": {"id_course": 9999}},
+        json={"data": {"course_id": 9999}},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 404
@@ -75,7 +75,7 @@ def test_edit_course_should_return_status_code_200_if_admin_with_token_and_edite
 
     edit_response = client.patch(
         "/api/courses",
-        data=json.dumps(dict(data=dict(id_course=1, description="test_desc_edited"))),
+        data=json.dumps(dict(data=dict(course_id=1, description="test_desc_edited"))),
         headers={"Authorization": f"Bearer {token}"},
     )
     assert edit_response.status_code == 200
@@ -134,7 +134,7 @@ def test_get_courses_me_should_return_status_code_200_if_with_token():
 
     response = client.post(
         "/api/course",
-        json={"data": {"id_course": 1}},
+        json={"data": {"course_id": 1}},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
@@ -153,7 +153,7 @@ def test_get_enrolled_courses_should_return_status_code_200_if_with_token():
 
     response = client.post(
         "/api/course",
-        json={"data": {"id_course": 1}},
+        json={"data": {"course_id": 1}},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200

@@ -1,5 +1,5 @@
 export type Answer = {
-  id: string;
-  lessonId: string;
+  id: number;
+  lessonId: number;
   finalAnswer: string;
 };

@@ -25,7 +25,7 @@ export const enrollCourse = createAsyncThunk(
       const { accessToken } = state.auth.token;
       const res = await apiClient.post('course', {
         json: {
-          data: { id_course: id },
+          data: { course_id: id },
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,

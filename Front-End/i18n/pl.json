@@ -88,7 +88,10 @@
     "cancel": "Anuluj",
     "name": "Nazwa",
     "description": "Opis",
-    "no-short": "Lp."
+    "no-short": "Lp.",
+    "try": "Spróbuj",
+    "completed": "Ukończone",
+    "status": "Status"
   },
   "Meta": {
     "title-home": "Strona główna",

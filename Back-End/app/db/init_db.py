@@ -4,12 +4,12 @@ from sqlalchemy.orm import Session
 from app.db.session import Base
 from app.models import (
     User,
-    CoursesTaken,
+    EnrolledCourses,
     Roles,
     Courses,
     Lessons,
     Answers,
-    LessonsTaken,
+    EnrolledLessons,
 )
 
 

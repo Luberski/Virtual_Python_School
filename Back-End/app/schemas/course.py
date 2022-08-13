@@ -26,7 +26,7 @@ class CourseCreateResponse(BaseJSONResponse):
 
 
 class CourseEditData(BaseModel):
-    id_course: int
+    course_id: int
     name: Optional[str]
     description: Optional[str]
     featured: Optional[bool] = False
@@ -37,7 +37,7 @@ class CourseEditRequest(BaseJSONRequest):
 
 
 class CourseJoinData(BaseModel):
-    id_course: int
+    course_id: int
 
 
 class CourseJoinRequest(BaseJSONRequest):
@@ -46,10 +46,9 @@ class CourseJoinRequest(BaseJSONRequest):
 
 class CourseJoinResponseData(BaseModel):
     id: int
-    id_user: int
+    user_id: int
     start_date: str
     end_date: str
-    section_number: int
     completed: Optional[bool] = False
 
 
@@ -59,7 +58,7 @@ class CourseJoinResponse(BaseJSONResponse):
 
 class CourseJoinByIdData(BaseModel):
     id: int
-    id_course: int
+    course_id: int
 
 
 class CourseJoinByIdRequest(BaseJSONRequest):
@@ -67,7 +66,7 @@ class CourseJoinByIdRequest(BaseJSONRequest):
 
 
 class CourseCloseData(BaseModel):
-    id_course: int
+    course_id: int
 
 
 class CourseCloseRequest(BaseJSONRequest):
@@ -76,7 +75,7 @@ class CourseCloseRequest(BaseJSONRequest):
 
 class CourseCloseByIdData(BaseModel):
     id: int
-    id_course: int
+    course_id: int
 
 
 class CourseCloseByIdRequest(BaseJSONRequest):

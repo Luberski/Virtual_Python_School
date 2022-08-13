@@ -5,7 +5,7 @@ from app.schemas.base import BaseJSONRequest
 
 
 class AnswerCreateData(BaseModel):
-    id_lesson: int
+    lesson_id: int
     final_answer: str
 
 
@@ -14,8 +14,8 @@ class AnswerCreateRequest(BaseJSONRequest):
 
 
 class AnswerCheckData(BaseModel):
-    id_lesson: int
-    id_lesson_taken: int
+    lesson_id: int
+    enrolled_lesson_id: int
     answer: Union[str, list]
 
 
@@ -24,8 +24,8 @@ class AnswerCheckRequest(BaseJSONRequest):
 
 
 class AnswerEditData(BaseModel):
-    id_answer: int
-    id_lesson: int
+    answer_id: int
+    lesson_id: int
     final_answer: str
 
 
@@ -34,7 +34,7 @@ class AnswerEditRequest(BaseJSONRequest):
 
 
 class AnswerDeleteData(BaseModel):
-    id_answer: int
+    answer_id: int
 
 
 class AnswerDeleteRequest(BaseJSONRequest):

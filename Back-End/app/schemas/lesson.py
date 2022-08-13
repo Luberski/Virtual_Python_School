@@ -4,7 +4,7 @@ from app.schemas.base import BaseJSONRequest, BaseJSONResponse
 
 
 class LessonCreateData(BaseModel):
-    id_course: int
+    course_id: int
     name: str
     description: str
     type: str
@@ -18,7 +18,7 @@ class LessonCreateRequest(BaseJSONRequest):
 
 class LessonEditData(BaseModel):
     lesson_id: int
-    id_course: Optional[int]
+    course_id: Optional[int]
     name: Optional[str]
     description: Optional[str]
     type: Optional[str]
@@ -30,21 +30,22 @@ class LessonEditRequest(BaseJSONRequest):
     data: LessonEditData
 
 
-class LessonJoinResponseData(BaseModel):
+class LessonEnrollResponseData(BaseModel):
     id: int
-    id_user: int
+    user_id: int
     start_date: str
     end_date: str
     completed: Optional[bool] = False
 
 
-class LessonJoinResponse(BaseJSONResponse):
-    data: LessonJoinResponseData
+class LessonEnrollResponse(BaseJSONResponse):
+    data: LessonEnrollResponseData
 
 
-class LessonJoinData(BaseModel):
-    id_lesson: int
+class LessonEnrollData(BaseModel):
+    lesson_id: int
+    enrolled_course_id: int
 
 
-class LessonJoinRequest(BaseJSONRequest):
-    data: LessonJoinData
+class LessonEnrollRequest(BaseJSONRequest):
+    data: LessonEnrollData

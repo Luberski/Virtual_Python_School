@@ -21,7 +21,7 @@ def test_create_answer_should_return_status_code_201_if_created():
 
     response = client.post(
         "/api/answers",
-        json={"data": {"id_lesson": "1", "final_answer": "ok"}},
+        json={"data": {"lesson_id": "1", "final_answer": "ok"}},
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 201
@@ -40,7 +40,7 @@ def test_check_answer_should_return_status_code_200_if_lession_exists_and_answer
         "/api/answers/check",
         json={
             "data": {
-                "id_lesson": "1",
+                "lesson_id": "1",
                 "answer": "ok",
             }
         },
@@ -63,7 +63,7 @@ def test_check_answer_should_return_status_code_200_if_lession_exists_and_answer
         "/api/answers/check",
         json={
             "data": {
-                "id_lesson": "1",
+                "lesson_id": "1",
                 "answer": "not ok",
             }
         },
@@ -87,7 +87,7 @@ def test_get_answers_should_return_status_code_200_if_answers_found():
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
-    assert response.json()["data"][0]["id_lesson"] == 1
+    assert response.json()["data"][0]["lesson_id"] == 1
 
 
 def test_delete_answer_should_return_status_code_200_if_answer_deleted():

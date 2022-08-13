@@ -35,7 +35,7 @@ export const createAnswer = createAsyncThunk(
       const res = await apiClient.post('answers', {
         json: {
           data: {
-            id_lesson: lessonId,
+            lesson_id: lessonId,
             final_answer: finalAnswer,
           },
         },

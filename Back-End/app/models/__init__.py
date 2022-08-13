@@ -13,7 +13,7 @@ class User(Base):
     name = Column(String(100))
     last_name = Column(String(100))
     email = Column(String(100), unique=True)
-    id_course = relationship("CoursesTaken")
+    course_id = relationship("EnrolledCourses")
     role_id = Column(Integer, ForeignKey("roles.id"))
 
     @staticmethod
@@ -25,16 +25,16 @@ class User(Base):
         return bcrypt_sha256.verify(password, hash_)
 
 
-class CoursesTaken(Base):
-    __tablename__ = "courses_taken"
+class EnrolledCourses(Base):
+    __tablename__ = "enrolled_courses"
     id = Column(Integer, primary_key=True)
-    id_course = Column(Integer, ForeignKey("courses.id"))
-    id_user = Column(Integer, ForeignKey("user.id"))
+    course_id = Column(Integer, ForeignKey("courses.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
     start_date = Column(DateTime())
     end_date = Column(DateTime())
-    section_number = Column(Integer)
     completed = Column(Boolean, default=False, nullable=False)
     course = relationship("Courses")
+    enrolled_lessons = relationship("EnrolledLessons")
 
 
 class Courses(Base):
@@ -51,17 +51,18 @@ class Lessons(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     description = Column(String(2000))
-    id_course = Column(Integer, ForeignKey("courses.id"))
+    course_id = Column(Integer, ForeignKey("courses.id"))
     type = Column(Integer)
     number_of_answers = Column(Integer)
     answers = relationship("Answers")
 
 
-class LessonsTaken(Base):
-    __tablename__ = "lessons_taken"
+class EnrolledLessons(Base):
+    __tablename__ = "enrolled_lessons"
     id = Column(Integer, primary_key=True)
-    id_lesson = Column(Integer, ForeignKey("lessons.id"))
-    id_user = Column(Integer, ForeignKey("user.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    enrolled_course_id = Column(Integer, ForeignKey("enrolled_courses.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
     start_date = Column(DateTime())
     end_date = Column(DateTime())
     completed = Column(Boolean, default=False, nullable=False)
@@ -72,7 +73,7 @@ class Answers(Base):
     __tablename__ = "answers"
     id = Column(Integer, primary_key=True)
     final_answer = Column(String(500))
-    id_lesson = Column(Integer, ForeignKey("lessons.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"))
 
 
 class Roles(Base):

@@ -17,15 +17,21 @@ const initialState: LessonState = {
   error: null,
 };
 
-export const joinLesson = createAsyncThunk(
+export const enrollLesson = createAsyncThunk(
   'api/lesson/join',
-  async (id: string | number, thunkApi) => {
+  async (
+    {
+      lessonId,
+      enrolledCourseId,
+    }: { lessonId: number; enrolledCourseId: number },
+    thunkApi
+  ) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
       const res = await apiClient.post('lesson', {
         json: {
-          data: { id_lesson: id },
+          data: { lesson_id: lessonId, enrolled_course_id: enrolledCourseId },
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -41,8 +47,8 @@ export const joinLesson = createAsyncThunk(
   }
 );
 
-export const joinLessonSlice = createSlice({
-  name: 'joinLesson',
+export const enrollLessonSlice = createSlice({
+  name: 'enrollLesson',
   initialState,
   reducers: {},
   extraReducers(builder) {
@@ -50,13 +56,13 @@ export const joinLessonSlice = createSlice({
       .addCase(HYDRATE, (state, action) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return Object.assign({}, state, { ...action.payload.joinLesson });
+        return Object.assign({}, state, { ...action.payload.enrollLesson });
       })
-      .addCase(joinLesson.pending, (state) => {
+      .addCase(enrollLesson.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        joinLesson.fulfilled,
+        enrollLesson.fulfilled,
         (
           state,
           { payload: { data, error } }: { payload: ApiPayload | any }
@@ -72,7 +78,7 @@ export const joinLessonSlice = createSlice({
           }
         }
       )
-      .addCase(joinLesson.rejected, (state, action) => {
+      .addCase(enrollLesson.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
@@ -80,10 +86,10 @@ export const joinLessonSlice = createSlice({
 });
 
 export const selectJoinLessonData = (state: RootState) =>
-  state.joinLesson.data;
+  state.enrollLesson.data;
 export const selectJoinLessonError = (state: RootState) =>
-  state.joinLesson.error;
+  state.enrollLesson.error;
 export const selectJoinLessonStatus = (state: RootState) =>
-  state.joinLesson.status;
+  state.enrollLesson.status;
 
-export default joinLessonSlice.reducer;
+export default enrollLessonSlice.reducer;

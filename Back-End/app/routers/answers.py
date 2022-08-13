@@ -32,7 +32,7 @@ def create_answer(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    lesson = db.query(models.Lessons).filter_by(id=request_data.data.id_lesson).first()
+    lesson = db.query(models.Lessons).filter_by(id=request_data.data.lesson_id).first()
     if lesson is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -41,7 +41,7 @@ def create_answer(
 
     new_answer = models.Answers(
         final_answer=request_data.data.final_answer,
-        id_lesson=request_data.data.id_lesson,
+        lesson_id=request_data.data.lesson_id,
     )
     db.add(new_answer)
     db.commit()
@@ -52,7 +52,7 @@ def create_answer(
             "data": {
                 "id": new_answer.id,
                 "final_answer": new_answer.final_answer,
-                "id_lesson": new_answer.id_lesson,
+                "lesson_id": new_answer.lesson_id,
             },
             "error": None,
         },
@@ -79,8 +79,8 @@ def check_answer(
             content={"error": "User not found"},
         )
 
-    id_lesson = request_data.data.id_lesson
-    answers = db.query(models.Answers).filter_by(id_lesson=id_lesson).all()
+    lesson_id = request_data.data.lesson_id
+    answers = db.query(models.Answers).filter_by(lesson_id=lesson_id).all()
 
     answer_valid = None
     answer_status = False
@@ -104,16 +104,16 @@ def check_answer(
         )
 
     if answer_status is True:
-        lesson_taken = (
-            db.query(models.LessonsTaken)
+        lesson_enrolled = (
+            db.query(models.EnrolledLessons)
             .filter_by(
-                id=request_data.data.id_lesson_taken,
-                id_user=user.id,
-                id_lesson=id_lesson,
+                id=request_data.data.enrolled_lesson_id,
+                user_id=user.id,
+                lesson_id=lesson_id,
             )
             .first()
         )
-        lesson_taken.completed = True
+        lesson_enrolled.completed = True
         db.commit()
 
         return JSONResponse(
@@ -122,8 +122,8 @@ def check_answer(
                 "data": {
                     "id": answer_valid.id,
                     "status": answer_status,
-                    "id_lesson": answer_valid.id_lesson,
-                    "completed": lesson_taken.completed,
+                    "lesson_id": answer_valid.lesson_id,
+                    "completed": lesson_enrolled.completed,
                 },
                 "error": None,
             },
@@ -134,7 +134,7 @@ def check_answer(
             content={
                 "data": {
                     "status": answer_status,
-                    "id_lesson": id_lesson,
+                    "lesson_id": lesson_id,
                 },
                 "error": None,
             },
@@ -159,8 +159,8 @@ def edit_answer(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    id_answer = request_data.data.id_answer
-    answer_edit = models.Answers().query.filter_by(id=id_answer).first()
+    answer_id = request_data.data.answer_id
+    answer_edit = models.Answers().query.filter_by(id=answer_id).first()
 
     if answer_edit is None:
         return JSONResponse(
@@ -174,8 +174,8 @@ def edit_answer(
         answer_edit.final_answer = request_data.data.final_answer
         to_commit = True
 
-    if request_data.data.id_lesson is not None:
-        answer_edit.id_lesson = request_data.data.id_lesson
+    if request_data.data.lesson_id is not None:
+        answer_edit.lesson_id = request_data.data.lesson_id
         to_commit = True
 
     if to_commit:
@@ -185,18 +185,18 @@ def edit_answer(
         status_code=status.HTTP_200_OK,
         content={
             "data": {
-                "id": id_answer,
+                "id": answer_id,
                 "final_answer": answer_edit.final_answer,
-                "id_lesson": answer_edit.id_lesson,
+                "lesson_id": answer_edit.lesson_id,
             },
             "error": None,
         },
     )
 
 
-@router.delete("/answers/{id_answer}", tags=["answers"])
+@router.delete("/answers/{answer_id}", tags=["answers"])
 def delete_answer(
-    id_answer: int = Path(title="id of the answer to delete"),
+    answer_id: int = Path(title="id of the answer to delete"),
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
 ):
@@ -215,24 +215,24 @@ def delete_answer(
 
     # TODO: change this after add sections + find better option to save completed courses
 
-    db.query(models.Answers).filter_by(id=id_answer).delete()
+    db.query(models.Answers).filter_by(id=answer_id).delete()
 
     db.commit()
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
-            "data": {"id": id_answer},
+            "data": {"id": answer_id},
             "error": None,
         },
     )
 
 
-@router.get("/lessons/{id_lesson}/answers", tags=["answers"])
+@router.get("/lessons/{lesson_id}/answers", tags=["answers"])
 def get_answers(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
-    id_lesson: int = Path(title="id of the lesson"),
+    lesson_id: int = Path(title="id of the lesson"),
 ):
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
@@ -241,7 +241,7 @@ def get_answers(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    answers = db.query(models.Answers).filter_by(id_lesson=id_lesson).all()
+    answers = db.query(models.Answers).filter_by(lesson_id=lesson_id).all()
     if answers is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -255,7 +255,7 @@ def get_answers(
                 {
                     "id": answer.id,
                     "final_answer": answer.final_answer,
-                    "id_lesson": answer.id_lesson,
+                    "lesson_id": answer.lesson_id,
                 }
                 for answer in answers
             ],

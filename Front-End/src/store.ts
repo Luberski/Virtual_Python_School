@@ -11,14 +11,15 @@ import coursesReducer from '@app/features/courses/coursesSlice';
 import courseReducer from '@app/features/courses/courseSlice';
 import enrollCourseReducer from '@app/features/courses/enrollCourseSlice';
 import courseWithLessonsReducer from '@app/features/courses/courseWithLessonsSlice';
+import enrolledCourseWithLessonsReducer from '@app/features/courses/enrolledCourseWithLessonsSlice';
 import featuredCoursesReducer from '@app/features/courses/featuredCoursesSlice';
 import enrolledCoursesReducer from '@app/features/courses/enrolledCoursesSlice';
 import lessonsReducer from '@app/features/lessons/lessonsSlice';
 import lessonReducer from '@app/features/lessons/lessonSlice';
 import answersReducer from '@app/features/lessons/answersSlice';
 import answerReducer from '@app/features/lessons/answerSlice';
-import joinLessonReducer from '@app/features/lessons/joinLessonSlice';
-import joinedLessonReducer from '@app/features/lessons/joinedLessonSlice';
+import enrollLessonReducer from '@app/features/lessons/enrollLessonSlice';
+import enrolledLessonReducer from '@app/features/lessons/enrolledLessonSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -27,14 +28,15 @@ const combinedReducers = combineReducers({
   course: courseReducer,
   enrollCourse: enrollCourseReducer,
   courseWithLessons: courseWithLessonsReducer,
+  enrolledCourseWithLessons: enrolledCourseWithLessonsReducer,
   featuredCourses: featuredCoursesReducer,
   enrolledCourses: enrolledCoursesReducer,
   lessons: lessonsReducer,
   lesson: lessonReducer,
   answers: answersReducer,
   answer: answerReducer,
-  joinLesson: joinLessonReducer,
-  joinedLesson: joinedLessonReducer,
+  enrollLesson: enrollLessonReducer,
+  enrolledLesson: enrolledLessonReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -63,12 +65,15 @@ export type RootState = {
   course: ReturnType<typeof courseReducer>;
   enrollCourse: ReturnType<typeof enrollCourseReducer>;
   courseWithLessons: ReturnType<typeof courseWithLessonsReducer>;
+  enrolledCourseWithLessons: ReturnType<
+    typeof enrolledCourseWithLessonsReducer
+  >;
   featuredCourses: ReturnType<typeof featuredCoursesReducer>;
   enrolledCourses: ReturnType<typeof enrolledCoursesReducer>;
   lessons: ReturnType<typeof lessonsReducer>;
   lesson: ReturnType<typeof lessonReducer>;
   answers: ReturnType<typeof answersReducer>;
   answer: ReturnType<typeof answerReducer>;
-  joinLesson: ReturnType<typeof joinLessonReducer>;
-  joinedLesson: ReturnType<typeof joinedLessonReducer>;
+  enrollLesson: ReturnType<typeof enrollLessonReducer>;
+  enrolledLesson: ReturnType<typeof enrolledLessonReducer>;
 };

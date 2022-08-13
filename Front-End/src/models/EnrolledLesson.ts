@@ -1,6 +1,6 @@
-export type JoinedLesson = {
-  id: string;
-  lessonID: string;
+export type EnrolledLesson = {
+  id: number;
+  lessonID: number;
   startDate: string;
   endDate: string;
   completed: boolean;

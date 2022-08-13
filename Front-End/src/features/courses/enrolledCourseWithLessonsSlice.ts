@@ -2,51 +2,33 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
+import type { EnrolledCourse } from '@app/models/EnrolledCourse';
 import type { ApiPayload } from '@app/models/ApiPayload';
 
-export type AnswerState = {
-  // TODO: move types to models folder
-  data: { id: string; status: boolean; lesson_id: string };
+export type EnrolledCourseState = {
+  data: EnrolledCourse;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
-const initialState: AnswerState = {
+const initialState: EnrolledCourseState = {
   data: null,
   status: 'idle',
   error: null,
 };
 
-export const checkAnswer = createAsyncThunk(
-  'api/answer/check',
-  async (
-    {
-      lessonId,
-      enrolledLessonId,
-      answer,
-    }: {
-      lessonId: string;
-      enrolledLessonId: string;
-      answer: string;
-    },
-    thunkApi
-  ) => {
+export const fetchEnrolledCourseWithLessons = createAsyncThunk(
+  'api/course/enrolled/with-lessons',
+  async ({ id }: { id: string | number }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('answers/check', {
-        json: {
-          data: {
-            lesson_id: lessonId,
-            enrolled_lesson_id: enrolledLessonId,
-            answer: answer,
-          },
-        },
+      const endpoint = `courses/${id}/enrolled?include_lessons=true`;
+      const res = await apiClient.get(endpoint, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
       const data = await res.json();
       return data;
     } catch (error) {
@@ -56,26 +38,25 @@ export const checkAnswer = createAsyncThunk(
   }
 );
 
-export const answerSlice = createSlice({
-  name: 'answer',
+export const enrolledCourseWithLessonsSlice = createSlice({
+  name: 'enrolledCourseWithLessons',
   initialState,
-  reducers: {
-    reset: () => {
-      return initialState;
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return Object.assign({}, state, { ...action.payload.answer });
+        return Object.assign({}, state, {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          ...action.payload.enrolledCourseWithLessons,
+        });
       })
-      .addCase(checkAnswer.pending, (state) => {
+
+      .addCase(fetchEnrolledCourseWithLessons.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        checkAnswer.fulfilled,
+        fetchEnrolledCourseWithLessons.fulfilled,
         (
           state,
           { payload: { data, error } }: { payload: ApiPayload | any }
@@ -91,16 +72,18 @@ export const answerSlice = createSlice({
           }
         }
       )
-      .addCase(checkAnswer.rejected, (state, action) => {
+      .addCase(fetchEnrolledCourseWithLessons.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
   },
 });
 
-export const selectAnswerData = (state: RootState) => state.answer.data;
-export const selectAnswerError = (state: RootState) => state.answer.error;
-export const selectAnswerStatus = (state: RootState) => state.answer.status;
-export const { reset } = answerSlice.actions;
+export const selectEnrolledCourseWithLessonsData = (state: RootState) =>
+  state.enrolledCourseWithLessons.data;
+export const selectEnrolledCourseWithLessonsError = (state: RootState) =>
+  state.enrolledCourseWithLessons.error;
+export const selectEnrolledCourseWithLessonsStatus = (state: RootState) =>
+  state.enrolledCourseWithLessons.status;
 
-export default answerSlice.reducer;
+export default enrolledCourseWithLessonsSlice.reducer;

@@ -9,9 +9,9 @@ from app.db.session import Base, engine
 
 
 CREATE_COURSE_TEST_DATA = {"name": "test_name", "description": "test_desc"}
-CREATE_ANSWER_TEST_DATA = {"id_lesson": "1", "final_answer": "ok"}
+CREATE_ANSWER_TEST_DATA = {"lesson_id": "1", "final_answer": "ok"}
 CREATE_LESSON_TEST_DATA = {
-    "id_course": 1,
+    "course_id": 1,
     "name": "test_lesson",
     "description": "test_desc",
     "type": 1,

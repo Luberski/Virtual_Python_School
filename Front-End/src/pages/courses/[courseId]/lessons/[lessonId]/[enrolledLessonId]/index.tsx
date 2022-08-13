@@ -18,9 +18,9 @@ import {
   sendCode,
 } from '@app/features/playground/playgroundSlice';
 import {
-  fetchJoinedLesson,
-  selectJoinedLessonData,
-} from '@app/features/lessons/joinedLessonSlice';
+  fetchEnrolledLesson,
+  selectEnrolledLessonData,
+} from '@app/features/lessons/enrolledLessonSlice';
 import Input from '@app/components/Input';
 import {
   checkAnswer,
@@ -40,13 +40,13 @@ const Editor = dynamic(() => import('@monaco-editor/react'), {
 type Props = {
   courseId: string;
   lessonId: string;
-  joinedLessonId: string;
+  enrolledLessonId: string;
 };
 
 export default function LessonPage({
   courseId,
   lessonId,
-  joinedLessonId,
+  enrolledLessonId,
 }: Props) {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useDispatch();
@@ -60,7 +60,7 @@ export default function LessonPage({
     useForm<{
       answer: string;
     }>();
-  const joinedLesson = useAppSelector(selectJoinedLessonData);
+  const enrolledLesson = useAppSelector(selectEnrolledLessonData);
   const answerStatus = useAppSelector(selectAnswerStatus);
   const answerData = useAppSelector(selectAnswerData);
   const [isExploding, setIsExploding] = useState(false);
@@ -128,7 +128,7 @@ export default function LessonPage({
           dispatch(
             checkAnswer({
               lessonId,
-              joinedLessonId,
+              enrolledLessonId,
               answer,
             })
           );
@@ -137,7 +137,7 @@ export default function LessonPage({
           console.error(error);
         }
       }, 500),
-    [dispatch, joinedLessonId, lessonId]
+    [dispatch, enrolledLessonId, lessonId]
   );
 
   const handleValue = useMemo(
@@ -176,10 +176,10 @@ export default function LessonPage({
         />
         <div className="container mx-auto px-4">
           <div className="brand-shadow2 container my-6 flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
-            {joinedLesson ? (
+            {enrolledLesson ? (
               <>
                 <h1 className="pb-4 text-center text-indigo-900 dark:text-indigo-300">
-                  {t('Meta.title-lesson')}:&nbsp;{joinedLesson.name}
+                  {t('Meta.title-lesson')}:&nbsp;{enrolledLesson.name}
                 </h1>
                 <div className="my-9 self-end">
                   <IconButton
@@ -216,7 +216,7 @@ export default function LessonPage({
                   <div className="brand-shadow2 m-2 flex flex-col rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700 xl:w-1/2">
                     <h2>{t('Manage.description')}</h2>
                     <p className="h-[580px] overflow-auto whitespace-pre-line">
-                      {joinedLesson.description}
+                      {enrolledLesson.description}
                     </p>
                     <form
                       onSubmit={handleSubmit(onSubmit)}
@@ -314,18 +314,18 @@ export default function LessonPage({
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale, params }) => {
-      const { courseId, lessonId, joinedLessonId } = params as {
+      const { courseId, lessonId, enrolledLessonId } = params as {
         courseId: string;
         lessonId: string;
-        joinedLessonId: string;
+        enrolledLessonId: string;
       };
-      await store.dispatch(fetchJoinedLesson({ lessonId, joinedLessonId }));
+      await store.dispatch(fetchEnrolledLesson({ lessonId, enrolledLessonId }));
 
       return {
         props: {
           courseId,
           lessonId,
-          joinedLessonId,
+          enrolledLessonId,
           i18n: Object.assign(
             {},
             await import(`../../../../../../../i18n/${locale}.json`)

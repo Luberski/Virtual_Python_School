@@ -22,7 +22,7 @@ export default function EnrolledCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useDispatch();
   const t = useTranslations();
-  const courses = useAppSelector(selectEnrolledCoursesData);
+  const enrolledCourses = useAppSelector(selectEnrolledCoursesData);
 
   if (!user && !isLoggedIn) {
     return null;
@@ -52,17 +52,17 @@ export default function EnrolledCoursesPage() {
           </div>
         </div>
         <div className="container mx-auto px-12">
-          {courses && courses.length > 0 ? (
+          {enrolledCourses && enrolledCourses.length > 0 ? (
             <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
-              {courses.map((course) => {
+              {enrolledCourses.map((enrolledCourse) => {
                 const lessonsCompletedPercentage =
-                  (course.total_completed_lessons_count /
-                    course.total_lessons_count) *
+                  (enrolledCourse.total_completed_lessons_count /
+                    enrolledCourse.total_lessons_count) *
                   100;
                 return (
                   <FancyCard
-                    key={course.id}
-                    title={course.name}
+                    key={enrolledCourse.id}
+                    title={enrolledCourse.name}
                     description={
                       <div className="flex flex-col">
                         <div className="flex space-x-2">
@@ -78,13 +78,13 @@ export default function EnrolledCoursesPage() {
                             {lessonsCompletedPercentage}%
                           </div>
                         </div>
-                        {course.description}
+                        {enrolledCourse.description}
                         <div>
                           <div className="mt-4 mb-1 text-xs text-neutral-400">
                             {t('Manage.name')}
                           </div>
-                          {course.lessons?.length > 0 &&
-                            course.lessons?.map((lesson) => (
+                          {enrolledCourse.lessons?.length > 0 &&
+                            enrolledCourse.lessons?.map((lesson) => (
                               <div key={lesson.id}>
                                 <div className="text-indigo-900 dark:text-indigo-300">
                                   {lesson.name}
@@ -99,7 +99,7 @@ export default function EnrolledCoursesPage() {
                     shadowColor="shadow-black/25"
                     hoverShadowColor="hover:shadow-black/25"
                     bottomControls={
-                      <Link href={`/courses/${course.id}`} passHref={true}>
+                      <Link href={`/courses/${enrolledCourse.id}`} passHref={true}>
                         <IconButtonLink
                           className="w-fit"
                           variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
@@ -126,7 +126,7 @@ export default function EnrolledCoursesPage() {
             </div>
           )}
         </div>
-        {courses && courses.length > 0 && (
+        {enrolledCourses && enrolledCourses.length > 0 && (
           <div className="my-16 flex items-center justify-center">
             <Image
               src="/undraw_online_learning_re_qw08.svg"

@@ -2,30 +2,30 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { JoinedLesson } from '@app/models/JoinedLesson';
+import type { EnrolledLesson } from '@app/models/EnrolledLesson';
 import type { ApiPayload } from '@app/models/ApiPayload';
 
-export type JoinedLessonState = {
-  data: JoinedLesson;
+export type EnrolledLessonState = {
+  data: EnrolledLesson;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
-const initialState: JoinedLessonState = {
+const initialState: EnrolledLessonState = {
   data: null,
   status: 'idle',
   error: null,
 };
 
-export const fetchJoinedLesson = createAsyncThunk(
-  'api/courses/courseId/joinedLesson/joinedLessonId',
+export const fetchEnrolledLesson = createAsyncThunk(
+  'api/courses/courseId/enrolledLesson/enrolledLessonId',
   async (
     {
       lessonId,
-      joinedLessonId,
+      enrolledLessonId,
     }: {
-      lessonId: string;
-      joinedLessonId: string;
+      lessonId: number;
+      enrolledLessonId: number;
     },
     thunkApi
   ) => {
@@ -33,7 +33,7 @@ export const fetchJoinedLesson = createAsyncThunk(
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
       const res = await apiClient.get(
-        `courses/lessons/${lessonId}/${joinedLessonId}`,
+        `courses/lessons/${lessonId}/${enrolledLessonId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -50,8 +50,8 @@ export const fetchJoinedLesson = createAsyncThunk(
   }
 );
 
-export const joinedLessonSlice = createSlice({
-  name: 'joinedLesson',
+export const enrolledLessonSlice = createSlice({
+  name: 'enrolledLesson',
   initialState,
   reducers: {},
   extraReducers(builder) {
@@ -59,13 +59,13 @@ export const joinedLessonSlice = createSlice({
       .addCase(HYDRATE, (state, action) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return Object.assign({}, state, { ...action.payload.joinedLesson });
+        return Object.assign({}, state, { ...action.payload.enrolledLesson });
       })
-      .addCase(fetchJoinedLesson.pending, (state) => {
+      .addCase(fetchEnrolledLesson.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        fetchJoinedLesson.fulfilled,
+        fetchEnrolledLesson.fulfilled,
         (
           state,
           { payload: { data, error } }: { payload: ApiPayload | any }
@@ -81,18 +81,18 @@ export const joinedLessonSlice = createSlice({
           }
         }
       )
-      .addCase(fetchJoinedLesson.rejected, (state, action) => {
+      .addCase(fetchEnrolledLesson.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
   },
 });
 
-export const selectJoinedLessonData = (state: RootState) =>
-  state.joinedLesson.data;
-export const selectJoinedLessonError = (state: RootState) =>
-  state.joinedLesson.error;
-export const selectJoinedLessonStatus = (state: RootState) =>
-  state.joinedLesson.status;
+export const selectEnrolledLessonData = (state: RootState) =>
+  state.enrolledLesson.data;
+export const selectEnrolledLessonError = (state: RootState) =>
+  state.enrolledLesson.error;
+export const selectEnrolledLessonStatus = (state: RootState) =>
+  state.enrolledLesson.status;
 
-export default joinedLessonSlice.reducer;
+export default enrolledLessonSlice.reducer;

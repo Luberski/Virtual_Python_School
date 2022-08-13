@@ -85,8 +85,8 @@ def edit_course(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    id_course = request_data.data.id_course
-    course_edit = db.query(models.Courses).filter_by(id=id_course).first()
+    course_id = request_data.data.course_id
+    course_edit = db.query(models.Courses).filter_by(id=course_id).first()
     if course_edit is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -123,9 +123,9 @@ def edit_course(
     )
 
 
-@router.delete("/courses/{id_course}", tags=["courses"])
+@router.delete("/courses/{course_id}", tags=["courses"])
 def delete_course(
-    id_course: int = Path(title="id of the course to delete"),
+    course_id: int = Path(title="id of the course to delete"),
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
 ):
@@ -142,9 +142,9 @@ def delete_course(
             content={"error": "Unauthorized"},
         )
     # TODO: change this after add sections + find better option to save completed courses
-    db.query(models.CoursesTaken).filter_by(id_course=id_course).delete()
-    db.query(models.Lessons).filter_by(id_course=id_course).delete()
-    db.query(models.Courses).filter_by(id=id_course).delete()
+    db.query(models.EnrolledCourses).filter_by(course_id=course_id).delete()
+    db.query(models.Lessons).filter_by(course_id=course_id).delete()
+    db.query(models.Courses).filter_by(id=course_id).delete()
 
     db.commit()
 
@@ -152,7 +152,7 @@ def delete_course(
         status_code=status.HTTP_200_OK,
         content={
             "data": {
-                "id": id_course,
+                "id": course_id,
             },
             "error": None,
         },
@@ -184,21 +184,21 @@ def get_courses_all(
     )
 
     if include_lessons:
-        courses_taken_with_lessons = (
-            db.query(models.CoursesTaken)
-            .filter_by(id_user=user.id)
-            .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
-            .join(models.Lessons, models.Courses.id == models.Lessons.id_course)
+        enrolled_courses_with_lessons = (
+            db.query(models.EnrolledCourses)
+            .filter_by(user_id=user.id)
+            .join(models.Courses, models.Courses.id == models.EnrolledCourses.course_id)
+            .join(models.Lessons, models.Courses.id == models.Lessons.course_id)
             .all()
         )
-        if courses_taken_with_lessons:
-            for course_taken in courses_taken_with_lessons:
+        if enrolled_courses_with_lessons:
+            for enrolled_course in enrolled_courses_with_lessons:
                 courses_response_data.append(
                     {
-                        "id": course_taken.course.id,
-                        "name": course_taken.course.name,
-                        "description": course_taken.course.description,
-                        "featured": course_taken.course.featured,
+                        "id": enrolled_course.course.id,
+                        "name": enrolled_course.course.name,
+                        "description": enrolled_course.course.description,
+                        "featured": enrolled_course.course.featured,
                         "enrolled": True,
                         "lessons": [
                             {
@@ -208,7 +208,7 @@ def get_courses_all(
                                 "type": lesson.type,
                                 "number_of_answers": lesson.number_of_answers,
                             }
-                            for lesson in course_taken.course.lessons.limit(
+                            for lesson in enrolled_course.course.lessons.limit(
                                 limit_lessons
                             )
                         ],
@@ -217,14 +217,14 @@ def get_courses_all(
 
         courses_with_lessons = (
             db.query(models.Courses)
-            .join(models.Lessons, models.Courses.id == models.Lessons.id_course)
+            .join(models.Lessons, models.Courses.id == models.Lessons.course_id)
             .all()
         )
         if courses_with_lessons:
             for course in courses_with_lessons:
                 if course.id not in [
-                    course_taken.course.id
-                    for course_taken in courses_taken_with_lessons
+                    enrolled_course.course.id
+                    for enrolled_course in enrolled_courses_with_lessons
                 ]:
                     courses_response_data.append(
                         {
@@ -246,20 +246,20 @@ def get_courses_all(
                         }
                     )
     else:
-        courses_taken = (
-            db.query(models.CoursesTaken)
-            .filter_by(id_user=user.id)
-            .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
+        enrolled_courses = (
+            db.query(models.EnrolledCourses)
+            .filter_by(user_id=user.id)
+            .join(models.Courses, models.Courses.id == models.EnrolledCourses.course_id)
             .all()
         )
-        if courses_taken:
-            for course_taken in courses_taken:
+        if enrolled_courses:
+            for enrolled_course in enrolled_courses:
                 courses_response_data.append(
                     {
-                        "id": course_taken.course.id,
-                        "name": course_taken.course.name,
-                        "description": course_taken.course.description,
-                        "featured": course_taken.course.featured,
+                        "id": enrolled_course.course.id,
+                        "name": enrolled_course.course.name,
+                        "description": enrolled_course.course.description,
+                        "featured": enrolled_course.course.featured,
                         "enrolled": True,
                     }
                 )
@@ -268,7 +268,7 @@ def get_courses_all(
         if courses:
             for course in courses:
                 if course.id not in [
-                    course_taken.course.id for course_taken in courses_taken
+                    enrolled_course.course.id for enrolled_course in enrolled_courses
                 ]:
                     courses_response_data.append(
                         {
@@ -326,7 +326,7 @@ def get_courses_me(
             content={"error": "Unauthorized"},
         )
     user = db.query(models.User).filter_by(username=username).first()
-    courses = db.query(models.CoursesTaken).filter_by(id_user=user.id).all()
+    courses = db.query(models.EnrolledCourses).filter_by(user_id=user.id).all()
     if courses is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -338,10 +338,9 @@ def get_courses_me(
             "data": [
                 {
                     "username": username,
-                    "id_course": course.id_course,
+                    "course_id": course.course_id,
                     "start_date": str(course.start_date),
                     "end_date": str(course.end_date),
-                    "section_number": course.section_number,
                     "completed": course.completed,
                 }
                 for course in courses
@@ -378,63 +377,63 @@ def get_enrolled_courses(
     if include_lessons:
         completed_lessons_count_query = (
             db.query(
-                models.LessonsTaken.id,
-                models.LessonsTaken.id_lesson,
-                models.LessonsTaken.id_user,
-                func.count(models.LessonsTaken.completed).label(
+                models.EnrolledLessons.id,
+                models.EnrolledLessons.lesson_id,
+                models.EnrolledLessons.user_id,
+                func.count(models.EnrolledLessons.completed).label(
                     "completed_lessons_count"
                 ),
             )
             .filter(
-                models.LessonsTaken.id_user == user.id,
+                models.EnrolledLessons.user_id == user.id,
                 # pylint: disable=C0121
-                models.LessonsTaken.completed == True,
+                models.EnrolledLessons.completed == True,
             )
-            .distinct(models.LessonsTaken.id_lesson)
-            .group_by(models.LessonsTaken.id)
+            .distinct(models.EnrolledLessons.lesson_id)
+            .group_by(models.EnrolledLessons.id)
             .all()
         )
-        courses_taken_with_lessons = (
-            db.query(models.CoursesTaken)
-            .filter_by(id_user=user.id)
-            .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
-            .join(models.Lessons, models.Courses.id == models.Lessons.id_course)
+        enrolled_courses_with_lessons = (
+            db.query(models.EnrolledCourses)
+            .filter_by(user_id=user.id)
+            .join(models.Courses, models.Courses.id == models.EnrolledCourses.course_id)
+            .join(models.Lessons, models.Courses.id == models.Lessons.course_id)
             .all()
         )
-        if courses_taken_with_lessons:
-            for course_taken in courses_taken_with_lessons:
+        if enrolled_courses_with_lessons:
+            for enrolled_course in enrolled_courses_with_lessons:
                 total_lessons_count = 0
                 total_completed_lessons_count = 0
-                for lesson in course_taken.course.lessons:
+                for lesson in enrolled_course.course.lessons:
                     total_lessons_count += 1
                     if lesson.id in [
-                        lesson_taken.id_lesson
-                        for lesson_taken in completed_lessons_count_query
-                        if lesson_taken.id_lesson == lesson.id
+                        lesson_enrolled.lesson_id
+                        for lesson_enrolled in completed_lessons_count_query
+                        if lesson_enrolled.lesson_id == lesson.id
                     ]:
                         total_completed_lessons_count += 1
 
                 courses_response_data.append(
                     {
-                        "id": course_taken.course.id,
-                        "name": course_taken.course.name,
-                        "description": course_taken.course.description,
-                        "featured": course_taken.course.featured,
+                        "id": enrolled_course.id,
+                        "course_id": enrolled_course.course.id,
+                        "name": enrolled_course.course.name,
+                        "description": enrolled_course.course.description,
+                        "featured": enrolled_course.course.featured,
                         "enrolled": True,
-                        "end_date": str(course_taken.end_date),
-                        "section_number": course_taken.section_number,
+                        "end_date": str(enrolled_course.end_date),
                         "total_lessons_count": total_lessons_count,
                         "total_completed_lessons_count": total_completed_lessons_count,
                         "lessons": [
                             {
                                 "id": lesson.id,
-                                "start_date": str(course_taken.start_date),
+                                "start_date": str(enrolled_course.start_date),
                                 "name": lesson.name,
                                 "description": lesson.description,
                                 "type": lesson.type,
                                 "number_of_answers": lesson.number_of_answers,
                             }
-                            for lesson in course_taken.course.lessons.limit(
+                            for lesson in enrolled_course.course.lessons.limit(
                                 limit_lessons
                             )
                         ],
@@ -442,24 +441,24 @@ def get_enrolled_courses(
                 )
 
     else:
-        courses_taken = (
-            db.query(models.CoursesTaken)
-            .filter_by(id_user=user.id)
-            .join(models.Courses, models.Courses.id == models.CoursesTaken.id_course)
+        enrolled_courses = (
+            db.query(models.EnrolledCourses)
+            .filter_by(user_id=user.id)
+            .join(models.Courses, models.Courses.id == models.EnrolledCourses.course_id)
             .all()
         )
-        if courses_taken:
-            for course_taken in courses_taken:
+        if enrolled_courses:
+            for enrolled_course in enrolled_courses:
                 courses_response_data.append(
                     {
-                        "id": course_taken.course.id,
-                        "start_date": str(course_taken.start_date),
-                        "name": course_taken.course.name,
-                        "description": course_taken.course.description,
-                        "featured": course_taken.course.featured,
+                        "id": enrolled_course.id,
+                        "course_id": enrolled_course.course.id,
+                        "start_date": str(enrolled_course.start_date),
+                        "name": enrolled_course.course.name,
+                        "description": enrolled_course.course.description,
+                        "featured": enrolled_course.course.featured,
                         "enrolled": True,
-                        "end_date": str(course_taken.end_date),
-                        "section_number": course_taken.section_number,
+                        "end_date": str(enrolled_course.end_date),
                     }
                 )
 
@@ -469,10 +468,10 @@ def get_enrolled_courses(
     )
 
 
-@router.get("/courses/{id_course}", tags=["courses"])
+@router.get("/courses/{course_id}", tags=["courses"])
 def get_course_by_id(
     db: Session = Depends(deps.get_db),
-    id_course: int = Path(title="id of the course"),
+    course_id: int = Path(title="id of the course"),
     include_lessons: Union[bool, None] = Query(default=False),
     limit_lessons: Union[int, None] = Query(default=None, gt=0),
 ):
@@ -480,19 +479,19 @@ def get_course_by_id(
     if include_lessons:
         course = (
             db.query(models.Courses)
-            .filter_by(id=id_course)
+            .filter_by(id=course_id)
             .join(
                 models.Lessons,
-                models.Lessons.id_course == models.Courses.id,
+                models.Lessons.course_id == models.Courses.id,
             )
-            .filter_by(id_course=id_course)
+            .filter_by(course_id=course_id)
             .first()
         )
         if course:
             lessons_exist = True
 
     if not lessons_exist:
-        course = db.query(models.Courses).filter_by(id=id_course).first()
+        course = db.query(models.Courses).filter_by(id=course_id).first()
 
     if course is None:
         return JSONResponse(
@@ -537,8 +536,141 @@ def get_course_by_id(
     )
 
 
+@router.get("/courses/{course_id}/enrolled", tags=["courses"])
+def get_enrolled_course_by_id(
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+    course_id: int = Path(title="id of the course"),
+    include_lessons: Union[bool, None] = Query(default=False),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
+    if include_lessons:
+        completed_lessons_count_query = (
+            db.query(
+                models.EnrolledLessons.id,
+                models.EnrolledLessons.lesson_id,
+                models.EnrolledLessons.user_id,
+                func.count(models.EnrolledLessons.completed).label(
+                    "completed_lessons_count"
+                ),
+            )
+            .filter(
+                models.EnrolledLessons.user_id == user.id,
+                # pylint: disable=C0121
+                models.EnrolledLessons.completed == True,
+            )
+            .distinct(models.EnrolledLessons.lesson_id)
+            .group_by(models.EnrolledLessons.id)
+            .all()
+        )
+        enrolled_course_with_lessons = (
+            db.query(
+                models.EnrolledCourses,
+            )
+            .filter_by(user_id=user.id, course_id=course_id)
+            .first()
+        )
+        if enrolled_course_with_lessons:
+            total_lessons_count = 0
+            total_completed_lessons_count = 0
+            for lesson in enrolled_course_with_lessons.course.lessons:
+                total_lessons_count += 1
+                if lesson.id in [
+                    lesson_enrolled.lesson_id
+                    for lesson_enrolled in completed_lessons_count_query
+                    if lesson_enrolled.lesson_id == lesson.id
+                ]:
+                    total_completed_lessons_count += 1
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "data": {
+                        "id": enrolled_course_with_lessons.id,
+                        "course_id": enrolled_course_with_lessons.course_id,
+                        "name": enrolled_course_with_lessons.course.name,
+                        "description": enrolled_course_with_lessons.course.description,
+                        "featured": enrolled_course_with_lessons.course.featured,
+                        "enrolled": True,
+                        "start_date": str(enrolled_course_with_lessons.start_date),
+                        "end_date": str(enrolled_course_with_lessons.end_date),
+                        "total_lessons_count": total_lessons_count,
+                        "total_completed_lessons_count": total_completed_lessons_count,
+                        "lessons": [
+                            {
+                                "id": lesson.id,
+                                "start_date": str(
+                                    enrolled_course_with_lessons.start_date
+                                ),
+                                "end_date": str(enrolled_course_with_lessons.end_date),
+                                "name": lesson.name,
+                                "description": lesson.description,
+                                "type": lesson.type,
+                                "number_of_answers": lesson.number_of_answers,
+                                "completed": lesson.id
+                                in [
+                                    lesson_enrolled.lesson_id
+                                    for lesson_enrolled in completed_lessons_count_query
+                                    if lesson_enrolled.lesson_id == lesson.id
+                                ],
+                            }
+                            for lesson in enrolled_course_with_lessons.course.lessons
+                        ],
+                    },
+                    "error": None,
+                },
+            )
+        else:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Course not found"},
+            )
+    else:
+        enrolled_course = (
+            db.query(
+                models.EnrolledCourses,
+            )
+            .filter_by(user_id=user.id, course_id=course_id)
+            .join(models.Courses, models.Courses.id == models.EnrolledCourses.course_id)
+            .first()
+        )
+        if enrolled_course:
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "data": {
+                        "id": enrolled_course.id,
+                        "course_id": enrolled_course.course_id,
+                        "name": enrolled_course.course.name,
+                        "description": enrolled_course.course.description,
+                        "featured": enrolled_course.course.featured,
+                        "enrolled": True,
+                        "start_date": str(enrolled_course.start_date),
+                        "end_date": str(enrolled_course.end_date),
+                    },
+                    "error": None,
+                },
+            )
+        else:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Course not found"},
+            )
+
+
 @router.post("/course", tags=["courses"], response_model=CourseJoinResponse)
-def join_course_me(
+def enroll_course_me(
     request_data: CourseJoinRequest,
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
@@ -552,7 +684,7 @@ def join_course_me(
         )
     user = db.query(models.User).filter_by(username=username).first()
 
-    course_wanted = request_data.data.id_course
+    course_wanted = request_data.data.course_id
     if course_wanted is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -566,8 +698,8 @@ def join_course_me(
         )
 
     check_exist = (
-        db.query(models.CoursesTaken)
-        .filter_by(id_user=user.id, id_course=course_wanted)
+        db.query(models.EnrolledCourses)
+        .filter_by(user_id=user.id, course_id=course_wanted)
         .first()
     )
     if check_exist:
@@ -576,15 +708,14 @@ def join_course_me(
             content={"error": "User attends in course"},
         )
 
-    course_taken = models.CoursesTaken(
-        id_course=course_query.id,
-        id_user=user.id,
+    enrolled_course = models.EnrolledCourses(
+        course_id=course_query.id,
+        user_id=user.id,
         start_date=datetime.now(),
         end_date=None,
-        section_number=0,
         completed=False,
     )
-    db.add(course_taken)
+    db.add(enrolled_course)
     db.commit()
 
     return JSONResponse(
@@ -592,12 +723,11 @@ def join_course_me(
         content={
             "data": {
                 "username": username,
-                "id_user": course_taken.id_user,
-                "id": course_taken.id_course,
-                "start_date": str(course_taken.start_date),
-                "end_date": str(course_taken.end_date),
-                "section_number": course_taken.section_number,
-                "completed": course_taken.completed,
+                "user_id": enrolled_course.user_id,
+                "id": enrolled_course.course_id,
+                "start_date": str(enrolled_course.start_date),
+                "end_date": str(enrolled_course.end_date),
+                "completed": enrolled_course.completed,
             },
             "error": None,
         },
@@ -605,7 +735,7 @@ def join_course_me(
 
 
 @router.post("/course/id", tags=["courses"], response_model=CourseJoinResponse)
-def join_course_id(
+def enroll_course_id(
     request_data: CourseJoinByIdRequest,
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
@@ -629,7 +759,7 @@ def join_course_id(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-    course_wanted = request_data.data.id_course
+    course_wanted = request_data.data.course_id
 
     if course_wanted is None:
         return JSONResponse(
@@ -645,8 +775,8 @@ def join_course_id(
         )
 
     check_exist = (
-        db.query(models.CoursesTaken)
-        .filter_by(id_user=user.id, id_course=course_wanted)
+        db.query(models.EnrolledCourses)
+        .filter_by(user_id=user.id, course_id=course_wanted)
         .first()
     )
 
@@ -655,15 +785,14 @@ def join_course_id(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"error": "User attends in course"},
         )
-    course_taken = models.CoursesTaken(
-        id_course=course_query.id,
-        id_user=user.id,
+    enrolled_course = models.EnrolledCourses(
+        course_id=course_query.id,
+        user_id=user.id,
         start_date=datetime.now(),
         end_date=None,
-        section_number=0,
         completed=False,
     )
-    db.add(course_taken)
+    db.add(enrolled_course)
     db.commit()
 
     return JSONResponse(
@@ -671,12 +800,11 @@ def join_course_id(
         content={
             "data": {
                 "username": username,
-                "id_user": course_taken.id_user,
-                "id_course": course_taken.id_course,
-                "start_date": str(course_taken.start_date),
-                "end_date": str(course_taken.end_date),
-                "section_number": course_taken.section_number,
-                "completed": course_taken.completed,
+                "user_id": enrolled_course.user_id,
+                "course_id": enrolled_course.course_id,
+                "start_date": str(enrolled_course.start_date),
+                "end_date": str(enrolled_course.end_date),
+                "completed": enrolled_course.completed,
             },
             "error": None,
         },
@@ -698,7 +826,7 @@ def close_course_me(
         )
     user = db.query(models.User).filter_by(username=username).first()
 
-    course_wanted = request_data.data.id_course
+    course_wanted = request_data.data.course_id
 
     if course_wanted is None:
         return JSONResponse(
@@ -714,8 +842,8 @@ def close_course_me(
         )
 
     course_to_close = (
-        db.query(models.CoursesTaken)
-        .filter_by(id_user=user.id, id_course=course_wanted)
+        db.query(models.EnrolledCourses)
+        .filter_by(user_id=user.id, course_id=course_wanted)
         .first()
     )
     if course_to_close is None:
@@ -733,11 +861,10 @@ def close_course_me(
         content={
             "data": {
                 "username": username,
-                "id_user": course_to_close.id_user,
-                "id_course": course_to_close.id_course,
+                "user_id": course_to_close.user_id,
+                "course_id": course_to_close.course_id,
                 "start_date": str(course_to_close.start_date),
                 "end_date": str(course_to_close.end_date),
-                "section_number": course_to_close.section_number,
                 "completed": course_to_close.completed,
             },
             "error": None,
@@ -770,7 +897,7 @@ def close_course_id(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-    course_wanted = request_data.data.id_course
+    course_wanted = request_data.data.course_id
 
     if course_wanted is None:
         return JSONResponse(
@@ -786,8 +913,8 @@ def close_course_id(
         )
 
     course_to_close = (
-        db.query(models.CoursesTaken)
-        .filter_by(id_user=user.id, id_course=course_wanted)
+        db.query(models.EnrolledCourses)
+        .filter_by(user_id=user.id, course_id=course_wanted)
         .first()
     )
     if course_to_close is None:
@@ -805,11 +932,10 @@ def close_course_id(
         content={
             "data": {
                 "username": username,
-                "id_user": course_to_close.id_user,
-                "id_course": course_to_close.id_course,
+                "user_id": course_to_close.user_id,
+                "course_id": course_to_close.course_id,
                 "start_date": str(course_to_close.start_date),
                 "end_date": str(course_to_close.end_date),
-                "section_number": course_to_close.section_number,
                 "completed": course_to_close.completed,
             },
             "error": None,

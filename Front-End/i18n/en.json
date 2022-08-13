@@ -88,7 +88,10 @@
     "cancel": "Cancel",
     "name": "Name",
     "description": "Description",
-    "no-short": "No."
+    "no-short": "No.",
+    "try": "Try",
+    "completed": "Completed",
+    "status": "Status"
   },
   "Meta": {
     "title-home": "Home",
