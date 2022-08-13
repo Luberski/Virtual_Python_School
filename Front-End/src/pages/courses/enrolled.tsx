@@ -55,10 +55,11 @@ export default function EnrolledCoursesPage() {
           {enrolledCourses && enrolledCourses.length > 0 ? (
             <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
               {enrolledCourses.map((enrolledCourse) => {
-                const lessonsCompletedPercentage =
+                const lessonsCompletedPercentage = Math.round(
                   (enrolledCourse.total_completed_lessons_count /
                     enrolledCourse.total_lessons_count) *
-                  100;
+                    100
+                );
                 return (
                   <FancyCard
                     key={enrolledCourse.id}
@@ -99,7 +100,9 @@ export default function EnrolledCoursesPage() {
                     shadowColor="shadow-black/25"
                     hoverShadowColor="hover:shadow-black/25"
                     bottomControls={
-                      <Link href={`/courses/${enrolledCourse.id}`} passHref={true}>
+                      <Link
+                        href={`/courses/${enrolledCourse.id}`}
+                        passHref={true}>
                         <IconButtonLink
                           className="w-fit"
                           variant={IconButtonLinkVariant.OUTLINE_PRIMARY}

@@ -50,10 +50,11 @@ export default function CoursePage() {
     );
   };
 
-  const lessonsCompletedPercentage =
+  const lessonsCompletedPercentage = Math.round(
     (enrolledCourse?.total_completed_lessons_count /
       enrolledCourse?.total_lessons_count) *
-    100;
+      100
+  );
 
   if (!user && !isLoggedIn) {
     return null;
