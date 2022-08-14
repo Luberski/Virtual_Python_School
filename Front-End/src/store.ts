@@ -12,7 +12,7 @@ import courseReducer from '@app/features/courses/courseSlice';
 import enrollCourseReducer from '@app/features/courses/enrollCourseSlice';
 import courseWithLessonsReducer from '@app/features/courses/courseWithLessonsSlice';
 import enrolledCourseWithLessonsReducer from '@app/features/courses/enrolledCourseWithLessonsSlice';
-import featuredCoursesReducer from '@app/features/courses/featuredCoursesSlice';
+import featuredCoursesReducer from '@app/features/courses/featured/featuredCoursesSlice';
 import enrolledCoursesReducer from '@app/features/courses/enrolledCoursesSlice';
 import lessonsReducer from '@app/features/lessons/lessonsSlice';
 import lessonReducer from '@app/features/lessons/lessonSlice';
