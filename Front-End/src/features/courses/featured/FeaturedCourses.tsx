@@ -18,7 +18,7 @@ export default function FeaturedCourses({
     // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {featuredCourses && featuredCourses.length > 0 ? (
-        <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
+        <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-4">
           {featuredCourses.map((course) => (
             <FancyCard
               key={course.id}

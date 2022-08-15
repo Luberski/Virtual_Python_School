@@ -19,7 +19,7 @@ import lessonReducer from '@app/features/lessons/lessonSlice';
 import answersReducer from '@app/features/lessons/answersSlice';
 import answerReducer from '@app/features/lessons/answerSlice';
 import enrollLessonReducer from '@app/features/lessons/enrollLessonSlice';
-import enrolledLessonReducer from '@app/features/lessons/enrolledLessonSlice';
+import enrolledLessonReducer from '@app/features/lessons/enrolled/enrolledLessonSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,

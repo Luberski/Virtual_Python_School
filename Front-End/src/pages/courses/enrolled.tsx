@@ -10,7 +10,7 @@ import {
 } from '@app/features/courses/enrolled/enrolledCoursesSlice';
 import { WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
-import EnrolledCourses from '@app/features/courses/enrolled/Enrolled';
+import EnrolledCourses from '@app/features/courses/enrolled/EnrolledCourses';
 
 export default function EnrolledCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -46,7 +46,7 @@ export default function EnrolledCoursesPage() {
             </h1>
           </div>
         </div>
-        <div className="container mx-auto px-12">
+        <div className="container mx-auto px-6">
           <EnrolledCourses enrolledCourses={enrolledCourses} translations={t} />
         </div>
         <Footer />

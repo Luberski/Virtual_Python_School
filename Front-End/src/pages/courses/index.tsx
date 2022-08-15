@@ -50,7 +50,7 @@ export default function CoursesPage() {
             </p>
           </div>
         </div>
-        <div className="container mx-auto px-12">
+        <div className="container mx-auto px-6">
           <Courses courses={courses} translations={t} />
         </div>
         <Toaster />

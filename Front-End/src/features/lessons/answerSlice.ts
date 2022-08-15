@@ -25,8 +25,8 @@ export const checkAnswer = createAsyncThunk(
       enrolledLessonId,
       answer,
     }: {
-      lessonId: string;
-      enrolledLessonId: string;
+      lessonId: number;
+      enrolledLessonId: number;
       answer: string;
     },
     thunkApi
