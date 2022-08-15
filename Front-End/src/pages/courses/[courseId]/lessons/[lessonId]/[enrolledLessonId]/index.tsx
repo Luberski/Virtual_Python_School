@@ -319,7 +319,12 @@ export const getServerSideProps = wrapper.getServerSideProps(
         lessonId: string;
         enrolledLessonId: string;
       };
-      await store.dispatch(fetchEnrolledLesson({ lessonId, enrolledLessonId }));
+      await store.dispatch(
+        fetchEnrolledLesson({
+          lessonId: Number(lessonId),
+          enrolledLessonId: Number(enrolledLessonId),
+        })
+      );
 
       return {
         props: {

@@ -122,8 +122,8 @@ export const editLesson = createAsyncThunk(
       numberOfAnswers,
       answer,
     }: {
-      courseId: string;
-      lessonId: string;
+      courseId: number;
+      lessonId: number;
       name?: string;
       description?: string;
       type?: number;

@@ -50,7 +50,7 @@ export default function ManageCoursesPage() {
     useState(false);
   const [isCourseDeleteDialogOpen, setIsCourseDeleteDialogOpen] =
     useState(false);
-  const [currentCourseId, setCurrentCourseId] = useState<string>(null);
+  const [currentCourseId, setCurrentCourseId] = useState<number>(null);
 
   const cancelButtonRef = useRef(null);
 
@@ -66,7 +66,7 @@ export default function ManageCoursesPage() {
     setIsCourseDeleteDialogOpen(false);
   };
 
-  const openCourseDeleteDialog = (courseId: string) => () => {
+  const openCourseDeleteDialog = (courseId: number) => () => {
     setCurrentCourseId(courseId);
     setIsCourseDeleteDialogOpen(true);
   };

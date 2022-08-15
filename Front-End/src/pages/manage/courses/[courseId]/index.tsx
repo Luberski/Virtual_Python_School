@@ -72,7 +72,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
   const [isLessonEditDialogOpen, setIsLessonEditDialogOpen] = useState(false);
   const [isLessonDeleteDialogOpen, setIsLessonDeleteDialogOpen] =
     useState(false);
-  const [currentLessonId, setCurrentLessonId] = useState<string>(null);
+  const [currentLessonId, setCurrentLessonId] = useState<number>(null);
 
   const cancelButtonRef = useRef(null);
 
@@ -97,7 +97,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
     setIsLessonEditDialogOpen(false);
   };
 
-  const openLessonEditDialog = (lessonId: string) => () => {
+  const openLessonEditDialog = (lessonId: number) => () => {
     setCurrentLessonId(lessonId);
     setIsLessonEditDialogOpen(true);
   };
@@ -106,7 +106,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
     setIsLessonDeleteDialogOpen(false);
   };
 
-  const openLessonDeleteDialog = (lessonId: string) => () => {
+  const openLessonDeleteDialog = (lessonId: number) => () => {
     setCurrentLessonId(lessonId);
     setIsLessonDeleteDialogOpen(true);
   };
@@ -180,7 +180,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
       try {
         dispatch(
           editLesson({
-            courseId,
+            courseId: Number(courseId),
             lessonId: currentLessonId,
             name,
             description,

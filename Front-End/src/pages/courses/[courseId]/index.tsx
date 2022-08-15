@@ -9,7 +9,7 @@ import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   fetchEnrolledCourseWithLessons,
   selectEnrolledCourseWithLessonsData,
-} from '@app/features/courses/enrolledCourseWithLessonsSlice';
+} from '@app/features/courses/enrolled/enrolledCourseWithLessonsSlice';
 import { wrapper } from '@app/store';
 import Button, { ButtonVariant } from '@app/components/Button';
 import {
