@@ -29,7 +29,7 @@ const IconButtonLink = forwardRef(function ButtonLink(
         sizeType,
         'hover:no-underline',
         className,
-        'flex items-center'
+        'flex w-fit items-center'
       )}>
       <div className="pr-1">{icon}</div>
       {children}

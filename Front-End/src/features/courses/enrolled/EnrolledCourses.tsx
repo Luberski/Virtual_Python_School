@@ -68,7 +68,6 @@ export default function EnrolledCourses({
                 bottomControls={
                   <Link href={`/courses/${enrolledCourse.id}`} passHref={true}>
                     <IconButtonLink
-                      className="w-fit"
                       variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
                       icon={<InformationCircleIcon className="h-5 w-5" />}>
                       {translations('Home.more')}
