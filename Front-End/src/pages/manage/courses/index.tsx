@@ -163,7 +163,7 @@ export default function ManageCoursesPage() {
         />
         <div className="container mx-auto px-4">
           <div className="container flex flex-col rounded-lg bg-white p-9 shadow dark:bg-neutral-800">
-            <h1 className="pb-4 text-indigo-900 dark:text-indigo-300">
+            <h1 className="pb-6 text-indigo-900 dark:text-indigo-300">
               {t('Manage.manage-courses')}
             </h1>
             <div className="flex items-center justify-between">

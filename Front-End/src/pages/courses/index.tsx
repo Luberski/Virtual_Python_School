@@ -40,7 +40,7 @@ export default function CoursesPage() {
             })
           }
         />
-        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-4">
+        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
           <div className="space-y-2">
             <h1 className="text-center text-indigo-900 dark:text-indigo-300">
               {t('Home.courses')}

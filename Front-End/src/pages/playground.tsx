@@ -68,7 +68,7 @@ export default function Playground() {
         />
         <div className="container mx-auto px-4">
           <div className="container my-6 flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow dark:bg-neutral-800">
-            <h1 className="pb-4 text-center text-indigo-900 dark:text-indigo-300">
+            <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
               {t('Playground.leading')}
             </h1>
             <div className="my-9 self-end">

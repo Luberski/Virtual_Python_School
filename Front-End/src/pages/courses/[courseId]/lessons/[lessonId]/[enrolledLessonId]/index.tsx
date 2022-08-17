@@ -178,7 +178,7 @@ export default function LessonPage({
           <div className="brand-shadow2 container my-6 flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
             {enrolledLesson ? (
               <>
-                <h1 className="pb-4 text-center text-indigo-900 dark:text-indigo-300">
+                <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
                   {t('Meta.title-lesson')}:&nbsp;{enrolledLesson.name}
                 </h1>
                 <div className="my-9 self-end">
