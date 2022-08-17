@@ -6,8 +6,14 @@ import { ButtonSize, ButtonVariant } from '@app/components/Button';
 export const IconButtonVariant = ButtonVariant;
 export const IconButtonSize = ButtonSize;
 
+export const IconPosition = {
+  LEFT: 'left',
+  RIGHT: 'right',
+};
+
 export type IconButtonProps = ButtonProps & {
   icon?: React.ReactNode;
+  iconPosition?: typeof IconPosition[keyof typeof IconPosition];
 };
 
 const IconButton = ({
@@ -17,6 +23,7 @@ const IconButton = ({
   sizeType = IconButtonSize.DEFAULT,
   disabled = false,
   type = 'button',
+  iconPosition = IconPosition.LEFT,
   icon,
   ...props
 }: IconButtonProps & React.HTMLProps<HTMLButtonElement>) => (
@@ -26,8 +33,17 @@ const IconButton = ({
     // eslint-disable-next-line react/button-has-type
     type={type}
     {...props}>
-    <div className="pr-1">{icon}</div>
-    {children}
+    {iconPosition === IconPosition.LEFT ? (
+      <>
+        <div className="pr-1">{icon}</div>
+        {children}
+      </>
+    ) : (
+      <>
+        {children}
+        <div className="pl-1">{icon}</div>
+      </>
+    )}
   </button>
 );
 
