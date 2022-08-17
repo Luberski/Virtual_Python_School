@@ -25,11 +25,11 @@ const IconButtonLink = forwardRef(function ButtonLink(
       {...props}
       className={clsx(
         'btn',
+        'hover:no-underline',
+        'flex w-fit items-center',
         variant,
         sizeType,
-        'hover:no-underline',
-        className,
-        'flex w-fit items-center'
+        className
       )}>
       <div className="pr-1">{icon}</div>
       {children}
