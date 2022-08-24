@@ -1,4 +1,4 @@
-import { InformationCircleIcon } from '@heroicons/react/outline';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import toast from 'react-hot-toast';
 

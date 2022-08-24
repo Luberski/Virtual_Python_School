@@ -38,7 +38,6 @@ export const fetchLessons = createAsyncThunk(
   }
 );
 
-// TODO: handle errors
 export const deleteLesson = createAsyncThunk(
   'api/lessons/delete',
   async (id: string | number, thunkApi) => {
@@ -60,7 +59,6 @@ export const deleteLesson = createAsyncThunk(
   }
 );
 
-// TODO: handle errors
 export const createLesson = createAsyncThunk(
   'api/lessons/create',
   async (

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { InformationCircleIcon } from '@heroicons/react/solid';
+import { InformationCircleIcon } from '@heroicons/react/20/solid';
 import FancyCard from '@app/components/FancyCard';
 import IconButtonLink, {
   IconButtonLinkVariant,

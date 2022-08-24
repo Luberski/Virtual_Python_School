@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { AcademicCapIcon, BadgeCheckIcon } from '@heroicons/react/solid';
+import { AcademicCapIcon, CheckBadgeIcon } from '@heroicons/react/20/solid';
 import NavBar from '@app/components/NavBar';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
@@ -83,7 +83,7 @@ export default function CoursePage() {
             <div className="flex space-x-8">
               <div className="brand-shadow flex w-96 flex-col space-y-2 rounded-lg bg-indigo-50 p-9 text-indigo-900 shadow-indigo-900/25 dark:bg-indigo-400/25 dark:text-indigo-300">
                 <div className="flex items-center">
-                  <BadgeCheckIcon className="mr-2 h-9 w-9" />
+                  <CheckBadgeIcon className="mr-2 h-9 w-9" />
                   <h3 className="text-indigo-900 dark:text-indigo-300">
                     Overview
                   </h3>

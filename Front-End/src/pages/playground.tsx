@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import { useTranslations } from 'use-intl';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import { PlayIcon } from '@heroicons/react/solid';
+import { PlayIcon } from '@heroicons/react/20/solid';
 import debounce from 'debounce';
 import { useDispatch } from 'react-redux';
 import NavBar from '@app/components/NavBar';

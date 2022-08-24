@@ -5,8 +5,12 @@ import {
   AcademicCapIcon,
   ExclamationCircleIcon,
   InformationCircleIcon,
-} from '@heroicons/react/outline';
-import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/solid';
+} from '@heroicons/react/24/outline';
+import {
+  PencilIcon,
+  PlusCircleIcon,
+  TrashIcon,
+} from '@heroicons/react/20/solid';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import Head from 'next/head';

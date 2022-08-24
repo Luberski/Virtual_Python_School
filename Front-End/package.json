@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.6.6",
-    "@heroicons/react": "^1.0.6",
+    "@heroicons/react": "^2.0.4",
     "@monaco-editor/react": "^4.4.5",
     "@reduxjs/toolkit": "^1.8.3",
     "clsx": "^1.2.1",

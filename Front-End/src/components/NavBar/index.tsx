@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import { LogoutIcon } from '@heroicons/react/outline';
+import { ArrowRightOnRectangleIcon } from '@heroicons/react/20/solid';
 import { Fragment } from 'react';
 import IconButton, {
   IconButtonSize,
@@ -141,7 +141,9 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                                   sizeType={IconButtonSize.EXTRA_LARGE}
                                   onClick={logout}
                                   variant={IconButtonVariant.FLAT_DANGER}
-                                  icon={<LogoutIcon className="h-5 w-5" />}>
+                                  icon={
+                                    <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                                  }>
                                   {t('Auth.logout')}
                                 </IconButton>
                               </Menu.Item>
@@ -245,7 +247,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                       type="button"
                       onClick={logout}
                       variant={IconButtonVariant.FLAT_DANGER}
-                      icon={<LogoutIcon className="h-5 w-5" />}>
+                      icon={<ArrowRightOnRectangleIcon className="h-5 w-5" />}>
                       {t('Auth.logout')}
                     </IconButton>
                   </div>

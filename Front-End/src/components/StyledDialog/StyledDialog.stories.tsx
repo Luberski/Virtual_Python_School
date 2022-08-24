@@ -1,6 +1,6 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import { useState } from 'react';
-import { AcademicCapIcon } from '@heroicons/react/outline';
+import { AcademicCapIcon } from '@heroicons/react/20/solid';
 import StyledDialog from '.';
 import Button from '@app/components/Button';
 

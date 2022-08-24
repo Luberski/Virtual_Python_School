@@ -3,7 +3,7 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { BadgeCheckIcon, CheckCircleIcon } from '@heroicons/react/solid';
+import { CheckBadgeIcon, CheckCircleIcon } from '@heroicons/react/20/solid';
 import FancyCard from '@app/components/FancyCard';
 import { enrollCourse } from '@app/features/courses/enrollCourseSlice';
 import FancyToast from '@app/components/FancyToast';
@@ -86,7 +86,7 @@ export default function Courses({ courses, translations }: CoursesProps) {
                     <IconButtonLink
                       className="w-fit"
                       variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
-                      icon={<BadgeCheckIcon className="h-5 w-5" />}>
+                      icon={<CheckBadgeIcon className="h-5 w-5" />}>
                       {translations('Courses.enrolled')}
                     </IconButtonLink>
                   </Link>

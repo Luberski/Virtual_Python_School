@@ -2,11 +2,16 @@ import { Fragment, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import {
+  PencilIcon as PencilIconOutline,
   AcademicCapIcon,
   ExclamationCircleIcon,
   InformationCircleIcon,
-} from '@heroicons/react/outline';
-import { PencilIcon, PlusCircleIcon, TrashIcon } from '@heroicons/react/solid';
+} from '@heroicons/react/24/outline';
+import {
+  PencilIcon,
+  PlusCircleIcon,
+  TrashIcon,
+} from '@heroicons/react/20/solid';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
@@ -407,7 +412,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
               isOpen={isCourseEditDialogOpen}
               icon={
                 <div className="h-fit rounded-lg bg-indigo-100 p-2">
-                  <PencilIcon className="h-6 w-6 text-indigo-900" />
+                  <PencilIconOutline className="h-6 w-6 text-indigo-900" />
                 </div>
               }
               onClose={() =>
@@ -468,7 +473,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
               isOpen={isLessonEditDialogOpen}
               icon={
                 <div className="h-fit rounded-lg bg-indigo-100 p-2">
-                  <PencilIcon className="h-6 w-6 text-indigo-900" />
+                  <PencilIconOutline className="h-6 w-6 text-indigo-900" />
                 </div>
               }
               onClose={() =>

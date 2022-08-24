@@ -1,4 +1,4 @@
-import { PlusCircleIcon } from '@heroicons/react/solid';
+import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import { render, screen } from '@testing-library/react';
 import IconButton, { IconButtonVariant } from '.';
 

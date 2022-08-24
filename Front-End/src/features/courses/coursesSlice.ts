@@ -48,7 +48,6 @@ export const fetchCourses = createAsyncThunk(
   }
 );
 
-// TODO: handle errors
 export const deleteCourse = createAsyncThunk(
   'api/courses/delete',
   async (id: string | number, thunkApi) => {

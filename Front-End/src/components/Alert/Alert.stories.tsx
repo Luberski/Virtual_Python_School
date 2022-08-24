@@ -1,4 +1,4 @@
-import { InformationCircleIcon } from '@heroicons/react/outline';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import Alert from '.';
 

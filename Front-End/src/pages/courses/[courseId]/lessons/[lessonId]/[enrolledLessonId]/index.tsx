@@ -4,11 +4,10 @@ import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
-import { CheckIcon } from '@heroicons/react/outline';
 import ConfettiExplosion from 'react-confetti-explosion';
 import debounce from 'debounce';
 import { useDispatch } from 'react-redux';
-import { PlayIcon } from '@heroicons/react/solid';
+import { PlayIcon, CheckIcon } from '@heroicons/react/20/solid';
 import NavBar from '@app/components/NavBar';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {

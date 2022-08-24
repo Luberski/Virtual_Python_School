@@ -49,12 +49,7 @@ export default function IndexPage() {
           </div>
         </div>
         <div className="container mx-auto px-6">
-          <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-4">
-            <FeaturedCourses
-              featuredCourses={featuredCourses}
-              translations={t}
-            />
-          </div>
+          <FeaturedCourses featuredCourses={featuredCourses} translations={t} />
         </div>
         <div className="my-16 flex items-center justify-center">
           <Image
