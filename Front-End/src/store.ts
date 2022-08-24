@@ -20,6 +20,8 @@ import answersReducer from '@app/features/lessons/answersSlice';
 import answerReducer from '@app/features/lessons/answerSlice';
 import enrollLessonReducer from '@app/features/lessons/enrollLessonSlice';
 import enrolledLessonReducer from '@app/features/lessons/enrolled/enrolledLessonSlice';
+import surveyReducer from '@app/features/dynamic-courses/surveySlice';
+import surveyResultsReducer from '@app/features/dynamic-courses/surveyResultsSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -37,6 +39,8 @@ const combinedReducers = combineReducers({
   answer: answerReducer,
   enrollLesson: enrollLessonReducer,
   enrolledLesson: enrolledLessonReducer,
+  survey: surveyReducer,
+  surveyResults: surveyResultsReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -76,4 +80,6 @@ export type RootState = {
   answer: ReturnType<typeof answerReducer>;
   enrollLesson: ReturnType<typeof enrollLessonReducer>;
   enrolledLesson: ReturnType<typeof enrolledLessonReducer>;
+  survey: ReturnType<typeof surveyReducer>;
+  surveyResults: ReturnType<typeof surveyResultsReducer>;
 };

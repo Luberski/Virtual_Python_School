@@ -93,6 +93,10 @@
     "completed": "Ukończone",
     "status": "Status"
   },
+  "DynamicCourse": {
+    "leading": "Anikieta kursu dynamicznego",
+    "alert-info": "W skali od 0-3 (nic, trochę, dobrze, świetnie), odpowiedz na pytania, które będą określać twoją wiedzę w języku programowania."
+  },
   "Meta": {
     "title-home": "Strona główna",
     "title-courses": "Kursy",
@@ -102,6 +106,7 @@
     "title-login": "Logowanie",
     "title-register": "Rejestracja",
     "title-course": "Kurs",
-    "title-lesson": "Lekcja"
+    "title-lesson": "Lekcja",
+    "title-dynamic-course": "Dynamiczny kurs"
   }
 }
