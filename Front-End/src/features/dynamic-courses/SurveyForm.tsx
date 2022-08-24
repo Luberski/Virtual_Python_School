@@ -10,6 +10,7 @@ type SurveyFormProps = {
 };
 
 export default function SurveyForm({ survey }: SurveyFormProps) {
+  // TODO: determine steps based on survey questions
   const STEPS = 2;
   const [formStep, setFormStep] = useState(0);
 
