@@ -15,6 +15,12 @@ from app.models import (
     Lessons,
     Answers,
     EnrolledLessons,
+    DynamicCourseSurvey,
+    DynamicCourseSurveyQuestions,
+    DynamicCourseSurveyAnswers,
+    DynamicCourseSurveyUserResults,
+    DynamicCourses,
+    DynamicLessons,
 )
 
 # this is the Alembic Config object, which provides

@@ -81,3 +81,52 @@ class Roles(Base):
     id = Column(Integer, primary_key=True)
     role_name = Column(String(100), unique=True)
     user = relationship("User")
+
+
+class DynamicCourseSurveyUserResults(Base):
+    __tablename__ = "dynamic_course_survey_user_results"
+    id = Column(Integer, primary_key=True)
+    survey_id = Column(Integer, ForeignKey("dynamic_course_survey.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    question_id = Column(Integer, ForeignKey("dynamic_course_survey_questions.id"))
+    answer_id = Column(Integer, ForeignKey("dynamic_course_survey_answers.id"))
+    survey = relationship("DynamicCourseSurvey")
+
+
+class DynamicCourseSurveyAnswers(Base):
+    __tablename__ = "dynamic_course_survey_answers"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    question_id = Column(Integer, ForeignKey("dynamic_course_survey_questions.id"))
+    rule_type = Column(Integer)
+    rule_value = Column(Integer)
+
+
+class DynamicCourseSurveyQuestions(Base):
+    __tablename__ = "dynamic_course_survey_questions"
+    id = Column(Integer, primary_key=True)
+    survey_id = Column(Integer, ForeignKey("dynamic_course_survey.id"))
+    question = Column(String(500))
+    answers = relationship("DynamicCourseSurveyAnswers")
+
+
+class DynamicCourseSurvey(Base):
+    __tablename__ = "dynamic_course_survey"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    questions = relationship("DynamicCourseSurveyQuestions")
+
+
+class DynamicLessons(Base):
+    __tablename__ = "dynamic_lessons"
+    id = Column(Integer, primary_key=True)
+    dynamic_course_id = Column(Integer, ForeignKey("dynamic_courses.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+
+
+class DynamicCourses(Base):
+    __tablename__ = "dynamic_courses"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    dynamic_lessons = relationship("DynamicLessons", lazy="dynamic")

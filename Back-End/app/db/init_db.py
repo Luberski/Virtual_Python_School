@@ -10,6 +10,12 @@ from app.models import (
     Lessons,
     Answers,
     EnrolledLessons,
+    DynamicCourseSurvey,
+    DynamicCourseSurveyQuestions,
+    DynamicCourseSurveyAnswers,
+    DynamicCourseSurveyUserResults,
+    DynamicCourses,
+    DynamicLessons,
 )
 
 
