@@ -94,8 +94,13 @@
     "status": "Status"
   },
   "DynamicCourse": {
-    "leading": "Anikieta kursu dynamicznego",
-    "alert-info": "W skali od 0-3 (nic, trochę, dobrze, świetnie), odpowiedz na pytania, które będą określać twoją wiedzę w języku programowania."
+    "leading": "Ankieta kursu dynamicznego",
+    "course-name": "Mój kurs dynamiczny"
+  },
+  "Survey": {
+    "alert-first-step": "W skali od 0-3 (nic, trochę, dobrze, świetnie), odpowiedz na pytania, które będą określać twoją wiedzę w języku programowania.",
+    "alert-last-step": "Na podstawie Twojej ankiety stwierdziliśmy, że te lekcje są dla Ciebie najlepsze.",
+    "not-found": "Nie znaleziono ankiety"
   },
   "Meta": {
     "title-home": "Strona główna",

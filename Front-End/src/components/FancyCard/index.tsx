@@ -1,8 +1,8 @@
 import type React from 'react';
 
 type FancyCardProps = {
-  title: string;
-  description: string | React.ReactNode;
+  title: React.ReactNode;
+  description: React.ReactNode;
   cardColor?: string;
   darkCardColor?: string;
   shadowColor?: string;
@@ -25,9 +25,7 @@ export default function FancyCard({
       <p title={title} className="break-words text-2xl font-bold">
         {title}
       </p>
-      <p className="truncate break-words">
-        {description}
-      </p>
+      <p className="truncate break-words">{description}</p>
       <div className="mt-6">{bottomControls}</div>
     </div>
   );

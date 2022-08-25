@@ -1,38 +1,29 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
-import type { SurveyResults } from '@app/models/SurveyResults';
+import type DynamicCourse from '@app/models/DynamicCourse';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
 import type { ApiPayload } from '@app/models/ApiPayload';
 
-export type SurveyResultsState = {
-  data: SurveyResults;
+export type DynamicCourseState = {
+  data: DynamicCourse;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
 
-const initialState: SurveyResultsState = {
+const initialState: DynamicCourseState = {
   data: null,
   status: 'idle',
   error: null,
 };
 
-export const sendSurveyResults = createAsyncThunk(
-  'api/dynamic-courses/surveys/results',
-  async (surveyResults: SurveyResults, thunkApi) => {
+export const fetchDynamicCourse = createAsyncThunk(
+  'api/dynamic-courses/id',
+  async (id: number, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys/user/answers', {
-        json: {
-          data: {
-            survey_id: surveyResults.surveyId,
-            survey_results: surveyResults.surveyResults.map((result) => ({
-              question_id: result.questionId,
-              answer_id: result.answerId,
-            })),
-          },
-        },
+      const res = await apiClient.get(`dynamic-courses/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -47,23 +38,25 @@ export const sendSurveyResults = createAsyncThunk(
   }
 );
 
-export const surveyResultsSlice = createSlice({
-  name: 'surveyResults',
+export const dynamicCourseSlice = createSlice({
+  name: 'dynamicCourse',
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return Object.assign({}, state, { ...action.payload.surveyResults });
+        return Object.assign({}, state, {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          ...action.payload.dynamicCourse,
+        });
       })
 
-      .addCase(sendSurveyResults.pending, (state) => {
+      .addCase(fetchDynamicCourse.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        sendSurveyResults.fulfilled,
+        fetchDynamicCourse.fulfilled,
         (
           state,
           { payload: { data, error } }: { payload: ApiPayload | any }
@@ -79,18 +72,18 @@ export const surveyResultsSlice = createSlice({
           }
         }
       )
-      .addCase(sendSurveyResults.rejected, (state, action) => {
+      .addCase(fetchDynamicCourse.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
   },
 });
 
-export const selectSurveyResultsData = (state: RootState) =>
-  state.surveyResults.data;
-export const selectSurveyResultsError = (state: RootState) =>
-  state.surveyResults.error;
-export const selectSurveyResultsStatus = (state: RootState) =>
-  state.surveyResults.status;
+export const selectDynamicCourseData = (state: RootState) =>
+  state.dynamicCourse.data;
+export const selectDynamicCourseError = (state: RootState) =>
+  state.dynamicCourse.error;
+export const selectDynamicCourseStatus = (state: RootState) =>
+  state.dynamicCourse.status;
 
-export default surveyResultsSlice.reducer;
+export default dynamicCourseSlice.reducer;

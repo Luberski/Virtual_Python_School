@@ -1,15 +1,21 @@
 import { useState } from 'react';
+import {
+  InformationCircleIcon,
+  LightBulbIcon,
+} from '@heroicons/react/24/outline';
 import SurveyFormStep from './SurveyFormStep';
 import SurveyFormCard from './SurveyFormCard';
 import SurveyFormCompleted from './SurveyFormCompleted';
-import type { Survey } from '@app/models/Survey';
-import type { SurveyResults } from '@app/models/SurveyResults';
+import type Survey from '@app/models/Survey';
+import type SurveyResults from '@app/models/SurveyResults';
+import Alert from '@app/components/Alert';
 
 type SurveyFormProps = {
   survey: Survey;
+  translations: (key: string) => string;
 };
 
-export default function SurveyForm({ survey }: SurveyFormProps) {
+export default function SurveyForm({ survey, translations }: SurveyFormProps) {
   // TODO: determine steps based on survey questions
   const STEPS = 2;
   const [formStep, setFormStep] = useState(0);
@@ -31,7 +37,22 @@ export default function SurveyForm({ survey }: SurveyFormProps) {
   });
 
   return (
-    <div className="my-6">
+    <div className="my-6 flex flex-col items-center justify-center space-y-6">
+      {formStep > STEPS - 1 ? (
+        <Alert>
+          <LightBulbIcon className="mr-2 h-6 w-6" />
+          <p className="w-fit max-w-sm">
+            {translations('Survey.alert-last-step')}
+          </p>
+        </Alert>
+      ) : (
+        <Alert>
+          <InformationCircleIcon className="mr-2 h-6 w-6" />
+          <p className="w-fit max-w-sm">
+            {translations('Survey.alert-first-step')}
+          </p>
+        </Alert>
+      )}
       <SurveyFormCard currentStep={formStep} steps={STEPS}>
         {/* // TODO: use map */}
         {formStep >= 0 && (
@@ -59,7 +80,9 @@ export default function SurveyForm({ survey }: SurveyFormProps) {
           />
         )}
 
-        {formStep > STEPS - 1 && <SurveyFormCompleted />}
+        {formStep > STEPS - 1 && (
+          <SurveyFormCompleted survey={survey} translations={translations} />
+        )}
       </SurveyFormCard>
     </div>
   );

@@ -224,7 +224,7 @@ def create_dynamic_course_survey_answer(
         )
 
     # if rule_type and rule_value is 0, then skip lesson for this question
-    # if rule_type and rule_value is 1, select lesson_id for this question
+    # if rule_type is 1, then rule_value is lesson_id for this question
     if request_data.data.rule_type == 0:
         rule_type = 0
         rule_value = 0
@@ -353,7 +353,6 @@ def create_dynamic_course_survey_user_results(
 )
 def get_dynamic_course_survey_user_results(
     survey_id: int = Path(title="id of the survey"),
-    populate: Union[bool, None] = Query(default=False),
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
 ):
@@ -387,37 +386,7 @@ def get_dynamic_course_survey_user_results(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "Survey results not found"},
         )
-    # TODO:  delete maybe?
-    # if populate:
-    #     return JSONResponse(
-    #         status_code=status.HTTP_200_OK,
-    #         content={
-    #             "data": [
-    #                 {
-    #                     "id": result.id,
-    #                     "survey": {
-    #                         "id": result.survey.id,
-    #                         "name": result.survey.name,
-    #                         "questions": [
-    #                             {
-    #                                 "id": survey_question.id,
-    #                                 "question": survey_question.question,
-    #                                 "answers": [
-    #                                     {
-    #                                         "id": survey_answer.id,
-    #                                         "name": survey_answer.name,
-    #                                     }
-    #                                     for survey_answer in survey_question.answers
-    #                                 ],
-    #                             }
-    #                             for survey_question in result.survey.questions
-    #                         ],
-    #                     },
-    #                 }
-    #             ]
-    #             for result in survey_results
-    #         },
-    #     )
+
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
@@ -493,26 +462,70 @@ def create_dynamic_course_from_survey_user_results(
                     status_code=status.HTTP_404_NOT_FOUND,
                     content={"error": "Lesson for answer_id not found"},
                 )
-            lessons_list.append(lesson)
-            lessons_found = True
+            if lesson not in lessons_list:
+                lessons_list.append(lesson)
+                lessons_found = True
     if lessons_found:
-        dynamic_course = models.DynamicCourses(
+        new_dynamic_course = models.DynamicCourses(
             name=request_data.data.name,
             user_id=user.id,
         )
-        db.add(dynamic_course)
+        db.add(new_dynamic_course)
         db.commit()
         for lesson in lessons_list:
-            dynamic_lesson = models.DynamicLessons(
-                dynamic_course_id=dynamic_course.id,
+            new_dynamic_lesson = models.DynamicLessons(
+                dynamic_course_id=new_dynamic_course.id,
                 lesson_id=lesson.id,
             )
-            db.add(dynamic_lesson)
+            db.add(new_dynamic_lesson)
             db.commit()
+
+        dynamic_course = (
+            db.query(models.DynamicCourses)
+            .filter_by(id=new_dynamic_course.id, user_id=user.id)
+            .first()
+        )
+        dynamic_lessons = (
+            db.query(models.DynamicLessons)
+            .filter_by(dynamic_course_id=dynamic_course.id)
+            .join(models.Lessons, models.DynamicLessons.lesson_id == models.Lessons.id)
+            .add_columns(
+                models.DynamicLessons.id,
+                models.DynamicLessons.dynamic_course_id,
+                models.Lessons.id.label("lesson_id"),
+                models.Lessons.name.label("lesson_name"),
+                models.Lessons.description.label("lesson_description"),
+                models.Lessons.type.label("lesson_type"),
+                models.Lessons.number_of_answers.label("lesson_number_of_answers"),
+            )
+            .group_by(models.DynamicLessons.id)
+            .all()
+        )
+        if dynamic_lessons is None:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Dynamic lessons not found"},
+            )
 
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={"data": {"id": dynamic_course.id, "name": dynamic_course.name}},
+            content={
+                "data": {
+                    "id": dynamic_course.id,
+                    "name": dynamic_course.name,
+                    "lessons": [
+                        {
+                            "id": dynamic_lesson.id,
+                            "lesson_id": dynamic_lesson.lesson_id,
+                            "name": dynamic_lesson.lesson_name,
+                            "description": dynamic_lesson.lesson_description,
+                            "type": dynamic_lesson.lesson_type,
+                            "number_of_answers": dynamic_lesson.lesson_number_of_answers,
+                        }
+                        for dynamic_lesson in dynamic_lessons
+                    ],
+                },
+            },
         )
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
@@ -631,5 +644,116 @@ def get_all_dynamic_courses(
                 }
                 for dynamic_course in dynamic_courses
             ]
+        },
+    )
+
+
+@router.get(
+    "/dynamic-courses/{dynamic_course_id}",
+    tags=["dynamic-courses"],
+)
+def get_dynamic_course_by_id(
+    dynamic_course_id: int = Path(title="id of the dynamic course"),
+    populate: Union[bool, None] = Query(default=False),
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
+
+    if populate:
+        dynamic_course = (
+            db.query(models.DynamicCourses)
+            .filter_by(id=dynamic_course_id, user_id=user.id)
+            .first()
+        )
+        if dynamic_course is None:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Dynamic course not found"},
+            )
+        dynamic_lessons = (
+            db.query(models.DynamicLessons)
+            .filter_by(dynamic_course_id=dynamic_course.id)
+            .join(models.Lessons, models.DynamicLessons.lesson_id == models.Lessons.id)
+            .add_columns(
+                models.DynamicLessons.id,
+                models.DynamicLessons.dynamic_course_id,
+                models.Lessons.id.label("lesson_id"),
+                models.Lessons.name.label("lesson_name"),
+                models.Lessons.description.label("lesson_description"),
+                models.Lessons.type.label("lesson_type"),
+                models.Lessons.number_of_answers.label("lesson_number_of_answers"),
+            )
+            .group_by(models.DynamicLessons.id)
+            .all()
+        )
+        if dynamic_lessons is None:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Dynamic lessons not found"},
+            )
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "data": {
+                    "id": dynamic_course.id,
+                    "name": dynamic_course.name,
+                    "lessons": [
+                        {
+                            "id": dynamic_lesson.id,
+                            "lesson_id": dynamic_lesson.lesson_id,
+                            "name": dynamic_lesson.lesson_name,
+                            "description": dynamic_lesson.lesson_description,
+                            "type": dynamic_lesson.lesson_type,
+                            "number_of_answers": dynamic_lesson.lesson_number_of_answers,
+                        }
+                        for dynamic_lesson in dynamic_lessons
+                    ],
+                },
+            },
+        )
+
+    dynamic_course = (
+        db.query(models.DynamicCourses)
+        .filter_by(id=dynamic_course_id, user_id=user.id)
+        .first()
+    )
+    if dynamic_course is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Dynamic course not found"},
+        )
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": {
+                "id": dynamic_course.id,
+                "name": dynamic_course.name,
+                "lessons": [
+                    {
+                        "id": dynamic_lesson.id,
+                        "lesson_id": dynamic_lesson.lesson_id,
+                    }
+                    for dynamic_lesson in dynamic_course.dynamic_lessons
+                ],
+            }
         },
     )

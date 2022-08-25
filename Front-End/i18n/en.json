@@ -95,7 +95,12 @@
   },
   "DynamicCourse": {
     "leading": "Dynamic Course Survey",
-    "alert-info": "On a scale of 0-3 (nothing, something, good, great), answer the questions that will determine your level of programminglanguage knowledge."
+    "course-name": "My Dynamic Course"
+  },
+  "Survey": {
+    "alert-first-step": "On a scale of 0-3 (nothing, something, good, great), answer the questions that will determine your level of programming language knowledge.",
+    "alert-last-step": "Based on your survey we found that these lessons are the best for you.",
+    "not-found": "Survey not found"
   },
   "Meta": {
     "title-home": "Home",

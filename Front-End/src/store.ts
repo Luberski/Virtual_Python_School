@@ -20,8 +20,10 @@ import answersReducer from '@app/features/lessons/answersSlice';
 import answerReducer from '@app/features/lessons/answerSlice';
 import enrollLessonReducer from '@app/features/lessons/enrollLessonSlice';
 import enrolledLessonReducer from '@app/features/lessons/enrolled/enrolledLessonSlice';
-import surveyReducer from '@app/features/dynamic-courses/surveySlice';
-import surveyResultsReducer from '@app/features/dynamic-courses/surveyResultsSlice';
+import surveyReducer from '@app/features/dynamic-courses/survey/surveySlice';
+import surveyResultsReducer from '@app/features/dynamic-courses/survey/surveyResultsSlice';
+import enrollDynamicCourseReducer from '@app/features/dynamic-courses/enrollDynamicCourseSlice';
+import dynamicCourseReducer from '@app/features/dynamic-courses/dynamicCourseSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -41,6 +43,8 @@ const combinedReducers = combineReducers({
   enrolledLesson: enrolledLessonReducer,
   survey: surveyReducer,
   surveyResults: surveyResultsReducer,
+  enrollDynamicCourse: enrollDynamicCourseReducer,
+  dynamicCourse: dynamicCourseReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -82,4 +86,6 @@ export type RootState = {
   enrolledLesson: ReturnType<typeof enrolledLessonReducer>;
   survey: ReturnType<typeof surveyReducer>;
   surveyResults: ReturnType<typeof surveyResultsReducer>;
+  enrollDynamicCourse: ReturnType<typeof enrollDynamicCourseReducer>;
+  dynamicCourse: ReturnType<typeof dynamicCourseReducer>;
 };

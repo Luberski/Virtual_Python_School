@@ -11,8 +11,8 @@ import IconButton, {
   IconButtonVariant,
   IconPosition,
 } from '@app/components/IconButton';
-import type { SurveyQuestion } from '@app/models/SurveyQuestion';
-import type { SurveyResults } from '@app/models/SurveyResults';
+import type SurveyQuestion from '@app/models/SurveyQuestion';
+import type SurveyResults from '@app/models/SurveyResults';
 
 type DynamicCourseFormStepProps = {
   currentStep: number;

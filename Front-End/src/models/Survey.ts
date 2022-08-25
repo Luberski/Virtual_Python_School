@@ -1,7 +1,9 @@
-import type { SurveyQuestion } from './SurveyQuestion';
+import type SurveyQuestion from './SurveyQuestion';
 
-export type Survey = {
+type Survey = {
   id: number;
   name: string;
   questions: SurveyQuestion[];
 };
+
+export default Survey;
