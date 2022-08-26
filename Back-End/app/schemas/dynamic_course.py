@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from app.schemas.base import BaseJSONRequest, BaseJSONResponse
 
@@ -55,6 +56,7 @@ class DynamicCourseSurveyCreateResponse(BaseJSONResponse):
 
 class DynamicCourseSurveyCreateRequestData(BaseModel):
     name: str
+    featured: Optional[bool] = False
 
 
 class DynamicCourseSurveyCreateRequest(BaseJSONRequest):

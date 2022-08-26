@@ -37,6 +37,26 @@ export const fetchSurvey = createAsyncThunk(
   }
 );
 
+export const fetchFeaturedSurvey = createAsyncThunk(
+  'api/dynamic-courses/surveys/featured',
+  async (_: void, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.get(`dynamic-courses/survey/featured`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 export const surveySlice = createSlice({
   name: 'survey',
   initialState,
@@ -69,6 +89,30 @@ export const surveySlice = createSlice({
         }
       )
       .addCase(fetchSurvey.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(fetchFeaturedSurvey.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        fetchFeaturedSurvey.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(fetchFeaturedSurvey.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

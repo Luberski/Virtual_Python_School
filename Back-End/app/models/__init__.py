@@ -115,6 +115,7 @@ class DynamicCourseSurvey(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     questions = relationship("DynamicCourseSurveyQuestions")
+    featured = Column(Boolean, default=False, nullable=False)
 
 
 class DynamicLessons(Base):

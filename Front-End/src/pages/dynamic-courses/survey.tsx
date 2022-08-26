@@ -7,7 +7,7 @@ import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import { wrapper } from '@app/store';
 import SurveyForm from '@app/features/dynamic-courses/survey/SurveyForm';
 import {
-  fetchSurvey,
+  fetchFeaturedSurvey,
   selectSurveyData,
 } from '@app/features/dynamic-courses/survey/surveySlice';
 
@@ -61,8 +61,7 @@ export default function SurveyPage() {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale }) => {
-      // TODO: get survey id from query params
-      await store.dispatch(fetchSurvey(1));
+      await store.dispatch(fetchFeaturedSurvey());
       return {
         props: {
           i18n: Object.assign({}, await import(`../../../i18n/${locale}.json`)),

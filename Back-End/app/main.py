@@ -18,7 +18,8 @@ from .routers import courses
 from .routers import answers
 from .routers import lessons
 from .routers import playground
-from .routers import dynamic_course
+from .routers.dynamic_course import dynamic_course
+from .routers.dynamic_course import survey
 
 token_expires = datetime.timedelta(days=30)
 
@@ -67,6 +68,10 @@ def get_application() -> FastAPI:
     )
     application.include_router(
         dynamic_course.router,
+        prefix=settings.API_PREFIX,
+    )
+    application.include_router(
+        survey.router,
         prefix=settings.API_PREFIX,
     )
     return application
