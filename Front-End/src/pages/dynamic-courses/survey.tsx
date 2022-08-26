@@ -43,7 +43,7 @@ export default function SurveyPage() {
           {survey ? (
             <>
               <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
-                {t('DynamicCourse.leading')}
+                {t('Survey.leading')}
               </h1>
               <SurveyForm survey={survey} translations={t} />
             </>

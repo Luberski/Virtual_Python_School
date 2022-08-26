@@ -78,6 +78,8 @@
   "Manage": {
     "manage": "Manage",
     "manage-courses": "Manage courses",
+    "manage-dynamic-courses": "Manage dynamic courses",
+    "manage-surveys": "Manage surveys",
     "manage-lessons": "Manage lessons",
     "edit": "Edit",
     "delete": "Delete",
@@ -94,13 +96,19 @@
     "status": "Status"
   },
   "DynamicCourse": {
-    "leading": "Dynamic Course Survey",
-    "course-name": "My Dynamic Course"
+    "leading": "Dynamic Course",
+    "course-name": "My Dynamic Course",
+    "list-of-dynamic-courses": "List of dynamic courses"
   },
   "Survey": {
+    "leading": "Dynamic Course Survey",
     "alert-first-step": "On a scale of 0-3 (nothing, something, good, great), answer the questions that will determine your level of programming language knowledge.",
     "alert-last-step": "Based on your survey we found that these lessons are the best for you.",
-    "not-found": "Survey not found"
+    "not-found": "Survey not found",
+    "list-of-surveys": "List of surveys"
+  },
+  "Form": {
+    "step-of": "Step {currentStep} of {steps}"
   },
   "Meta": {
     "title-home": "Home",

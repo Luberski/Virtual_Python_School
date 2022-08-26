@@ -53,7 +53,10 @@ export default function SurveyForm({ survey, translations }: SurveyFormProps) {
           </p>
         </Alert>
       )}
-      <SurveyFormCard currentStep={formStep} steps={STEPS}>
+      <SurveyFormCard
+        currentStep={formStep}
+        steps={STEPS}
+        translations={translations}>
         {/* // TODO: use map */}
         {formStep >= 0 && (
           <SurveyFormStep

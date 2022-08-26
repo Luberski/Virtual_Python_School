@@ -14,7 +14,7 @@ import IconButton, {
 import type SurveyQuestion from '@app/models/SurveyQuestion';
 import type SurveyResults from '@app/models/SurveyResults';
 
-type DynamicCourseFormStepProps = {
+type SurveyFormStepProps = {
   currentStep: number;
   formStep: number;
   steps: number;
@@ -34,7 +34,7 @@ export default function SurveyFormStep({
   steps,
   surveyResults,
   setSurveyResults,
-}: DynamicCourseFormStepProps) {
+}: SurveyFormStepProps) {
   const dispatch = useDispatch();
 
   const onNextStepSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

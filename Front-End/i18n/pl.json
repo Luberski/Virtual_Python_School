@@ -78,6 +78,8 @@
   "Manage": {
     "manage": "Zarządzaj",
     "manage-courses": "Zarządzaj kursami",
+    "manage-dynamic-courses": "Zarządzaj dynamicznymi kursami",
+    "manage-surveys": "Zarządzaj ankietami",
     "manage-lessons": "Zarządzaj lekcjami",
     "edit": "Edytuj",
     "delete": "Usuń",
@@ -94,13 +96,19 @@
     "status": "Status"
   },
   "DynamicCourse": {
-    "leading": "Ankieta kursu dynamicznego",
-    "course-name": "Mój kurs dynamiczny"
+    "leading": "Kurs dynamiczny",
+    "course-name": "Mój kurs dynamiczny",
+    "list-of-dynamic-courses": "Lista kursów dynamicznych"
   },
   "Survey": {
+    "leading": "Ankieta kursu dynamicznego",
     "alert-first-step": "W skali od 0-3 (nic, trochę, dobrze, świetnie), odpowiedz na pytania, które będą określać twoją wiedzę w języku programowania.",
     "alert-last-step": "Na podstawie Twojej ankiety stwierdziliśmy, że te lekcje są dla Ciebie najlepsze.",
-    "not-found": "Nie znaleziono ankiety"
+    "not-found": "Nie znaleziono ankiety",
+    "list-of-surveys": "Lista ankiet"
+  },
+  "Form": {
+    "step-of": "Krok {currentStep} z {steps}"
   },
   "Meta": {
     "title-home": "Strona główna",
