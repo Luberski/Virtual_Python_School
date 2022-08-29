@@ -322,7 +322,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
           }
         />
         <div className="container mx-auto px-4">
-          <div className="container flex flex-col rounded-lg bg-white p-9 shadow dark:bg-neutral-800">
+          <div className="brand-shadow2 container flex flex-col rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
             <div className="flex items-center space-x-2">
               <h1 className="pb-6 text-indigo-900 dark:text-indigo-300">
                 {course?.name}

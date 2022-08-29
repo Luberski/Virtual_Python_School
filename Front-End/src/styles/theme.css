@@ -21,6 +21,18 @@
     @apply text-3xl font-bold;
   }
 
+  h4 {
+    @apply text-2xl font-bold;
+  }
+
+  h5 {
+    @apply text-xl font-bold;
+  }
+
+  h6 {
+    @apply text-lg font-bold;
+  }
+
   a {
     @apply no-underline cursor-pointer;
   }
