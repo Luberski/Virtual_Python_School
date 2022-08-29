@@ -6,20 +6,22 @@ type SelectProps = {
   options: string[];
   selected: string;
   setSelected: (value: string | unknown) => void;
+  disabled?: boolean;
 };
 
 export default function Select({
   options,
   selected,
   setSelected,
+  disabled,
 }: SelectProps) {
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={selected} onChange={setSelected} disabled={disabled}>
       <div className="relative mt-1 w-full">
         <Listbox.Button
           data-testid="select-button"
           // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
-          className="brand-shadow relative w-72 cursor-default rounded-lg bg-neutral-50 py-2 pl-4 pr-10 text-left text-neutral-900 shadow-neutral-900/25 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-500 dark:bg-neutral-700 dark:text-white sm:w-96 sm:text-sm">
+          className="relative w-72 cursor-pointer rounded-lg border border-neutral-300 bg-neutral-50 py-2 pl-4 pr-10 text-left text-neutral-900 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white sm:w-96 sm:text-sm">
           <span className="block truncate py-2">{selected}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <ChevronDownIcon
@@ -40,7 +42,7 @@ export default function Select({
               <Listbox.Option
                 key={index}
                 className={({ active }) =>
-                  `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                  `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
                     active
                       ? 'bg-indigo-100 text-indigo-900'
                       : 'text-neutral-900 dark:text-neutral-400'
