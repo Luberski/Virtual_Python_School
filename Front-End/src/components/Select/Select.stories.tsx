@@ -1,4 +1,5 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import { useState } from 'react';
 import Select from '.';
 
 export default {
@@ -6,18 +7,23 @@ export default {
   component: Select,
 } as ComponentMeta<typeof Select>;
 
-export const Default: ComponentStory<typeof Select> = (args) => (
-  <Select
-    options={[
-      {
-        id: 1,
-        value: 'Opt1',
-        disabled: false,
-      },
-      {
-        id: 1,
-        value: 'Opt2',
-        disabled: false,
-      },
-    ]}></Select>
-);
+const people = [
+  'Wade Cooper Wade Coope Wade Cooper',
+  'Arlene Mccoy',
+  'Devon Webb',
+  'Tom Cook',
+  'Tanya Fox',
+  'Hellen Schmidt',
+];
+export const Default: ComponentStory<typeof Select> = (args) => {
+  const [selected, setSelected] = useState(people[0]);
+
+  return (
+    <Select
+      options={people}
+      selected={selected}
+      setSelected={setSelected}
+      {...args}
+    />
+  );
+};
