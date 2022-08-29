@@ -4,12 +4,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Select from '.';
 
 const optList = [
-  { id: 1, value: 'Opt1', unavailable: false },
-  { id: 2, value: 'Opt2', unavailable: false },
+  { id: 1, value: 'Opt1', disabled: false },
+  { id: 2, value: 'Opt2', disabled: false },
 ];
 
 const setup = () => {
-  render(<Select optionsList={optList}></Select>);
+  render(<Select options={optList}></Select>);
 };
 
 describe('Select', () => {

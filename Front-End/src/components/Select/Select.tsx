@@ -1,51 +1,63 @@
 import React, { useState } from 'react';
 import { Listbox } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import clsx from 'clsx';
 
 type SelectProps = {
-  optionsList: {
+  options: {
     id: number;
     value: string;
-    unavailable: boolean;
+    disabled: boolean;
   }[];
+  placeholder?: string;
 };
 
-export default function Select({ optionsList }: SelectProps) {
+export default function Select({
+  options,
+  placeholder = 'Select option...',
+}: SelectProps) {
   const [selectedOption, setSelectedOption] = useState({
-    value: 'Select option...',
+    value: placeholder,
   });
 
   return (
     <Listbox value={selectedOption} onChange={setSelectedOption}>
-      <Listbox.Button
-        className={({ open }) =>
-          `brand-shadow flex h-10 w-full cursor-pointer items-center px-6 justify-between border-none text-left shadow-black/25 ${
-            open
-              ? 'rounded-t-lg bg-indigo-50 text-indigo-900'
-              : 'bg-neutral-50 rounded-lg'
-          }`
-        }>
-        {selectedOption.value}
-        <ChevronDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-      </Listbox.Button>
-      <Listbox.Options
-        className={
-          'brand-shadow flex w-full cursor-pointer flex-col rounded-b-lg border-none bg-indigo-50 text-left shadow-black/25'
-        }>
-        {optionsList.map((option) => (
-          <Listbox.Option
-            key={option.id}
-            className={({ active }) =>
-              `relative cursor-default select-none py-2 px-6 ${
-                active ? 'text-indigo-900 font-medium bg-indigo-200' : ''
-              }`
-            }
-            value={option}
-            disabled={option.unavailable}>
-            {option.value}
-          </Listbox.Option>
-        ))}
-      </Listbox.Options>
+      <div className="relative mt-1 w-full">
+        <Listbox.Button
+          className={({ open }) =>
+            `brand-shadow flex w-full py-3 cursor-pointer items-center px-4 justify-between border-none text-left shadow-black/25 ${
+              open
+                ? 'rounded-t-lg bg-indigo-50 text-indigo-900'
+                : 'bg-neutral-50 rounded-lg dark:text-neutral-400 dark:bg-neutral-700'
+            }`
+          }>
+          {selectedOption.value}
+          <ChevronDownIcon
+            className="h-5 w-5 text-neutral-400"
+            aria-hidden="true"
+          />
+        </Listbox.Button>
+
+        <Listbox.Options
+          className={
+            'brand-shadow flex w-full cursor-pointer flex-col rounded-b-lg border-none bg-indigo-50 text-left shadow-black/25'
+          }>
+          {options.map((option) => (
+            <Listbox.Option
+              key={option.id}
+              className={({ active }) =>
+                clsx(
+                  'relative select-none rounded-b-lg py-2 px-4 dark:text-neutral-900',
+                  active && 'bg-indigo-200 font-medium text-indigo-900'
+                )
+              }
+              value={option}
+              disabled={option.disabled}>
+              {option.value}
+            </Listbox.Option>
+          ))}
+        </Listbox.Options>
+      </div>
     </Listbox>
   );
 }

@@ -8,16 +8,16 @@ export default {
 
 export const Default: ComponentStory<typeof Select> = (args) => (
   <Select
-    optionsList={[
+    options={[
       {
         id: 1,
         value: 'Opt1',
-        unavailable: false,
+        disabled: false,
       },
       {
         id: 1,
         value: 'Opt2',
-        unavailable: false,
+        disabled: false,
       },
     ]}></Select>
 );

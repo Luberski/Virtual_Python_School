@@ -1,12 +1,13 @@
 import { Dialog, Transition } from '@headlessui/react';
+import type React from 'react';
 import { Fragment } from 'react';
 
 type StyledDialogProps = {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
-  children?: JSX.Element;
-  icon?: JSX.Element;
+  title: React.ReactNode;
+  children?: React.ReactNode;
+  icon?: React.ReactNode;
 };
 
 export default function StyledDialog({

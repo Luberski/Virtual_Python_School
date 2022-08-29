@@ -31,7 +31,7 @@ export default function LoginPage() {
       </Head>
       <div className="h-full w-full">
         <NavBar />
-        <div className="container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow dark:bg-neutral-800">
+        <div className="brand-shadow2 container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
           <h1 className="text-center text-indigo-900 dark:text-indigo-300">
             {t('Auth.welcome-back')}
           </h1>
