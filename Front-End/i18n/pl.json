@@ -98,17 +98,34 @@
   "DynamicCourse": {
     "leading": "Kurs dynamiczny",
     "course-name": "Mój kurs dynamiczny",
-    "list-of-dynamic-courses": "Lista kursów dynamicznych"
+    "list-of-dynamic-courses": "Lista kursów dynamicznych",
+    "guide-alert-1-step": "Aby aktywować kurs dynamiczny musisz stworzyć ankietę.\nNa podstawie tej ankiety dla każdego użytkownika zostanie automatycznie utworzony dynamiczny kurs.",
+    "guide-alert-2-step": "Utwórz nową ankietę z pytaniami.\nKażde pytanie ma odpowiedź.\nMożesz dodać reguły dla każdej odpowiedzi.\nKażda reguła określa, czy zasugerować lub pominąć lekcję.\nGdy użytkownik przeprowadza taką ankietę, system oparty na regułach odpowiedzi ma możliwość przygotować dynamiczny kurs tylko z lekcjami bardziej dostosowanymi do poziomu umiejętności użytkownika.",
+    "guide-alert-3-step": "Dodaj pytania do ankiety.\nNastępnie przypisz każdą odpowiedź do lekcji.\nNa tej podstawie system utworzy ankietę i zdecyduje, które lekcje zostaną pokazane użytkownikowi.",
+    "guide-alert-question": "Dodaj pytanie do ankiety.\nNastępnie przypisz każdą odpowiedź do reguły.\nNa tej podstawie system utworzy ankietę i zdecyduje, które lekcje zostaną pokazane użytkownikowi w jego dynamicznym kursie.",
+    "guide-alert-rules": "Wybierz regułę dla każdej odpowiedzi.\nNa podstawie tej reguły zostanie ustalone, która lekcja zostanie wybrana i dodana do dynamicznego kursu po wypełnieniu ankiety.",
+    "introduction": "Wprowadzenie"
   },
   "Survey": {
     "leading": "Ankieta kursu dynamicznego",
     "alert-first-step": "W skali od 0-3 (nic, trochę, dobrze, świetnie), odpowiedz na pytania, które będą określać twoją wiedzę w języku programowania.",
     "alert-last-step": "Na podstawie Twojej ankiety stwierdziliśmy, że te lekcje są dla Ciebie najlepsze.",
     "not-found": "Nie znaleziono ankiety",
-    "list-of-surveys": "Lista ankiet"
+    "list-of-surveys": "Lista ankiet",
+    "questions": "Pytania",
+    "question": "Pytanie",
+    "add-question-for-survey": "Dodaj pytanie do ankiety",
+    "add-question": "Dodaj pytanie",
+    "rules": "Reguły",
+    "add-new-rule": "Dodaj nową regułę"
   },
   "Form": {
-    "step-of": "Krok {currentStep} z {steps}"
+    "step-of": "Krok {currentStep} z {steps}",
+    "back": "Wstecz",
+    "next": "Dalej",
+    "finish": "Zakończ",
+    "submit": "Wyślij",
+    "begin": "Rozpocznij"
   },
   "Meta": {
     "title-home": "Strona główna",

@@ -17,13 +17,34 @@ const initialState: LessonsState = {
   error: null,
 };
 
-export const fetchLessons = createAsyncThunk(
-  'api/lessons',
+export const fetchLessonsByCourseId = createAsyncThunk(
+  'api/lessons/byCourseId',
   async (courseId: string, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
       const res = await apiClient.get(`courses/${courseId}/lessons`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
+export const fetchAllLessons = createAsyncThunk(
+  'api/lessons/all',
+  async (_: void, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.get(`lessons`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -170,11 +191,11 @@ export const lessonsSlice = createSlice({
         // @ts-ignore
         return Object.assign({}, state, { ...action.payload.lessons });
       })
-      .addCase(fetchLessons.pending, (state) => {
+      .addCase(fetchLessonsByCourseId.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        fetchLessons.fulfilled,
+        fetchLessonsByCourseId.fulfilled,
         (
           state,
           { payload: { data, error } }: { payload: ApiPayload | any }
@@ -190,7 +211,7 @@ export const lessonsSlice = createSlice({
           }
         }
       )
-      .addCase(fetchLessons.rejected, (state, action) => {
+      .addCase(fetchLessonsByCourseId.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })
@@ -237,6 +258,30 @@ export const lessonsSlice = createSlice({
         }
       )
       .addCase(editLesson.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(fetchAllLessons.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        fetchAllLessons.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(fetchAllLessons.rejected, (state, action) => {
+        state.status = 'failed';
         state.error = action.error.message;
       });
   },

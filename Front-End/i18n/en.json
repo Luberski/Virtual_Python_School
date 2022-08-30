@@ -98,17 +98,34 @@
   "DynamicCourse": {
     "leading": "Dynamic Course",
     "course-name": "My Dynamic Course",
-    "list-of-dynamic-courses": "List of dynamic courses"
+    "list-of-dynamic-courses": "List of dynamic courses",
+    "guide-alert-1-step": "To activate the dynamic course you need to create a survey.\nBased on this survey, a dynamic course will be automatically created for each user.",
+    "guide-alert-2-step": "Create a new survey with questions.\nEvery question has an answer.\nYou can add rules for each answer.\nEach rule determines whether to suggest or skip a lesson.\nWhen the user conducts such a survey, the system based on the answer rules has the ability to prepare a dynamic course only with lessons that are more suited to the user's skill level.",
+    "guide-alert-3-step": "Add questions to the survey.\nThen assign each answer to the lesson.\nOn this basis, the system will create a survey and decide which lessons will be shown to the user.",
+    "guide-alert-question": "Add question to the survey.\nThen assign each answer to the rule.\nOn this basis, the system will create a survey and decide which lessons will be shown to the user in thier dynamic course.",
+    "guide-alert-rules": "Choose a rule for each answer.\nBased on this rule, it will be determined which lesson is to be selected and added to the dynamic course after completing the survey.",
+    "introduction": "Introduction"
   },
   "Survey": {
     "leading": "Dynamic Course Survey",
     "alert-first-step": "On a scale of 0-3 (nothing, something, good, great), answer the questions that will determine your level of programming language knowledge.",
     "alert-last-step": "Based on your survey we found that these lessons are the best for you.",
     "not-found": "Survey not found",
-    "list-of-surveys": "List of surveys"
+    "list-of-surveys": "List of surveys",
+    "questions": "Questions",
+    "question": "Question",
+    "add-question-for-survey": "Add question for a survey",
+    "add-question": "Add question",
+    "rules": "Rules",
+    "add-new-rule": "Add new rule"
   },
   "Form": {
-    "step-of": "Step {currentStep} of {steps}"
+    "step-of": "Step {currentStep} of {steps}",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "submit": "Submit",
+    "begin": "Begin"
   },
   "Meta": {
     "title-home": "Home",

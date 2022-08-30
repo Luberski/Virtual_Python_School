@@ -17,6 +17,32 @@ const initialState: SurveyState = {
   error: null,
 };
 
+export const createSurvey = createAsyncThunk(
+  'api/dynamic-courses/surveys/create',
+  async (name: string, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.post('dynamic-courses/surveys', {
+        json: {
+          data: {
+            name,
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 export const fetchSurvey = createAsyncThunk(
   'api/dynamic-courses/surveys',
   async (id: number, thunkApi) => {
@@ -113,6 +139,30 @@ export const surveySlice = createSlice({
         }
       )
       .addCase(fetchFeaturedSurvey.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(createSurvey.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        createSurvey.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(createSurvey.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

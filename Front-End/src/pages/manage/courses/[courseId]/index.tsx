@@ -21,7 +21,7 @@ import {
   createLesson,
   deleteLesson,
   editLesson,
-  fetchLessons,
+  fetchLessonsByCourseId,
   selectLessonsData,
 } from '@app/features/lessons/lessonsSlice';
 import NavBar from '@app/components/NavBar';
@@ -631,7 +631,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     async ({ locale, params }) => {
       const { courseId } = params as { courseId: string };
       await store.dispatch(fetchCourse(courseId));
-      await store.dispatch(fetchLessons(courseId));
+      await store.dispatch(fetchLessonsByCourseId(courseId));
 
       return {
         props: {

@@ -12,7 +12,7 @@ import Alert from '@app/components/Alert';
 
 type SurveyFormProps = {
   survey: Survey;
-  translations: (key: string) => string;
+  translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function SurveyForm({ survey, translations }: SurveyFormProps) {
@@ -68,6 +68,7 @@ export default function SurveyForm({ survey, translations }: SurveyFormProps) {
             steps={STEPS}
             surveyResults={surveyResults}
             setSurveyResults={setSurveyResults}
+            translations={translations}
           />
         )}
         {formStep >= 1 && (
@@ -80,6 +81,7 @@ export default function SurveyForm({ survey, translations }: SurveyFormProps) {
             steps={STEPS}
             surveyResults={surveyResults}
             setSurveyResults={setSurveyResults}
+            translations={translations}
           />
         )}
 

@@ -16,7 +16,7 @@ import FancyCard from '@app/components/FancyCard';
 
 type SurveyFormCompletedProps = {
   survey: Survey;
-  translations: (key: string) => string;
+  translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function SurveyFormCompleted({

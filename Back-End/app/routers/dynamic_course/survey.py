@@ -316,11 +316,13 @@ def create_dynamic_course_survey_answer(
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content={
-            "id": question_answer.id,
-            "question_id": question_answer.question_id,
-            "name": question_answer.name,
-            "rule_type": question_answer.rule_type,
-            "rule_value": question_answer.rule_value,
+            "data": {
+                "id": question_answer.id,
+                "question_id": question_answer.question_id,
+                "name": question_answer.name,
+                "rule_type": question_answer.rule_type,
+                "rule_value": question_answer.rule_value,
+            },
         },
     )
 

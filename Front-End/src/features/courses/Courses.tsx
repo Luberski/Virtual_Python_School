@@ -16,7 +16,7 @@ import type { Course } from '@app/models/Course';
 
 type CoursesProps = {
   courses: Course[];
-  translations: (key: string) => string;
+  translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function Courses({ courses, translations }: CoursesProps) {

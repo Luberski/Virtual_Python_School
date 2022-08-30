@@ -3,12 +3,26 @@ import { render, screen, renderHook } from '@testing-library/react';
 import Select from '.';
 
 const people = [
-  'Wade Cooper Wade Coope Wade Cooper',
-  'Arlene Mccoy',
-  'Devon Webb',
-  'Tom Cook',
-  'Tanya Fox',
-  'Hellen Schmidt',
+  {
+    id: 1,
+    value: 'Wade Cooper Wade Coope Wade Cooper',
+  },
+  {
+    id: 2,
+    value: 'Arlene Mccoy',
+  },
+  {
+    id: 3,
+    value: 'Tom Cook',
+  },
+  {
+    id: 4,
+    value: 'Tanya Fox',
+  },
+  {
+    id: 5,
+    value: 'Hellen Schmidt',
+  },
 ];
 
 describe('Select', () => {
@@ -18,6 +32,6 @@ describe('Select', () => {
     render(
       <Select options={people} selected={selected} setSelected={setSelected} />
     );
-    expect(screen.getByText(people[0])).toBeInTheDocument();
+    expect(screen.getByText(people[0].value)).toBeInTheDocument();
   });
 });

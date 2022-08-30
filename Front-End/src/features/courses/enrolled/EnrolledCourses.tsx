@@ -9,7 +9,7 @@ import type { Course } from '@app/models/Course';
 
 type EnrolledCoursesProps = {
   enrolledCourses: Course[];
-  translations: (key: string) => string;
+  translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function EnrolledCourses({
