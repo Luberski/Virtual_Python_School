@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 type Option = {
   id: number;
   value: string;
+  disabled: boolean;
 };
 
 type SelectProps = {
@@ -53,7 +54,8 @@ export default function Select({
                       : 'text-neutral-900 dark:text-neutral-400'
                   }`
                 }
-                value={item}>
+                value={item}
+                disabled={item.disabled}>
                 {({ selected }) => (
                   <>
                     <span
