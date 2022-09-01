@@ -113,11 +113,14 @@
     "not-found": "Nie znaleziono ankiety",
     "list-of-surveys": "Lista ankiet",
     "questions": "Pytania",
+    "added-questions": "Dodane pytania",
     "question": "Pytanie",
     "add-question-for-survey": "Dodaj pytanie do ankiety",
     "add-question": "Dodaj pytanie",
     "rules": "Reguły",
-    "add-new-rule": "Dodaj nową regułę"
+    "add-new-rule": "Dodaj nową regułę",
+    "survey-created": "Utworzono ankietę",
+    "survey-preview": "Podgląd ankiety"
   },
   "Form": {
     "step-of": "Krok {currentStep} z {steps}",

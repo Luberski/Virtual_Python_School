@@ -113,11 +113,14 @@
     "not-found": "Survey not found",
     "list-of-surveys": "List of surveys",
     "questions": "Questions",
+    "added-questions": "Added questions",
     "question": "Question",
     "add-question-for-survey": "Add question for a survey",
     "add-question": "Add question",
     "rules": "Rules",
-    "add-new-rule": "Add new rule"
+    "add-new-rule": "Add new rule",
+    "survey-created": "Survey created",
+    "survey-preview": "Survey preview"
   },
   "Form": {
     "step-of": "Step {currentStep} of {steps}",
