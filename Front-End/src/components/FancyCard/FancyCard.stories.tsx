@@ -1,11 +1,11 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import type { Course } from '@app/models/Course';
 import Link from 'next/link';
-import IconButton, {IconButtonVariant} from '@app/components/IconButton';
-import IconButtonLink, {IconButtonLinkVariant} from '@app/components/IconButtonLink';
 import { CheckBadgeIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/20/solid';
 import FancyCard from '.';
+import IconButtonLink, {IconButtonLinkVariant} from '@app/components/IconButtonLink';
+import IconButton, {IconButtonVariant} from '@app/components/IconButton';
+import type { Course } from '@app/models/Course';
 
 export default {
   title: 'FancyCard',

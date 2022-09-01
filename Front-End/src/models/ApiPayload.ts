@@ -1,4 +1,4 @@
-export type ApiPayload = {
-  data: unknown | null;
+export interface ApiPayload<T = unknown> {
+  data: T | null;
   error: string | null;
-};
+}

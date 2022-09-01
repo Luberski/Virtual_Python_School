@@ -8,5 +8,5 @@ export default {
 } as ComponentMeta<typeof IconButton>;
 
 export const Default: ComponentStory<typeof IconButton> = (args) => (
-  <IconButton icon={LightBulbIcon} {...args} />
+  <IconButton icon={<LightBulbIcon className="h-5 w-5" />} {...args} />
 );
