@@ -42,14 +42,19 @@ export default function GuidedDynamicCourseForm({
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
 
-  const { control, register, handleSubmit, setValue } =
-    useForm<{
-      question: string;
-      selectedLesson1: string | unknown;
-      selectedLesson2: string | unknown;
-      selectedLesson3: string | unknown;
-      selectedLesson4: string | unknown;
-    }>();
+  const {
+    control,
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<{
+    question: string;
+    selectedLesson1: string | unknown;
+    selectedLesson2: string | unknown;
+    selectedLesson3: string | unknown;
+    selectedLesson4: string | unknown;
+  }>();
 
   const [isAddQuestionDialogOpen, setIsAddQuestionDialogOpen] = useState(false);
 
@@ -330,6 +335,11 @@ export default function GuidedDynamicCourseForm({
               required
               maxLength={100}
               placeholder={translations('Survey.question')}
+              className={
+                errors.question &&
+                errors.question.type === 'required' &&
+                'border-red-600'
+              }
             />
             <div>
               <h4 className="text-indigo-900 dark:text-indigo-300">
@@ -351,13 +361,18 @@ export default function GuidedDynamicCourseForm({
               <div className="mt-6 flex h-36 flex-col space-y-6 overflow-auto">
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Nothing</div>
-                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-1">
+                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
                       name="selectedLesson1"
                       rules={{ required: !skipLesson1 }}
                       render={({ field: { onChange } }) => (
                         <Select
+                          className={
+                            errors.selectedLesson1 &&
+                            errors.selectedLesson1.type === 'required' &&
+                            'border-red-600'
+                          }
                           disabled={skipLesson1}
                           options={
                             lessonsData?.length > 0 &&
@@ -398,13 +413,18 @@ export default function GuidedDynamicCourseForm({
                 </div>
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Something</div>
-                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-1">
+                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
                       name="selectedLesson2"
                       rules={{ required: !skipLesson2 }}
                       render={({ field: { onChange } }) => (
                         <Select
+                          className={
+                            errors.selectedLesson2 &&
+                            errors.selectedLesson2.type === 'required' &&
+                            'border-red-600'
+                          }
                           disabled={skipLesson2}
                           options={
                             lessonsData?.length > 0 &&
@@ -445,13 +465,18 @@ export default function GuidedDynamicCourseForm({
                 </div>
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Good</div>
-                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-1">
+                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
                       name="selectedLesson3"
                       rules={{ required: !skipLesson3 }}
                       render={({ field: { onChange } }) => (
                         <Select
+                          className={
+                            errors.selectedLesson3 &&
+                            errors.selectedLesson3.type === 'required' &&
+                            'border-red-600'
+                          }
                           disabled={skipLesson3}
                           options={
                             lessonsData?.length > 0 &&
@@ -492,13 +517,18 @@ export default function GuidedDynamicCourseForm({
                 </div>
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Great</div>
-                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-1">
+                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
                       name="selectedLesson4"
                       rules={{ required: !skipLesson4 }}
                       render={({ field: { onChange } }) => (
                         <Select
+                          className={
+                            errors.selectedLesson4 &&
+                            errors.selectedLesson4.type === 'required' &&
+                            'border-red-600'
+                          }
                           disabled={skipLesson4}
                           options={
                             lessonsData?.length > 0 &&
