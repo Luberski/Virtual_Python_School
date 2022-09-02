@@ -41,14 +41,14 @@ export default function SurveyForm({ survey, translations }: SurveyFormProps) {
       {formStep > STEPS - 1 ? (
         <Alert>
           <LightBulbIcon className="mr-2 h-6 w-6" />
-          <p className="w-fit max-w-sm">
+          <p className="w-fit max-w-xs">
             {translations('Survey.alert-last-step')}
           </p>
         </Alert>
       ) : (
         <Alert>
           <InformationCircleIcon className="mr-2 h-6 w-6" />
-          <p className="w-fit max-w-sm">
+          <p className="w-fit max-w-xs">
             {translations('Survey.alert-first-step')}
           </p>
         </Alert>

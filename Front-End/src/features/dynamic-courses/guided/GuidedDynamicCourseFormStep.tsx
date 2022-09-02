@@ -5,11 +5,15 @@ import {
 } from '@heroicons/react/20/solid';
 import { useDispatch } from 'react-redux';
 import { createSurvey } from '../survey/surveySlice';
-import { createSurveyQuestionsWithAnswers } from '../survey/surveyQuestionSlice';
+import {
+  createSurveyQuestionsWithAnswers,
+  selectSurveyQuestions,
+} from '../survey/surveyQuestionSlice';
 import IconButton, {
   IconButtonVariant,
   IconPosition,
 } from '@app/components/IconButton';
+import { useAppSelector } from '@app/hooks';
 
 type GuidedDynamicCourseFormStepProps = {
   currentStep: number;
@@ -31,6 +35,7 @@ export default function GuidedDynamicCourseFormStep({
   translations,
 }: GuidedDynamicCourseFormStepProps) {
   const dispatch = useDispatch();
+  const questions = useAppSelector(selectSurveyQuestions);
 
   const onNextStepSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,6 +69,7 @@ export default function GuidedDynamicCourseFormStep({
             <IconButton
               variant={IconButtonVariant.PRIMARY}
               type="submit"
+              disabled={!questions || questions.length === 0}
               iconPosition={IconPosition.LEFT}
               icon={<PaperAirplaneIcon className="h-5 w-5" />}>
               {translations('Form.submit')}

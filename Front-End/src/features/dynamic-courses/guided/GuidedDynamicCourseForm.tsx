@@ -11,6 +11,7 @@ import { selectSurveyData } from '../survey/surveySlice';
 import GuidedDynamicCourseFormStep from './GuidedDynamicCourseFormStep';
 import GuidedDynamicCourseFormCard from './GuidedDynamicCourseFormCard';
 import GuidedDynamicCourseFormCompleted from './GuidedDynamicCourseFormCompleted';
+import SurveyPreview from './SurveyPreview';
 import Alert from '@app/components/Alert';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import StyledDialog from '@app/components/StyledDialog';
@@ -180,7 +181,7 @@ export default function GuidedDynamicCourseForm({
               </h3>
               <Alert>
                 <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
-                <ul className="w-fit max-w-sm list-disc px-6">
+                <ul className="w-fit max-w-xs list-disc px-6">
                   {translations('DynamicCourse.guide-alert-1-step')
                     .split('\n')
                     .map((line) => (
@@ -205,7 +206,7 @@ export default function GuidedDynamicCourseForm({
               </h3>
               <Alert>
                 <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
-                <ul className="w-fit max-w-sm list-disc px-6">
+                <ul className="w-fit max-w-xs list-disc px-6">
                   {translations('DynamicCourse.guide-alert-2-step')
                     .split('\n')
                     .map((line) => (
@@ -230,7 +231,7 @@ export default function GuidedDynamicCourseForm({
               </h3>
               <Alert>
                 <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
-                <ul className="w-fit max-w-sm list-disc px-6">
+                <ul className="w-fit max-w-xs list-disc px-6">
                   {translations('DynamicCourse.guide-alert-3-step')
                     .split('\n')
                     .map((line) => (
@@ -267,9 +268,25 @@ export default function GuidedDynamicCourseForm({
             nextFormStep={nextFormStep}
             steps={STEPS}
             translations={translations}>
-            <h3 className="text-center text-indigo-900 dark:text-indigo-300">
-              {translations('Survey.survey-preview')}
-            </h3>
+            <div className="flex flex-col space-y-4">
+              <h3 className="text-center text-indigo-900 dark:text-indigo-300">
+                {translations('Survey.survey-preview')}
+              </h3>
+              {questions?.length > 0 ? (
+                <SurveyPreview
+                  questions={questions?.map((question) => ({
+                    question: question?.question,
+                    answers: question?.answers?.map((answer) => ({
+                      name: answer?.name,
+                    })),
+                  }))}
+                />
+              ) : (
+                <div className="text-center text-xl">
+                  {translations('Survey.no-questions-added')}
+                </div>
+              )}
+            </div>
           </GuidedDynamicCourseFormStep>
         )}
 
@@ -289,7 +306,7 @@ export default function GuidedDynamicCourseForm({
         <div className="mt-6">
           <Alert>
             <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
-            <ul className="w-fit max-w-sm list-disc px-6">
+            <ul className="w-fit max-w-xs list-disc px-6">
               {translations('DynamicCourse.guide-alert-question')
                 .split('\n')
                 .map((line) => (
@@ -323,7 +340,7 @@ export default function GuidedDynamicCourseForm({
               </div>
               <Alert>
                 <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
-                <ul className="w-fit max-w-sm list-disc px-6">
+                <ul className="w-fit max-w-xs list-disc px-6">
                   {translations('DynamicCourse.guide-alert-rules')
                     .split('\n')
                     .map((line) => (
@@ -331,10 +348,10 @@ export default function GuidedDynamicCourseForm({
                     ))}
                 </ul>
               </Alert>
-              <div className="mt-6 flex h-40 flex-col space-y-6 overflow-auto">
+              <div className="mt-6 flex h-36 flex-col space-y-6 overflow-auto">
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Nothing</div>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
                       name="selectedLesson1"
@@ -381,7 +398,7 @@ export default function GuidedDynamicCourseForm({
                 </div>
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Something</div>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
                       name="selectedLesson2"
@@ -428,7 +445,7 @@ export default function GuidedDynamicCourseForm({
                 </div>
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Good</div>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
                       name="selectedLesson3"
@@ -475,7 +492,7 @@ export default function GuidedDynamicCourseForm({
                 </div>
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Great</div>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
                       name="selectedLesson4"
