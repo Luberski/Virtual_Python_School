@@ -20,8 +20,8 @@ router = APIRouter()
 
 
 @router.post(
-    "/dynamic-courses/surveys",
-    tags=["survey"],
+    "/surveys",
+    tags=["surveys"],
     response_model=DynamicCourseSurveyCreateResponse,
 )
 def create_dynamic_course_survey(
@@ -67,8 +67,8 @@ def create_dynamic_course_survey(
 
 
 @router.post(
-    "/dynamic-courses/surveys/questions",
-    tags=["survey"],
+    "/surveys/questions",
+    tags=["surveys"],
     response_model=DynamicCourseSurveyQuestionCreateResponse,
 )
 def create_dynamic_course_survey_question(
@@ -140,8 +140,8 @@ def create_dynamic_course_survey_question(
 
 
 @router.get(
-    "/dynamic-courses/surveys/{survey_id}",
-    tags=["survey"],
+    "/surveys/{survey_id}",
+    tags=["surveys"],
 )
 def get_dynamic_course_survey_by_id(
     survey_id: int = Path(title="id of the survey"),
@@ -206,8 +206,69 @@ def get_dynamic_course_survey_by_id(
 
 
 @router.get(
-    "/dynamic-courses/survey/featured",
-    tags=["survey"],
+    "/surveys",
+    tags=["surveys"],
+)
+def get_dynamic_course_surveys(
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    surveys = (
+        db.query(models.DynamicCourseSurvey)
+        .join(
+            models.DynamicCourseSurveyQuestions,
+            models.DynamicCourseSurveyQuestions.survey_id
+            == models.DynamicCourseSurvey.id,
+        )
+        .join(
+            models.DynamicCourseSurveyAnswers,
+            models.DynamicCourseSurveyAnswers.question_id
+            == models.DynamicCourseSurveyQuestions.id,
+        )
+        .all()
+    )
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": [
+                {
+                    "id": survey.id,
+                    "name": survey.name,
+                    "questions": [
+                        {
+                            "question_id": survey_question.id,
+                            "question": survey_question.question,
+                            "answers": [
+                                {
+                                    "answer_id": survey_answer.id,
+                                    "name": survey_answer.name,
+                                    "rule_type": survey_answer.rule_type,
+                                    "rule_value": survey_answer.rule_value,
+                                }
+                                for survey_answer in survey_question.answers
+                            ],
+                        }
+                        for survey_question in survey.questions
+                    ],
+                }
+                for survey in surveys
+            ]
+        },
+    )
+
+
+@router.get(
+    "/survey/featured",
+    tags=["surveys"],
 )
 def get_dynamic_course_survey_featured(
     db: Session = Depends(deps.get_db),
@@ -271,8 +332,8 @@ def get_dynamic_course_survey_featured(
 
 
 @router.post(
-    "/dynamic-courses/surveys/answers",
-    tags=["survey"],
+    "/surveys/answers",
+    tags=["surveys"],
 )
 def create_dynamic_course_survey_answer(
     request_data: DynamicCourseSurveyAnswerCreateRequest,
@@ -402,8 +463,8 @@ def create_dynamic_course_survey_answer(
 
 
 @router.post(
-    "/dynamic-courses/surveys/question",
-    tags=["survey"],
+    "/surveys/question",
+    tags=["surveys"],
 )
 def create_dynamic_course_survey_question_with_answers(
     request_data: DynamicCourseSurveyWithAnswersCreateRequest,
@@ -487,8 +548,8 @@ def create_dynamic_course_survey_question_with_answers(
 
 
 @router.post(
-    "/dynamic-courses/surveys/user/answers",
-    tags=["survey"],
+    "/surveys/user/answers",
+    tags=["surveys"],
     response_model=DynamicCourseSurveyQuestionCreateResponse,
 )
 def create_dynamic_course_survey_user_results(
@@ -573,8 +634,8 @@ def create_dynamic_course_survey_user_results(
 
 
 @router.get(
-    "/dynamic-courses/surveys/{survey_id}/user/results",
-    tags=["survey"],
+    "/surveys/{survey_id}/user/results",
+    tags=["surveys"],
 )
 def get_dynamic_course_survey_user_results(
     survey_id: int = Path(title="id of the survey"),

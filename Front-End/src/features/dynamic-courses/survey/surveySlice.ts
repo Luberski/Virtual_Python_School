@@ -18,12 +18,12 @@ const initialState: SurveyState = {
 };
 
 export const createSurvey = createAsyncThunk(
-  'api/dynamic-courses/surveys/create',
+  'api/surveys/create',
   async (name: string, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys', {
+      const res = await apiClient.post('surveys', {
         json: {
           data: {
             name,
@@ -44,12 +44,12 @@ export const createSurvey = createAsyncThunk(
 );
 
 export const fetchSurvey = createAsyncThunk(
-  'api/dynamic-courses/surveys',
+  'api/surveys',
   async (id: number, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`dynamic-courses/surveys/${id}`, {
+      const res = await apiClient.get(`surveys/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -64,12 +64,12 @@ export const fetchSurvey = createAsyncThunk(
 );
 
 export const fetchFeaturedSurvey = createAsyncThunk(
-  'api/dynamic-courses/surveys/featured',
+  'api/surveys/featured',
   async (_: void, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`dynamic-courses/survey/featured`, {
+      const res = await apiClient.get(`survey/featured`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

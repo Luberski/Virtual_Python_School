@@ -37,7 +37,7 @@ export const createSurveyQuestion = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys/questions', {
+      const res = await apiClient.post('surveys/questions', {
         json: {
           data: {
             survey_id: surveyId,
@@ -64,7 +64,7 @@ export const createSurveyQuestions = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys/questions', {
+      const res = await apiClient.post('surveys/questions', {
         json: {
           data: {
             survey_id: state.survey.data.id,
@@ -97,7 +97,7 @@ export const createSurveyQuestionWithAnswers = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys/question', {
+      const res = await apiClient.post('surveys/question', {
         json: {
           data: {
             survey_id: state.survey.data.id,

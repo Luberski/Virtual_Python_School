@@ -18,12 +18,12 @@ const initialState: SurveyResultsState = {
 };
 
 export const sendSurveyResults = createAsyncThunk(
-  'api/dynamic-courses/surveys/results',
+  'api/surveys/results',
   async (surveyResults: SurveyResults, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys/user/answers', {
+      const res = await apiClient.post('surveys/user/answers', {
         json: {
           data: {
             survey_id: surveyResults.surveyId,

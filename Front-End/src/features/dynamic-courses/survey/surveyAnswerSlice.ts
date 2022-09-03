@@ -47,7 +47,7 @@ export const createSurveyAnswer = createAsyncThunk(
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys/answers', {
+      const res = await apiClient.post('surveys/answers', {
         json: {
           data: {
             question_id: questionId,
