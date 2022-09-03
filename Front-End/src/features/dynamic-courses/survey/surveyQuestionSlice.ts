@@ -7,6 +7,7 @@ import type { RootState } from '@app/store';
 import type { ApiPayload } from '@app/models/ApiPayload';
 
 type QuestionData = {
+  _id?: string;
   id?: number;
   survey_id: number;
   question: string;
@@ -147,6 +148,18 @@ export const surveyQuestionSlice = createSlice({
     addSurveyQuestion: (state, { payload }: PayloadAction<QuestionData>) => {
       state.questions = [...state.questions, payload];
     },
+    removeSurveyQuestion: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        _id: string;
+      }>
+    ) => {
+      state.questions = state.questions.filter(
+        (question) => question._id !== payload._id
+      );
+    },
   },
   extraReducers(builder) {
     builder
@@ -219,6 +232,7 @@ export const selectSurveyQuestionError = (state: RootState) =>
 export const selectSurveyQuestionStatus = (state: RootState) =>
   state.surveyQuestion.status;
 
-export const { addSurveyQuestion } = surveyQuestionSlice.actions;
+export const { addSurveyQuestion, removeSurveyQuestion } =
+  surveyQuestionSlice.actions;
 
 export default surveyQuestionSlice.reducer;

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { BoltIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import { PlusCircleIcon } from '@heroicons/react/20/solid';
+import { PlusCircleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { nanoid } from 'nanoid';
 import {
   addSurveyQuestion,
+  removeSurveyQuestion,
   selectSurveyQuestions,
 } from '../survey/surveyQuestionSlice';
 import { selectSurveyData } from '../survey/surveySlice';
@@ -117,6 +119,7 @@ export default function GuidedDynamicCourseForm({
         addSurveyQuestion({
           survey_id: surveyData?.id,
           question,
+          _id: nanoid(),
           answers: [
             {
               name: 'Nothing',
@@ -157,6 +160,14 @@ export default function GuidedDynamicCourseForm({
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleRemoveQuestion = (_id: string) => async () => {
+    await dispatch(
+      removeSurveyQuestion({
+        _id,
+      })
+    );
   };
 
   useEffect(() => {
@@ -257,7 +268,16 @@ export default function GuidedDynamicCourseForm({
                       {translations('Survey.added-questions')}
                     </div>
                     {questions?.map((question) => (
-                      <div key={question?.question}>{question?.question}</div>
+                      <div
+                        className="flex items-center justify-between"
+                        key={question?._id}>
+                        <div>{question?.question}</div>
+                        <IconButton
+                          variant={IconButtonVariant.FLAT_DANGER}
+                          onClick={handleRemoveQuestion(question?._id)}
+                          icon={<TrashIcon className="h-5 w-5" />}
+                        />
+                      </div>
                     ))}
                   </div>
                 )}
