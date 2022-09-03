@@ -6,6 +6,7 @@ import NavBar from '@app/components/NavBar';
 import { WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
 import GuidedDynamicCourseForm from '@app/features/dynamic-courses/guided/GuidedDynamicCourseForm';
+import Footer from '@app/components/Footer';
 
 export default function GuidedDynamicCoursePage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -40,6 +41,7 @@ export default function GuidedDynamicCoursePage() {
           </h1>
           <GuidedDynamicCourseForm translations={t} />
         </div>
+        <Footer />
       </div>
     </>
   );

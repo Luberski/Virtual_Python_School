@@ -136,6 +136,28 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                                 </Link>
                               </Menu.Item>
                               <Menu.Item>
+                                <Link
+                                  href="/manage/dynamic-courses"
+                                  passHref={true}>
+                                  <ButtonLink
+                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
+                                    {t('Manage.manage-dynamic-courses')}
+                                  </ButtonLink>
+                                </Link>
+                              </Menu.Item>
+                              <Menu.Item>
+                                <Link
+                                  href="/manage/dynamic-courses/surveys"
+                                  passHref={true}>
+                                  <ButtonLink
+                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
+                                    {t('Manage.manage-surveys')}
+                                  </ButtonLink>
+                                </Link>
+                              </Menu.Item>
+                              <Menu.Item>
                                 <IconButton
                                   type="button"
                                   sizeType={IconButtonSize.EXTRA_LARGE}

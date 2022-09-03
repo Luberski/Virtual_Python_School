@@ -1,4 +1,4 @@
-import Head from 'next/Head';
+import Head from 'next/head';
 import { useDispatch } from 'react-redux';
 import { useTranslations } from 'next-intl';
 import NavBar from '@app/components/NavBar';

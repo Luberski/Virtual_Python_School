@@ -184,6 +184,7 @@ def get_dynamic_course_survey_by_id(
             "data": {
                 "id": survey.id,
                 "name": survey.name,
+                "featured": survey.featured,
                 "questions": [
                     {
                         "question_id": survey_question.id,
@@ -243,6 +244,7 @@ def get_dynamic_course_surveys(
                 {
                     "id": survey.id,
                     "name": survey.name,
+                    "featured": survey.featured,
                     "questions": [
                         {
                             "question_id": survey_question.id,
@@ -310,6 +312,7 @@ def get_dynamic_course_survey_featured(
             "data": {
                 "id": survey.id,
                 "name": survey.name,
+                "featured": survey.featured,
                 "questions": [
                     {
                         "question_id": survey_question.id,

@@ -38,6 +38,7 @@ import {
 import Button, { ButtonVariant } from '@app/components/Button';
 import StyledDialog from '@app/components/StyledDialog';
 import Checkbox from '@app/components/Checkbox';
+import Footer from '@app/components/Footer';
 
 type Props = {
   courseId: string;
@@ -558,7 +559,6 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
                 </div>
               </div>
             </StyledDialog>
-            <Toaster />
             {lessons && lessons?.length > 0 ? (
               <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
                 <table className="w-full table-auto divide-y divide-neutral-200">
@@ -620,6 +620,8 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
               </div>
             )}
           </div>
+          <Toaster />
+          <Footer />
         </div>
       </div>
     </>

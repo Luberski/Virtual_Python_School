@@ -36,6 +36,7 @@ import IconButtonLink, {
 import Button, { ButtonVariant } from '@app/components/Button';
 import Checkbox from '@app/components/Checkbox';
 import StyledDialog from '@app/components/StyledDialog';
+import Footer from '@app/components/Footer';
 
 export default function ManageCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -276,7 +277,6 @@ export default function ManageCoursesPage() {
                 </div>
               </div>
             </StyledDialog>
-            <Toaster />
             {courses && courses.length > 0 ? (
               <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
                 <table className="w-full table-auto divide-y divide-neutral-200">
@@ -351,6 +351,8 @@ export default function ManageCoursesPage() {
               </div>
             )}
           </div>
+          <Toaster />
+          <Footer />
         </div>
       </div>
     </>
