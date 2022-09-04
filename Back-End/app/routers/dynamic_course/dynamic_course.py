@@ -368,3 +368,46 @@ def get_dynamic_course_by_id(
             }
         },
     )
+
+
+@router.delete("/dynamic-courses/{dynamic_course_id}", tags=["dynamic-courses"])
+def delete_dynamic_course(
+    dynamic_course_id: int = Path(title="id of the dynamic course to delete"),
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
+    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    db.query(models.DynamicLessons).filter_by(
+        dynamic_course_id=dynamic_course_id
+    ).delete()
+    db.query(models.DynamicCourses).filter_by(id=dynamic_course_id).delete()
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": {
+                "id": dynamic_course_id,
+            },
+            "error": None,
+        },
+    )

@@ -690,3 +690,58 @@ def get_dynamic_course_survey_user_results(
             ]
         },
     )
+
+
+@router.delete("/surveys/{survey_id}", tags=["surveys"])
+def delete_dynamic_course_survey(
+    survey_id: int = Path(title="id of the survey to delete"),
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
+    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    questions = (
+        db.query(models.DynamicCourseSurveyQuestions)
+        .filter_by(survey_id=survey_id)
+        .all()
+    )
+    for question in questions:
+        db.query(models.DynamicCourseSurveyAnswers).filter_by(
+            question_id=question.id
+        ).delete()
+        db.query(models.DynamicCourseSurveyUserResults).filter_by(
+            question_id=question.id
+        ).delete()
+    db.query(models.DynamicCourseSurveyQuestions).filter_by(
+        survey_id=survey_id
+    ).delete()
+    db.query(models.DynamicCourseSurvey).filter_by(id=survey_id).delete()
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": {
+                "id": survey_id,
+            },
+            "error": None,
+        },
+    )
