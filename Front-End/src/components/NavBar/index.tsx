@@ -2,8 +2,12 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import { ArrowRightOnRectangleIcon } from '@heroicons/react/20/solid';
+import {
+  ArrowRightOnRectangleIcon,
+  LanguageIcon,
+} from '@heroicons/react/20/solid';
 import { Fragment } from 'react';
+import IconButtonLink, { IconButtonLinkVariant } from '../IconButtonLink';
 import IconButton, {
   IconButtonSize,
   IconButtonVariant,
@@ -24,6 +28,7 @@ type NavBarProps = {
 const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
   const router = useRouter();
   const t = useTranslations();
+  const otherLocale = router.locales?.find((cur) => cur !== router.locale);
 
   return (
     <Disclosure
@@ -184,6 +189,17 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                     </div>
                   )}
                   <ThemeButton />
+                  <Link href={router.route} locale={otherLocale}>
+                    <IconButtonLink
+                      title={t('Meta.switch-locale', {
+                        locale: otherLocale,
+                      })}
+                      variant={IconButtonLinkVariant.FLAT_SECONDARY}
+                      icon={
+                        <LanguageIcon className="h-5 w-5" aria-hidden="true" />
+                      }
+                    />
+                  </Link>
                 </div>
               </div>
             </div>

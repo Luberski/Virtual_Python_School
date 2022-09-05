@@ -148,6 +148,7 @@
     "title-register": "Register",
     "title-course": "Course",
     "title-lesson": "Lesson",
-    "title-dynamic-course": "Dynamic course"
+    "title-dynamic-course": "Dynamic course",
+    "switch-locale": "Switch locale"
   }
 }
