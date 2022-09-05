@@ -28,22 +28,17 @@ const initialState: SurveyAnswerState = {
   error: null,
 };
 
-export const createSurveyAnswer = createAsyncThunk(
+export const createSurveyAnswer = createAsyncThunk<
+  ApiPayload<AnswerData>,
+  {
+    questionId: number;
+    name: string;
+    ruleType: RuleType;
+    ruleValue: number;
+  }
+>(
   'api/surveys/answers/create',
-  async (
-    {
-      questionId,
-      name,
-      ruleType,
-      ruleValue,
-    }: {
-      questionId: number;
-      name: string;
-      ruleType: RuleType;
-      ruleValue: number;
-    },
-    thunkApi
-  ) => {
+  async ({ questionId, name, ruleType, ruleValue }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -62,7 +57,7 @@ export const createSurveyAnswer = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<AnswerData>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -94,7 +89,7 @@ export const surveyAnswerSlice = createSlice({
         createSurveyAnswer.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<AnswerData> }
         ) => {
           if (error) {
             state.data = null;

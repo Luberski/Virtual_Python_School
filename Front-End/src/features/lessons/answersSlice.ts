@@ -17,41 +17,35 @@ const initialState: AnswersState = {
   error: null,
 };
 
-export const createAnswer = createAsyncThunk(
-  'api/answers/create',
-  async (
-    {
-      lessonId,
-      finalAnswer,
-    }: {
-      lessonId: string;
-      finalAnswer: string;
-    },
-    thunkApi
-  ) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('answers', {
-        json: {
-          data: {
-            lesson_id: lessonId,
-            final_answer: finalAnswer,
-          },
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+export const createAnswer = createAsyncThunk<
+  ApiPayload<Answer>,
+  {
+    lessonId: string;
+    finalAnswer: string;
   }
-);
+>('api/answers/create', async ({ lessonId, finalAnswer }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('answers', {
+      json: {
+        data: {
+          lesson_id: lessonId,
+          final_answer: finalAnswer,
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await res.json();
+    return data as ApiPayload<Answer>;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
 
 export const answersSlice = createSlice({
   name: 'answers',
@@ -69,7 +63,7 @@ export const answersSlice = createSlice({
       })
       .addCase(
         createAnswer.fulfilled,
-        (state, { payload }: { payload: ApiPayload | any }) => {
+        (state, { payload }: { payload: ApiPayload<Answer> }) => {
           state.data = [...state.data, payload.data];
         }
       )

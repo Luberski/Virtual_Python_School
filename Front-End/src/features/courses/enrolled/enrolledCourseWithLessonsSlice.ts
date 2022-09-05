@@ -17,26 +17,26 @@ const initialState: EnrolledCourseState = {
   error: null,
 };
 
-export const fetchEnrolledCourseWithLessons = createAsyncThunk(
-  'api/course/enrolled/with-lessons',
-  async ({ id }: { id: string | number }, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const endpoint = `courses/${id}/enrolled?include_lessons=true`;
-      const res = await apiClient.get(endpoint, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+export const fetchEnrolledCourseWithLessons = createAsyncThunk<
+  ApiPayload<EnrolledCourse>,
+  { id: string | number }
+>('api/course/enrolled/with-lessons', async ({ id }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const endpoint = `courses/${id}/enrolled?include_lessons=true`;
+    const res = await apiClient.get(endpoint, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const data = await res.json();
+    return data as ApiPayload<EnrolledCourse>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const enrolledCourseWithLessonsSlice = createSlice({
   name: 'enrolledCourseWithLessons',
@@ -59,7 +59,7 @@ export const enrolledCourseWithLessonsSlice = createSlice({
         fetchEnrolledCourseWithLessons.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<EnrolledCourse> }
         ) => {
           if (error) {
             state.data = null;

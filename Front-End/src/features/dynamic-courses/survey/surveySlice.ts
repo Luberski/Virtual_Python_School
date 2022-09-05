@@ -23,43 +23,38 @@ const initialState: SurveyState = {
   error: null,
 };
 
-export const createSurvey = createAsyncThunk(
-  'api/surveys/create',
-  async (
-    {
-      name,
-    }: {
-      name: string;
-    },
-    thunkApi
-  ) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('surveys', {
-        json: {
-          data: {
-            name,
-            featured: state.survey.data.featured,
-          },
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+export const createSurvey = createAsyncThunk<
+  ApiPayload<Survey>,
+  {
+    name: string;
   }
-);
+>('api/surveys/create', async ({ name }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('surveys', {
+      json: {
+        data: {
+          name,
+          featured: state.survey.data.featured,
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-export const fetchSurvey = createAsyncThunk(
+    const data = await res.json();
+    return data as ApiPayload<Survey>;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
+export const fetchSurvey = createAsyncThunk<ApiPayload<Survey>, number>(
   'api/surveys',
-  async (id: number, thunkApi) => {
+  async (id, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -69,7 +64,7 @@ export const fetchSurvey = createAsyncThunk(
         },
       });
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Survey>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -77,7 +72,7 @@ export const fetchSurvey = createAsyncThunk(
   }
 );
 
-export const fetchFeaturedSurvey = createAsyncThunk(
+export const fetchFeaturedSurvey = createAsyncThunk<ApiPayload<Survey>>(
   'api/surveys/featured',
   async (_: void, thunkApi) => {
     try {
@@ -89,7 +84,7 @@ export const fetchFeaturedSurvey = createAsyncThunk(
         },
       });
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Survey>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -119,7 +114,7 @@ export const surveySlice = createSlice({
         fetchSurvey.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Survey> }
         ) => {
           if (error) {
             state.data = null;
@@ -143,7 +138,7 @@ export const surveySlice = createSlice({
         fetchFeaturedSurvey.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Survey> }
         ) => {
           if (error) {
             state.data = null;
@@ -167,7 +162,7 @@ export const surveySlice = createSlice({
         createSurvey.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Survey> }
         ) => {
           if (error) {
             state.data = null;

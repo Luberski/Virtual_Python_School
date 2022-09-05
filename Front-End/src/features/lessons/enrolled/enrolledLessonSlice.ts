@@ -17,18 +17,15 @@ const initialState: EnrolledLessonState = {
   error: null,
 };
 
-export const fetchEnrolledLesson = createAsyncThunk(
+export const fetchEnrolledLesson = createAsyncThunk<
+  ApiPayload<EnrolledLesson>,
+  {
+    lessonId: number;
+    enrolledLessonId: number;
+  }
+>(
   'api/courses/courseId/enrolledLesson/enrolledLessonId',
-  async (
-    {
-      lessonId,
-      enrolledLessonId,
-    }: {
-      lessonId: number;
-      enrolledLessonId: number;
-    },
-    thunkApi
-  ) => {
+  async ({ lessonId, enrolledLessonId }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -42,7 +39,7 @@ export const fetchEnrolledLesson = createAsyncThunk(
       );
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<EnrolledLesson>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -68,7 +65,7 @@ export const enrolledLessonSlice = createSlice({
         fetchEnrolledLesson.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<EnrolledLesson> }
         ) => {
           if (error) {
             state.data = null;

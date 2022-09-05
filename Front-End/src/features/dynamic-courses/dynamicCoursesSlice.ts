@@ -17,46 +17,45 @@ const initialState: DynamicCoursesState = {
   error: null,
 };
 
-export const fetchDynamicCourses = createAsyncThunk(
-  'api/dynamic-courses/all',
-  async (_: void, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`dynamic-courses`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+export const fetchDynamicCourses = createAsyncThunk<
+  ApiPayload<DynamicCourse[]>
+>('api/dynamic-courses/all', async (_: void, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.get(`dynamic-courses`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<DynamicCourse[]>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
-export const deleteDynamicCourse = createAsyncThunk(
-  'api/dynamic-courses/delete',
-  async (id: number, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.delete(`dynamic-courses/${id}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+export const deleteDynamicCourse = createAsyncThunk<
+  ApiPayload<DynamicCourse>,
+  number
+>('api/dynamic-courses/delete', async (id: number, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.delete(`dynamic-courses/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const data = await res.json();
+    return data as ApiPayload<DynamicCourse>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const dynamicCoursesSlice = createSlice({
   name: 'dynamicCourses',
@@ -79,7 +78,7 @@ export const dynamicCoursesSlice = createSlice({
         fetchDynamicCourses.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<DynamicCourse[]> }
         ) => {
           if (error) {
             state.data = null;
@@ -103,7 +102,7 @@ export const dynamicCoursesSlice = createSlice({
         deleteDynamicCourse.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<DynamicCourse> }
         ) => {
           if (error) {
             state.data = null;

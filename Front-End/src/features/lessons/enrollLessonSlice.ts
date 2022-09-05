@@ -17,35 +17,29 @@ const initialState: LessonState = {
   error: null,
 };
 
-export const enrollLesson = createAsyncThunk(
-  'api/lesson/join',
-  async (
-    {
-      lessonId,
-      enrolledCourseId,
-    }: { lessonId: number; enrolledCourseId: number },
-    thunkApi
-  ) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('lesson', {
-        json: {
-          data: { lesson_id: lessonId, enrolled_course_id: enrolledCourseId },
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+export const enrollLesson = createAsyncThunk<
+  ApiPayload<Lesson>,
+  { lessonId: number; enrolledCourseId: number }
+>('api/lesson/join', async ({ lessonId, enrolledCourseId }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('lesson', {
+      json: {
+        data: { lesson_id: lessonId, enrolled_course_id: enrolledCourseId },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<Lesson>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const enrollLessonSlice = createSlice({
   name: 'enrollLesson',
@@ -65,7 +59,7 @@ export const enrollLessonSlice = createSlice({
         enrollLesson.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Lesson> }
         ) => {
           if (error) {
             state.data = null;

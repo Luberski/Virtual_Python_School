@@ -17,26 +17,26 @@ const initialState: DynamicCourseState = {
   error: null,
 };
 
-export const fetchDynamicCourse = createAsyncThunk(
-  'api/dynamic-courses/id',
-  async (id: number, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`dynamic-courses/${id}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+export const fetchDynamicCourse = createAsyncThunk<
+  ApiPayload<DynamicCourse>,
+  number
+>('api/dynamic-courses/id', async (id: number, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.get(`dynamic-courses/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<DynamicCourse>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const dynamicCourseSlice = createSlice({
   name: 'dynamicCourse',
@@ -59,7 +59,7 @@ export const dynamicCourseSlice = createSlice({
         fetchDynamicCourse.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<DynamicCourse> }
         ) => {
           if (error) {
             state.data = null;

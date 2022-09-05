@@ -4,9 +4,10 @@ import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
 import type { ApiPayload } from '@app/models/ApiPayload';
 
+type AnswerData = { id: string; status: boolean; lesson_id: string };
+
 export type AnswerState = {
-  // TODO: move types to models folder
-  data: { id: string; status: boolean; lesson_id: string };
+  data: AnswerData;
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
 };
@@ -17,20 +18,16 @@ const initialState: AnswerState = {
   error: null,
 };
 
-export const checkAnswer = createAsyncThunk(
+export const checkAnswer = createAsyncThunk<
+  ApiPayload<AnswerData>,
+  {
+    lessonId: number;
+    enrolledLessonId: number;
+    answer: string;
+  }
+>(
   'api/answer/check',
-  async (
-    {
-      lessonId,
-      enrolledLessonId,
-      answer,
-    }: {
-      lessonId: number;
-      enrolledLessonId: number;
-      answer: string;
-    },
-    thunkApi
-  ) => {
+  async ({ lessonId, enrolledLessonId, answer }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -48,7 +45,7 @@ export const checkAnswer = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<AnswerData>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -78,7 +75,7 @@ export const answerSlice = createSlice({
         checkAnswer.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<AnswerData> }
         ) => {
           if (error) {
             state.data = null;

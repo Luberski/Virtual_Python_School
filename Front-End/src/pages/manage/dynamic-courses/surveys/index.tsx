@@ -9,6 +9,8 @@ import {
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
+import { PlusCircleIcon } from '@heroicons/react/20/solid';
+import Link from 'next/link';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import NavBar from '@app/components/NavBar';
 import { WEBSITE_TITLE } from '@app/constants';
@@ -23,9 +25,7 @@ import {
 import Footer from '@app/components/Footer';
 import Button, { ButtonVariant } from '@app/components/Button';
 import StyledDialog from '@app/components/StyledDialog';
-import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import IconButtonLink from '@app/components/IconButtonLink';
-import Link from 'next/link';
 
 export default function ManageSurveysPage() {
   const [user, isLoggedIn] = useAuthRedirect();

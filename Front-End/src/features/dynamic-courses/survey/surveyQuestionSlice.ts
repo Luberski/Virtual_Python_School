@@ -14,8 +14,14 @@ type QuestionData = {
   answers: AnswerData[];
 };
 
+type CreateSurveyQuestionsResponse = ApiPayload & {
+  data: {
+    questions: QuestionData[];
+  };
+};
+
 export type SurveyQuestionState = {
-  data: QuestionData;
+  data: QuestionData | CreateSurveyQuestionsResponse;
   questions: QuestionData[];
   status: 'idle' | 'pending' | 'succeeded' | 'failed';
   error: string | null;
@@ -28,72 +34,70 @@ const initialState: SurveyQuestionState = {
   error: null,
 };
 
-export const createSurveyQuestion = createAsyncThunk(
-  'api/surveys/questions/create',
-  async (
-    { surveyId, question }: { surveyId: number; question: string },
-    thunkApi
-  ) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('surveys/questions', {
-        json: {
-          data: {
-            survey_id: surveyId,
-            question,
-          },
+export const createSurveyQuestion = createAsyncThunk<
+  ApiPayload<QuestionData>,
+  { surveyId: number; question: string }
+>('api/surveys/questions/create', async ({ surveyId, question }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('surveys/questions', {
+      json: {
+        data: {
+          survey_id: surveyId,
+          question,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<QuestionData>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
-export const createSurveyQuestions = createAsyncThunk(
-  'api/surveys/questions/create/bulk',
-  async (_: void, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('surveys/questions', {
-        json: {
-          data: {
-            survey_id: state.survey.data.id,
-            bulk: true,
-            questions: state.surveyQuestion.questions.map(
-              ({ question }) => question
-            ),
+export const createSurveyQuestions =
+  createAsyncThunk<CreateSurveyQuestionsResponse>(
+    'api/surveys/questions/create/bulk',
+    async (_: void, thunkApi) => {
+      try {
+        const state = thunkApi.getState() as RootState;
+        const { accessToken } = state.auth.token;
+        const res = await apiClient.post('surveys/questions', {
+          json: {
+            data: {
+              survey_id: state.survey.data.id,
+              bulk: true,
+              questions: state.surveyQuestion.questions.map(
+                ({ question }) => question
+              ),
+            },
           },
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
+        const data = await res.json();
+        return data as CreateSurveyQuestionsResponse;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
     }
-  }
-);
+  );
 
-export const createSurveyQuestionWithAnswers = createAsyncThunk(
+export const createSurveyQuestionWithAnswers = createAsyncThunk<
+  ApiPayload<QuestionData>,
+  { question: string; answers: AnswerData[] }
+>(
   'api/surveys/questions/answers/create',
-  async (
-    { question, answers }: { question: string; answers: AnswerData[] },
-    thunkApi
-  ) => {
+  async ({ question, answers }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -111,7 +115,7 @@ export const createSurveyQuestionWithAnswers = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<QuestionData>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -132,8 +136,7 @@ export const createSurveyQuestionsWithAnswers = createAsyncThunk(
           })
         )
       );
-      const res = await Promise.all(questions);
-      return res;
+      await Promise.all(questions);
     } catch (error) {
       console.error(error);
       throw error;
@@ -178,7 +181,7 @@ export const surveyQuestionSlice = createSlice({
         createSurveyQuestion.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<QuestionData> }
         ) => {
           if (error) {
             state.data = null;
@@ -203,7 +206,9 @@ export const surveyQuestionSlice = createSlice({
         createSurveyQuestions.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          {
+            payload: { data, error },
+          }: { payload: CreateSurveyQuestionsResponse }
         ) => {
           if (error) {
             state.data = null;

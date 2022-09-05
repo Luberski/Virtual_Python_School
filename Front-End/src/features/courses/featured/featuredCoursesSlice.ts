@@ -17,14 +17,14 @@ const initialState: FeaturedCoursesState = {
   error: null,
 };
 
-export const fetchFeaturedCourses = createAsyncThunk(
+export const fetchFeaturedCourses = createAsyncThunk<ApiPayload<Course[]>>(
   'api/courses/featured',
   async (_: void) => {
     try {
       const res = await apiClient.get('courses/featured', {});
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Course[]>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -50,7 +50,7 @@ export const featuredCoursesSlice = createSlice({
         fetchFeaturedCourses.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Course[]> }
         ) => {
           if (error) {
             state.data = null;
