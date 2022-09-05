@@ -23,6 +23,9 @@ import {
 import Footer from '@app/components/Footer';
 import Button, { ButtonVariant } from '@app/components/Button';
 import StyledDialog from '@app/components/StyledDialog';
+import { PlusCircleIcon } from '@heroicons/react/20/solid';
+import IconButtonLink from '@app/components/IconButtonLink';
+import Link from 'next/link';
 
 export default function ManageSurveysPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -102,6 +105,13 @@ export default function ManageSurveysPage() {
               <p className="text-xl font-medium">
                 {t('Survey.list-of-surveys')}
               </p>
+              <Link href="/manage/dynamic-courses/guided" passHref>
+                <IconButtonLink
+                  variant={IconButtonVariant.PRIMARY}
+                  icon={<PlusCircleIcon className="h-5 w-5" />}>
+                  {t('Manage.create')}
+                </IconButtonLink>
+              </Link>
             </div>
             <StyledDialog
               title={t('Survey.delete-survey')}
