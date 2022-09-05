@@ -42,7 +42,11 @@ export default function GuidedDynamicCourseFormStep({
 
     if (steps === currentStep + 1) {
       try {
-        await dispatch(createSurvey('Survey for Dynamic Course'));
+        await dispatch(
+          createSurvey({
+            name: 'Survey for Dynamic Course',
+          })
+        );
         await dispatch(createSurveyQuestionsWithAnswers());
       } catch (error) {
         console.error(error);

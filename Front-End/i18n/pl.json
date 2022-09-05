@@ -128,7 +128,8 @@
     "survey-preview": "Podgląd ankiety",
     "delete-survey": "Usuń ankietę",
     "delete-survey-confirmation": "Czy na pewno chcesz USUNĄĆ tą ankietę?",
-    "survey-deleted": "Ankieta została usunięta"
+    "survey-deleted": "Ankieta została usunięta",
+    "featured": "Ustaw jako rekomendowaną ankietę dla dynamicznego kursu dla wszystkich użytkowników"
   },
   "Form": {
     "step-of": "Krok {currentStep} z {steps}",

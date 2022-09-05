@@ -1,3 +1,4 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import type Survey from '@app/models/Survey';
@@ -12,14 +13,26 @@ export type SurveyState = {
 };
 
 const initialState: SurveyState = {
-  data: null,
+  data: {
+    id: null,
+    name: null,
+    featured: true,
+    questions: [],
+  },
   status: 'idle',
   error: null,
 };
 
 export const createSurvey = createAsyncThunk(
   'api/surveys/create',
-  async (name: string, thunkApi) => {
+  async (
+    {
+      name,
+    }: {
+      name: string;
+    },
+    thunkApi
+  ) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -27,6 +40,7 @@ export const createSurvey = createAsyncThunk(
         json: {
           data: {
             name,
+            featured: state.survey.data.featured,
           },
         },
         headers: {
@@ -86,7 +100,11 @@ export const fetchFeaturedSurvey = createAsyncThunk(
 export const surveySlice = createSlice({
   name: 'survey',
   initialState,
-  reducers: {},
+  reducers: {
+    setSurveyAsFeatured: (state, { payload }: PayloadAction<boolean>) => {
+      state.data.featured = payload;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
@@ -172,5 +190,7 @@ export const surveySlice = createSlice({
 export const selectSurveyData = (state: RootState) => state.survey.data;
 export const selectSurveyError = (state: RootState) => state.survey.error;
 export const selectSurveyStatus = (state: RootState) => state.survey.status;
+
+export const { setSurveyAsFeatured } = surveySlice.actions;
 
 export default surveySlice.reducer;

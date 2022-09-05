@@ -48,6 +48,11 @@ def create_dynamic_course_survey(
             content={"error": "User not found"},
         )
 
+    if request_data.data.featured is True:
+        db.query(models.DynamicCourseSurvey).filter_by(featured=True).update(
+            {"featured": False}
+        )
+
     survey = models.DynamicCourseSurvey(
         name=request_data.data.name,
         featured=request_data.data.featured,

@@ -128,7 +128,8 @@
     "survey-preview": "Survey preview",
     "delete-survey": "Delete survey",
     "delete-survey-confirmation": "Are you sure you want to DELETE this survey?",
-    "survey-deleted": "Survey deleted"
+    "survey-deleted": "Survey deleted",
+    "featured": "Set as featured survey for a dynamic course for all users"
   },
   "Form": {
     "step-of": "Step {currentStep} of {steps}",

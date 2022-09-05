@@ -9,7 +9,7 @@ import {
   removeSurveyQuestion,
   selectSurveyQuestions,
 } from '../survey/surveyQuestionSlice';
-import { selectSurveyData } from '../survey/surveySlice';
+import { selectSurveyData, setSurveyAsFeatured } from '../survey/surveySlice';
 import GuidedDynamicCourseFormStep from './GuidedDynamicCourseFormStep';
 import GuidedDynamicCourseFormCard from './GuidedDynamicCourseFormCard';
 import GuidedDynamicCourseFormCompleted from './GuidedDynamicCourseFormCompleted';
@@ -26,6 +26,7 @@ import {
 } from '@app/features/lessons/lessonsSlice';
 import { useAppSelector } from '@app/hooks';
 import { RuleType } from '@app/models/SurveyAnswer';
+import Checkbox from '@app/components/Checkbox';
 
 type GuidedDynamicCourseFormProps = {
   translations: (key: string, ...params: unknown[]) => string;
@@ -98,6 +99,10 @@ export default function GuidedDynamicCourseForm({
   const lessonsData = useAppSelector(selectLessonsData);
   const surveyData = useAppSelector(selectSurveyData);
   const questions = useAppSelector(selectSurveyQuestions);
+
+  const handleSurveyFeatured = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setSurveyAsFeatured(e.target.checked));
+  };
 
   const onAddQuestionSubmit = async (data: {
     question: string;
@@ -298,14 +303,28 @@ export default function GuidedDynamicCourseForm({
                 {translations('Survey.survey-preview')}
               </h3>
               {questions?.length > 0 ? (
-                <SurveyPreview
-                  questions={questions?.map((question) => ({
-                    question: question?.question,
-                    answers: question?.answers?.map((answer) => ({
-                      name: answer?.name,
-                    })),
-                  }))}
-                />
+                <div>
+                  <div className="flex items-center">
+                    <Checkbox
+                      id="featured"
+                      name="featured"
+                      label="featured"
+                      checked={surveyData?.featured}
+                      onChange={handleSurveyFeatured}
+                    />
+                    <label htmlFor="featured" className="ml-2">
+                      {translations('Survey.featured')}
+                    </label>
+                  </div>
+                  <SurveyPreview
+                    questions={questions?.map((question) => ({
+                      question: question?.question,
+                      answers: question?.answers?.map((answer) => ({
+                        name: answer?.name,
+                      })),
+                    }))}
+                  />
+                </div>
               ) : (
                 <div className="text-center text-xl">
                   {translations('Survey.no-questions-added')}
@@ -358,7 +377,7 @@ export default function GuidedDynamicCourseForm({
               className={
                 errors.question &&
                 errors.question.type === 'required' &&
-                'border-red-600'
+                'border-red-600 dark:border-red-400'
               }
             />
             <div>
@@ -391,7 +410,7 @@ export default function GuidedDynamicCourseForm({
                           className={
                             errors.selectedLesson1 &&
                             errors.selectedLesson1.type === 'required' &&
-                            'border-red-600'
+                            'border-red-600 dark:border-red-400'
                           }
                           disabled={skipLesson1}
                           options={
@@ -443,7 +462,7 @@ export default function GuidedDynamicCourseForm({
                           className={
                             errors.selectedLesson2 &&
                             errors.selectedLesson2.type === 'required' &&
-                            'border-red-600'
+                            'border-red-600 dark:border-red-400'
                           }
                           disabled={skipLesson2}
                           options={
@@ -495,7 +514,7 @@ export default function GuidedDynamicCourseForm({
                           className={
                             errors.selectedLesson3 &&
                             errors.selectedLesson3.type === 'required' &&
-                            'border-red-600'
+                            'border-red-600 dark:border-red-400'
                           }
                           disabled={skipLesson3}
                           options={
@@ -547,7 +566,7 @@ export default function GuidedDynamicCourseForm({
                           className={
                             errors.selectedLesson4 &&
                             errors.selectedLesson4.type === 'required' &&
-                            'border-red-600'
+                            'border-red-600 dark:border-red-400'
                           }
                           disabled={skipLesson4}
                           options={
