@@ -21,6 +21,7 @@ from app.models import (
     DynamicCourseSurveyUserResults,
     DynamicCourses,
     DynamicLessons,
+    Classrooms
 )
 
 # this is the Alembic Config object, which provides

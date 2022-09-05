@@ -15,6 +15,7 @@ class User(Base):
     email = Column(String(100), unique=True)
     course_id = relationship("EnrolledCourses")
     role_id = Column(Integer, ForeignKey("roles.id"))
+    classroom = relationship("Classrooms", back_populates="user")
 
     @staticmethod
     def generate_hash(password):
@@ -131,3 +132,12 @@ class DynamicCourses(Base):
     name = Column(String(100))
     user_id = Column(Integer, ForeignKey("user.id"))
     dynamic_lessons = relationship("DynamicLessons", lazy="dynamic")
+
+class Classrooms(Base):
+    __tablename__ = "classrooms"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50))
+    url = Column(String(50))
+    teacher_id = Column(Integer, ForeignKey("user.id"))
+    isPublic = Column(Boolean, default=False, nullable=False)
+    user = relationship("User", back_populates="classroom")
