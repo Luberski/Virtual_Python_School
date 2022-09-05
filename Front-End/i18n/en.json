@@ -104,7 +104,10 @@
     "guide-alert-3-step": "Add questions to the survey.\nThen assign each answer to the lesson.\nOn this basis, the system will create a survey and decide which lessons will be shown to the user.",
     "guide-alert-question": "Add question to the survey.\nThen assign each answer to the rule.\nOn this basis, the system will create a survey and decide which lessons will be shown to the user in thier dynamic course.",
     "guide-alert-rules": "Choose a rule for each answer.\nBased on this rule, it will be determined which lesson is to be selected and added to the dynamic course after completing the survey.",
-    "introduction": "Introduction"
+    "introduction": "Introduction",
+    "delete-dynamic-course": "Delete dynamic course",
+    "delete-dynamic-course-confirmation": "Are you sure you want to DELETE this dynamic course?",
+    "dynamic-course-deleted": "Dynamic course deleted"
   },
   "Survey": {
     "leading": "Dynamic Course Survey",

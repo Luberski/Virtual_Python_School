@@ -38,6 +38,26 @@ export const fetchDynamicCourses = createAsyncThunk(
   }
 );
 
+export const deleteDynamicCourse = createAsyncThunk(
+  'api/dynamic-courses/delete',
+  async (id: number, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.delete(`dynamic-courses/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 export const dynamicCoursesSlice = createSlice({
   name: 'dynamicCourses',
   initialState,
@@ -73,6 +93,30 @@ export const dynamicCoursesSlice = createSlice({
         }
       )
       .addCase(fetchDynamicCourses.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(deleteDynamicCourse.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        deleteDynamicCourse.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = [...state.data.filter((d) => d.id !== data.id)];
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(deleteDynamicCourse.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

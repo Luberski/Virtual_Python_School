@@ -1,10 +1,16 @@
 import { useTranslations } from 'next-intl';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
 import { useDispatch } from 'react-redux';
-import { TrashIcon } from '@heroicons/react/24/outline';
-import Image from 'next/image';
 import {
+  ExclamationCircleIcon,
+  InformationCircleIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
+import Image from 'next/image';
+import { useRef, useState } from 'react';
+import {
+  deleteDynamicCourse,
   fetchDynamicCourses,
   selectDynamicCoursesData,
 } from '@app/features/dynamic-courses/dynamicCoursesSlice';
@@ -14,6 +20,8 @@ import { WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import Footer from '@app/components/Footer';
+import StyledDialog from '@app/components/StyledDialog';
+import Button, { ButtonVariant } from '@app/components/Button';
 
 export default function ManageDynamicCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -21,6 +29,50 @@ export default function ManageDynamicCoursesPage() {
 
   const t = useTranslations();
   const dynamicCourses = useAppSelector(selectDynamicCoursesData);
+  const [isDynamicCourseDeleteDialogOpen, setIsDynamicCourseDeleteDialogOpen] =
+    useState(false);
+  const [currentDynamicCourseId, setCurrentDynamicCourseId] =
+    useState<number>(null);
+  const cancelButtonRef = useRef(null);
+
+  const closeDynamicCourseDeleteDialog = () => {
+    setIsDynamicCourseDeleteDialogOpen(false);
+  };
+
+  const openDynamicCourseDeleteDialog = (courseId: number) => () => {
+    setCurrentDynamicCourseId(courseId);
+    setIsDynamicCourseDeleteDialogOpen(true);
+  };
+
+  const handleDeleteDynamicCourse = async () => {
+    await dispatch(deleteDynamicCourse(currentDynamicCourseId));
+    closeDynamicCourseDeleteDialog();
+    notifyDynamicCourseDeleted();
+  };
+
+  const notifyDynamicCourseDeleted = () =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-red-500 bg-red-200 py-3 px-4 text-red-900 shadow-red-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">
+                {t('DynamicCourse.dynamic-course-deleted')}
+              </p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'DynamicCourse-deleted-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
 
   if (!user && !isLoggedIn) {
     return null;
@@ -53,6 +105,40 @@ export default function ManageDynamicCoursesPage() {
                 {t('DynamicCourse.list-of-dynamic-courses')}
               </p>
             </div>
+            <StyledDialog
+              title={t('DynamicCourse.delete-dynamic-course')}
+              isOpen={isDynamicCourseDeleteDialogOpen}
+              icon={
+                <div className="h-fit rounded-lg bg-red-100 p-2">
+                  <ExclamationCircleIcon className="h-6 w-6 text-red-900" />
+                </div>
+              }
+              onClose={() =>
+                setIsDynamicCourseDeleteDialogOpen(
+                  !isDynamicCourseDeleteDialogOpen
+                )
+              }>
+              <div className="my-2">
+                <p className="my-2 font-bold text-red-400">
+                  {t('DynamicCourse.delete-dynamic-course-confirmation')}
+                </p>
+                <div className="flex space-x-4 py-3">
+                  <Button
+                    type="button"
+                    variant={ButtonVariant.DANGER}
+                    onClick={handleDeleteDynamicCourse}>
+                    {t('Manage.delete')}
+                  </Button>
+                  <Button
+                    variant={ButtonVariant.FLAT_SECONDARY}
+                    type="button"
+                    onClick={closeDynamicCourseDeleteDialog}
+                    ref={cancelButtonRef}>
+                    {t('Manage.cancel')}
+                  </Button>
+                </div>
+              </div>
+            </StyledDialog>
             {dynamicCourses && dynamicCourses.length > 0 ? (
               <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
                 <table className="w-full table-auto divide-y divide-neutral-200">
@@ -76,7 +162,8 @@ export default function ManageDynamicCoursesPage() {
                         <td className="flex space-x-4 py-4 pr-4">
                           <IconButton
                             variant={IconButtonVariant.DANGER}
-                            icon={<TrashIcon className="h-5 w-5" />}>
+                            icon={<TrashIcon className="h-5 w-5" />}
+                            onClick={openDynamicCourseDeleteDialog(course.id)}>
                             {t('Manage.delete')}
                           </IconButton>
                         </td>

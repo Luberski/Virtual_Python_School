@@ -47,10 +47,10 @@ export default function ManageSurveysPage() {
   const handleDeleteSurvey = async () => {
     await dispatch(deleteSurvey(currentSurveyId));
     closeSurveyDeleteDialog();
-    notifyCourseDeleted();
+    notifySurveyDeleted();
   };
 
-  const notifyCourseDeleted = () =>
+  const notifySurveyDeleted = () =>
     toast.custom(
       (to) => (
         <button

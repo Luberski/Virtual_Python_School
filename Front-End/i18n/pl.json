@@ -104,7 +104,10 @@
     "guide-alert-3-step": "Dodaj pytania do ankiety.\nNastępnie przypisz każdą odpowiedź do lekcji.\nNa tej podstawie system utworzy ankietę i zdecyduje, które lekcje zostaną pokazane użytkownikowi.",
     "guide-alert-question": "Dodaj pytanie do ankiety.\nNastępnie przypisz każdą odpowiedź do reguły.\nNa tej podstawie system utworzy ankietę i zdecyduje, które lekcje zostaną pokazane użytkownikowi w jego dynamicznym kursie.",
     "guide-alert-rules": "Wybierz regułę dla każdej odpowiedzi.\nNa podstawie tej reguły zostanie ustalone, która lekcja zostanie wybrana i dodana do dynamicznego kursu po wypełnieniu ankiety.",
-    "introduction": "Wprowadzenie"
+    "introduction": "Wprowadzenie",
+    "delete-dynamic-course": "Usuń kurs dynamiczny",
+    "delete-dynamic-course-confirmation": "Czy na pewno chcesz USUNĄĆ ten kurs dynamiczny?",
+    "dynamic-course-deleted": "Kurs dynamiczny został usunięty"
   },
   "Survey": {
     "leading": "Ankieta kursu dynamicznego",
