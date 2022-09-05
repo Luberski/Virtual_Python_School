@@ -1,9 +1,14 @@
 import { useTranslations } from 'next-intl';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
 import { useDispatch } from 'react-redux';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import {
+  ExclamationCircleIcon,
+  InformationCircleIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { useRef, useState } from 'react';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import NavBar from '@app/components/NavBar';
 import { WEBSITE_TITLE } from '@app/constants';
@@ -11,10 +16,13 @@ import { wrapper } from '@app/store';
 import Checkbox from '@app/components/Checkbox';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import {
+  deleteSurvey,
   fetchSurveys,
   selectSurveysData,
 } from '@app/features/dynamic-courses/survey/surveysSlice';
 import Footer from '@app/components/Footer';
+import Button, { ButtonVariant } from '@app/components/Button';
+import StyledDialog from '@app/components/StyledDialog';
 
 export default function ManageSurveysPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -22,6 +30,47 @@ export default function ManageSurveysPage() {
 
   const t = useTranslations();
   const surveys = useAppSelector(selectSurveysData);
+  const [isSurveyDeleteDialogOpen, setIsSurveyDeleteDialogOpen] =
+    useState(false);
+  const [currentSurveyId, setCurrentSurveyId] = useState<number>(null);
+  const cancelButtonRef = useRef(null);
+
+  const closeSurveyDeleteDialog = () => {
+    setIsSurveyDeleteDialogOpen(false);
+  };
+
+  const openSurveyDeleteDialog = (courseId: number) => () => {
+    setCurrentSurveyId(courseId);
+    setIsSurveyDeleteDialogOpen(true);
+  };
+
+  const handleDeleteSurvey = async () => {
+    await dispatch(deleteSurvey(currentSurveyId));
+    closeSurveyDeleteDialog();
+    notifyCourseDeleted();
+  };
+
+  const notifyCourseDeleted = () =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-red-500 bg-red-200 py-3 px-4 text-red-900 shadow-red-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{t('Survey.survey-deleted')}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'Survey-deleted-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
 
   if (!user && !isLoggedIn) {
     return null;
@@ -54,6 +103,38 @@ export default function ManageSurveysPage() {
                 {t('Survey.list-of-surveys')}
               </p>
             </div>
+            <StyledDialog
+              title={t('Survey.delete-survey')}
+              isOpen={isSurveyDeleteDialogOpen}
+              icon={
+                <div className="h-fit rounded-lg bg-red-100 p-2">
+                  <ExclamationCircleIcon className="h-6 w-6 text-red-900" />
+                </div>
+              }
+              onClose={() =>
+                setIsSurveyDeleteDialogOpen(!isSurveyDeleteDialogOpen)
+              }>
+              <div className="my-2">
+                <p className="my-2 font-bold text-red-400">
+                  {t('Survey.delete-survey-confirmation')}
+                </p>
+                <div className="flex space-x-4 py-3">
+                  <Button
+                    type="button"
+                    variant={ButtonVariant.DANGER}
+                    onClick={handleDeleteSurvey}>
+                    {t('Manage.delete')}
+                  </Button>
+                  <Button
+                    variant={ButtonVariant.FLAT_SECONDARY}
+                    type="button"
+                    onClick={closeSurveyDeleteDialog}
+                    ref={cancelButtonRef}>
+                    {t('Manage.cancel')}
+                  </Button>
+                </div>
+              </div>
+            </StyledDialog>
             {surveys && surveys.length > 0 ? (
               <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
                 <table className="w-full table-auto divide-y divide-neutral-200">
@@ -88,7 +169,8 @@ export default function ManageSurveysPage() {
                         <td className="flex space-x-4 py-4 pr-4">
                           <IconButton
                             variant={IconButtonVariant.DANGER}
-                            icon={<TrashIcon className="h-5 w-5" />}>
+                            icon={<TrashIcon className="h-5 w-5" />}
+                            onClick={openSurveyDeleteDialog(survey.id)}>
                             {t('Manage.delete')}
                           </IconButton>
                         </td>

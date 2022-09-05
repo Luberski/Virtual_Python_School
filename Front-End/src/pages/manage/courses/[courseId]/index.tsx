@@ -221,7 +221,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
           className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6 text-indigo-500" />
+            <InformationCircleIcon className="h-6 w-6" />
             <div>
               <p className="font-bold">{t('Lessons.new-lesson-added')}</p>
             </div>
@@ -243,7 +243,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
           className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6 text-indigo-500" />
+            <InformationCircleIcon className="h-6 w-6" />
             <div>
               <p className="font-bold">{t('Courses.course-edited')}</p>
             </div>
@@ -265,7 +265,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
           className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6 text-indigo-500" />
+            <InformationCircleIcon className="h-6 w-6" />
             <div>
               <p className="font-bold">{t('Lessons.lesson-edited')}</p>
             </div>
@@ -291,7 +291,7 @@ export default function ManageCourseAndLessonsPage({ courseId }: Props) {
           className="brand-shadow rounded-lg border-red-500 bg-red-200 py-3 px-4 text-red-900 shadow-red-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6 text-red-500" />
+            <InformationCircleIcon className="h-6 w-6" />
             <div>
               <p className="font-bold">{t('Lessons.lesson-deleted')}</p>
             </div>

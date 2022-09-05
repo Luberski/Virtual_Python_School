@@ -109,7 +109,7 @@ export default function ManageCoursesPage() {
           className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6 text-indigo-500" />
+            <InformationCircleIcon className="h-6 w-6" />
             <div>
               <p className="font-bold">{t('Courses.new-course-added')}</p>
             </div>
@@ -131,7 +131,7 @@ export default function ManageCoursesPage() {
           className="brand-shadow rounded-lg border-red-500 bg-red-200 py-3 px-4 text-red-900 shadow-red-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6 text-red-500" />
+            <InformationCircleIcon className="h-6 w-6" />
             <div>
               <p className="font-bold">{t('Courses.course-deleted')}</p>
             </div>

@@ -121,7 +121,10 @@
     "rules": "Rules",
     "add-new-rule": "Add new rule",
     "survey-created": "Survey created",
-    "survey-preview": "Survey preview"
+    "survey-preview": "Survey preview",
+    "delete-survey": "Delete survey",
+    "delete-survey-confirmation": "Are you sure you want to DELETE this survey?",
+    "survey-deleted": "Survey deleted"
   },
   "Form": {
     "step-of": "Step {currentStep} of {steps}",

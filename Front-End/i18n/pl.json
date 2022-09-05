@@ -121,7 +121,10 @@
     "rules": "Reguły",
     "add-new-rule": "Dodaj nową regułę",
     "survey-created": "Utworzono ankietę",
-    "survey-preview": "Podgląd ankiety"
+    "survey-preview": "Podgląd ankiety",
+    "delete-survey": "Usuń ankietę",
+    "delete-survey-confirmation": "Czy na pewno chcesz USUNĄĆ tą ankietę?",
+    "survey-deleted": "Ankieta została usunięta"
   },
   "Form": {
     "step-of": "Krok {currentStep} z {steps}",
