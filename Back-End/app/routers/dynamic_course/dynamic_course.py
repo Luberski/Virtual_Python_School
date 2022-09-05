@@ -124,6 +124,7 @@ def create_dynamic_course_from_survey_user_results(
                 "data": {
                     "id": dynamic_course.id,
                     "name": dynamic_course.name,
+                    "user_id": dynamic_course.user_id,
                     "lessons": [
                         {
                             "id": dynamic_lesson.id,
@@ -211,6 +212,7 @@ def get_all_dynamic_courses(
                 {
                     "id": dynamic_course.id,
                     "name": dynamic_course.name,
+                    "user_id": dynamic_course.user_id,
                     "lessons": [
                         {
                             "id": dynamic_lesson.id,
@@ -245,6 +247,7 @@ def get_all_dynamic_courses(
                 {
                     "id": dynamic_course.id,
                     "name": dynamic_course.name,
+                    "user_id": dynamic_course.user_id,
                     "lessons": [
                         {
                             "id": dynamic_lesson.id,
@@ -327,6 +330,7 @@ def get_dynamic_course_by_id(
                 "data": {
                     "id": dynamic_course.id,
                     "name": dynamic_course.name,
+                    "user_id": dynamic_course.user_id,
                     "lessons": [
                         {
                             "id": dynamic_lesson.id,
@@ -358,6 +362,7 @@ def get_dynamic_course_by_id(
             "data": {
                 "id": dynamic_course.id,
                 "name": dynamic_course.name,
+                "user_id": dynamic_course.user_id,
                 "lessons": [
                     {
                         "id": dynamic_lesson.id,

@@ -93,7 +93,8 @@
     "no-short": "Lp.",
     "try": "Spróbuj",
     "completed": "Ukończone",
-    "status": "Status"
+    "status": "Status",
+    "user-id": "User ID"
   },
   "DynamicCourse": {
     "leading": "Kurs dynamiczny",

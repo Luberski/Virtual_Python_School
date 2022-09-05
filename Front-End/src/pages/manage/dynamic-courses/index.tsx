@@ -150,6 +150,9 @@ export default function ManageDynamicCoursesPage() {
                       <th scope="col" className="py-3 px-4">
                         {t('Manage.name')}
                       </th>
+                      <th scope="col" className="py-3 px-4">
+                        {t('Manage.user-id')}
+                      </th>
                       <th scope="col" className="py-3 px-4" />
                     </tr>
                   </thead>
@@ -158,7 +161,7 @@ export default function ManageDynamicCoursesPage() {
                       <tr key={course.id}>
                         <td className="p-4">{(key += 1)}</td>
                         <td className="break-words p-4">{course.name}</td>
-
+                        <td className="py-4 px-8">{course.user_id}</td>
                         <td className="flex space-x-4 py-4 pr-4">
                           <IconButton
                             variant={IconButtonVariant.DANGER}

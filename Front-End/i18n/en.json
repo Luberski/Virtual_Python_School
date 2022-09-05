@@ -93,7 +93,8 @@
     "no-short": "No.",
     "try": "Try",
     "completed": "Completed",
-    "status": "Status"
+    "status": "Status",
+    "user-id": "User ID"
   },
   "DynamicCourse": {
     "leading": "Dynamic Course",
