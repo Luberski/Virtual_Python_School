@@ -3,7 +3,7 @@ import { BoltIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { PlusCircleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { nanoid } from 'nanoid';
+import { nanoid } from '@reduxjs/toolkit';
 import {
   addSurveyQuestion,
   removeSurveyQuestion,
