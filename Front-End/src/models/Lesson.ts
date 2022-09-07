@@ -1,4 +1,4 @@
-export type Lesson = {
+type Lesson = {
   id: number;
   name: string;
   description: string;
@@ -6,3 +6,5 @@ export type Lesson = {
   start_date: string;
   completed: boolean;
 };
+
+export default Lesson;

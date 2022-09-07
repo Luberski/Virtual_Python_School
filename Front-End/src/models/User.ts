@@ -1,4 +1,4 @@
-export type User = {
+type User = {
   id: number;
   zutID: string;
   username: string;
@@ -7,3 +7,5 @@ export type User = {
   email: string;
   roleId: string;
 };
+
+export default User;

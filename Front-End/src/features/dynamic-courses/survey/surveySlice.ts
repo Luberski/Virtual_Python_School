@@ -4,7 +4,7 @@ import { HYDRATE } from 'next-redux-wrapper';
 import type Survey from '@app/models/Survey';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type ApiPayload from '@app/models/ApiPayload';
 
 export type SurveyState = {
   data: Survey;

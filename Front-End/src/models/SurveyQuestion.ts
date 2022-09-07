@@ -5,4 +5,5 @@ type SurveyQuestion = {
   question: string;
   answers: SurveyAnswer[];
 };
+
 export default SurveyQuestion;

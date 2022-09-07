@@ -17,7 +17,7 @@ import ButtonLink, {
   ButtonLinkVariant,
 } from '@app/components/ButtonLink';
 import { ThemeButton } from '@app/components/ThemeButton';
-import type { User } from '@app/models/User';
+import type User from '@app/models/User';
 
 type NavBarProps = {
   isLoggedIn?: boolean;

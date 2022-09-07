@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Course } from '@app/models/Course';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Course from '@app/models/Course';
+import type ApiPayload from '@app/models/ApiPayload';
 
 export type FeaturedCoursesState = {
   data: Course[] | null;

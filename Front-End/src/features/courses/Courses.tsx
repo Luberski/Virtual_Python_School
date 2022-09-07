@@ -12,7 +12,7 @@ import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
-import type { Course } from '@app/models/Course';
+import type Course from '@app/models/Course';
 
 type CoursesProps = {
   courses: Course[];

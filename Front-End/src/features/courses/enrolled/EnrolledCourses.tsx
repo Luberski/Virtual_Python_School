@@ -5,10 +5,10 @@ import FancyCard from '@app/components/FancyCard';
 import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
-import type { Course } from '@app/models/Course';
+import type EnrolledCourse from '@app/models/EnrolledCourse';
 
 type EnrolledCoursesProps = {
-  enrolledCourses: Course[];
+  enrolledCourses: EnrolledCourse[];
   translations: (key: string, ...params: unknown[]) => string;
 };
 
@@ -29,41 +29,61 @@ export default function EnrolledCourses({
             return (
               <FancyCard
                 key={enrolledCourse.id}
-                title={enrolledCourse.name}
-                description={
-                  <div className="flex flex-col">
-                    <div className="flex space-x-2">
-                      <div className="my-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
-                        <div
-                          className="h-2 rounded-lg bg-indigo-600"
-                          style={{
-                            width: `${lessonsCompletedPercentage}%`,
-                          }}
-                        />
-                      </div>
-                      <div className="text-sm text-neutral-500">
-                        {lessonsCompletedPercentage}%
-                      </div>
+                title={
+                  enrolledCourse.is_dynamic ? (
+                    <div className="text-indigo-900 dark:text-indigo-300">
+                      {enrolledCourse.name}
                     </div>
-                    {enrolledCourse.description}
+                  ) : (
+                    enrolledCourse.name
+                  )
+                }
+                description={
+                  <div className="flex h-96 flex-col">
+                    {!enrolledCourse.is_dynamic && (
+                      <div className="flex space-x-2">
+                        <div className="my-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
+                          <div
+                            className="h-2 rounded-lg bg-indigo-600"
+                            style={{
+                              width: `${lessonsCompletedPercentage}%`,
+                            }}
+                          />
+                        </div>
+                        <div className="text-sm text-neutral-500">
+                          {lessonsCompletedPercentage}%
+                        </div>
+                      </div>
+                    )}
+                    <div>{enrolledCourse.description}</div>
                     <div>
                       <div className="mt-4 mb-1 text-xs text-neutral-400">
                         {translations('Manage.name')}
                       </div>
-                      {enrolledCourse.lessons?.length > 0 &&
-                        enrolledCourse.lessons?.map((lesson) => (
-                          <div key={lesson.id}>
-                            <div className="text-indigo-900 dark:text-indigo-300">
-                              {lesson.name}
+                      <div>
+                        {enrolledCourse.lessons?.length > 0 &&
+                          enrolledCourse.lessons?.map((lesson) => (
+                            <div key={lesson.id}>
+                              <div className="text-indigo-900 dark:text-indigo-300">
+                                {lesson.name}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                      </div>
                       ...
                     </div>
                   </div>
                 }
-                cardColor="bg-white"
-                shadowColor="shadow-black/25"
+                cardColor={
+                  enrolledCourse.is_dynamic
+                    ? 'bg-indigo-50 dark:bg-indigo-400/25'
+                    : 'bg-white'
+                }
+                shadowColor={
+                  enrolledCourse.is_dynamic
+                    ? 'shadow-indigo-900/25'
+                    : 'shadow-black/25'
+                }
                 hoverShadowColor="hover:shadow-black/25"
                 bottomControls={
                   <Link href={`/courses/${enrolledCourse.id}`} passHref={true}>

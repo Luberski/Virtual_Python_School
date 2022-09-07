@@ -1,3 +1,5 @@
-export type Playground = {
+type Playground = {
   content: string;
 };
+
+export default Playground;

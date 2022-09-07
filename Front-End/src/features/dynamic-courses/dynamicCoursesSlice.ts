@@ -3,7 +3,7 @@ import { HYDRATE } from 'next-redux-wrapper';
 import type DynamicCourse from '@app/models/DynamicCourse';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type ApiPayload from '@app/models/ApiPayload';
 
 export type DynamicCoursesState = {
   data: DynamicCourse[];

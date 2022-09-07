@@ -3,9 +3,9 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { setCookies } from 'cookies-next';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { User } from '@app/models/User';
-import type { ApiPayload } from '@app/models/ApiPayload';
-import type { Token } from '@app/models/Token';
+import type User from '@app/models/User';
+import type ApiPayload from '@app/models/ApiPayload';
+import type Token from '@app/models/Token';
 
 interface AuthPayload extends ApiPayload {
   data: User & { token: Token };

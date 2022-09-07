@@ -1,15 +1,18 @@
-import type { Lesson } from './Lesson';
+import type Lesson from './Lesson';
 
-export type EnrolledCourse = {
+type EnrolledCourse = {
   id: number;
   course_id: number;
   name: string;
   description: string;
   featured: boolean;
   enrolled: boolean;
+  is_dynamic: boolean;
   start_date: string;
   end_date: string;
   total_lessons_count: number;
   total_completed_lessons_count: number;
   lessons?: Lesson[];
 };
+
+export default EnrolledCourse;

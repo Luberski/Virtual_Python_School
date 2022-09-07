@@ -3,7 +3,7 @@ import Link from 'next/link';
 import FancyCard from '@app/components/FancyCard';
 import DynamicCourseCard from '@app/components/DynamicCourseCard';
 import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
-import type { Course } from '@app/models/Course';
+import type Course from '@app/models/Course';
 
 type FeaturedCoursesProps = {
   featuredCourses: Course[];

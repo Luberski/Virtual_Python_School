@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { EnrolledLesson } from '@app/models/EnrolledLesson';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type EnrolledLesson from '@app/models/EnrolledLesson';
+import type ApiPayload from '@app/models/ApiPayload';
 
 export type EnrolledLessonState = {
   data: EnrolledLesson;
