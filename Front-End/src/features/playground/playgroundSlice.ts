@@ -4,10 +4,11 @@ import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
 import type Playground from '@app/models/Playground';
 import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type PlaygroundState = {
   data: Playground;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 

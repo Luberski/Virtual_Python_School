@@ -6,6 +6,7 @@ import type { RootState } from '@app/store';
 import type User from '@app/models/User';
 import type ApiPayload from '@app/models/ApiPayload';
 import type Token from '@app/models/Token';
+import type ApiStatus from '@app/models/ApiStatus';
 
 interface AuthPayload extends ApiPayload {
   data: User & { token: Token };
@@ -15,7 +16,7 @@ export type AuthState = {
   token: Token | null;
   user: User | null;
   isLoggedIn: boolean;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 

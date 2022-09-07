@@ -4,10 +4,11 @@ import type SurveyResults from '@app/models/SurveyResults';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
 import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type SurveyResultsState = {
   data: SurveyResults;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 

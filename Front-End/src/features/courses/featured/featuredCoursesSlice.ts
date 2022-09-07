@@ -4,10 +4,11 @@ import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
 import type Course from '@app/models/Course';
 import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type FeaturedCoursesState = {
   data: Course[] | null;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
