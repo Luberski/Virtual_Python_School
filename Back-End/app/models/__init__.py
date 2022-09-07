@@ -137,7 +137,6 @@ class Classrooms(Base):
     __tablename__ = "classrooms"
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
-    url = Column(String(50))
     teacher_id = Column(Integer, ForeignKey("user.id"))
-    isPublic = Column(Boolean, default=False, nullable=False)
+    is_public = Column(Boolean, default=False, nullable=False)
     user = relationship("User", back_populates="classroom")
