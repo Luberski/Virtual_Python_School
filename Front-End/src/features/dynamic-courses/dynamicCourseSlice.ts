@@ -25,7 +25,7 @@ export const fetchDynamicCourse = createAsyncThunk<
   try {
     const state = thunkApi.getState() as RootState;
     const { accessToken } = state.auth.token;
-    const res = await apiClient.get(`dynamic-courses/${id}`, {
+    const res = await apiClient.get(`dynamic-courses/${id}?populate=true`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

@@ -4,28 +4,29 @@ import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { AcademicCapIcon, CheckBadgeIcon } from '@heroicons/react/20/solid';
 import Button, { ButtonVariant } from '@app/components/Button';
-import { enrollLesson } from '@app/features/lessons/enrollLessonSlice';
-import type Lesson from '@app/models/Lesson';
+import {
+  enrollLesson,
+  selectJoinLessonData,
+  selectJoinLessonStatus,
+} from '@app/features/lessons/enrollLessonSlice';
 import type EnrolledCourseModel from '@app/models/EnrolledCourse';
-import type ApiStatus from '@app/models/ApiStatus';
+import { useAppSelector } from '@app/hooks';
 
 type EnrolledCourseProps = {
   enrolledCourse: EnrolledCourseModel;
-  enrollLessonStatus: ApiStatus;
-  enrollLessonData: Lesson;
   translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function EnrolledCourse({
   enrolledCourse,
-  enrollLessonStatus,
-  enrollLessonData,
   translations,
 }: EnrolledCourseProps) {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const [currentLessonId, setCurrentLessonId] = useState(null);
+  const enrollLessonStatus = useAppSelector(selectJoinLessonStatus);
+  const enrollLessonData = useAppSelector(selectJoinLessonData);
 
   useEffect(() => {
     if (enrollLessonStatus === 'succeeded') {

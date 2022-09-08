@@ -7,10 +7,6 @@ import {
   selectEnrolledCourseWithLessonsData,
 } from '@app/features/courses/enrolled/enrolledCourseWithLessonsSlice';
 import { wrapper } from '@app/store';
-import {
-  selectJoinLessonData,
-  selectJoinLessonStatus,
-} from '@app/features/lessons/enrollLessonSlice';
 import EnrolledCourse from '@app/features/courses/enrolled/EnrolledCourse';
 
 export default function CoursePage() {
@@ -19,8 +15,6 @@ export default function CoursePage() {
   const dispatch = useDispatch();
 
   const enrolledCourse = useAppSelector(selectEnrolledCourseWithLessonsData);
-  const enrollLessonStatus = useAppSelector(selectJoinLessonStatus);
-  const enrollLessonData = useAppSelector(selectJoinLessonData);
 
   if (!user && !isLoggedIn) {
     return null;
@@ -38,12 +32,7 @@ export default function CoursePage() {
         }
       />
       <div className="brand-shadow2 container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
-        <EnrolledCourse
-          translations={t}
-          enrolledCourse={enrolledCourse}
-          enrollLessonStatus={enrollLessonStatus}
-          enrollLessonData={enrollLessonData}
-        />
+        <EnrolledCourse translations={t} enrolledCourse={enrolledCourse} />
       </div>
     </div>
   );
