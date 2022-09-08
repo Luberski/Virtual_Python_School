@@ -265,7 +265,7 @@ def get_lessons_all(
 
 
 @router.get("/courses/{course_id}/lessons/{lesson_id}", tags=["lessons"])
-def get_lesson(
+def get_lesson_by_course_id(
     course_id: int = Path(title="id of the course"),
     lesson_id: int = Path(title="id of the lesson"),
     db: Session = Depends(deps.get_db),
@@ -281,6 +281,42 @@ def get_lesson(
     lesson = (
         db.query(models.Lessons).filter_by(course_id=course_id, id=lesson_id).first()
     )
+    if lesson is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Lesson not found"},
+        )
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": {
+                "id": lesson.id,
+                "name": lesson.name,
+                "description": lesson.description,
+                "course_id": lesson.course_id,
+                "type": lesson.type,
+                "number_of_answers": lesson.number_of_answers,
+            },
+            "error": None,
+        },
+    )
+
+
+@router.get("/lessons/{lesson_id}", tags=["lessons"])
+def get_lesson_by_lesson_id(
+    lesson_id: int = Path(title="id of the lesson"),
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    lesson = db.query(models.Lessons).filter_by(id=lesson_id).first()
     if lesson is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
