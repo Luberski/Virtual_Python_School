@@ -86,7 +86,13 @@ export default function EnrolledCourses({
                 }
                 hoverShadowColor="hover:shadow-black/25"
                 bottomControls={
-                  <Link href={`/courses/${enrolledCourse.id}`} passHref={true}>
+                  <Link
+                    href={
+                      enrolledCourse.is_dynamic
+                        ? `/dynamic-courses/${enrolledCourse.id}`
+                        : `/courses/${enrolledCourse.id}`
+                    }
+                    passHref={true}>
                     <IconButtonLink
                       variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
                       icon={<InformationCircleIcon className="h-5 w-5" />}>

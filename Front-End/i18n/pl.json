@@ -108,7 +108,8 @@
     "introduction": "Wprowadzenie",
     "delete-dynamic-course": "Usuń kurs dynamiczny",
     "delete-dynamic-course-confirmation": "Czy na pewno chcesz USUNĄĆ ten kurs dynamiczny?",
-    "dynamic-course-deleted": "Kurs dynamiczny został usunięty"
+    "dynamic-course-deleted": "Kurs dynamiczny został usunięty",
+    "no-dynamic-courses-found": "Nie znaleziono kursów dynamicznych"
   },
   "Survey": {
     "leading": "Ankieta kursu dynamicznego",
@@ -130,7 +131,8 @@
     "delete-survey": "Usuń ankietę",
     "delete-survey-confirmation": "Czy na pewno chcesz USUNĄĆ tą ankietę?",
     "survey-deleted": "Ankieta została usunięta",
-    "featured": "Ustaw jako rekomendowaną ankietę dla dynamicznego kursu dla wszystkich użytkowników"
+    "featured": "Ustaw jako rekomendowaną ankietę dla dynamicznego kursu dla wszystkich użytkowników",
+    "no-surveys-found": "Nie znaleziono ankiet"
   },
   "Form": {
     "step-of": "Krok {currentStep} z {steps}",

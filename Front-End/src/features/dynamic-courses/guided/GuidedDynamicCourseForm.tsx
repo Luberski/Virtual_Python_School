@@ -98,6 +98,7 @@ export default function GuidedDynamicCourseForm({
 
   const lessonsData = useAppSelector(selectLessonsData);
   const surveyData = useAppSelector(selectSurveyData);
+  const surveyFeatured = useAppSelector((state) => state.survey.featured);
   const questions = useAppSelector(selectSurveyQuestions);
 
   const handleSurveyFeatured = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -274,7 +275,7 @@ export default function GuidedDynamicCourseForm({
                     </div>
                     {questions?.map((question) => (
                       <div
-                        className="flex items-center justify-between"
+                        className="flex items-center justify-between space-x-4"
                         key={question?._id}>
                         <div>{question?.question}</div>
                         <IconButton
@@ -309,7 +310,7 @@ export default function GuidedDynamicCourseForm({
                       id="featured"
                       name="featured"
                       label="featured"
-                      checked={surveyData?.featured}
+                      checked={surveyFeatured}
                       onChange={handleSurveyFeatured}
                     />
                     <label htmlFor="featured" className="ml-2">
@@ -347,7 +348,7 @@ export default function GuidedDynamicCourseForm({
           </div>
         }
         onClose={() => setIsAddQuestionDialogOpen(!isAddQuestionDialogOpen)}>
-        <div className="mt-6">
+        <div className="mt-6 max-h-[768px] overflow-y-auto overflow-x-hidden">
           <Alert>
             <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
             <ul className="w-fit max-w-xs list-disc px-6">
@@ -397,7 +398,7 @@ export default function GuidedDynamicCourseForm({
                     ))}
                 </ul>
               </Alert>
-              <div className="mt-6 flex h-36 flex-col space-y-6 overflow-auto">
+              <div className="mt-6 flex flex-col space-y-6">
                 <div className="flex flex-col space-y-2">
                   <div className="text-lg">Answer: Nothing</div>
                   <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">

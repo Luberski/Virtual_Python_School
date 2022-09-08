@@ -108,7 +108,8 @@
     "introduction": "Introduction",
     "delete-dynamic-course": "Delete dynamic course",
     "delete-dynamic-course-confirmation": "Are you sure you want to DELETE this dynamic course?",
-    "dynamic-course-deleted": "Dynamic course deleted"
+    "dynamic-course-deleted": "Dynamic course deleted",
+    "no-dynamic-courses-found": "No dynamic courses found"
   },
   "Survey": {
     "leading": "Dynamic Course Survey",
@@ -129,7 +130,8 @@
     "delete-survey": "Delete survey",
     "delete-survey-confirmation": "Are you sure you want to DELETE this survey?",
     "survey-deleted": "Survey deleted",
-    "featured": "Set as featured survey for a dynamic course for all users"
+    "featured": "Set as featured survey for a dynamic course for all users",
+    "no-surveys-found": "No surveys found"
   },
   "Form": {
     "step-of": "Step {currentStep} of {steps}",

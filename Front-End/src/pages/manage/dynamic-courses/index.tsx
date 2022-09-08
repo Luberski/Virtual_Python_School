@@ -178,7 +178,7 @@ export default function ManageDynamicCoursesPage() {
             ) : (
               <div className="flex flex-col justify-center">
                 <p className="pb-8 text-lg font-medium">
-                  {t('Courses.no-dynamicCourses-found')}
+                  {t('DynamicCourse.no-dynamic-courses-found')}
                 </p>
                 <Image
                   src="/undraw_no_data_re_kwbl.svg"

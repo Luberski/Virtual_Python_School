@@ -9,17 +9,14 @@ import type ApiStatus from '@app/models/ApiStatus';
 
 export type SurveyState = {
   data: Survey;
+  featured: boolean;
   status: ApiStatus;
   error: string | null;
 };
 
 const initialState: SurveyState = {
-  data: {
-    id: null,
-    name: null,
-    featured: true,
-    questions: [],
-  },
+  data: null,
+  featured: true,
   status: 'idle',
   error: null,
 };
@@ -37,7 +34,7 @@ export const createSurvey = createAsyncThunk<
       json: {
         data: {
           name,
-          featured: state.survey.data.featured,
+          featured: state.survey.featured,
         },
       },
       headers: {
@@ -98,7 +95,7 @@ export const surveySlice = createSlice({
   initialState,
   reducers: {
     setSurveyAsFeatured: (state, { payload }: PayloadAction<boolean>) => {
-      state.data.featured = payload;
+      state.featured = payload;
     },
   },
   extraReducers(builder) {
