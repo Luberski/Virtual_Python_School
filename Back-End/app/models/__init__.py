@@ -123,6 +123,10 @@ class DynamicLessons(Base):
     id = Column(Integer, primary_key=True)
     dynamic_course_id = Column(Integer, ForeignKey("dynamic_courses.id"))
     lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    completed = Column(Boolean, default=False, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    start_date = Column(DateTime())
+    end_date = Column(DateTime())
 
 
 class DynamicCourses(Base):

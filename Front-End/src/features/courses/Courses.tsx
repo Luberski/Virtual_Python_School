@@ -101,7 +101,9 @@ export default function Courses({ courses, translations }: CoursesProps) {
               }
             />
           ))}
-          <DynamicCourseCard />
+          <DynamicCourseCard>
+            {translations('DynamicCourse.try-dynamic-course')}
+          </DynamicCourseCard>
         </div>
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center">

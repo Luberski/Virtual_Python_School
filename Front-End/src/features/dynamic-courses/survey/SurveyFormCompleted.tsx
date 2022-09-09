@@ -64,7 +64,7 @@ export default function SurveyFormCompleted({
                   </div>
                   {enrollDynamicCourseData.lessons?.length > 0 &&
                     enrollDynamicCourseData.lessons?.map((lesson) => (
-                      <div key={lesson.dynamic_lesson_id}>
+                      <div key={lesson.id}>
                         <div className="text-indigo-900 dark:text-indigo-300">
                           {lesson.name}
                         </div>

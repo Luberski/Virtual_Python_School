@@ -11,6 +11,8 @@ import {
 } from '@app/features/lessons/enrollLessonSlice';
 import type EnrolledCourseModel from '@app/models/EnrolledCourse';
 import { useAppSelector } from '@app/hooks';
+import type Lesson from '@app/models/Lesson';
+import type EnrolledLesson from '@app/models/EnrolledLesson';
 
 type EnrolledCourseProps = {
   enrolledCourse: EnrolledCourseModel;
@@ -29,24 +31,34 @@ export default function EnrolledCourse({
   const enrollLessonData = useAppSelector(selectJoinLessonData);
 
   useEffect(() => {
-    if (enrollLessonStatus === 'succeeded') {
+    if (enrollLessonStatus === 'succeeded' && !enrolledCourse?.is_dynamic) {
       router.push(
         `/courses/${enrolledCourse.id}/lessons/${currentLessonId}/${enrollLessonData.id}`
       );
     }
   }, [
     router,
-    enrolledCourse?.id,
+    enrolledCourse.id,
     currentLessonId,
     enrollLessonStatus,
     enrollLessonData?.id,
+    enrolledCourse?.is_dynamic,
   ]);
 
-  const handleJoinLesson = (lessonId: number) => async () => {
-    setCurrentLessonId(lessonId);
-    await dispatch(
-      enrollLesson({ lessonId, enrolledCourseId: enrolledCourse?.id })
-    );
+  const handleJoinLesson = (lesson: EnrolledLesson) => async () => {
+    setCurrentLessonId(lesson.id);
+    if (enrolledCourse?.is_dynamic) {
+      router.push(
+        `/dynamic-courses/${enrolledCourse.id}/lessons/${lesson.lessonId}/${lesson.id}`
+      );
+    } else {
+      await dispatch(
+        enrollLesson({
+          lessonId: lesson.id,
+          enrolledCourseId: enrolledCourse?.id,
+        })
+      );
+    }
   };
 
   const lessonsCompletedPercentage = Math.round(
@@ -115,27 +127,29 @@ export default function EnrolledCourse({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-200 font-medium">
-                    {enrolledCourse?.lessons.map((lesson) => (
-                      <tr key={lesson.id}>
-                        <td className="p-4">{lesson.name}</td>
-                        <td className="p-4 text-center">
-                          {lesson.completed?.toString() === 'true' ? (
-                            <div className="text-indigo-600 dark:text-indigo-300">
-                              {translations('Manage.completed')}
-                            </div>
-                          ) : (
-                            <div className="font-bold">-</div>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          <Button
-                            variant={ButtonVariant.FLAT_PRIMARY}
-                            onClick={handleJoinLesson(lesson.id)}>
-                            {translations('Manage.try')}
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                    {enrolledCourse?.lessons.map(
+                      (lesson: Lesson & EnrolledLesson) => (
+                        <tr key={lesson.id}>
+                          <td className="p-4">{lesson.name}</td>
+                          <td className="p-4 text-center">
+                            {lesson.completed?.toString() === 'true' ? (
+                              <div className="text-indigo-600 dark:text-indigo-300">
+                                {translations('Manage.completed')}
+                              </div>
+                            ) : (
+                              <div className="font-bold">-</div>
+                            )}
+                          </td>
+                          <td className="p-4">
+                            <Button
+                              variant={ButtonVariant.FLAT_PRIMARY}
+                              onClick={handleJoinLesson(lesson)}>
+                              {translations('Manage.try')}
+                            </Button>
+                          </td>
+                        </tr>
+                      )
+                    )}
                   </tbody>
                 </table>
               </div>

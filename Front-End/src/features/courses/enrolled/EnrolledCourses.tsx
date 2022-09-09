@@ -40,21 +40,19 @@ export default function EnrolledCourses({
                 }
                 description={
                   <div className="flex h-96 flex-col">
-                    {!enrolledCourse.is_dynamic && (
-                      <div className="flex space-x-2">
-                        <div className="my-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
-                          <div
-                            className="h-2 rounded-lg bg-indigo-600"
-                            style={{
-                              width: `${lessonsCompletedPercentage}%`,
-                            }}
-                          />
-                        </div>
-                        <div className="text-sm text-neutral-500">
-                          {lessonsCompletedPercentage}%
-                        </div>
+                    <div className="flex space-x-2">
+                      <div className="my-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
+                        <div
+                          className="h-2 rounded-lg bg-indigo-600"
+                          style={{
+                            width: `${lessonsCompletedPercentage}%`,
+                          }}
+                        />
                       </div>
-                    )}
+                      <div className="text-sm text-neutral-500">
+                        {lessonsCompletedPercentage}%
+                      </div>
+                    </div>
                     <div>{enrolledCourse.description}</div>
                     <div>
                       <div className="mt-4 mb-1 text-xs text-neutral-400">

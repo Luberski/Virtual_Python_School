@@ -171,7 +171,7 @@ def delete_lesson(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    # TODO: change this after add sections + find better option to save completed courses
+    # TODO: find better option to save completed courses
 
     db.query(models.Answers).filter_by(lesson_id=lesson_id).delete()
     db.query(models.Lessons).filter_by(id=lesson_id).delete()

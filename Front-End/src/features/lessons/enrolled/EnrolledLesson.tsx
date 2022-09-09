@@ -35,6 +35,7 @@ type Props = {
   lessonId: string;
   enrolledLessonId: string;
   enrolledLesson: EnrolledLessonModel;
+  isDynamic?: boolean;
 };
 
 export default function EnrolledLesson({
@@ -43,6 +44,7 @@ export default function EnrolledLesson({
   lessonId,
   enrolledLessonId,
   enrolledLesson,
+  isDynamic,
 }: Props) {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -94,7 +96,11 @@ export default function EnrolledLesson({
         setIsExploding(true);
         setTimeout(() => {
           setIsExploding(false);
-          router.push(`/courses/${courseId}`);
+          if (isDynamic) {
+            router.push(`/dynamic-courses/${courseId}`);
+          } else {
+            router.push(`/courses/${courseId}`);
+          }
         }, 2000);
       } else {
         notify(false);
@@ -112,6 +118,7 @@ export default function EnrolledLesson({
     isExploding,
     notify,
     courseId,
+    isDynamic,
   ]);
 
   const onSubmit = useMemo(
@@ -123,6 +130,7 @@ export default function EnrolledLesson({
             checkAnswer({
               lessonId: Number(lessonId),
               enrolledLessonId: Number(enrolledLessonId),
+              isDynamic,
               answer,
             })
           );
@@ -131,7 +139,7 @@ export default function EnrolledLesson({
           console.error(error);
         }
       }, 500),
-    [dispatch, enrolledLessonId, lessonId]
+    [dispatch, enrolledLessonId, isDynamic, lessonId]
   );
 
   const handleValue = useMemo(

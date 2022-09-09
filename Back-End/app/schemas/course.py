@@ -88,6 +88,7 @@ class CoursesAllResponseData(BaseModel):
     description: str
     featured: Optional[bool] = False
     enrolled: Optional[bool] = False
+    is_dynamic_course: Optional[bool] = False
     total_lessons_count: Optional[int] = 0
     total_completed_lessons_count: Optional[int] = 0
     lessons: Optional[Any] = []
@@ -100,3 +101,27 @@ class CoursesAllResponseDataCollection(BaseCollectionModel[CoursesAllResponseDat
 
 class CoursesAllResponse(BaseJSONResponse):
     data: list[CoursesAllResponseData]
+
+
+class EnrolledCoursesAllResponseData(BaseModel):
+    id: int
+    user_id: Optional[int] = None
+    name: str
+    description: str
+    featured: Optional[bool] = False
+    enrolled: Optional[bool] = False
+    is_dynamic_course: Optional[bool] = False
+    total_lessons_count: Optional[int] = 0
+    total_completed_lessons_count: Optional[int] = 0
+    lessons: Optional[Any] = []
+
+
+class EnrolledCoursesAllResponseDataCollection(
+    BaseCollectionModel[EnrolledCoursesAllResponseData]
+):
+    class Config:
+        validate_assignment_strict = False
+
+
+class EnrolledCoursesAllResponse(BaseJSONResponse):
+    data: list[EnrolledCoursesAllResponseData]

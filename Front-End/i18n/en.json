@@ -109,7 +109,8 @@
     "delete-dynamic-course": "Delete dynamic course",
     "delete-dynamic-course-confirmation": "Are you sure you want to DELETE this dynamic course?",
     "dynamic-course-deleted": "Dynamic course deleted",
-    "no-dynamic-courses-found": "No dynamic courses found"
+    "no-dynamic-courses-found": "No dynamic courses found",
+    "try-dynamic-course": "Try dynamic course"
   },
   "Survey": {
     "leading": "Dynamic Course Survey",

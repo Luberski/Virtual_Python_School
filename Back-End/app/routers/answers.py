@@ -104,30 +104,56 @@ def check_answer(
         )
 
     if answer_status is True:
-        lesson_enrolled = (
-            db.query(models.EnrolledLessons)
-            .filter_by(
-                id=request_data.data.enrolled_lesson_id,
-                user_id=user.id,
-                lesson_id=lesson_id,
+        if request_data.data.enrolled_lesson_id is not None:
+            lesson_enrolled = (
+                db.query(models.EnrolledLessons)
+                .filter_by(
+                    id=request_data.data.enrolled_lesson_id,
+                    user_id=user.id,
+                    lesson_id=lesson_id,
+                )
+                .first()
             )
-            .first()
-        )
-        lesson_enrolled.completed = True
-        db.commit()
+            lesson_enrolled.completed = True
+            db.commit()
 
-        return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={
-                "data": {
-                    "id": answer_valid.id,
-                    "status": answer_status,
-                    "lesson_id": answer_valid.lesson_id,
-                    "completed": lesson_enrolled.completed,
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "data": {
+                        "id": answer_valid.id,
+                        "status": answer_status,
+                        "lesson_id": answer_valid.lesson_id,
+                        "completed": lesson_enrolled.completed,
+                    },
+                    "error": None,
                 },
-                "error": None,
-            },
-        )
+            )
+        if request_data.data.dynamic_lesson_id is not None:
+            dynamic_lesson = (
+                db.query(models.DynamicLessons)
+                .filter_by(
+                    id=request_data.data.dynamic_lesson_id,
+                    user_id=user.id,
+                    lesson_id=lesson_id,
+                )
+                .first()
+            )
+            dynamic_lesson.completed = True
+            db.commit()
+
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "data": {
+                        "id": answer_valid.id,
+                        "status": answer_status,
+                        "lesson_id": answer_valid.lesson_id,
+                        "completed": dynamic_lesson.completed,
+                    },
+                    "error": None,
+                },
+            )
     else:
         return JSONResponse(
             status_code=status.HTTP_200_OK,

@@ -23,22 +23,36 @@ export const checkAnswer = createAsyncThunk<
   ApiPayload<AnswerData>,
   {
     lessonId: number;
-    enrolledLessonId: number;
+    enrolledLessonId?: number;
+    isDynamic?: boolean;
     answer: string;
   }
 >(
   'api/answer/check',
-  async ({ lessonId, enrolledLessonId, answer }, thunkApi) => {
+  async (
+    { lessonId, enrolledLessonId, isDynamic = false, answer },
+    thunkApi
+  ) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
+      let jsonData = null;
+      if (isDynamic) {
+        jsonData = {
+          lesson_id: lessonId,
+          dynamic_lesson_id: enrolledLessonId,
+          answer: answer,
+        };
+      } else {
+        jsonData = {
+          lesson_id: lessonId,
+          enrolled_lesson_id: enrolledLessonId,
+          answer: answer,
+        };
+      }
       const res = await apiClient.post('answers/check', {
         json: {
-          data: {
-            lesson_id: lessonId,
-            enrolled_lesson_id: enrolledLessonId,
-            answer: answer,
-          },
+          data: jsonData,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,

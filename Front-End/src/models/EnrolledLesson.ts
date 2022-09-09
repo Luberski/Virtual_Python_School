@@ -1,6 +1,6 @@
 type EnrolledLesson = {
   id: number;
-  lessonID: number;
+  lessonId: number;
   startDate: string;
   endDate: string;
   completed: boolean;

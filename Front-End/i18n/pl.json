@@ -109,7 +109,8 @@
     "delete-dynamic-course": "Usuń kurs dynamiczny",
     "delete-dynamic-course-confirmation": "Czy na pewno chcesz USUNĄĆ ten kurs dynamiczny?",
     "dynamic-course-deleted": "Kurs dynamiczny został usunięty",
-    "no-dynamic-courses-found": "Nie znaleziono kursów dynamicznych"
+    "no-dynamic-courses-found": "Nie znaleziono kursów dynamicznych",
+    "try-dynamic-course": "Wypróbuj kurs dynamiczny"
   },
   "Survey": {
     "leading": "Ankieta kursu dynamicznego",

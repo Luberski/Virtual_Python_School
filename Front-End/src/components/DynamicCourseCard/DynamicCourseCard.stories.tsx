@@ -7,5 +7,5 @@ export default {
 } as ComponentMeta<typeof DynamicCourseCard>;
 
 export const Default: ComponentStory<typeof DynamicCourseCard> = () => (
-  <DynamicCourseCard />
+  <DynamicCourseCard>Try dynamic course</DynamicCourseCard>
 );
