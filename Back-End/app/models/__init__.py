@@ -86,10 +86,16 @@ class Roles(Base):
 class DynamicCourseSurveyUserResults(Base):
     __tablename__ = "dynamic_course_survey_user_results"
     id = Column(Integer, primary_key=True)
-    survey_id = Column(Integer, ForeignKey("dynamic_course_survey.id"))
-    user_id = Column(Integer, ForeignKey("user.id"))
-    question_id = Column(Integer, ForeignKey("dynamic_course_survey_questions.id"))
-    answer_id = Column(Integer, ForeignKey("dynamic_course_survey_answers.id"))
+    survey_id = Column(
+        Integer, ForeignKey("dynamic_course_survey.id", ondelete="CASCADE")
+    )
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
+    question_id = Column(
+        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
+    )
+    answer_id = Column(
+        Integer, ForeignKey("dynamic_course_survey_answers.id", ondelete="CASCADE")
+    )
     survey = relationship("DynamicCourseSurvey")
 
 
@@ -97,7 +103,9 @@ class DynamicCourseSurveyAnswers(Base):
     __tablename__ = "dynamic_course_survey_answers"
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    question_id = Column(Integer, ForeignKey("dynamic_course_survey_questions.id"))
+    question_id = Column(
+        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
+    )
     rule_type = Column(Integer)
     rule_value = Column(Integer)
 
@@ -105,16 +113,24 @@ class DynamicCourseSurveyAnswers(Base):
 class DynamicCourseSurveyQuestions(Base):
     __tablename__ = "dynamic_course_survey_questions"
     id = Column(Integer, primary_key=True)
-    survey_id = Column(Integer, ForeignKey("dynamic_course_survey.id"))
+    survey_id = Column(
+        Integer, ForeignKey("dynamic_course_survey.id", ondelete="CASCADE")
+    )
     question = Column(String(500))
-    answers = relationship("DynamicCourseSurveyAnswers")
+    answers = relationship(
+        "DynamicCourseSurveyAnswers", cascade="all, delete", passive_deletes=True
+    )
 
 
 class DynamicCourseSurvey(Base):
     __tablename__ = "dynamic_course_survey"
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    questions = relationship("DynamicCourseSurveyQuestions")
+    questions = relationship(
+        "DynamicCourseSurveyQuestions",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
     featured = Column(Boolean, default=False, nullable=False)
 
 

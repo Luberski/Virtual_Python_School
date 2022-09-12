@@ -723,6 +723,9 @@ def delete_dynamic_course_survey(
             content={"error": "Unauthorized"},
         )
 
+    db.query(models.DynamicCourseSurveyUserResults).filter_by(
+        survey_id=survey_id
+    ).delete()
     questions = (
         db.query(models.DynamicCourseSurveyQuestions)
         .filter_by(survey_id=survey_id)
@@ -730,9 +733,6 @@ def delete_dynamic_course_survey(
     )
     for question in questions:
         db.query(models.DynamicCourseSurveyAnswers).filter_by(
-            question_id=question.id
-        ).delete()
-        db.query(models.DynamicCourseSurveyUserResults).filter_by(
             question_id=question.id
         ).delete()
     db.query(models.DynamicCourseSurveyQuestions).filter_by(
