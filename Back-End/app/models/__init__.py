@@ -28,13 +28,15 @@ class User(Base):
 class EnrolledCourses(Base):
     __tablename__ = "enrolled_courses"
     id = Column(Integer, primary_key=True)
-    course_id = Column(Integer, ForeignKey("courses.id"))
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
     user_id = Column(Integer, ForeignKey("user.id"))
     start_date = Column(DateTime())
     end_date = Column(DateTime())
     completed = Column(Boolean, default=False, nullable=False)
     course = relationship("Courses")
-    enrolled_lessons = relationship("EnrolledLessons")
+    enrolled_lessons = relationship(
+        "EnrolledLessons", cascade="all, delete", passive_deletes=True
+    )
 
 
 class Courses(Base):
@@ -60,8 +62,10 @@ class Lessons(Base):
 class EnrolledLessons(Base):
     __tablename__ = "enrolled_lessons"
     id = Column(Integer, primary_key=True)
-    lesson_id = Column(Integer, ForeignKey("lessons.id"))
-    enrolled_course_id = Column(Integer, ForeignKey("enrolled_courses.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+    enrolled_course_id = Column(
+        Integer, ForeignKey("enrolled_courses.id", ondelete="CASCADE")
+    )
     user_id = Column(Integer, ForeignKey("user.id"))
     start_date = Column(DateTime())
     end_date = Column(DateTime())
@@ -150,4 +154,6 @@ class DynamicCourses(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     user_id = Column(Integer, ForeignKey("user.id"))
-    dynamic_lessons = relationship("DynamicLessons", lazy="dynamic")
+    dynamic_lessons = relationship(
+        "DynamicLessons", lazy="dynamic", cascade="all, delete", passive_deletes=True
+    )
