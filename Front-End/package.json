@@ -29,7 +29,7 @@
     "debounce": "^1.2.1",
     "ky": "^0.31.1",
     "ky-universal": "^0.10.1",
-    "next": "^12.2.5",
+    "next": "^12.3.0",
     "next-intl": "^2.7.5",
     "next-redux-cookie-wrapper": "^2.2.1",
     "next-redux-logger": "^1.0.15",
@@ -39,7 +39,7 @@
     "react-confetti-explosion": "^1.0.3",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.34.2",
-    "react-hot-toast": "^2.3.0",
+    "react-hot-toast": "^2.4.0",
     "react-redux": "^8.0.2",
     "ts-node": "^10.9.1"
   },
