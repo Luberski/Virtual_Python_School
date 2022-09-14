@@ -140,8 +140,10 @@ def delete_course(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    # TODO: find better option to save completed courses
+
     db.query(models.EnrolledCourses).filter_by(course_id=course_id).delete()
+    for lesson in db.query(models.Lessons).filter_by(course_id=course_id).all():
+        db.query(models.Answers).filter_by(lesson_id=lesson.id).delete()
     db.query(models.Lessons).filter_by(course_id=course_id).delete()
     db.query(models.Courses).filter_by(id=course_id).delete()
 

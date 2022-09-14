@@ -18,30 +18,30 @@ const initialState: CourseState = {
   error: null,
 };
 
-export const fetchCourse = createAsyncThunk<
-  ApiPayload<Course>,
-  string | number
->('api/course', async (id, thunkApi) => {
-  try {
-    const state = thunkApi.getState() as RootState;
-    const { accessToken } = state.auth.token;
-    const res = await apiClient.get(`courses/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    const data = await res.json();
-    return data as ApiPayload<Course>;
-  } catch (error) {
-    console.error(error);
-    throw error;
+export const fetchCourse = createAsyncThunk<ApiPayload<Course>, number>(
+  'api/course',
+  async (id, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.get(`courses/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const data = await res.json();
+      return data as ApiPayload<Course>;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
-});
+);
 
 export const editCourse = createAsyncThunk<
   ApiPayload<Course>,
   {
-    courseId: string;
+    courseId: number;
     name?: string;
     description?: string;
     featured?: boolean;

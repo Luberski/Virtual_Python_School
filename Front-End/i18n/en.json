@@ -46,7 +46,9 @@
     "course-edited": "Course edited",
     "delete-course": "Delete course",
     "delete-course-confirmation": "Are you sure you want to DELETE this course?",
-    "course-deleted": "Course deleted"
+    "course-deleted": "Course deleted",
+    "progress": "Progress",
+    "overview": "Overview"
   },
   "Lessons": {
     "lessons": "Lessons",
@@ -69,7 +71,8 @@
     "edit-lesson": "Edit lesson",
     "delete-lesson": "Delete lesson",
     "delete-lesson-confirmation": "Are you sure you want to DELETE this lesson?",
-    "lesson-deleted": "Lesson deleted"
+    "lesson-deleted": "Lesson deleted",
+    "completed-lessons": "Completed lessons"
   },
   "Playground": {
     "run": "Run",

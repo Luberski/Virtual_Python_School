@@ -21,11 +21,12 @@ export default function EnrolledCourses({
       {enrolledCourses && enrolledCourses.length > 0 ? (
         <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-4">
           {enrolledCourses.map((enrolledCourse) => {
-            const lessonsCompletedPercentage = Math.round(
-              (enrolledCourse.total_completed_lessons_count /
-                enrolledCourse.total_lessons_count) *
-                100
-            );
+            const lessonsCompletedPercentage =
+              Math.round(
+                (enrolledCourse.total_completed_lessons_count /
+                  enrolledCourse.total_lessons_count) *
+                  100
+              ) || 0;
             return (
               <FancyCard
                 key={enrolledCourse.id}

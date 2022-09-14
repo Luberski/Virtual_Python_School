@@ -43,26 +43,26 @@ export const fetchCourses = createAsyncThunk<
   }
 });
 
-export const deleteCourse = createAsyncThunk<
-  ApiPayload<Course>,
-  string | number
->('api/courses/delete', async (id, thunkApi) => {
-  try {
-    const state = thunkApi.getState() as RootState;
-    const { accessToken } = state.auth.token;
-    const res = await apiClient.delete(`courses/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+export const deleteCourse = createAsyncThunk<ApiPayload<Course>, number>(
+  'api/courses/delete',
+  async (id, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.delete(`courses/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-    const data = await res.json();
-    return data as ApiPayload<Course>;
-  } catch (error) {
-    console.error(error);
-    throw error;
+      const data = await res.json();
+      return data as ApiPayload<Course>;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
-});
+);
 
 export const createCourse = createAsyncThunk<
   ApiPayload<Course>,

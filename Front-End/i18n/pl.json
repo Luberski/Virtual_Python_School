@@ -46,7 +46,9 @@
     "course-edited": "Kurs został edytowany",
     "delete-course": "Usuń kurs",
     "delete-course-confirmation": "Czy na pewno chcesz USUNĄĆ ten kurs?",
-    "course-deleted": "Kurs został usunięty"
+    "course-deleted": "Kurs został usunięty",
+    "progress": "Postęp",
+    "overview": "Przegląd"
   },
   "Lessons": {
     "lessons": "Lekcje",
@@ -69,7 +71,8 @@
     "edit-lesson": "Edytuj lekcję",
     "delete-lesson": "Usuń lekcję",
     "delete-lesson-confirmation": "Czy na pewno chcesz USUNĄĆ tą lekcję?",
-    "lesson-deleted": "Lekcja została usunięta"
+    "lesson-deleted": "Lekcja została usunięta",
+    "completed-lessons": "Ukończone lekcje"
   },
   "Playground": {
     "run": "Uruchom",

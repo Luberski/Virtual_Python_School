@@ -45,7 +45,7 @@ class Courses(Base):
     name = Column(String(100))
     description = Column(String(2000))
     featured = Column(Boolean, default=False, nullable=False)
-    lessons = relationship("Lessons", lazy="dynamic")
+    lessons = relationship("Lessons", lazy="dynamic", cascade="all, delete")
 
 
 class Lessons(Base):
@@ -53,10 +53,10 @@ class Lessons(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     description = Column(String(2000))
-    course_id = Column(Integer, ForeignKey("courses.id"))
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
     type = Column(Integer)
     number_of_answers = Column(Integer)
-    answers = relationship("Answers")
+    answers = relationship("Answers", cascade="all, delete")
 
 
 class EnrolledLessons(Base):
@@ -77,7 +77,7 @@ class Answers(Base):
     __tablename__ = "answers"
     id = Column(Integer, primary_key=True)
     final_answer = Column(String(500))
-    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
 
 
 class Roles(Base):

@@ -20,7 +20,7 @@ const initialState: CourseState = {
 
 export const fetchCourseWithLessons = createAsyncThunk<
   ApiPayload<Course>,
-  { id: string | number; limitLessons?: number | null }
+  { id: number; limitLessons?: number | null }
 >('api/course/with-lessons', async ({ id, limitLessons }, thunkApi) => {
   try {
     const state = thunkApi.getState() as RootState;

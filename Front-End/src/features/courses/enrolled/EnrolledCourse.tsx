@@ -38,7 +38,7 @@ export default function EnrolledCourse({
     }
   }, [
     router,
-    enrolledCourse.id,
+    enrolledCourse?.id,
     currentLessonId,
     enrollLessonStatus,
     enrollLessonData?.id,
@@ -61,11 +61,12 @@ export default function EnrolledCourse({
     }
   };
 
-  const lessonsCompletedPercentage = Math.round(
-    (enrolledCourse?.total_completed_lessons_count /
-      enrolledCourse?.total_lessons_count) *
-      100
-  );
+  const lessonsCompletedPercentage =
+    Math.round(
+      (enrolledCourse?.total_completed_lessons_count /
+        enrolledCourse?.total_lessons_count) *
+        100
+    ) || 0;
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -83,11 +84,13 @@ export default function EnrolledCourse({
               <div className="flex items-center">
                 <CheckBadgeIcon className="mr-2 h-9 w-9" />
                 <h3 className="text-indigo-900 dark:text-indigo-300">
-                  Overview
+                  {translations('Courses.overview')}
                 </h3>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="text-xl font-medium">Progress</div>
+                <div className="text-xl font-medium">
+                  {translations('Courses.progress')}
+                </div>
                 <div className="mt-2 flex w-full items-center space-x-2">
                   <div className="w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
                     <div
@@ -101,7 +104,9 @@ export default function EnrolledCourse({
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <div className="text-xl font-medium">Lessons Completed</div>
+                <div className="text-xl font-medium">
+                  {translations('Lessons.completed-lessons')}
+                </div>
                 <span className="mt-1 text-base font-normal">
                   {enrolledCourse?.total_completed_lessons_count}/
                   {enrolledCourse?.total_lessons_count}
@@ -112,7 +117,7 @@ export default function EnrolledCourse({
               <div className="brand-shadow flex flex-col space-y-2 rounded-lg bg-neutral-50 p-9 shadow-black/25 dark:bg-neutral-700">
                 <div className="flex items-center">
                   <AcademicCapIcon className="mr-2 h-9 w-9" />
-                  <h3>Lessons</h3>
+                  <h3>{translations('Lessons.lessons')}</h3>
                 </div>
                 <table className="table-auto divide-y divide-neutral-200">
                   <thead className="text-left font-medium text-neutral-500">
