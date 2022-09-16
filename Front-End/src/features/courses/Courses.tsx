@@ -13,6 +13,7 @@ import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
 import type Course from '@app/models/Course';
+import { LESSONS_LIMIT } from '@app/constants';
 
 type CoursesProps = {
   courses: Course[];
@@ -61,9 +62,10 @@ export default function Courses({ courses, translations }: CoursesProps) {
               description={
                 <div className="flex flex-col">
                   {course.description}
+                  {course.total_lessons_count}
                   <div>
                     <div className="mt-4 mb-1 text-xs text-neutral-400">
-                      {translations('Manage.name')}
+                      {translations('Lessons.list-of-lessons')}
                     </div>
                     {course.lessons?.length > 0 &&
                       course.lessons?.map((lesson) => (
@@ -73,7 +75,12 @@ export default function Courses({ courses, translations }: CoursesProps) {
                           </div>
                         </div>
                       ))}
-                    ...
+                    {LESSONS_LIMIT < course.total_lessons_count && (
+                      <div className="text-xs lowercase text-neutral-400">
+                        {course.total_lessons_count - LESSONS_LIMIT}
+                        &nbsp;{translations('Home.more')}
+                      </div>
+                    )}
                   </div>
                 </div>
               }

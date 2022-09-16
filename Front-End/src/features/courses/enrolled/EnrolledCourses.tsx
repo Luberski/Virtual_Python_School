@@ -6,6 +6,7 @@ import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
 import type EnrolledCourse from '@app/models/EnrolledCourse';
+import { LESSONS_LIMIT } from '@app/constants';
 
 type EnrolledCoursesProps = {
   enrolledCourses: EnrolledCourse[];
@@ -33,7 +34,7 @@ export default function EnrolledCourses({
                 title={
                   enrolledCourse.is_dynamic ? (
                     <div className="text-indigo-900 dark:text-indigo-300">
-                      {enrolledCourse.name}
+                      {translations('DynamicCourse.course-name')}
                     </div>
                   ) : (
                     enrolledCourse.name
@@ -57,7 +58,7 @@ export default function EnrolledCourses({
                     <div>{enrolledCourse.description}</div>
                     <div>
                       <div className="mt-4 mb-1 text-xs text-neutral-400">
-                        {translations('Manage.name')}
+                        {translations('Lessons.list-of-lessons')}
                       </div>
                       <div>
                         {enrolledCourse.lessons?.length > 0 &&
@@ -69,7 +70,12 @@ export default function EnrolledCourses({
                             </div>
                           ))}
                       </div>
-                      ...
+                      {LESSONS_LIMIT < enrolledCourse.total_lessons_count && (
+                        <div className="text-xs lowercase text-neutral-400">
+                          {enrolledCourse.total_lessons_count - LESSONS_LIMIT}
+                          &nbsp;{translations('Home.more')}
+                        </div>
+                      )}
                     </div>
                   </div>
                 }

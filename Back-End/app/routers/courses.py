@@ -194,6 +194,9 @@ def get_courses_all(
         )
         if enrolled_courses_with_lessons:
             for enrolled_course in enrolled_courses_with_lessons:
+                total_lessons_count = 0
+                for _ in enrolled_course.course.lessons:
+                    total_lessons_count += 1
                 courses_response_data.append(
                     {
                         "id": enrolled_course.course.id,
@@ -201,6 +204,7 @@ def get_courses_all(
                         "description": enrolled_course.course.description,
                         "featured": enrolled_course.course.featured,
                         "enrolled": True,
+                        "total_lessons_count": total_lessons_count,
                         "lessons": [
                             {
                                 "id": lesson.id,
@@ -227,6 +231,9 @@ def get_courses_all(
                     enrolled_course.course.id
                     for enrolled_course in enrolled_courses_with_lessons
                 ]:
+                    total_lessons_count = 0
+                    for _ in course.lessons:
+                        total_lessons_count += 1
                     courses_response_data.append(
                         {
                             "id": course.id,
@@ -234,6 +241,7 @@ def get_courses_all(
                             "description": course.description,
                             "featured": course.featured,
                             "enrolled": False,
+                            "total_lessons_count": total_lessons_count,
                             "lessons": [
                                 {
                                     "id": lesson.id,

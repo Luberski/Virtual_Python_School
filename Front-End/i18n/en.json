@@ -101,7 +101,7 @@
   },
   "DynamicCourse": {
     "leading": "Dynamic Course",
-    "course-name": "My Dynamic Course",
+    "course-name": "My dynamic course",
     "list-of-dynamic-courses": "List of dynamic courses",
     "guide-alert-1-step": "To activate the dynamic course you need to create a survey.\nBased on this survey, a dynamic course will be automatically created for each user.",
     "guide-alert-2-step": "Create a new survey with questions.\nEvery question has an answer.\nYou can add rules for each answer.\nEach rule determines whether to suggest or skip a lesson.\nWhen the user conducts such a survey, the system based on the answer rules has the ability to prepare a dynamic course only with lessons that are more suited to the user's skill level.",

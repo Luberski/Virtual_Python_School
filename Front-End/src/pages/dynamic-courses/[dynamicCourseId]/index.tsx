@@ -36,7 +36,7 @@ export default function DynamicCoursePage() {
           translations={t}
           enrolledCourse={{
             id: dynamicCourse?.id,
-            name: dynamicCourse?.name,
+            name: t('DynamicCourse.course-name'),
             course_id: null,
             description: null,
             total_lessons_count: dynamicCourse?.total_lessons_count,
