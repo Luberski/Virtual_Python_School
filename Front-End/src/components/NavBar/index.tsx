@@ -189,7 +189,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                     </div>
                   )}
                   <ThemeButton />
-                  <Link href={router.route} locale={otherLocale}>
+                  <Link href={router.asPath} locale={otherLocale}>
                     <IconButtonLink
                       title={t('Meta.switch-locale', {
                         locale: otherLocale,
