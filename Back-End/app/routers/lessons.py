@@ -411,6 +411,31 @@ def enroll_lesson_me(
             content={"error": "Lesson not found"},
         )
 
+    enrolled_lesson_exists = (
+        db.query(models.EnrolledLessons)
+        .filter_by(lesson_id=lesson_wanted, user_id=user.id)
+        .first()
+    )
+
+    if enrolled_lesson_exists:
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "data": {
+                    "id": enrolled_lesson_exists.id,
+                    "lesson_id": enrolled_lesson_exists.lesson_id,
+                    "enrolled_course_id": enrolled_lesson_exists.enrolled_course_id,
+                    "name": enrolled_lesson_exists.lesson.name,
+                    "description": enrolled_lesson_exists.lesson.description,
+                    "user_id": enrolled_lesson_exists.user_id,
+                    "start_date": str(enrolled_lesson_exists.start_date),
+                    "end_date": str(enrolled_lesson_exists.end_date),
+                    "completed": enrolled_lesson_exists.completed,
+                },
+                "error": None,
+            },
+        )
+
     lesson_enrolled = models.EnrolledLessons(
         lesson_id=lesson_query.id,
         user_id=user.id,
@@ -423,7 +448,7 @@ def enroll_lesson_me(
     db.commit()
 
     return JSONResponse(
-        status_code=status.HTTP_200_OK,
+        status_code=status.HTTP_201_CREATED,
         content={
             "data": {
                 "id": lesson_enrolled.id,
