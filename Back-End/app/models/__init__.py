@@ -80,6 +80,17 @@ class Answers(Base):
     lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
 
 
+class AnswersHistory(Base):
+    __tablename__ = "answers_history"
+    id = Column(Integer, primary_key=True)
+    answer_id = Column(Integer, ForeignKey("answers.id", ondelete="CASCADE"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    answer = Column(String(500))
+    is_correct = Column(Boolean, default=False, nullable=False)
+    date = Column(DateTime())
+
+
 class Roles(Base):
     __tablename__ = "roles"
     id = Column(Integer, primary_key=True)

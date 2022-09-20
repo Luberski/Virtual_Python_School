@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, Path, status
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
@@ -102,6 +103,17 @@ def check_answer(
                 "error": "Answer not found",
             },
         )
+
+    answer_history = models.AnswersHistory(
+        answer_id=answers[0].id,
+        lesson_id=lesson_id,
+        user_id=user.id,
+        answer=request_data.data.answer,
+        is_correct=answer_status,
+        date=datetime.now(),
+    )
+    db.add(answer_history)
+    db.commit()
 
     if answer_status is True:
         if request_data.data.enrolled_lesson_id is not None:
