@@ -12,6 +12,7 @@ type EnrolledCourse = {
   end_date: string;
   total_lessons_count: number;
   total_completed_lessons_count: number;
+  lang?: string;
   lessons?: Lesson[];
 };
 

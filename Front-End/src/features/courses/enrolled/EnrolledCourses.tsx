@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { InformationCircleIcon } from '@heroicons/react/20/solid';
+import { useRouter } from 'next/router';
 import FancyCard from '@app/components/FancyCard';
 import IconButtonLink, {
   IconButtonLinkVariant,
@@ -17,6 +18,7 @@ export default function EnrolledCourses({
   enrolledCourses,
   translations,
 }: EnrolledCoursesProps) {
+  const router = useRouter();
   return (
     <>
       {enrolledCourses && enrolledCourses.length > 0 ? (
@@ -55,6 +57,14 @@ export default function EnrolledCourses({
                         {lessonsCompletedPercentage}%
                       </div>
                     </div>
+                    {enrolledCourse.lang && (
+                      <div className="mb-2 text-sm">
+                        {translations('Meta.language')}:&nbsp;
+                        {new Intl.DisplayNames(router.locale, {
+                          type: 'language',
+                        }).of(enrolledCourse.lang)}
+                      </div>
+                    )}
                     <div>{enrolledCourse.description}</div>
                     <div>
                       <div className="mt-4 mb-1 text-xs text-neutral-400">

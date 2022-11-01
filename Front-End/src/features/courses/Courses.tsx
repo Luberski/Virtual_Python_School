@@ -61,6 +61,14 @@ export default function Courses({ courses, translations }: CoursesProps) {
               title={course.name}
               description={
                 <div className="flex flex-col">
+                  {course.lang && (
+                    <div className="mb-2 text-sm">
+                      {translations('Meta.language')}:&nbsp;
+                      {new Intl.DisplayNames(router.locale, {
+                        type: 'language',
+                      }).of(course.lang)}
+                    </div>
+                  )}
                   {course.description}
                   {course.total_lessons_count}
                   <div>

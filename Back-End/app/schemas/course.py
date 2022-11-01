@@ -8,6 +8,7 @@ class CourseCreateData(BaseModel):
     name: str
     description: str
     featured: Optional[bool] = False
+    lang: Optional[str] = None
 
 
 class CourseCreateRequest(BaseJSONRequest):
@@ -19,6 +20,7 @@ class CourseCreateResponseData(BaseModel):
     name: str
     description: str
     featured: Optional[bool] = False
+    lang: Optional[str] = None
 
 
 class CourseCreateResponse(BaseJSONResponse):
@@ -30,6 +32,7 @@ class CourseEditData(BaseModel):
     name: Optional[str]
     description: Optional[str]
     featured: Optional[bool] = False
+    lang: Optional[str] = None
 
 
 class CourseEditRequest(BaseJSONRequest):
@@ -91,6 +94,7 @@ class CoursesAllResponseData(BaseModel):
     is_dynamic_course: Optional[bool] = False
     total_lessons_count: Optional[int] = 0
     total_completed_lessons_count: Optional[int] = 0
+    lang: Optional[str] = None
     lessons: Optional[Any] = []
 
 
@@ -113,6 +117,7 @@ class EnrolledCoursesAllResponseData(BaseModel):
     is_dynamic_course: Optional[bool] = False
     total_lessons_count: Optional[int] = 0
     total_completed_lessons_count: Optional[int] = 0
+    lang: Optional[str] = None
     lessons: Optional[Any] = []
 
 

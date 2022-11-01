@@ -156,6 +156,7 @@
     "title-course": "Course",
     "title-lesson": "Lesson",
     "title-dynamic-course": "Dynamic course",
-    "switch-locale": "Switch locale"
+    "switch-locale": "Switch locale",
+    "language": "Language"
   }
 }

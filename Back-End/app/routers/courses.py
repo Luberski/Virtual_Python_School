@@ -45,6 +45,7 @@ def create_course(
         name=request_data.data.name,
         description=request_data.data.description,
         featured=False,
+        lang=request_data.data.lang,
     )
     if request_data.data.featured:
         new_course.featured = request_data.data.featured
@@ -60,6 +61,7 @@ def create_course(
                 "name": new_course.name,
                 "description": new_course.description,
                 "featured": new_course.featured,
+                "lang": new_course.lang,
             },
             "error": None,
         },
@@ -106,6 +108,10 @@ def edit_course(
         course_edit.featured = request_data.data.featured
         to_commit = True
 
+    if request_data.data.lang:
+        course_edit.lang = request_data.data.lang
+        to_commit = True
+
     if to_commit:
         db.commit()
 
@@ -116,6 +122,7 @@ def edit_course(
                 "name": course_edit.name,
                 "description": course_edit.description,
                 "featured": course_edit.featured,
+                "lang": course_edit.lang,
             },
             "error": None,
         },
@@ -205,6 +212,7 @@ def get_courses_all(
                         "featured": enrolled_course.course.featured,
                         "enrolled": True,
                         "total_lessons_count": total_lessons_count,
+                        "lang": enrolled_course.course.lang,
                         "lessons": [
                             {
                                 "id": lesson.id,
@@ -242,6 +250,7 @@ def get_courses_all(
                             "featured": course.featured,
                             "enrolled": False,
                             "total_lessons_count": total_lessons_count,
+                            "lang": course.lang,
                             "lessons": [
                                 {
                                     "id": lesson.id,
@@ -270,6 +279,7 @@ def get_courses_all(
                         "description": enrolled_course.course.description,
                         "featured": enrolled_course.course.featured,
                         "enrolled": True,
+                        "lang": enrolled_course.course.lang,
                     }
                 )
 
@@ -286,6 +296,7 @@ def get_courses_all(
                             "description": course.description,
                             "featured": course.featured,
                             "enrolled": False,
+                            "lang": course.lang,
                         }
                     )
 
@@ -314,6 +325,7 @@ def get_courses_all_featured(
                     "name": course.name,
                     "description": course.description,
                     "featured": course.featured,
+                    "lang": course.lang,
                 }
                 for course in courses
             ],
@@ -335,8 +347,8 @@ def get_courses_me(
             content={"error": "Unauthorized"},
         )
     user = db.query(models.User).filter_by(username=username).first()
-    courses = db.query(models.EnrolledCourses).filter_by(user_id=user.id).all()
-    if courses is None:
+    enrolled_courses = db.query(models.EnrolledCourses).filter_by(user_id=user.id).all()
+    if enrolled_courses is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "Courses not found"},
@@ -347,12 +359,13 @@ def get_courses_me(
             "data": [
                 {
                     "username": username,
-                    "course_id": course.course_id,
-                    "start_date": str(course.start_date),
-                    "end_date": str(course.end_date),
-                    "completed": course.completed,
+                    "course_id": enrolled_course.course_id,
+                    "start_date": str(enrolled_course.start_date),
+                    "end_date": str(enrolled_course.end_date),
+                    "completed": enrolled_course.completed,
+                    "lang": enrolled_course.course.lang,
                 }
-                for course in courses
+                for enrolled_course in enrolled_courses
             ],
             "error": None,
         },
@@ -441,6 +454,7 @@ def get_course_by_id(
                     "name": course.name,
                     "description": course.description,
                     "featured": course.featured,
+                    "lang": course.lang,
                     "lessons": [
                         {
                             "id": lesson.id,
@@ -463,6 +477,7 @@ def get_course_by_id(
                 "name": course.name,
                 "description": course.description,
                 "featured": course.featured,
+                "lang": course.lang,
             },
             "error": None,
         },

@@ -69,6 +69,7 @@ def get_all_enrolled_courses(
                             "end_date": str(enrolled_course.end_date),
                             "total_lessons_count": total_lessons_count,
                             "total_completed_lessons_count": total_completed_lessons_count,
+                            "lang": enrolled_course.course.lang,
                             "lessons": [
                                 {
                                     "id": lesson.id,
@@ -109,6 +110,7 @@ def get_all_enrolled_courses(
                             "enrolled": True,
                             "is_dynamic": False,
                             "end_date": str(enrolled_course.end_date),
+                            "lang": enrolled_course.course.lang,
                         }
                     )
 
@@ -173,6 +175,7 @@ def get_enrolled_course_by_id(
                         "end_date": str(enrolled_course_with_lessons.end_date),
                         "total_lessons_count": total_lessons_count,
                         "total_completed_lessons_count": total_completed_lessons_count,
+                        "lang": enrolled_course_with_lessons.course.lang,
                         "lessons": [
                             {
                                 "id": lesson.id,
@@ -222,6 +225,7 @@ def get_enrolled_course_by_id(
                     "is_dynamic": False,
                     "start_date": str(enrolled_course.start_date),
                     "end_date": str(enrolled_course.end_date),
+                    "lang": enrolled_course.course.lang,
                 }
             else:
                 raise ValueError("Course not found")
