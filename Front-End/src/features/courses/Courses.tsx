@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { CheckBadgeIcon, CheckCircleIcon } from '@heroicons/react/20/solid';
+import ISO6391 from 'iso-639-1';
 import FancyCard from '@app/components/FancyCard';
 import { enrollCourse } from '@app/features/courses/enrollCourseSlice';
 import FancyToast from '@app/components/FancyToast';
@@ -55,67 +56,71 @@ export default function Courses({ courses, translations }: CoursesProps) {
     <>
       {courses && courses.length > 0 ? (
         <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-4">
-          {courses.map((course) => (
-            <FancyCard
-              key={course.id}
-              title={course.name}
-              description={
-                <div className="flex flex-col">
-                  {course.lang && (
-                    <div className="mb-2 text-sm">
-                      {translations('Meta.language')}:&nbsp;
-                      {new Intl.DisplayNames(router.locale, {
-                        type: 'language',
-                      }).of(course.lang)}
-                    </div>
-                  )}
-                  {course.description}
-                  {course.total_lessons_count}
-                  <div>
-                    <div className="mt-4 mb-1 text-xs text-neutral-400">
-                      {translations('Lessons.list-of-lessons')}
-                    </div>
-                    {course.lessons?.length > 0 &&
-                      course.lessons?.map((lesson) => (
-                        <div key={lesson.id}>
-                          <div className="text-indigo-900 dark:text-indigo-300">
-                            {lesson.name}
-                          </div>
-                        </div>
-                      ))}
-                    {LESSONS_LIMIT < course.total_lessons_count && (
-                      <div className="text-xs lowercase text-neutral-400">
-                        {course.total_lessons_count - LESSONS_LIMIT}
-                        &nbsp;{translations('Home.more')}
+          {courses.map((course) => {
+            const intl = new Intl.DisplayNames(router.locale, {
+              type: 'language',
+            });
+            return (
+              <FancyCard
+                key={course.id}
+                title={course.name}
+                description={
+                  <div className="flex flex-col">
+                    {course.lang && (
+                      <div className="mb-2 text-sm">
+                        {translations('Meta.language')}:&nbsp;
+                        {intl?.of(course.lang).length > 2
+                          ? intl.of(course.lang)
+                          : ISO6391.getName(course.lang)}
                       </div>
                     )}
+                    {course.description}
+                    <div>
+                      <div className="mt-4 mb-1 text-xs text-neutral-400">
+                        {translations('Lessons.list-of-lessons')}
+                      </div>
+                      {course.lessons?.length > 0 &&
+                        course.lessons?.map((lesson) => (
+                          <div key={lesson.id}>
+                            <div className="text-indigo-900 dark:text-indigo-300">
+                              {lesson.name}
+                            </div>
+                          </div>
+                        ))}
+                      {LESSONS_LIMIT < course.total_lessons_count && (
+                        <div className="text-xs lowercase text-neutral-400">
+                          {course.total_lessons_count - LESSONS_LIMIT}
+                          &nbsp;{translations('Home.more')}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              }
-              cardColor="bg-white"
-              shadowColor="shadow-black/25"
-              hoverShadowColor="hover:shadow-black/25"
-              bottomControls={
-                course.enrolled ? (
-                  <Link href={`/courses/enrolled`} passHref={true}>
-                    <IconButtonLink
-                      className="w-fit"
-                      variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
-                      icon={<CheckBadgeIcon className="h-5 w-5" />}>
-                      {translations('Courses.enrolled')}
-                    </IconButtonLink>
-                  </Link>
-                ) : (
-                  <IconButton
-                    variant={IconButtonVariant.PRIMARY}
-                    icon={<CheckCircleIcon className="h-5 w-5" />}
-                    onClick={handleEnrollCourse(course.id)}>
-                    {translations('Courses.enroll')}
-                  </IconButton>
-                )
-              }
-            />
-          ))}
+                }
+                cardColor="bg-white"
+                shadowColor="shadow-black/25"
+                hoverShadowColor="hover:shadow-black/25"
+                bottomControls={
+                  course.enrolled ? (
+                    <Link href={`/courses/enrolled`} passHref={true}>
+                      <IconButtonLink
+                        className="w-fit"
+                        variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
+                        icon={<CheckBadgeIcon className="h-5 w-5" />}>
+                        {translations('Courses.enrolled')}
+                      </IconButtonLink>
+                    </Link>
+                  ) : (
+                    <IconButton
+                      variant={IconButtonVariant.PRIMARY}
+                      icon={<CheckCircleIcon className="h-5 w-5" />}
+                      onClick={handleEnrollCourse(course.id)}>
+                      {translations('Courses.enroll')}
+                    </IconButton>
+                  )
+                }
+              />
+            );
+          })}
           <DynamicCourseCard>
             {translations('DynamicCourse.try-dynamic-course')}
           </DynamicCourseCard>

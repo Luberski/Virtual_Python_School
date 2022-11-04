@@ -11,9 +11,11 @@ import {
   PlusCircleIcon,
   TrashIcon,
 } from '@heroicons/react/20/solid';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
+import ISO6391 from 'iso-639-1';
+import { nanoid } from '@reduxjs/toolkit';
 import {
   createLesson,
   deleteLesson,
@@ -28,11 +30,19 @@ import StyledDialog from '@app/components/StyledDialog';
 import Checkbox from '@app/components/Checkbox';
 import type Course from '@app/models/Course';
 import type Lesson from '@app/models/Lesson';
+import Select from '@app/components/Select';
 
 type ManageCourseAndLessonsProps = {
   course: Course;
   lessons: Lesson[];
   translations: (key: string, ...params: unknown[]) => string;
+};
+
+type SelectOption = {
+  id: string | number;
+  value: string;
+  label: string;
+  disabled: boolean;
 };
 
 export default function ManageCourseAndLessons({
@@ -50,10 +60,16 @@ export default function ManageCourseAndLessons({
     }>();
 
   const {
+    control,
     register: registerCourseEdit,
     handleSubmit: handleCourseEditSubmit,
     setValue: setValueCourseEdit,
-  } = useForm<{ name: string; description: string; featured: boolean }>();
+  } = useForm<{
+    name: string;
+    description: string;
+    featured: boolean;
+    lang: string | unknown;
+  }>();
 
   const {
     register: registerLessonEdit,
@@ -70,6 +86,17 @@ export default function ManageCourseAndLessons({
   const [currentLessonId, setCurrentLessonId] = useState<number>(null);
 
   const cancelButtonRef = useRef(null);
+
+  const languageOptions: SelectOption[] = ISO6391.getAllCodes().map((code) => ({
+    id: nanoid(),
+    value: code,
+    label: ISO6391.getNativeName(code),
+    disabled: false,
+  }));
+
+  const [selectedLang, setSelectedLang] = useState(
+    languageOptions.find((option) => option.value === course?.lang)
+  );
 
   const closeLessonCreateDialog = () => {
     setIsLessonCreateDialogOpen(false);
@@ -139,9 +166,10 @@ export default function ManageCourseAndLessons({
     name: string;
     description: string;
     featured: boolean;
+    lang: { id: number; value: string; label: string; disabled: boolean };
   }) => {
-    const { name, description, featured } = data;
-    if (name.trim() || description.trim() || featured !== course?.featured) {
+    const { name, description, featured, lang } = data;
+    if (name.trim() || description.trim() || featured !== course?.featured || lang.value !== course?.lang) {
       try {
         dispatch(
           editCourse({
@@ -149,6 +177,7 @@ export default function ManageCourseAndLessons({
             name,
             description,
             featured,
+            lang: lang.value,
           })
         );
         setValueCourseEdit('name', '');
@@ -410,6 +439,20 @@ export default function ManageCourseAndLessons({
               rows={4}
               maxLength={2000}
               placeholder={translations('Courses.course-description')}
+            />
+            <Controller
+              control={control}
+              name="lang"
+              render={({ field: { onChange } }) => (
+                <Select
+                  options={languageOptions}
+                  selected={selectedLang}
+                  setSelected={({ id, value, label, disabled }) => {
+                    onChange({ id, value, label, disabled });
+                    setSelectedLang({ id, value, label, disabled });
+                  }}
+                />
+              )}
             />
             <div className="flex items-center">
               <Checkbox

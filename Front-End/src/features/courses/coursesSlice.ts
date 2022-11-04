@@ -66,16 +66,16 @@ export const deleteCourse = createAsyncThunk<ApiPayload<Course>, number>(
 
 export const createCourse = createAsyncThunk<
   ApiPayload<Course>,
-  { name: string; description: string; featured: boolean }
+  { name: string; description: string; featured: boolean; lang: string }
 >(
   'api/courses/create',
-  async ({ name, description, featured = false }, thunkApi) => {
+  async ({ name, description, featured = false, lang = 'en' }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
       const res = await apiClient.post('courses', {
         json: {
-          data: { name, description, featured },
+          data: { name, description, featured, lang },
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,

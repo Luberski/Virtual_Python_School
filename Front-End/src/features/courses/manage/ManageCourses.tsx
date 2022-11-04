@@ -10,10 +10,13 @@ import {
   PlusCircleIcon,
   TrashIcon,
 } from '@heroicons/react/20/solid';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
+import { nanoid } from '@reduxjs/toolkit';
+import ISO6391 from 'iso-639-1';
+import { useRouter } from 'next/router';
 import { createCourse, deleteCourse } from '@app/features/courses/coursesSlice';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import Input from '@app/components/Input';
@@ -26,10 +29,18 @@ import Button, { ButtonVariant } from '@app/components/Button';
 import Checkbox from '@app/components/Checkbox';
 import StyledDialog from '@app/components/StyledDialog';
 import type Course from '@app/models/Course';
+import Select from '@app/components/Select';
 
 type ManageCoursesProps = {
   courses: Course[];
   translations: (key: string, ...params: unknown[]) => string;
+};
+
+type SelectOption = {
+  id: string | number;
+  value: string;
+  label: string;
+  disabled: boolean;
 };
 
 export default function ManageCourses({
@@ -37,12 +48,13 @@ export default function ManageCourses({
   translations,
 }: ManageCoursesProps) {
   const dispatch = useDispatch();
-
-  const { register, handleSubmit, setValue } =
+  const router = useRouter();
+  const { control, register, handleSubmit, setValue } =
     useForm<{
       name: string;
       description: string;
       featured: boolean;
+      lang: string | unknown;
     }>();
 
   const [isCourseCreateDialogOpen, setIsCourseCreateDialogOpen] =
@@ -52,6 +64,17 @@ export default function ManageCourses({
   const [currentCourseId, setCurrentCourseId] = useState<number>(null);
 
   const cancelButtonRef = useRef(null);
+
+  const languageOptions: SelectOption[] = ISO6391.getAllCodes().map((code) => ({
+    id: nanoid(),
+    value: code,
+    label: ISO6391.getNativeName(code),
+    disabled: false,
+  }));
+
+  const [selectedLang, setSelectedLang] = useState(
+    languageOptions.find((option) => option.value === router.locale ?? 'en')
+  );
 
   const closeCourseCreateDialog = () => {
     setIsCourseCreateDialogOpen(false);
@@ -74,14 +97,18 @@ export default function ManageCourses({
     name: string;
     description: string;
     featured: boolean;
+    lang: { id: number; value: string; label: string; disabled: boolean };
   }) => {
-    const { name, description, featured } = data;
+    const { name, description, featured, lang } = data;
 
     try {
-      dispatch(createCourse({ name, description, featured }));
+      dispatch(
+        createCourse({ name, description, featured, lang: lang?.value })
+      );
       setValue('name', '');
       setValue('description', '');
       setValue('featured', false);
+      setValue('lang', '');
       closeCourseCreateDialog();
       notify();
     } catch (error) {
@@ -191,6 +218,20 @@ export default function ManageCourses({
               rows={4}
               maxLength={2000}
               placeholder={translations('Courses.course-description')}
+            />
+            <Controller
+              control={control}
+              name="lang"
+              render={({ field: { onChange } }) => (
+                <Select
+                  options={languageOptions}
+                  selected={selectedLang}
+                  setSelected={({ id, value, label, disabled }) => {
+                    onChange({ id, value, label, disabled });
+                    setSelectedLang({ id, value, label, disabled });
+                  }}
+                />
+              )}
             />
             <div className="flex items-center">
               <Checkbox

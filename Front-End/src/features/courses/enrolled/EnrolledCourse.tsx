@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { AcademicCapIcon, CheckBadgeIcon } from '@heroicons/react/20/solid';
+import ISO6391 from 'iso-639-1';
 import Button, { ButtonVariant } from '@app/components/Button';
 import {
   enrollLesson,
@@ -67,6 +68,9 @@ export default function EnrolledCourse({
         enrolledCourse?.total_lessons_count) *
         100
     ) || 0;
+  const intl = new Intl.DisplayNames(router.locale, {
+    type: 'language',
+  });
 
   return (
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -103,15 +107,25 @@ export default function EnrolledCourse({
                   <div>{lessonsCompletedPercentage}%</div>
                 </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="text-xl font-medium">
-                  {translations('Lessons.completed-lessons')}
-                </div>
-                <span className="mt-1 text-base font-normal">
+              <div className="text-xl">
+                <span className="font-medium">
+                  {translations('Lessons.completed-lessons')}:&nbsp;
+                </span>
+                <span className="font-normal">
                   {enrolledCourse?.total_completed_lessons_count}/
                   {enrolledCourse?.total_lessons_count}
                 </span>
               </div>
+              {enrolledCourse.lang && (
+                <div className="text-xl font-medium">
+                  {translations('Meta.language')}:&nbsp;
+                  <span className="font-normal">
+                    {intl?.of(enrolledCourse.lang).length > 2
+                      ? intl.of(enrolledCourse.lang)
+                      : ISO6391.getName(enrolledCourse.lang)}
+                  </span>
+                </div>
+              )}
             </div>
             {enrolledCourse?.lessons && enrolledCourse?.lessons.length > 0 ? (
               <div className="brand-shadow flex flex-col space-y-2 rounded-lg bg-neutral-50 p-9 shadow-black/25 dark:bg-neutral-700">

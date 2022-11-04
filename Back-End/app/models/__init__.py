@@ -46,7 +46,7 @@ class Courses(Base):
     description = Column(String(2000))
     featured = Column(Boolean, default=False, nullable=False)
     lessons = relationship("Lessons", lazy="dynamic", cascade="all, delete")
-    # ISO 2 Letter Language Codes
+    # ISO 639-1 Letter Language Codes
     lang = Column(String(2), default="en")
 
 class Lessons(Base):

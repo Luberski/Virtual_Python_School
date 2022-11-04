@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { InformationCircleIcon } from '@heroicons/react/20/solid';
 import { useRouter } from 'next/router';
+import ISO6391 from 'iso-639-1';
 import FancyCard from '@app/components/FancyCard';
 import IconButtonLink, {
   IconButtonLinkVariant,
@@ -30,6 +31,9 @@ export default function EnrolledCourses({
                   enrolledCourse.total_lessons_count) *
                   100
               ) || 0;
+            const intl = new Intl.DisplayNames(router.locale, {
+              type: 'language',
+            });
             return (
               <FancyCard
                 key={enrolledCourse.id}
@@ -60,9 +64,9 @@ export default function EnrolledCourses({
                     {enrolledCourse.lang && (
                       <div className="mb-2 text-sm">
                         {translations('Meta.language')}:&nbsp;
-                        {new Intl.DisplayNames(router.locale, {
-                          type: 'language',
-                        }).of(enrolledCourse.lang)}
+                        {intl?.of(enrolledCourse.lang).length > 2
+                          ? intl.of(enrolledCourse.lang)
+                          : ISO6391.getName(enrolledCourse.lang)}
                       </div>
                     )}
                     <div>{enrolledCourse.description}</div>

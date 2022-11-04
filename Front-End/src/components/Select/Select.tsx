@@ -4,8 +4,9 @@ import clsx from 'clsx';
 import { Fragment } from 'react';
 
 type Option = {
-  id: number;
+  id: string | number;
   value: string;
+  label: string;
   disabled: boolean;
 };
 
@@ -34,7 +35,7 @@ export default function Select({
             'relative w-72 cursor-pointer rounded-lg border border-neutral-300 bg-neutral-50 py-2 pl-4 pr-10 text-left text-neutral-900 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white sm:w-96 sm:text-sm',
             className
           )}>
-          <span className="block truncate py-2">{selected.value}</span>
+          <span className="block truncate py-2">{selected.label}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <ChevronDownIcon
               className="h-5 w-5 text-neutral-400"
@@ -68,7 +69,7 @@ export default function Select({
                       className={`block truncate ${
                         selected ? 'font-bold' : 'font-normal'
                       }`}>
-                      {item.value}
+                      {item.label}
                     </span>
                     {selected ? (
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-900 dark:text-indigo-300">

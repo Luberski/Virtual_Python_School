@@ -32,7 +32,17 @@ type GuidedDynamicCourseFormProps = {
   translations: (key: string, ...params: unknown[]) => string;
 };
 
-const SELECT_DEFAULT_VALUE = { id: 0, name: 'Select lesson', disabled: true };
+type SelectOption = {
+  id: number | string;
+  name: string;
+  disabled: boolean;
+};
+
+const SELECT_DEFAULT_VALUE: SelectOption = {
+  id: 0,
+  name: 'Select lesson',
+  disabled: true,
+};
 
 export default function GuidedDynamicCourseForm({
   translations,
@@ -107,10 +117,30 @@ export default function GuidedDynamicCourseForm({
 
   const onAddQuestionSubmit = async (data: {
     question: string;
-    selectedLesson1: { id: number; value: string; disabled: boolean };
-    selectedLesson2: { id: number; value: string; disabled: boolean };
-    selectedLesson3: { id: number; value: string; disabled: boolean };
-    selectedLesson4: { id: number; value: string; disabled: boolean };
+    selectedLesson1: {
+      id: number;
+      value: string;
+      label: string;
+      disabled: boolean;
+    };
+    selectedLesson2: {
+      id: number;
+      value: string;
+      label: string;
+      disabled: boolean;
+    };
+    selectedLesson3: {
+      id: number;
+      value: string;
+      label: string;
+      disabled: boolean;
+    };
+    selectedLesson4: {
+      id: number;
+      value: string;
+      label: string;
+      disabled: boolean;
+    };
   }) => {
     const {
       question,
@@ -420,6 +450,7 @@ export default function GuidedDynamicCourseForm({
                               return {
                                 id: lesson.id,
                                 value: lesson.name,
+                                label: lesson.name,
                                 disabled: false,
                               };
                             })
@@ -427,6 +458,7 @@ export default function GuidedDynamicCourseForm({
                           selected={{
                             id: selected1?.id,
                             value: selected1?.name,
+                            label: selected1?.name,
                             disabled: false,
                           }}
                           setSelected={({ id, value, disabled }) => {
@@ -472,6 +504,7 @@ export default function GuidedDynamicCourseForm({
                               return {
                                 id: lesson.id,
                                 value: lesson.name,
+                                label: lesson.name,
                                 disabled: false,
                               };
                             })
@@ -479,6 +512,7 @@ export default function GuidedDynamicCourseForm({
                           selected={{
                             id: selected2?.id,
                             value: selected2?.name,
+                            label: selected2?.name,
                             disabled: false,
                           }}
                           setSelected={({ id, value, disabled }) => {
@@ -524,6 +558,7 @@ export default function GuidedDynamicCourseForm({
                               return {
                                 id: lesson.id,
                                 value: lesson.name,
+                                label: lesson.name,
                                 disabled: false,
                               };
                             })
@@ -531,6 +566,7 @@ export default function GuidedDynamicCourseForm({
                           selected={{
                             id: selected3?.id,
                             value: selected3?.name,
+                            label: selected3?.name,
                             disabled: false,
                           }}
                           setSelected={({ id, value, disabled }) => {
@@ -576,6 +612,7 @@ export default function GuidedDynamicCourseForm({
                               return {
                                 id: lesson.id,
                                 value: lesson.name,
+                                label: lesson.name,
                                 disabled: false,
                               };
                             })
@@ -583,6 +620,7 @@ export default function GuidedDynamicCourseForm({
                           selected={{
                             id: selected4?.id,
                             value: selected4?.name,
+                            label: selected4?.name,
                             disabled: false,
                           }}
                           setSelected={({ id, value, disabled }) => {

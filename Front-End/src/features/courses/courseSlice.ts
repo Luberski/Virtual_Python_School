@@ -45,10 +45,11 @@ export const editCourse = createAsyncThunk<
     name?: string;
     description?: string;
     featured?: boolean;
+    lang?: string;
   }
 >(
   'api/courses/edit',
-  async ({ courseId, name, description, featured }, thunkApi) => {
+  async ({ courseId, name, description, featured, lang }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -58,6 +59,7 @@ export const editCourse = createAsyncThunk<
             course_id: courseId,
             ...(name && { name }),
             ...(description && { description }),
+            ...(lang && { lang }),
             featured,
           },
         },
