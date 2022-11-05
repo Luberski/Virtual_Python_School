@@ -231,3 +231,48 @@ def get_enrolled_course_by_id(
                 raise ValueError("Course not found")
     except ValueError as err:
         raise err
+
+
+def get_total_completed_lessons_count(db: Session, user: models.User) -> int:
+    try:
+        completed_lessons_count_query = (
+            db.query(
+                models.EnrolledLessons.id,
+                models.EnrolledLessons.lesson_id,
+                models.EnrolledLessons.user_id,
+                func.count(models.EnrolledLessons.completed).label(
+                    "completed_lessons_count"
+                ),
+            )
+            .filter(
+                models.EnrolledLessons.user_id == user.id,
+                # pylint: disable=C0121
+                models.EnrolledLessons.completed == True,
+            )
+            .distinct(models.EnrolledLessons.lesson_id)
+            .group_by(models.EnrolledLessons.id)
+            .all()
+        )
+        total_completed_lessons_count = 0
+        for lesson in db.query(models.Lessons).all():
+            if lesson.id in [
+                lesson_enrolled.lesson_id
+                for lesson_enrolled in completed_lessons_count_query
+                if lesson_enrolled.lesson_id == lesson.id
+            ]:
+                total_completed_lessons_count += 1
+        return total_completed_lessons_count
+    except ValueError as err:
+        raise err
+
+
+def get_total_enrolled_lessons_count(db: Session, user: models.User) -> int:
+    try:
+        total_enrolled_lessons_count = 0
+        total_enrolled_lessons_count = (
+            db.query(models.EnrolledLessons).filter_by(user_id=user.id).count()
+        )
+
+        return total_enrolled_lessons_count
+    except ValueError as err:
+        raise err

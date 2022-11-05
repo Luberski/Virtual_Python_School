@@ -38,10 +38,10 @@
     "featured": "Wyróżniony",
     "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej",
     "no-courses-found": "Nie znaleziono kursów",
-    "no-enrolled-courses-found": "Nie znaleziono zapisanych kursów",
+    "no-enrolled-courses-found": "Nie znaleziono przypisanych kursów",
     "course-not-found": "Nie znaleziono kursu",
     "course-enrolled": "Zapisano do kursu",
-    "enrolled": "Zapisano",
+    "enrolled": "Przypisano",
     "edit-course": "Edytuj kurs",
     "course-edited": "Kurs został edytowany",
     "delete-course": "Usuń kurs",
@@ -72,7 +72,8 @@
     "delete-lesson": "Usuń lekcję",
     "delete-lesson-confirmation": "Czy na pewno chcesz USUNĄĆ tą lekcję?",
     "lesson-deleted": "Lekcja została usunięta",
-    "completed-lessons": "Ukończone lekcje"
+    "completed-lessons": "Ukończone lekcje",
+    "enrolled-lessons": "Przypisane lekcje"
   },
   "Playground": {
     "run": "Uruchom",
@@ -146,16 +147,20 @@
     "submit": "Wyślij",
     "begin": "Rozpocznij"
   },
+  "Dashboard": {
+    "my-stats": "Moje statystyki"
+  },
   "Meta": {
     "title-home": "Strona główna",
     "title-courses": "Kursy",
-    "title-enrolled-courses": "Zapisane kursy",
+    "title-enrolled-courses": "Przypisane kursy",
     "title-playground": "Code Playground",
     "title-manage": "Zarządzaj",
     "title-login": "Logowanie",
     "title-register": "Rejestracja",
     "title-course": "Kurs",
     "title-lesson": "Lekcja",
+    "title-dashboard": "Panel użytkownika",
     "title-dynamic-course": "Dynamiczny kurs",
     "switch-locale": "Zmień język",
     "language": "Język"

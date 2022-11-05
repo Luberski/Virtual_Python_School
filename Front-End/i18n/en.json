@@ -72,7 +72,8 @@
     "delete-lesson": "Delete lesson",
     "delete-lesson-confirmation": "Are you sure you want to DELETE this lesson?",
     "lesson-deleted": "Lesson deleted",
-    "completed-lessons": "Completed lessons"
+    "completed-lessons": "Completed lessons",
+    "enrolled-lessons": "Enrolled lessons"
   },
   "Playground": {
     "run": "Run",
@@ -145,6 +146,9 @@
     "submit": "Submit",
     "begin": "Begin"
   },
+  "Dashboard": {
+    "my-stats": "My stats"
+  },
   "Meta": {
     "title-home": "Home",
     "title-courses": "Courses",
@@ -155,6 +159,7 @@
     "title-register": "Register",
     "title-course": "Course",
     "title-lesson": "Lesson",
+    "title-dashboard": "Dashboard",
     "title-dynamic-course": "Dynamic course",
     "switch-locale": "Switch locale",
     "language": "Language"
