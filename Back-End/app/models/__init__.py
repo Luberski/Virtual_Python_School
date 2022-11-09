@@ -48,6 +48,15 @@ class Courses(Base):
     lessons = relationship("Lessons", lazy="dynamic", cascade="all, delete")
     # ISO 639-1 Letter Language Codes
     lang = Column(String(2), default="en")
+    tags = relationship("CourseTags", lazy="dynamic", cascade="all, delete")
+
+
+class CourseTags(Base):
+    __tablename__ = "course_tags"
+    id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
+    name = Column(String(100), unique=True)
+
 
 class Lessons(Base):
     __tablename__ = "lessons"

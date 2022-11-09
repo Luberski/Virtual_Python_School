@@ -8,7 +8,7 @@ import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
 import type EnrolledCourse from '@app/models/EnrolledCourse';
-import { LESSONS_LIMIT } from '@app/constants';
+import { LESSONS_LIMIT, TAG_COLORS } from '@app/constants';
 
 type EnrolledCoursesProps = {
   enrolledCourses: EnrolledCourse[];
@@ -69,6 +69,19 @@ export default function EnrolledCourses({
                           : ISO6391.getName(enrolledCourse.lang)}
                       </div>
                     )}
+                    {enrolledCourse.tags && enrolledCourse.tags.length > 0 && (
+                      <div className="mb-2 flex max-h-16 flex-wrap overflow-auto text-sm">
+                        {enrolledCourse.tags.map((tag, index) => (
+                          <div
+                            key={tag}
+                            className={`mr-1 mt-1 h-6 w-fit rounded-lg px-3 py-1 text-center text-xs font-semibold ${
+                              TAG_COLORS[index % TAG_COLORS.length]
+                            }`}>
+                            {tag}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div>{enrolledCourse.description}</div>
                     <div>
                       <div className="mt-4 mb-1 text-xs text-neutral-400">
@@ -78,7 +91,7 @@ export default function EnrolledCourses({
                         {enrolledCourse.lessons?.length > 0 &&
                           enrolledCourse.lessons?.map((lesson) => (
                             <div key={lesson.id}>
-                              <div className="text-indigo-900 dark:text-indigo-300">
+                              <div className="text-sm text-indigo-900 dark:text-indigo-300">
                                 {lesson.name}
                               </div>
                             </div>

@@ -5,6 +5,9 @@ from app import models
 from app.schemas.course import (
     EnrolledCoursesAllResponseDataCollection,
 )
+from app.schemas.course_tag import (
+    CourseTagCreateData,
+)
 
 
 def get_all_enrolled_courses(
@@ -70,6 +73,7 @@ def get_all_enrolled_courses(
                             "total_lessons_count": total_lessons_count,
                             "total_completed_lessons_count": total_completed_lessons_count,
                             "lang": enrolled_course.course.lang,
+                            "tags": [tags.name for tags in enrolled_course.course.tags],
                             "lessons": [
                                 {
                                     "id": lesson.id,
@@ -111,6 +115,7 @@ def get_all_enrolled_courses(
                             "is_dynamic": False,
                             "end_date": str(enrolled_course.end_date),
                             "lang": enrolled_course.course.lang,
+                            "tags": [tags.name for tags in enrolled_course.course.tags],
                         }
                     )
 
@@ -176,6 +181,10 @@ def get_enrolled_course_by_id(
                         "total_lessons_count": total_lessons_count,
                         "total_completed_lessons_count": total_completed_lessons_count,
                         "lang": enrolled_course_with_lessons.course.lang,
+                        "tags": [
+                            tags.name
+                            for tags in enrolled_course_with_lessons.course.tags
+                        ],
                         "lessons": [
                             {
                                 "id": lesson.id,
@@ -226,6 +235,7 @@ def get_enrolled_course_by_id(
                     "start_date": str(enrolled_course.start_date),
                     "end_date": str(enrolled_course.end_date),
                     "lang": enrolled_course.course.lang,
+                    "tags": [tags.name for tags in enrolled_course.course.tags],
                 }
             else:
                 raise ValueError("Course not found")
@@ -274,5 +284,56 @@ def get_total_enrolled_lessons_count(db: Session, user: models.User) -> int:
         )
 
         return total_enrolled_lessons_count
+    except ValueError as err:
+        raise err
+
+
+def create_course_tag(
+    db: Session, course_tag_data: CourseTagCreateData
+) -> models.CourseTags:
+    try:
+        if db.query(models.CourseTags).filter_by(name=course_tag_data.name).first():
+            raise ValueError("Course tag already exists")
+        db_course_tag = models.CourseTags(
+            course_id=course_tag_data.course_id, name=course_tag_data.name
+        )
+        db.add(db_course_tag)
+        db.commit()
+        db.refresh(db_course_tag)
+        return db_course_tag
+    except ValueError as err:
+        raise err
+
+
+def get_course_tags(db: Session) -> list[models.CourseTags]:
+    try:
+        course_tags = db.query(models.CourseTags).all()
+        if course_tags:
+            return course_tags
+        raise ValueError("Course tags not found")
+    except ValueError as err:
+        raise err
+
+
+def get_course_tags_by_course_id(
+    db: Session, course_id: int
+) -> list[models.CourseTags]:
+    try:
+        course_tags = db.query(models.CourseTags).filter_by(course_id=course_id).all()
+        if course_tags:
+            return course_tags
+        raise ValueError("Course tags not found")
+    except ValueError as err:
+        raise err
+
+
+def delete_course_tag(db: Session, tag_id: int) -> bool:
+    try:
+        course_tag = db.query(models.CourseTags).filter_by(id=tag_id).first()
+        if course_tag:
+            db.delete(course_tag)
+            db.commit()
+            return True
+        raise ValueError("Course tag not found")
     except ValueError as err:
         raise err

@@ -19,6 +19,7 @@ from .routers import answers
 from .routers import lessons
 from .routers import playground
 from .routers import dashboard
+from .routers import course_tags
 from .routers.dynamic_course import dynamic_course
 from .routers.dynamic_course import survey
 
@@ -77,6 +78,10 @@ def get_application() -> FastAPI:
     )
     application.include_router(
         dashboard.router,
+        prefix=settings.API_PREFIX,
+    )
+    application.include_router(
+        course_tags.router,
         prefix=settings.API_PREFIX,
     )
     return application

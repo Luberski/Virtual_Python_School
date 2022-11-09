@@ -13,6 +13,7 @@ type EnrolledCourse = {
   total_lessons_count: number;
   total_completed_lessons_count: number;
   lang?: string;
+  tags?: string[];
   lessons?: Lesson[];
 };
 

@@ -14,7 +14,7 @@ import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
 import type Course from '@app/models/Course';
-import { LESSONS_LIMIT } from '@app/constants';
+import { LESSONS_LIMIT, TAG_COLORS } from '@app/constants';
 
 type CoursesProps = {
   courses: Course[];
@@ -74,6 +74,19 @@ export default function Courses({ courses, translations }: CoursesProps) {
                           : ISO6391.getName(course.lang)}
                       </div>
                     )}
+                    {course.tags && course.tags.length > 0 && (
+                      <div className="mb-2 flex max-h-16 flex-wrap overflow-auto text-sm">
+                        {course.tags.map((tag, index) => (
+                          <div
+                            key={tag}
+                            className={`mr-1 mt-1 h-6 w-fit rounded-lg px-3 py-1 text-center text-xs font-semibold ${
+                              TAG_COLORS[index % TAG_COLORS.length]
+                            }`}>
+                            {tag}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     {course.description}
                     <div>
                       <div className="mt-4 mb-1 text-xs text-neutral-400">
@@ -82,7 +95,7 @@ export default function Courses({ courses, translations }: CoursesProps) {
                       {course.lessons?.length > 0 &&
                         course.lessons?.map((lesson) => (
                           <div key={lesson.id}>
-                            <div className="text-indigo-900 dark:text-indigo-300">
+                            <div className="text-sm text-indigo-900 dark:text-indigo-300">
                               {lesson.name}
                             </div>
                           </div>

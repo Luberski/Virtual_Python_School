@@ -10,6 +10,7 @@ type Course = {
   total_completed_lessons_count: number;
   lessons?: Lesson[];
   lang?: string;
+  tags?: string[];
 };
 
 export default Course;

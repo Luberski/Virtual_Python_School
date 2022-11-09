@@ -8,7 +8,7 @@ from app import models, crud
 router = APIRouter()
 
 
-@router.get("/dashboard", tags=["users"])
+@router.get("/dashboard", tags=["dashboard"])
 def get_dashboard_me(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
