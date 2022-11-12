@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { InformationCircleIcon } from '@heroicons/react/20/solid';
+import { BoltIcon, InformationCircleIcon } from '@heroicons/react/20/solid';
 import { useRouter } from 'next/router';
 import ISO6391 from 'iso-639-1';
 import FancyCard from '@app/components/FancyCard';
@@ -40,6 +40,7 @@ export default function EnrolledCourses({
                 title={
                   enrolledCourse.is_dynamic ? (
                     <div className="text-indigo-900 dark:text-indigo-300">
+                      <BoltIcon className="mr-1 mb-1 inline h-5 w-5" />
                       {translations('DynamicCourse.course-name')}
                     </div>
                   ) : (
@@ -47,7 +48,7 @@ export default function EnrolledCourses({
                   )
                 }
                 description={
-                  <div className="flex h-96 flex-col">
+                  <div className="flex flex-col">
                     <div className="flex space-x-2">
                       <div className="my-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
                         <div

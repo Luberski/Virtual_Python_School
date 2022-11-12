@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { AcademicCapIcon, CheckBadgeIcon } from '@heroicons/react/20/solid';
+import {
+  AcademicCapIcon,
+  BoltIcon,
+  CheckBadgeIcon,
+} from '@heroicons/react/20/solid';
 import ISO6391 from 'iso-639-1';
 import Button, { ButtonVariant } from '@app/components/Button';
 import {
@@ -14,6 +18,7 @@ import type EnrolledCourseModel from '@app/models/EnrolledCourse';
 import { useAppSelector } from '@app/hooks';
 import type Lesson from '@app/models/Lesson';
 import type EnrolledLesson from '@app/models/EnrolledLesson';
+import { TAG_COLORS } from '@app/constants';
 
 type EnrolledCourseProps = {
   enrolledCourse: EnrolledCourseModel;
@@ -78,25 +83,24 @@ export default function EnrolledCourse({
       {enrolledCourse ? (
         <div>
           <h1 className="text-indigo-900 dark:text-indigo-300">
+            <BoltIcon className="mr-1 mb-1 inline h-9 w-9" />
             {enrolledCourse.name}
           </h1>
           <p className="word-wrap mb-6 text-2xl">
             {enrolledCourse.description}
           </p>
-          <div className="flex space-x-8">
-            <div className="brand-shadow flex w-96 flex-col space-y-2 rounded-lg bg-indigo-50 p-9 text-indigo-900 shadow-indigo-900/25 dark:bg-indigo-400/25 dark:text-indigo-300">
+          <div className="flex flex-col space-y-8 sm:flex-row sm:space-y-0 sm:space-x-8">
+            <div className="brand-shadow flex h-fit flex-col space-y-2 rounded-lg bg-neutral-50 p-9 shadow-black/25 dark:bg-neutral-700">
               <div className="flex items-center">
                 <CheckBadgeIcon className="mr-2 h-9 w-9" />
-                <h3 className="text-indigo-900 dark:text-indigo-300">
-                  {translations('Courses.overview')}
-                </h3>
+                <h3>{translations('Courses.overview')}</h3>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="text-xl font-medium">
+                <div className="font-medium">
                   {translations('Courses.progress')}
                 </div>
-                <div className="mt-2 flex w-full items-center space-x-2">
-                  <div className="w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
+                <div className="mt-[2px] flex w-full items-center space-x-2">
+                  <div className="w-full rounded-lg bg-neutral-200 dark:bg-neutral-600">
                     <div
                       className="h-2 rounded-lg bg-indigo-600"
                       style={{
@@ -107,7 +111,7 @@ export default function EnrolledCourse({
                   <div>{lessonsCompletedPercentage}%</div>
                 </div>
               </div>
-              <div className="text-xl">
+              <div>
                 <span className="font-medium">
                   {translations('Lessons.completed-lessons')}:&nbsp;
                 </span>
@@ -117,13 +121,26 @@ export default function EnrolledCourse({
                 </span>
               </div>
               {enrolledCourse.lang && (
-                <div className="text-xl font-medium">
+                <div className="font-medium">
                   {translations('Meta.language')}:&nbsp;
                   <span className="font-normal">
                     {intl?.of(enrolledCourse.lang).length > 2
                       ? intl.of(enrolledCourse.lang)
                       : ISO6391.getName(enrolledCourse.lang)}
                   </span>
+                </div>
+              )}
+              {enrolledCourse.tags && enrolledCourse.tags.length > 0 && (
+                <div className="mb-2 flex max-h-16 flex-wrap overflow-auto text-sm">
+                  {enrolledCourse.tags.map((tag, index) => (
+                    <div
+                      key={tag}
+                      className={`mr-1 mt-1 h-6 w-fit rounded-lg px-3 py-1 text-center text-xs font-semibold ${
+                        TAG_COLORS[index % TAG_COLORS.length]
+                      }`}>
+                      {tag}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -136,21 +153,21 @@ export default function EnrolledCourse({
                 <table className="table-auto divide-y divide-neutral-200">
                   <thead className="text-left font-medium text-neutral-500">
                     <tr>
-                      <th scope="col" className="py-3 px-4">
+                      <th scope="col" className="py-3 sm:px-4">
                         {translations('Manage.name')}
                       </th>
-                      <th scope="col" className="py-3 px-4 text-center">
+                      <th scope="col" className="py-3 text-center sm:px-4">
                         {translations('Manage.status')}
                       </th>
-                      <th scope="col" className="py-3 px-4 text-center"></th>
+                      <th scope="col" className="py-3 text-center sm:px-4"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-neutral-200 font-medium">
                     {enrolledCourse?.lessons.map(
                       (lesson: Lesson & EnrolledLesson) => (
                         <tr key={lesson.id}>
-                          <td className="p-4">{lesson.name}</td>
-                          <td className="p-4 text-center">
+                          <td className="sm:p-4">{lesson.name}</td>
+                          <td className="text-center sm:p-4">
                             {lesson.completed?.toString() === 'true' ? (
                               <div className="text-indigo-600 dark:text-indigo-300">
                                 {translations('Manage.completed')}
@@ -159,7 +176,7 @@ export default function EnrolledCourse({
                               <div className="font-bold">-</div>
                             )}
                           </td>
-                          <td className="p-4">
+                          <td className="sm:p-4">
                             <Button
                               variant={ButtonVariant.FLAT_PRIMARY}
                               onClick={handleJoinLesson(lesson)}>
