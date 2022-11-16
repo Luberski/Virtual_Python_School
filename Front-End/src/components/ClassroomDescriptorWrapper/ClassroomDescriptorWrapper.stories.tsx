@@ -1,6 +1,6 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import type { Classroom } from '@app/models/Classroom';
 import ClassroomDescriptorWrapper from './ClassroomDescriptorWrapper';
+import type { Classroom } from '@app/models/Classroom';
 
 export default {
   title: 'ClassroomDescriptorWrapper',
@@ -11,20 +11,23 @@ const classrooms: Classroom[] = [
   {
     id: 1,
     name: 'Kurs programowania w pythonie',
-    teached_id: 1,
+    teacher_id: 1,
     num_of_students: 15,
+    isPublic: true,
   },
   {
     id: 2,
     name: 'Podstawy c++',
-    teached_id: 2,
+    teacher_id: 2,
     num_of_students: 12,
+    isPublic: true,
   },
   {
     id: 3,
     name: 'Gra snake z wykorzystaniem biblioteki pygame',
-    teached_id: 3,
+    teacher_id: 3,
     num_of_students: 22,
+    isPublic: true,
   },
 ];
 

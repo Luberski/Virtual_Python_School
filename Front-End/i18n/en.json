@@ -71,6 +71,11 @@
     "delete-lesson-confirmation": "Are you sure you want to DELETE this lesson?",
     "lesson-deleted": "Lesson deleted"
   },
+  "Classrooms": {
+    "classrooms": "Classrooms",
+    "join-or-create": "Join or create a classroom",
+    "no-classrooms-found": "No classrooms found"
+  },
   "Playground": {
     "run": "Run",
     "leading": "Code Playground"
@@ -120,6 +125,7 @@
     "title-register": "Register",
     "title-course": "Course",
     "title-lesson": "Lesson",
-    "title-dynamic-course": "Dynamic course"
+    "title-dynamic-course": "Dynamic course",
+    "title-classrooms": "Virtual classroom"
   }
 }

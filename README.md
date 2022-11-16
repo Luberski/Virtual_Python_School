@@ -73,7 +73,7 @@ alembic revision --autogenerate -m "init"
 
 ### Updating
 
-> If you add a new db model you have to add new import in [Back-End/alembic/env.py](Back-End/alembic/env.py) as well then you can run:
+> If you add a new db model you have to add new import in [Back-End/alembic/env.py](Back-End/alembic/env.py) then you can run:
 
 ```bash
 alembic revision --autogenerate -m "new changes"

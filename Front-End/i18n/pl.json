@@ -71,6 +71,10 @@
     "delete-lesson-confirmation": "Czy na pewno chcesz USUNĄĆ tą lekcję?",
     "lesson-deleted": "Lekcja została usunięta"
   },
+  "Classrooms": {
+    "classrooms": "Wirtualna klasy",
+    "join-or-create": "Stwórz własną, lub dołącz do istniejącej"
+  },
   "Playground": {
     "run": "Uruchom",
     "leading": "Code Playground"
@@ -120,6 +124,7 @@
     "title-register": "Rejestracja",
     "title-course": "Kurs",
     "title-lesson": "Lekcja",
-    "title-dynamic-course": "Dynamiczny kurs"
+    "title-dynamic-course": "Dynamiczny kurs",
+    "title-classrooms": "Wirtualna klasa"
   }
 }

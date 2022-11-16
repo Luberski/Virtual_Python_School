@@ -1,6 +1,6 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import type { Classroom } from '@app/models/Classroom';
 import ClassroomDescriptor from '.';
+import type { Classroom } from '@app/models/Classroom';
 
 export default {
   title: 'ClassroomDescriptor',
@@ -10,8 +10,9 @@ export default {
 const class1: Classroom = {
   id: 21,
   name: 'Nauka programowania',
-  teached_id: 2384,
+  teacher_id: 2384,
   num_of_students: 12,
+  isPublic: true,
 };
 
 export const Default: ComponentStory<typeof ClassroomDescriptor> = (args) => (

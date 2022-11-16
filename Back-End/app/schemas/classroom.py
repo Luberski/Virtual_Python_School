@@ -37,3 +37,23 @@ class ClassroomsAllResponseDataCollection(BaseCollectionModel[ClassroomsAllRespo
 
 class ClassroomsAllResponse(BaseJSONResponse):
     data: list[ClassroomsAllResponseData]
+
+
+class ClassroomJoinResponseData(BaseModel):
+    id: int
+    user_id: int
+    start_date: str
+    end_date: str
+    completed: Optional[bool] = False
+
+
+class ClassroomJoinResponse(BaseJSONResponse):
+    data: ClassroomJoinResponseData
+
+
+class ClassroomJoinData(BaseModel):
+    classroom_id: int
+
+
+class ClassroomJoinRequest(BaseJSONRequest):
+    data: ClassroomJoinData

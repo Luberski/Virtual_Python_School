@@ -80,6 +80,18 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                 </Link>
               </li>
               <li>
+                <Link href="/classrooms" passHref={true}>
+                  <ButtonLink
+                    variant={
+                      router.pathname === '/classrooms'
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
+                    {t('Meta.title-classrooms')}
+                  </ButtonLink>
+                </Link>
+              </li>
+              <li>
                 <Link href="/playground" passHref={true}>
                   <ButtonLink
                     variant={
@@ -224,6 +236,16 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                         : ButtonLinkVariant.FLAT_SECONDARY
                     }>
                     {t('Meta.title-enrolled-courses')}
+                  </ButtonLink>
+                </Link>
+                <Link href="/classrooms" passHref={true}>
+                  <ButtonLink
+                    variant={
+                      router.pathname === '/classrooms'
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
+                    {t('Meta.title-classrooms')}
                   </ButtonLink>
                 </Link>
                 <Link href="/playground" passHref={true}>

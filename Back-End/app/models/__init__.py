@@ -15,7 +15,8 @@ class User(Base):
     email = Column(String(100), unique=True)
     course_id = relationship("EnrolledCourses")
     role_id = Column(Integer, ForeignKey("roles.id"))
-    classroom = relationship("Classrooms", back_populates="user")
+    joined_classroom = relationship(
+        "JoinedClassrooms", back_populates="user", uselist=False)
 
     @staticmethod
     def generate_hash(password):
@@ -89,7 +90,8 @@ class DynamicCourseSurveyUserResults(Base):
     id = Column(Integer, primary_key=True)
     survey_id = Column(Integer, ForeignKey("dynamic_course_survey.id"))
     user_id = Column(Integer, ForeignKey("user.id"))
-    question_id = Column(Integer, ForeignKey("dynamic_course_survey_questions.id"))
+    question_id = Column(Integer, ForeignKey(
+        "dynamic_course_survey_questions.id"))
     answer_id = Column(Integer, ForeignKey("dynamic_course_survey_answers.id"))
     survey = relationship("DynamicCourseSurvey")
 
@@ -98,7 +100,8 @@ class DynamicCourseSurveyAnswers(Base):
     __tablename__ = "dynamic_course_survey_answers"
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    question_id = Column(Integer, ForeignKey("dynamic_course_survey_questions.id"))
+    question_id = Column(Integer, ForeignKey(
+        "dynamic_course_survey_questions.id"))
     rule_type = Column(Integer)
     rule_value = Column(Integer)
 
@@ -133,10 +136,21 @@ class DynamicCourses(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     dynamic_lessons = relationship("DynamicLessons", lazy="dynamic")
 
+
 class Classrooms(Base):
     __tablename__ = "classrooms"
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     teacher_id = Column(Integer, ForeignKey("user.id"))
     is_public = Column(Boolean, default=False, nullable=False)
-    user = relationship("User", back_populates="classroom")
+    users = relationship("JoinedClassrooms")
+
+
+class JoinedClassrooms(Base):
+    __tablename__ = "joined_classrooms"
+    id = Column(Integer, primary_key=True)
+    classroom_id = Column(Integer, ForeignKey("classrooms.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    is_teacher = Column(Boolean, default=False, nullable=False)
+    classroom = Column(Integer, ForeignKey("classrooms.id"))
+    user = relationship("User", back_populates="joined_classroom")

@@ -12,6 +12,8 @@ from app.schemas.classroom import (
     ClassroomCreateResponse,
     ClassroomsAllResponse,
     ClassroomsAllResponseDataCollection,
+    ClassroomJoinRequest,
+    ClassroomJoinResponse,
 )
 from app.settings import ADMIN_ID
 
@@ -88,6 +90,7 @@ def delete_classroom(
 def get_classrooms_all(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
+    showFull: Union[bool, None] = Query(default=False),
 ):
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
@@ -105,20 +108,84 @@ def get_classrooms_all(
     classrooms_response_data: ClassroomsAllResponseDataCollection = (
         ClassroomsAllResponseDataCollection()
     )
-    
+
     classrooms = db.query(models.Classrooms).all()
     if classrooms:
         for classroom in classrooms:
-                classrooms_response_data.append(
-                    {
-                        "id": classroom.id,
-                        "name": classroom.name,
-                        "teacher_id": classroom.teacher_id,
-                        "is_public": classroom.is_public,
-                    }
-                )
+            classrooms_response_data.append(
+                {
+                    "id": classroom.id,
+                    "name": classroom.name,
+                    "teacher_id": classroom.teacher_id,
+                    "is_public": classroom.is_public,
+                }
+            )
+    # Add support for showFull
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"data": classrooms_response_data.dict(), "error": None},
+    )
+
+
+@router.post("/classroom", tags=["classrooms"], response_model=ClassroomJoinResponse)
+def join_classroom_me(
+    request_data: ClassroomJoinRequest,
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    user = db.query(models.User).filter_by(username=username).first()
+
+    classroom_wanted = request_data.data.classroom_id
+    if classroom_wanted is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Classroom does not exist"},
+        )
+    classroom_query = db.query(models.Classrooms).filter_by(
+        id=classroom_wanted).first()
+    if classroom_query is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Classroom not found"},
+        )
+
+    check_already_joined = (
+        db.query(models.JoinedClassrooms)
+        .filter_by(user_id=user.id)
+        .first()
+    )
+    if check_already_joined:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "error": "User cannot join the same classroom or multiple classrooms"},
+        )
+
+    joined_classroom = models.JoinedClassrooms(
+        classroom_id=classroom_query.id,
+        user_id=user.id,
+        is_teacher=False,
+    )
+    db.add(joined_classroom)
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": {
+                "username": username,
+                "user_id": joined_classroom.user_id,
+                "id": joined_classroom.classroom_id,
+                "is_teacher": joined_classroom.is_teacher,
+            },
+            "error": None,
+        },
     )
