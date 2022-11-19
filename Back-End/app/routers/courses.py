@@ -434,6 +434,7 @@ def get_enrolled_courses(
     Authorize: AuthJWT = Depends(),
     include_lessons: Union[bool, None] = Query(default=False),
     limit_lessons: Union[int, None] = Query(default=None, gt=0),
+    limit: Union[int, None] = Query(default=None, gt=0),
 ):
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
@@ -458,6 +459,9 @@ def get_enrolled_courses(
             db, user, True
         )
         all_courses = all_enrolled_courses + all_dynamic_courses
+
+        if limit:
+            all_courses = all_courses[:limit]
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,

@@ -235,3 +235,14 @@ def get_dynamic_lesson_by_id(
 
     except ValueError as err:
         raise err
+
+
+def get_total_dynamic_courses_count(db: Session, user: models.User) -> int:
+    try:
+        dynamic_courses_count = (
+            db.query(models.DynamicCourses).filter_by(user_id=user.id).count()
+        )
+        return dynamic_courses_count
+
+    except ValueError as err:
+        raise err

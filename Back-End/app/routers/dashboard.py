@@ -36,12 +36,21 @@ def get_dashboard_me(
         total_enrolled_lessons_count = crud.courses.get_total_enrolled_lessons_count(
             db, user
         )
+        total_enrolled_courses_count = crud.courses.get_total_enrolled_courses_count(
+            db, user
+        )
+        total_dynamic_courses_count = (
+            crud.dynamic_courses.get_total_dynamic_courses_count(db, user)
+        )
+
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
                 "data": {
                     "total_completed_lessons_count": total_completed_lessons_count,
                     "total_enrolled_lessions_count": total_enrolled_lessons_count,
+                    "total_enrolled_courses_count": total_enrolled_courses_count,
+                    "total_dynamic_courses_count": total_dynamic_courses_count,
                 }
             },
         )

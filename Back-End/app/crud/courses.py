@@ -362,3 +362,13 @@ def delete_course_tag(db: Session, tag_id: int) -> bool:
         raise ValueError("Course tag not found")
     except ValueError as err:
         raise err
+
+
+def get_total_enrolled_courses_count(db: Session, user: models.User) -> int:
+    try:
+        enrolled_courses_count = (
+            db.query(models.EnrolledCourses).filter_by(user_id=user.id).count()
+        )
+        return enrolled_courses_count
+    except ValueError as err:
+        raise err

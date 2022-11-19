@@ -20,18 +20,33 @@ const initialState: EnrolledCoursesState = {
 
 export const fetchEnrolledCourses = createAsyncThunk<
   ApiPayload<EnrolledCourse[]>,
-  { includeLessons?: boolean; limitLessons?: number | null }
+  {
+    includeLessons?: boolean;
+    limitLessons?: number | null;
+    limit?: number | null;
+  }
 >(
   'api/courses/enrolled',
-  async ({ includeLessons = false, limitLessons }, thunkApi) => {
+  async ({ includeLessons = false, limitLessons, limit }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-
-      let endpoint = `courses/enrolled?include_lessons=${includeLessons}`;
-      if (limitLessons) {
-        endpoint = `courses/enrolled?include_lessons=true&limit_lessons=${limitLessons}`;
+      const queryParams = [];
+      if (includeLessons) {
+        queryParams.push(`include_lessons=${includeLessons}`);
       }
+      if (limitLessons) {
+        queryParams.push(`limit_lessons=${limitLessons}`);
+      }
+      if (limit) {
+        queryParams.push(`limit=${limit}`);
+      }
+
+      let endpoint = `courses/enrolled`;
+      if (queryParams.length > 0) {
+        endpoint += `?${queryParams.join('&')}`;
+      }
+
       const res = await apiClient.get(endpoint, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
