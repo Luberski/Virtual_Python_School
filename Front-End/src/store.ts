@@ -30,6 +30,7 @@ import surveyAnswerReducer from '@app/features/dynamic-courses/survey/surveyAnsw
 import surveysReducer from '@app/features/dynamic-courses/survey/surveysSlice';
 import dynamicLessonReducer from '@app/features/dynamic-courses/dynamicLessonSlice';
 import dashboardReducer from '@app/features/dashboard/dashboardSlice';
+import courseTagsReducer from '@app/features/tags/courseTagsSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -57,6 +58,7 @@ const combinedReducers = combineReducers({
   surveyAnswer: surveyAnswerReducer,
   surveys: surveysReducer,
   dashboard: dashboardReducer,
+  courseTags: courseTagsReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -106,4 +108,5 @@ export type RootState = {
   surveyAnswer: ReturnType<typeof surveyAnswerReducer>;
   surveys: ReturnType<typeof surveysReducer>;
   dashboard: ReturnType<typeof dashboardReducer>;
+  courseTags: ReturnType<typeof courseTagsReducer>;
 };

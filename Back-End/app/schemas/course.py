@@ -33,7 +33,7 @@ class CourseEditData(BaseModel):
     description: Optional[str]
     featured: Optional[bool] = False
     lang: Optional[str] = None
-    tags: Optional[list[str]] = []
+    tags: Optional[Any] = []
 
 
 class CourseEditRequest(BaseJSONRequest):
@@ -96,7 +96,7 @@ class CoursesAllResponseData(BaseModel):
     total_lessons_count: Optional[int] = 0
     total_completed_lessons_count: Optional[int] = 0
     lang: Optional[str] = None
-    tags: Optional[list[str]] = []
+    tags: Optional[Any] = []
     lessons: Optional[Any] = []
 
 
@@ -120,7 +120,7 @@ class EnrolledCoursesAllResponseData(BaseModel):
     total_lessons_count: Optional[int] = 0
     total_completed_lessons_count: Optional[int] = 0
     lang: Optional[str] = None
-    tags: Optional[list[str]] = []
+    tags: Optional[Any] = []
     lessons: Optional[Any] = []
 
 

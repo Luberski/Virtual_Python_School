@@ -73,7 +73,14 @@ def get_all_enrolled_courses(
                             "total_lessons_count": total_lessons_count,
                             "total_completed_lessons_count": total_completed_lessons_count,
                             "lang": enrolled_course.course.lang,
-                            "tags": [tags.name for tags in enrolled_course.course.tags],
+                            "tags": [
+                                {
+                                    "id": tag.id,
+                                    "name": tag.name,
+                                    "course_id": tag.course_id,
+                                }
+                                for tag in enrolled_course.course.tags
+                            ],
                             "lessons": [
                                 {
                                     "id": lesson.id,
@@ -115,7 +122,14 @@ def get_all_enrolled_courses(
                             "is_dynamic": False,
                             "end_date": str(enrolled_course.end_date),
                             "lang": enrolled_course.course.lang,
-                            "tags": [tags.name for tags in enrolled_course.course.tags],
+                            "tags": [
+                                {
+                                    "id": tag.id,
+                                    "name": tag.name,
+                                    "course_id": tag.course_id,
+                                }
+                                for tag in enrolled_course.course.tags
+                            ],
                         }
                     )
 
@@ -182,8 +196,12 @@ def get_enrolled_course_by_id(
                         "total_completed_lessons_count": total_completed_lessons_count,
                         "lang": enrolled_course_with_lessons.course.lang,
                         "tags": [
-                            tags.name
-                            for tags in enrolled_course_with_lessons.course.tags
+                            {
+                                "id": tag.id,
+                                "name": tag.name,
+                                "course_id": tag.course_id,
+                            }
+                            for tag in enrolled_course_with_lessons.course.tags
                         ],
                         "lessons": [
                             {
@@ -235,7 +253,14 @@ def get_enrolled_course_by_id(
                     "start_date": str(enrolled_course.start_date),
                     "end_date": str(enrolled_course.end_date),
                     "lang": enrolled_course.course.lang,
-                    "tags": [tags.name for tags in enrolled_course.course.tags],
+                    "tags": [
+                        {
+                            "id": tag.id,
+                            "name": tag.name,
+                            "course_id": tag.course_id,
+                        }
+                        for tag in enrolled_course.course.tags
+                    ],
                 }
             else:
                 raise ValueError("Course not found")

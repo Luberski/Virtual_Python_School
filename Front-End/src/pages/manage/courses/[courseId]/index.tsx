@@ -16,6 +16,7 @@ import {
 } from '@app/features/courses/courseSlice';
 import Footer from '@app/components/Footer';
 import ManageCourseAndLessons from '@app/features/courses/manage/ManageCourseAndLessons';
+import { fetchCourseTagsByCourseId, selectCourseTagsData } from '@app/features/tags/courseTagsSlice';
 
 export default function ManageCourseAndLessonsPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -24,6 +25,7 @@ export default function ManageCourseAndLessonsPage() {
   const t = useTranslations();
 
   const lessons = useAppSelector(selectLessonsData);
+  const tags = useAppSelector(selectCourseTagsData);
   // TODO: use one selector for course and lessons and state
   const course = useAppSelector(selectCourseData);
 
@@ -53,6 +55,7 @@ export default function ManageCourseAndLessonsPage() {
             <ManageCourseAndLessons
               course={course}
               lessons={lessons}
+              tags={tags}
               translations={t}
             />
           </div>
@@ -70,6 +73,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       const { courseId } = params as { courseId: string };
       await store.dispatch(fetchCourse(Number(courseId)));
       await store.dispatch(fetchLessonsByCourseId(Number(courseId)));
+      await store.dispatch(fetchCourseTagsByCourseId(Number(courseId)));
 
       return {
         props: {

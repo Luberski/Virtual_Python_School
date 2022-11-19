@@ -149,6 +149,13 @@
   "Dashboard": {
     "my-stats": "My stats"
   },
+  "Tags": {
+    "add-tag": "Add tag",
+    "tag-name": "Tag name",
+    "tag-added": "Tag added",
+    "delete-tag": "Delete tag",
+    "tag-deleted": "Tag deleted"
+  },
   "Meta": {
     "title-home": "Home",
     "title-courses": "Courses",
@@ -162,6 +169,7 @@
     "title-dashboard": "Dashboard",
     "title-dynamic-course": "Dynamic course",
     "switch-locale": "Switch locale",
-    "language": "Language"
+    "language": "Language",
+    "tags": "Tags"
   }
 }

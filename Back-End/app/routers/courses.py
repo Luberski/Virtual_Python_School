@@ -123,7 +123,14 @@ def edit_course(
                 "description": course_edit.description,
                 "featured": course_edit.featured,
                 "lang": course_edit.lang,
-                "tags": [tag.name for tag in course_edit.tags],
+                "tags": [
+                    {
+                        "id": tag.id,
+                        "name": tag.name,
+                        "course_id": tag.course_id,
+                    }
+                    for tag in course_edit.tags
+                ],
             },
             "error": None,
         },
@@ -214,7 +221,14 @@ def get_courses_all(
                         "enrolled": True,
                         "total_lessons_count": total_lessons_count,
                         "lang": enrolled_course.course.lang,
-                        "tags": [tag.name for tag in enrolled_course.course.tags],
+                        "tags": [
+                            {
+                                "id": tag.id,
+                                "name": tag.name,
+                                "course_id": tag.course_id,
+                            }
+                            for tag in enrolled_course.course.tags
+                        ],
                         "lessons": [
                             {
                                 "id": lesson.id,
@@ -253,7 +267,14 @@ def get_courses_all(
                             "enrolled": False,
                             "total_lessons_count": total_lessons_count,
                             "lang": course.lang,
-                            "tags": [tag.name for tag in course.tags],
+                            "tags": [
+                                {
+                                    "id": tag.id,
+                                    "name": tag.name,
+                                    "course_id": tag.course_id,
+                                }
+                                for tag in course.tags
+                            ],
                             "lessons": [
                                 {
                                     "id": lesson.id,
@@ -283,6 +304,14 @@ def get_courses_all(
                         "featured": enrolled_course.course.featured,
                         "enrolled": True,
                         "lang": enrolled_course.course.lang,
+                        "tags": [
+                            {
+                                "id": tag.id,
+                                "name": tag.name,
+                                "course_id": tag.course_id,
+                            }
+                            for tag in enrolled_course.course.tags
+                        ],
                     }
                 )
 
@@ -300,6 +329,14 @@ def get_courses_all(
                             "featured": course.featured,
                             "enrolled": False,
                             "lang": course.lang,
+                            "tags": [
+                                {
+                                    "id": tag.id,
+                                    "name": tag.name,
+                                    "course_id": tag.course_id,
+                                }
+                                for tag in course.tags
+                            ],
                         }
                     )
 
@@ -329,6 +366,14 @@ def get_courses_all_featured(
                     "description": course.description,
                     "featured": course.featured,
                     "lang": course.lang,
+                    "tags": [
+                        {
+                            "id": tag.id,
+                            "name": tag.name,
+                            "course_id": tag.course_id,
+                        }
+                        for tag in course.tags
+                    ],
                 }
                 for course in courses
             ],
@@ -367,7 +412,14 @@ def get_courses_me(
                     "end_date": str(enrolled_course.end_date),
                     "completed": enrolled_course.completed,
                     "lang": enrolled_course.course.lang,
-                    "tags": [tag.name for tag in enrolled_course.course.tags],
+                    "tags": [
+                        {
+                            "id": tag.id,
+                            "name": tag.name,
+                            "course_id": tag.course_id,
+                        }
+                        for tag in enrolled_course.course.tags
+                    ],
                 }
                 for enrolled_course in enrolled_courses
             ],
@@ -459,7 +511,14 @@ def get_course_by_id(
                     "description": course.description,
                     "featured": course.featured,
                     "lang": course.lang,
-                    "tags": [tag.name for tag in course.tags],
+                    "tags": [
+                        {
+                            "id": tag.id,
+                            "name": tag.name,
+                            "course_id": tag.course_id,
+                        }
+                        for tag in course.tags
+                    ],
                     "lessons": [
                         {
                             "id": lesson.id,
@@ -483,6 +542,14 @@ def get_course_by_id(
                 "description": course.description,
                 "featured": course.featured,
                 "lang": course.lang,
+                "tags": [
+                    {
+                        "id": tag.id,
+                        "name": tag.name,
+                        "course_id": tag.course_id,
+                    }
+                    for tag in course.tags
+                ],
             },
             "error": None,
         },

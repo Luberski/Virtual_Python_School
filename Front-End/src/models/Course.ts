@@ -1,3 +1,4 @@
+import type CourseTag from './CourseTag';
 import type Lesson from './Lesson';
 
 type Course = {
@@ -10,7 +11,7 @@ type Course = {
   total_completed_lessons_count: number;
   lessons?: Lesson[];
   lang?: string;
-  tags?: string[];
+  tags?: CourseTag[];
 };
 
 export default Course;

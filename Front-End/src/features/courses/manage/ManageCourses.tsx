@@ -30,6 +30,7 @@ import Checkbox from '@app/components/Checkbox';
 import StyledDialog from '@app/components/StyledDialog';
 import type Course from '@app/models/Course';
 import Select from '@app/components/Select';
+import { TAG_COLORS } from '@app/constants';
 
 type ManageCoursesProps = {
   courses: Course[];
@@ -303,6 +304,12 @@ export default function ManageCourses({
                 <th scope="col" className="py-3 px-4 text-center">
                   {translations('Courses.featured')}
                 </th>
+                <th scope="col" className="py-3 px-4">
+                  {translations('Meta.language')}
+                </th>
+                <th scope="col" className="py-3 px-4">
+                  {translations('Meta.tags')}
+                </th>
                 <th scope="col" className="max-w-full py-3 px-4">
                   {translations('Manage.description')}
                 </th>
@@ -310,38 +317,69 @@ export default function ManageCourses({
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200">
-              {courses.map((course, key) => (
-                <tr key={course.id}>
-                  <td className="p-4">{(key += 1)}</td>
-                  <td className="break-words p-4">{course.name}</td>
-                  <td className="p-4 text-center">
-                    <Checkbox
-                      id="courseFeatured"
-                      name="courseFeatured"
-                      label="courseFeatured"
-                      disabled={true}
-                      checked={course.featured}
-                    />
-                  </td>
-                  <td className="break-words p-4">{course.description}</td>
-                  <td className="flex space-x-4 py-4 pr-4">
-                    <Link href={`/manage/courses/${course.id}`} passHref={true}>
-                      <IconButtonLink
-                        variant={IconButtonLinkVariant.PRIMARY}
-                        sizeType={IconButtonLinkSize.NORMAL}
-                        icon={<PencilIcon className="h-5 w-5" />}>
-                        {translations('Manage.edit')}
-                      </IconButtonLink>
-                    </Link>
-                    <IconButton
-                      variant={IconButtonVariant.DANGER}
-                      icon={<TrashIcon className="h-5 w-5" />}
-                      onClick={openCourseDeleteDialog(course.id)}>
-                      {translations('Manage.delete')}
-                    </IconButton>
-                  </td>
-                </tr>
-              ))}
+              {courses.map((course, key) => {
+                const intl = new Intl.DisplayNames(router.locale, {
+                  type: 'language',
+                });
+                return (
+                  <tr key={course.id}>
+                    <td className="p-4">{(key += 1)}</td>
+                    <td className="break-words p-4">{course.name}</td>
+                    <td className="p-4 text-center">
+                      <Checkbox
+                        id="courseFeatured"
+                        name="courseFeatured"
+                        label="courseFeatured"
+                        disabled={true}
+                        checked={course.featured}
+                      />
+                    </td>
+                    <td>
+                      {course.lang && (
+                        <div className="mb-2 text-sm">
+                          {intl?.of(course.lang).length > 2
+                            ? intl.of(course.lang)
+                            : ISO6391.getName(course.lang)}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      {course.tags && course.tags.length > 0 && (
+                        <div className="mb-2 flex max-h-16 flex-wrap overflow-auto text-sm">
+                          {course.tags.map((tag, index) => (
+                            <div
+                              key={tag.id}
+                              className={`mr-1 mt-1 h-6 w-fit rounded-lg px-3 py-1 text-center text-xs font-semibold ${
+                                TAG_COLORS[index % TAG_COLORS.length]
+                              }`}>
+                              {tag.name}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </td>
+                    <td className="break-words p-4">{course.description}</td>
+                    <td className="flex space-x-4 py-4 pr-4">
+                      <Link
+                        href={`/manage/courses/${course.id}`}
+                        passHref={true}>
+                        <IconButtonLink
+                          variant={IconButtonLinkVariant.PRIMARY}
+                          sizeType={IconButtonLinkSize.NORMAL}
+                          icon={<PencilIcon className="h-5 w-5" />}>
+                          {translations('Manage.edit')}
+                        </IconButtonLink>
+                      </Link>
+                      <IconButton
+                        variant={IconButtonVariant.DANGER}
+                        icon={<TrashIcon className="h-5 w-5" />}
+                        onClick={openCourseDeleteDialog(course.id)}>
+                        {translations('Manage.delete')}
+                      </IconButton>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

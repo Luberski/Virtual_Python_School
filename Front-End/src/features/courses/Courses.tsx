@@ -78,11 +78,11 @@ export default function Courses({ courses, translations }: CoursesProps) {
                       <div className="mb-2 flex max-h-16 flex-wrap overflow-auto text-sm">
                         {course.tags.map((tag, index) => (
                           <div
-                            key={tag}
+                            key={tag.id}
                             className={`mr-1 mt-1 h-6 w-fit rounded-lg px-3 py-1 text-center text-xs font-semibold ${
                               TAG_COLORS[index % TAG_COLORS.length]
                             }`}>
-                            {tag}
+                            {tag.name}
                           </div>
                         ))}
                       </div>
