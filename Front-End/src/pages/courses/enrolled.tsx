@@ -8,7 +8,7 @@ import {
   fetchEnrolledCourses,
   selectEnrolledCoursesData,
 } from '@app/features/courses/enrolled/enrolledCoursesSlice';
-import { WEBSITE_TITLE } from '@app/constants';
+import { LESSONS_LIMIT, WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
 import EnrolledCourses from '@app/features/courses/enrolled/EnrolledCourses';
 
@@ -59,7 +59,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
       await store.dispatch(
         fetchEnrolledCourses({
           includeLessons: true,
-          limitLessons: 3,
+          limitLessons: LESSONS_LIMIT,
         })
       );
 

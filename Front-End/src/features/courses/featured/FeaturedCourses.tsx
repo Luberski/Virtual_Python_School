@@ -3,11 +3,11 @@ import Link from 'next/link';
 import FancyCard from '@app/components/FancyCard';
 import DynamicCourseCard from '@app/components/DynamicCourseCard';
 import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
-import type { Course } from '@app/models/Course';
+import type Course from '@app/models/Course';
 
 type FeaturedCoursesProps = {
   featuredCourses: Course[];
-  translations: (key: string) => string;
+  translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function FeaturedCourses({
@@ -36,7 +36,9 @@ export default function FeaturedCourses({
               }
             />
           ))}
-          <DynamicCourseCard />
+          <DynamicCourseCard>
+            {translations('DynamicCourse.try-dynamic-course')}
+          </DynamicCourseCard>
         </div>
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center">

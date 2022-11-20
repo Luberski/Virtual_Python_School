@@ -2,8 +2,12 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import { ArrowRightOnRectangleIcon } from '@heroicons/react/20/solid';
+import {
+  ArrowRightOnRectangleIcon,
+  LanguageIcon,
+} from '@heroicons/react/20/solid';
 import { Fragment } from 'react';
+import IconButtonLink, { IconButtonLinkVariant } from '../IconButtonLink';
 import IconButton, {
   IconButtonSize,
   IconButtonVariant,
@@ -13,7 +17,7 @@ import ButtonLink, {
   ButtonLinkVariant,
 } from '@app/components/ButtonLink';
 import { ThemeButton } from '@app/components/ThemeButton';
-import type { User } from '@app/models/User';
+import type User from '@app/models/User';
 
 type NavBarProps = {
   isLoggedIn?: boolean;
@@ -24,6 +28,7 @@ type NavBarProps = {
 const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
   const router = useRouter();
   const t = useTranslations();
+  const otherLocale = router.locales?.find((cur) => cur !== router.locale);
 
   return (
     <Disclosure
@@ -139,11 +144,42 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                             className="absolute right-0 mt-2 origin-top-right divide-y divide-neutral-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-800">
                             <div className="flex flex-col justify-end p-2">
                               <Menu.Item>
+                                <Link href="/users/dashboard" passHref={true}>
+                                  <ButtonLink
+                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
+                                    {t('Meta.title-dashboard')}
+                                  </ButtonLink>
+                                </Link>
+                              </Menu.Item>
+                              <Menu.Item>
                                 <Link href="/manage/courses" passHref={true}>
                                   <ButtonLink
                                     sizeType={ButtonLinkSize.EXTRA_LARGE}
                                     variant={ButtonLinkVariant.FLAT_PRIMARY}>
                                     {t('Manage.manage-courses')}
+                                  </ButtonLink>
+                                </Link>
+                              </Menu.Item>
+                              <Menu.Item>
+                                <Link
+                                  href="/manage/dynamic-courses"
+                                  passHref={true}>
+                                  <ButtonLink
+                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
+                                    {t('Manage.manage-dynamic-courses')}
+                                  </ButtonLink>
+                                </Link>
+                              </Menu.Item>
+                              <Menu.Item>
+                                <Link
+                                  href="/manage/dynamic-courses/surveys"
+                                  passHref={true}>
+                                  <ButtonLink
+                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
+                                    {t('Manage.manage-surveys')}
                                   </ButtonLink>
                                 </Link>
                               </Menu.Item>
@@ -174,6 +210,17 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                     </div>
                   )}
                   <ThemeButton />
+                  <Link href={router.asPath} locale={otherLocale}>
+                    <IconButtonLink
+                      title={t('Meta.switch-locale', {
+                        locale: otherLocale,
+                      })}
+                      variant={IconButtonLinkVariant.FLAT_SECONDARY}
+                      icon={
+                        <LanguageIcon className="h-5 w-5" aria-hidden="true" />
+                      }
+                    />
+                  </Link>
                 </div>
               </div>
             </div>

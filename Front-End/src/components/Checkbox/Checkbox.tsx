@@ -8,6 +8,7 @@ type CheckboxProps = {
   name: string;
   checked?: boolean;
   disabled?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export default function Checkbox({
@@ -18,6 +19,7 @@ export default function Checkbox({
   className,
   disabled,
   checked,
+  onChange,
 }: CheckboxProps & React.HTMLProps<HTMLInputElement>) {
   return (
     <input
@@ -25,6 +27,7 @@ export default function Checkbox({
       checked={checked}
       type="checkbox"
       disabled={disabled}
+      onChange={onChange}
       {...(register &&
         (register(label, { required }) as {
           (...unknown);

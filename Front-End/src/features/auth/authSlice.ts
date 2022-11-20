@@ -3,9 +3,10 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { setCookies } from 'cookies-next';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { User } from '@app/models/User';
-import type { ApiPayload } from '@app/models/ApiPayload';
-import type { Token } from '@app/models/Token';
+import type User from '@app/models/User';
+import type ApiPayload from '@app/models/ApiPayload';
+import type Token from '@app/models/Token';
+import type ApiStatus from '@app/models/ApiStatus';
 
 interface AuthPayload extends ApiPayload {
   data: User & { token: Token };
@@ -15,7 +16,7 @@ export type AuthState = {
   token: Token | null;
   user: User | null;
   isLoggedIn: boolean;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -27,25 +28,25 @@ const initialState: AuthState = {
   error: null,
 };
 
-export const loginUser = createAsyncThunk(
-  'auth/login',
-  async ({ username, password }: { username: string; password: string }) => {
-    try {
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('password', password);
-      const res = await apiClient.post('login', {
-        body: formData,
-      });
+export const loginUser = createAsyncThunk<
+  AuthPayload,
+  { username: string; password: string }
+>('auth/login', async ({ username, password }) => {
+  try {
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+    const res = await apiClient.post('login', {
+      body: formData,
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as AuthPayload;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -83,7 +84,7 @@ export const authSlice = createSlice({
       })
       .addCase(
         loginUser.fulfilled,
-        (state, { payload: { data } }: { payload: AuthPayload | any }) => {
+        (state, { payload: { data } }: { payload: AuthPayload }) => {
           state.user = {
             id: data.id,
             zutID: data.zutID,

@@ -1,13 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import type { RootState } from '@app/store';
-import type { Course } from '@app/models/Course';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type ApiPayload from '@app/models/ApiPayload';
 import apiClient from '@app/apiClient';
+import type EnrolledCourse from '@app/models/EnrolledCourse';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type EnrolledCoursesState = {
-  data: Course[] | null;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  data: EnrolledCourse[] | null;
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,15 +18,12 @@ const initialState: EnrolledCoursesState = {
   error: null,
 };
 
-export const fetchEnrolledCourses = createAsyncThunk(
+export const fetchEnrolledCourses = createAsyncThunk<
+  ApiPayload<EnrolledCourse[]>,
+  { includeLessons?: boolean; limitLessons?: number | null }
+>(
   'api/courses/enrolled',
-  async (
-    {
-      includeLessons = false,
-      limitLessons,
-    }: { includeLessons?: boolean; limitLessons?: number | null },
-    thunkApi
-  ) => {
+  async ({ includeLessons = false, limitLessons }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -42,7 +40,7 @@ export const fetchEnrolledCourses = createAsyncThunk(
 
       const data = await res.json();
 
-      return data;
+      return data as ApiPayload<EnrolledCourse[]>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -68,7 +66,9 @@ export const enrolledCoursesSlice = createSlice({
         fetchEnrolledCourses.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          {
+            payload: { data, error },
+          }: { payload: ApiPayload<EnrolledCourse[]> }
         ) => {
           if (error) {
             state.data = null;

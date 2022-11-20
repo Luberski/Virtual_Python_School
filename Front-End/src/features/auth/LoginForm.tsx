@@ -12,7 +12,7 @@ import {
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 
 type LoginFormProps = {
-  translations: (key: string) => string;
+  translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function LoginForm({ translations }: LoginFormProps) {

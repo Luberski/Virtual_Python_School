@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Course } from '@app/models/Course';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Course from '@app/models/Course';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type CourseState = {
   data: Course;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,29 +18,29 @@ const initialState: CourseState = {
   error: null,
 };
 
-export const enrollCourse = createAsyncThunk(
-  'api/course/enroll',
-  async (id: string | number, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('course', {
-        json: {
-          data: { course_id: id },
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+export const enrollCourse = createAsyncThunk<
+  ApiPayload<Course>,
+  string | number
+>('api/course/enroll', async (id, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('course', {
+      json: {
+        data: { course_id: id },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<Course>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const enrollCourseSlice = createSlice({
   name: 'enrollCourse',
@@ -59,7 +60,7 @@ export const enrollCourseSlice = createSlice({
         enrollCourse.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Course> }
         ) => {
           if (error) {
             state.data = null;

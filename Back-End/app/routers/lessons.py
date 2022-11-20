@@ -171,7 +171,9 @@ def delete_lesson(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    # TODO: change this after add sections + find better option to save completed courses
+
+    if db.query(models.EnrolledLessons).filter_by(lesson_id=lesson_id).first():
+        db.query(models.EnrolledLessons).filter_by(lesson_id=lesson_id).delete()
 
     db.query(models.Answers).filter_by(lesson_id=lesson_id).delete()
     db.query(models.Lessons).filter_by(id=lesson_id).delete()
@@ -188,7 +190,7 @@ def delete_lesson(
 
 
 @router.get("/courses/{course_id}/lessons", tags=["lessons"])
-def get_lessons(
+def get_lessons_by_course_id(
     course_id: int = Path(title="id of the course"),
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
@@ -226,8 +228,46 @@ def get_lessons(
     )
 
 
+@router.get("/lessons", tags=["lessons"])
+def get_lessons_all(
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    lessons = db.query(models.Lessons).all()
+    if lessons is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Lessons not found"},
+        )
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": [
+                {
+                    "id": lesson.id,
+                    "name": lesson.name,
+                    "description": lesson.description,
+                    "course_id": lesson.course_id,
+                    "type": lesson.type,
+                    "number_of_answers": lesson.number_of_answers,
+                }
+                for lesson in lessons
+            ],
+            "error": None,
+        },
+    )
+
+
 @router.get("/courses/{course_id}/lessons/{lesson_id}", tags=["lessons"])
-def get_lesson(
+def get_lesson_by_course_id(
     course_id: int = Path(title="id of the course"),
     lesson_id: int = Path(title="id of the lesson"),
     db: Session = Depends(deps.get_db),
@@ -243,6 +283,42 @@ def get_lesson(
     lesson = (
         db.query(models.Lessons).filter_by(course_id=course_id, id=lesson_id).first()
     )
+    if lesson is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Lesson not found"},
+        )
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": {
+                "id": lesson.id,
+                "name": lesson.name,
+                "description": lesson.description,
+                "course_id": lesson.course_id,
+                "type": lesson.type,
+                "number_of_answers": lesson.number_of_answers,
+            },
+            "error": None,
+        },
+    )
+
+
+@router.get("/lessons/{lesson_id}", tags=["lessons"])
+def get_lesson_by_lesson_id(
+    lesson_id: int = Path(title="id of the lesson"),
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    lesson = db.query(models.Lessons).filter_by(id=lesson_id).first()
     if lesson is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -335,6 +411,31 @@ def enroll_lesson_me(
             content={"error": "Lesson not found"},
         )
 
+    enrolled_lesson_exists = (
+        db.query(models.EnrolledLessons)
+        .filter_by(lesson_id=lesson_wanted, user_id=user.id)
+        .first()
+    )
+
+    if enrolled_lesson_exists:
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "data": {
+                    "id": enrolled_lesson_exists.id,
+                    "lesson_id": enrolled_lesson_exists.lesson_id,
+                    "enrolled_course_id": enrolled_lesson_exists.enrolled_course_id,
+                    "name": enrolled_lesson_exists.lesson.name,
+                    "description": enrolled_lesson_exists.lesson.description,
+                    "user_id": enrolled_lesson_exists.user_id,
+                    "start_date": str(enrolled_lesson_exists.start_date),
+                    "end_date": str(enrolled_lesson_exists.end_date),
+                    "completed": enrolled_lesson_exists.completed,
+                },
+                "error": None,
+            },
+        )
+
     lesson_enrolled = models.EnrolledLessons(
         lesson_id=lesson_query.id,
         user_id=user.id,
@@ -347,7 +448,7 @@ def enroll_lesson_me(
     db.commit()
 
     return JSONResponse(
-        status_code=status.HTTP_200_OK,
+        status_code=status.HTTP_201_CREATED,
         content={
             "data": {
                 "id": lesson_enrolled.id,

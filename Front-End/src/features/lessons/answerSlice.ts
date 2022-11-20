@@ -2,12 +2,14 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
+
+type AnswerData = { id: string; status: boolean; lesson_id: string };
 
 export type AnswerState = {
-  // TODO: move types to models folder
-  data: { id: string; status: boolean; lesson_id: string };
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  data: AnswerData;
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,30 +19,40 @@ const initialState: AnswerState = {
   error: null,
 };
 
-export const checkAnswer = createAsyncThunk(
+export const checkAnswer = createAsyncThunk<
+  ApiPayload<AnswerData>,
+  {
+    lessonId: number;
+    enrolledLessonId?: number;
+    isDynamic?: boolean;
+    answer: string;
+  }
+>(
   'api/answer/check',
   async (
-    {
-      lessonId,
-      enrolledLessonId,
-      answer,
-    }: {
-      lessonId: number;
-      enrolledLessonId: number;
-      answer: string;
-    },
+    { lessonId, enrolledLessonId, isDynamic = false, answer },
     thunkApi
   ) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
+      let jsonData = null;
+      if (isDynamic) {
+        jsonData = {
+          lesson_id: lessonId,
+          dynamic_lesson_id: enrolledLessonId,
+          answer: answer,
+        };
+      } else {
+        jsonData = {
+          lesson_id: lessonId,
+          enrolled_lesson_id: enrolledLessonId,
+          answer: answer,
+        };
+      }
       const res = await apiClient.post('answers/check', {
         json: {
-          data: {
-            lesson_id: lessonId,
-            enrolled_lesson_id: enrolledLessonId,
-            answer: answer,
-          },
+          data: jsonData,
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -48,7 +60,7 @@ export const checkAnswer = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<AnswerData>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -78,7 +90,7 @@ export const answerSlice = createSlice({
         checkAnswer.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<AnswerData> }
         ) => {
           if (error) {
             state.data = null;

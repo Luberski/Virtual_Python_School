@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 from pydantic import BaseModel
 
 from app.schemas.base import BaseJSONRequest
@@ -15,7 +15,8 @@ class AnswerCreateRequest(BaseJSONRequest):
 
 class AnswerCheckData(BaseModel):
     lesson_id: int
-    enrolled_lesson_id: int
+    enrolled_lesson_id: Optional[int] = None
+    dynamic_lesson_id: Optional[int] = None
     answer: Union[str, list]
 
 

@@ -23,6 +23,7 @@ type SurveyFormStepProps = {
   questions: SurveyQuestion[];
   surveyResults: SurveyResults;
   setSurveyResults: Dispatch<SetStateAction<SurveyResults>>;
+  translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function SurveyFormStep({
@@ -34,6 +35,7 @@ export default function SurveyFormStep({
   steps,
   surveyResults,
   setSurveyResults,
+  translations,
 }: SurveyFormStepProps) {
   const dispatch = useDispatch();
 
@@ -125,7 +127,7 @@ export default function SurveyFormStep({
               onClick={prevFormStep}
               type="button"
               icon={<ArrowLeftIcon className="h-5 w-5" />}>
-              Back
+              {translations('Form.back')}
             </IconButton>
           )}
 
@@ -135,7 +137,7 @@ export default function SurveyFormStep({
               type="submit"
               iconPosition={IconPosition.LEFT}
               icon={<PaperAirplaneIcon className="h-5 w-5" />}>
-              Submit
+              {translations('Form.submit')}
             </IconButton>
           ) : (
             <IconButton
@@ -143,7 +145,7 @@ export default function SurveyFormStep({
               type="submit"
               iconPosition={IconPosition.RIGHT}
               icon={<ArrowRightIcon className="h-5 w-5" />}>
-              Next
+              {translations('Form.next')}
             </IconButton>
           )}
         </div>

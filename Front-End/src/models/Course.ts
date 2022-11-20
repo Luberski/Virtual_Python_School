@@ -1,6 +1,6 @@
-import type { Lesson } from './Lesson';
+import type Lesson from './Lesson';
 
-export type Course = {
+type Course = {
   id: number;
   name: string;
   description: string;
@@ -9,4 +9,8 @@ export type Course = {
   total_lessons_count: number;
   total_completed_lessons_count: number;
   lessons?: Lesson[];
+  lang?: string;
+  tags?: string[];
 };
+
+export default Course;

@@ -60,36 +60,29 @@ export const fetchClassrooms = createAsyncThunk(
 //   }
 // );
 
-// export const createClassroom = createAsyncThunk(
-//   'api/courses/create',
-//   async (
-//     {
-//       name,
-//       description,
-//       featured = false,
-//     }: { name: string; description: string; featured: boolean },
-//     thunkApi
-//   ) => {
-//     try {
-//       const state = thunkApi.getState() as RootState;
-//       const { accessToken } = state.auth.token;
-//       const res = await apiClient.post('courses', {
-//         json: {
-//           data: { name, description, featured },
-//         },
-//         headers: {
-//           Authorization: `Bearer ${accessToken}`,
-//         },
-//       });
+export const createClassroom = createAsyncThunk(
+  'api/courses/create',
+  async ({ name, isPublic }: { name: string; isPublic: boolean }, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.post('classrooms', {
+        json: {
+          data: { name, isPublic },
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-//       const data = await res.json();
-//       return data;
-//     } catch (error) {
-//       console.error(error);
-//       throw error;
-//     }
-//   }
-// );
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
 
 export const classroomsSlice = createSlice({
   name: 'courses',
@@ -125,7 +118,7 @@ export const classroomsSlice = createSlice({
       .addCase(fetchClassrooms.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
-      });
+      })
     // .addCase(
     //   deleteClassroom.fulfilled,
     //   (state, { payload }: { payload: ApiPayload | any }) => {
@@ -134,12 +127,12 @@ export const classroomsSlice = createSlice({
     //     );
     //   }
     // )
-    // .addCase(
-    //   createClassroom.fulfilled,
-    //   (state, { payload }: { payload: ApiPayload | any }) => {
-    //     state.data = [...state.data, payload.data];
-    //   }
-    // );
+    .addCase(
+      createClassroom.fulfilled,
+      (state, { payload }: { payload: ApiPayload | any }) => {
+        state.data = [...state.data, payload.data];
+      }
+    );
   },
 });
 

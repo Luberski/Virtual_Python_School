@@ -34,11 +34,34 @@ def create_classroom(
             content={"error": "Unauthorized"},
         )
 
+    check_if_classroom_exists = (
+        db.query(models.Classrooms)
+        .filter(models.Classrooms.name == request_data.name)
+        .first()
+    )
+    if check_if_classroom_exists:
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"error": "Classroom already exists"},
+        )
+
     user = db.query(models.User).filter_by(username=username).first()
+
+    check_if_user_has_classroom = (
+        db.query(models.Classrooms)
+        .filter(models.Classrooms.teacher_id == user.id)
+        .first()
+    )
+    if check_if_user_has_classroom:
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"error": "Teacher cannot have more than one classroom"},
+        )
+
     new_classroom = models.Classrooms(
         name=request_data.data.name,
         teacher_id=user.id,
-        is_public=request_data.data.is_public,
+        is_public=request_data.data.isPublic,
     )
 
     db.add(new_classroom)
@@ -51,7 +74,7 @@ def create_classroom(
                 "id": new_classroom.id,
                 "name": new_classroom.name,
                 "teacher_id": new_classroom.teacher_id,
-                "is_public": new_classroom.is_public,
+                "is_public": new_classroom.isPublic,
             },
             "error": None,
         },

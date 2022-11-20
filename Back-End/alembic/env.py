@@ -21,6 +21,7 @@ from app.models import (
     DynamicCourseSurveyUserResults,
     DynamicCourses,
     DynamicLessons,
+    CourseTags,
     Classrooms
 )
 

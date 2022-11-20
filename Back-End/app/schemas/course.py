@@ -8,6 +8,7 @@ class CourseCreateData(BaseModel):
     name: str
     description: str
     featured: Optional[bool] = False
+    lang: Optional[str] = None
 
 
 class CourseCreateRequest(BaseJSONRequest):
@@ -19,6 +20,7 @@ class CourseCreateResponseData(BaseModel):
     name: str
     description: str
     featured: Optional[bool] = False
+    lang: Optional[str] = None
 
 
 class CourseCreateResponse(BaseJSONResponse):
@@ -30,6 +32,8 @@ class CourseEditData(BaseModel):
     name: Optional[str]
     description: Optional[str]
     featured: Optional[bool] = False
+    lang: Optional[str] = None
+    tags: Optional[list[str]] = []
 
 
 class CourseEditRequest(BaseJSONRequest):
@@ -88,8 +92,11 @@ class CoursesAllResponseData(BaseModel):
     description: str
     featured: Optional[bool] = False
     enrolled: Optional[bool] = False
+    is_dynamic_course: Optional[bool] = False
     total_lessons_count: Optional[int] = 0
     total_completed_lessons_count: Optional[int] = 0
+    lang: Optional[str] = None
+    tags: Optional[list[str]] = []
     lessons: Optional[Any] = []
 
 
@@ -100,3 +107,29 @@ class CoursesAllResponseDataCollection(BaseCollectionModel[CoursesAllResponseDat
 
 class CoursesAllResponse(BaseJSONResponse):
     data: list[CoursesAllResponseData]
+
+
+class EnrolledCoursesAllResponseData(BaseModel):
+    id: int
+    user_id: Optional[int] = None
+    name: str
+    description: str
+    featured: Optional[bool] = False
+    enrolled: Optional[bool] = False
+    is_dynamic_course: Optional[bool] = False
+    total_lessons_count: Optional[int] = 0
+    total_completed_lessons_count: Optional[int] = 0
+    lang: Optional[str] = None
+    tags: Optional[list[str]] = []
+    lessons: Optional[Any] = []
+
+
+class EnrolledCoursesAllResponseDataCollection(
+    BaseCollectionModel[EnrolledCoursesAllResponseData]
+):
+    class Config:
+        validate_assignment_strict = False
+
+
+class EnrolledCoursesAllResponse(BaseJSONResponse):
+    data: list[EnrolledCoursesAllResponseData]

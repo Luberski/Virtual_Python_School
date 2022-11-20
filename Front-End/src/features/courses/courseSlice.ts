@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Course } from '@app/models/Course';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Course from '@app/models/Course';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type CourseState = {
   data: Course;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,9 +18,9 @@ const initialState: CourseState = {
   error: null,
 };
 
-export const fetchCourse = createAsyncThunk(
+export const fetchCourse = createAsyncThunk<ApiPayload<Course>, number>(
   'api/course',
-  async (id: string | number, thunkApi) => {
+  async (id, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -29,7 +30,7 @@ export const fetchCourse = createAsyncThunk(
         },
       });
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Course>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -37,22 +38,18 @@ export const fetchCourse = createAsyncThunk(
   }
 );
 
-export const editCourse = createAsyncThunk(
+export const editCourse = createAsyncThunk<
+  ApiPayload<Course>,
+  {
+    courseId: number;
+    name?: string;
+    description?: string;
+    featured?: boolean;
+    lang?: string;
+  }
+>(
   'api/courses/edit',
-  async (
-    {
-      courseId,
-      name,
-      description,
-      featured,
-    }: {
-      courseId: string;
-      name?: string;
-      description?: string;
-      featured?: boolean;
-    },
-    thunkApi
-  ) => {
+  async ({ courseId, name, description, featured, lang }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -62,6 +59,7 @@ export const editCourse = createAsyncThunk(
             course_id: courseId,
             ...(name && { name }),
             ...(description && { description }),
+            ...(lang && { lang }),
             featured,
           },
         },
@@ -71,7 +69,7 @@ export const editCourse = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Course>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -97,7 +95,7 @@ export const courseSlice = createSlice({
         fetchCourse.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Course> }
         ) => {
           if (error) {
             state.data = null;
@@ -116,7 +114,7 @@ export const courseSlice = createSlice({
       })
       .addCase(
         editCourse.fulfilled,
-        (state, { payload }: { payload: ApiPayload | any }) => {
+        (state, { payload }: { payload: ApiPayload<Course> }) => {
           state.data = { ...state.data, ...payload.data };
         }
       );

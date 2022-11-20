@@ -4,9 +4,8 @@ from fastapi import APIRouter, Depends, status, Query, Path
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from app.routers import deps
-from app import models
+from app import models, crud
 from app.schemas.course import (
     CourseCloseByIdRequest,
     CourseCloseRequest,
@@ -46,6 +45,7 @@ def create_course(
         name=request_data.data.name,
         description=request_data.data.description,
         featured=False,
+        lang=request_data.data.lang,
     )
     if request_data.data.featured:
         new_course.featured = request_data.data.featured
@@ -61,6 +61,7 @@ def create_course(
                 "name": new_course.name,
                 "description": new_course.description,
                 "featured": new_course.featured,
+                "lang": new_course.lang,
             },
             "error": None,
         },
@@ -107,6 +108,10 @@ def edit_course(
         course_edit.featured = request_data.data.featured
         to_commit = True
 
+    if request_data.data.lang:
+        course_edit.lang = request_data.data.lang
+        to_commit = True
+
     if to_commit:
         db.commit()
 
@@ -117,6 +122,8 @@ def edit_course(
                 "name": course_edit.name,
                 "description": course_edit.description,
                 "featured": course_edit.featured,
+                "lang": course_edit.lang,
+                "tags": [tag.name for tag in course_edit.tags],
             },
             "error": None,
         },
@@ -141,8 +148,10 @@ def delete_course(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    # TODO: change this after add sections + find better option to save completed courses
+
     db.query(models.EnrolledCourses).filter_by(course_id=course_id).delete()
+    for lesson in db.query(models.Lessons).filter_by(course_id=course_id).all():
+        db.query(models.Answers).filter_by(lesson_id=lesson.id).delete()
     db.query(models.Lessons).filter_by(course_id=course_id).delete()
     db.query(models.Courses).filter_by(id=course_id).delete()
 
@@ -193,6 +202,9 @@ def get_courses_all(
         )
         if enrolled_courses_with_lessons:
             for enrolled_course in enrolled_courses_with_lessons:
+                total_lessons_count = 0
+                for _ in enrolled_course.course.lessons:
+                    total_lessons_count += 1
                 courses_response_data.append(
                     {
                         "id": enrolled_course.course.id,
@@ -200,6 +212,9 @@ def get_courses_all(
                         "description": enrolled_course.course.description,
                         "featured": enrolled_course.course.featured,
                         "enrolled": True,
+                        "total_lessons_count": total_lessons_count,
+                        "lang": enrolled_course.course.lang,
+                        "tags": [tag.name for tag in enrolled_course.course.tags],
                         "lessons": [
                             {
                                 "id": lesson.id,
@@ -226,6 +241,9 @@ def get_courses_all(
                     enrolled_course.course.id
                     for enrolled_course in enrolled_courses_with_lessons
                 ]:
+                    total_lessons_count = 0
+                    for _ in course.lessons:
+                        total_lessons_count += 1
                     courses_response_data.append(
                         {
                             "id": course.id,
@@ -233,6 +251,9 @@ def get_courses_all(
                             "description": course.description,
                             "featured": course.featured,
                             "enrolled": False,
+                            "total_lessons_count": total_lessons_count,
+                            "lang": course.lang,
+                            "tags": [tag.name for tag in course.tags],
                             "lessons": [
                                 {
                                     "id": lesson.id,
@@ -261,6 +282,7 @@ def get_courses_all(
                         "description": enrolled_course.course.description,
                         "featured": enrolled_course.course.featured,
                         "enrolled": True,
+                        "lang": enrolled_course.course.lang,
                     }
                 )
 
@@ -277,6 +299,7 @@ def get_courses_all(
                             "description": course.description,
                             "featured": course.featured,
                             "enrolled": False,
+                            "lang": course.lang,
                         }
                     )
 
@@ -305,6 +328,7 @@ def get_courses_all_featured(
                     "name": course.name,
                     "description": course.description,
                     "featured": course.featured,
+                    "lang": course.lang,
                 }
                 for course in courses
             ],
@@ -326,8 +350,8 @@ def get_courses_me(
             content={"error": "Unauthorized"},
         )
     user = db.query(models.User).filter_by(username=username).first()
-    courses = db.query(models.EnrolledCourses).filter_by(user_id=user.id).all()
-    if courses is None:
+    enrolled_courses = db.query(models.EnrolledCourses).filter_by(user_id=user.id).all()
+    if enrolled_courses is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "Courses not found"},
@@ -338,12 +362,14 @@ def get_courses_me(
             "data": [
                 {
                     "username": username,
-                    "course_id": course.course_id,
-                    "start_date": str(course.start_date),
-                    "end_date": str(course.end_date),
-                    "completed": course.completed,
+                    "course_id": enrolled_course.course_id,
+                    "start_date": str(enrolled_course.start_date),
+                    "end_date": str(enrolled_course.end_date),
+                    "completed": enrolled_course.completed,
+                    "lang": enrolled_course.course.lang,
+                    "tags": [tag.name for tag in enrolled_course.course.tags],
                 }
-                for course in courses
+                for enrolled_course in enrolled_courses
             ],
             "error": None,
         },
@@ -370,102 +396,26 @@ def get_enrolled_courses(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-    courses_response_data: CoursesAllResponseDataCollection = (
-        CoursesAllResponseDataCollection()
-    )
 
-    if include_lessons:
-        completed_lessons_count_query = (
-            db.query(
-                models.EnrolledLessons.id,
-                models.EnrolledLessons.lesson_id,
-                models.EnrolledLessons.user_id,
-                func.count(models.EnrolledLessons.completed).label(
-                    "completed_lessons_count"
-                ),
-            )
-            .filter(
-                models.EnrolledLessons.user_id == user.id,
-                # pylint: disable=C0121
-                models.EnrolledLessons.completed == True,
-            )
-            .distinct(models.EnrolledLessons.lesson_id)
-            .group_by(models.EnrolledLessons.id)
-            .all()
+    try:
+        all_enrolled_courses = crud.courses.get_all_enrolled_courses(
+            db, user, include_lessons, limit_lessons
         )
-        enrolled_courses_with_lessons = (
-            db.query(models.EnrolledCourses)
-            .filter_by(user_id=user.id)
-            .join(models.Courses, models.Courses.id == models.EnrolledCourses.course_id)
-            .join(models.Lessons, models.Courses.id == models.Lessons.course_id)
-            .all()
+        # TODO: add support for limit_lessons in dynamic courses
+        all_dynamic_courses = crud.dynamic_courses.get_all_dynamic_courses(
+            db, user, True
         )
-        if enrolled_courses_with_lessons:
-            for enrolled_course in enrolled_courses_with_lessons:
-                total_lessons_count = 0
-                total_completed_lessons_count = 0
-                for lesson in enrolled_course.course.lessons:
-                    total_lessons_count += 1
-                    if lesson.id in [
-                        lesson_enrolled.lesson_id
-                        for lesson_enrolled in completed_lessons_count_query
-                        if lesson_enrolled.lesson_id == lesson.id
-                    ]:
-                        total_completed_lessons_count += 1
+        all_courses = all_enrolled_courses + all_dynamic_courses
 
-                courses_response_data.append(
-                    {
-                        "id": enrolled_course.id,
-                        "course_id": enrolled_course.course.id,
-                        "name": enrolled_course.course.name,
-                        "description": enrolled_course.course.description,
-                        "featured": enrolled_course.course.featured,
-                        "enrolled": True,
-                        "end_date": str(enrolled_course.end_date),
-                        "total_lessons_count": total_lessons_count,
-                        "total_completed_lessons_count": total_completed_lessons_count,
-                        "lessons": [
-                            {
-                                "id": lesson.id,
-                                "start_date": str(enrolled_course.start_date),
-                                "name": lesson.name,
-                                "description": lesson.description,
-                                "type": lesson.type,
-                                "number_of_answers": lesson.number_of_answers,
-                            }
-                            for lesson in enrolled_course.course.lessons.limit(
-                                limit_lessons
-                            )
-                        ],
-                    }
-                )
-
-    else:
-        enrolled_courses = (
-            db.query(models.EnrolledCourses)
-            .filter_by(user_id=user.id)
-            .join(models.Courses, models.Courses.id == models.EnrolledCourses.course_id)
-            .all()
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"data": all_courses},
         )
-        if enrolled_courses:
-            for enrolled_course in enrolled_courses:
-                courses_response_data.append(
-                    {
-                        "id": enrolled_course.id,
-                        "course_id": enrolled_course.course.id,
-                        "start_date": str(enrolled_course.start_date),
-                        "name": enrolled_course.course.name,
-                        "description": enrolled_course.course.description,
-                        "featured": enrolled_course.course.featured,
-                        "enrolled": True,
-                        "end_date": str(enrolled_course.end_date),
-                    }
-                )
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={"data": courses_response_data.dict(), "error": None},
-    )
+    except ValueError as err:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": str(err)},
+        )
 
 
 @router.get("/courses/{course_id}", tags=["courses"])
@@ -508,6 +458,8 @@ def get_course_by_id(
                     "name": course.name,
                     "description": course.description,
                     "featured": course.featured,
+                    "lang": course.lang,
+                    "tags": [tag.name for tag in course.tags],
                     "lessons": [
                         {
                             "id": lesson.id,
@@ -530,6 +482,7 @@ def get_course_by_id(
                 "name": course.name,
                 "description": course.description,
                 "featured": course.featured,
+                "lang": course.lang,
             },
             "error": None,
         },
@@ -556,117 +509,20 @@ def get_enrolled_course_by_id(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-    if include_lessons:
-        completed_lessons_count_query = (
-            db.query(
-                models.EnrolledLessons.id,
-                models.EnrolledLessons.lesson_id,
-                models.EnrolledLessons.user_id,
-                func.count(models.EnrolledLessons.completed).label(
-                    "completed_lessons_count"
-                ),
-            )
-            .filter(
-                models.EnrolledLessons.user_id == user.id,
-                # pylint: disable=C0121
-                models.EnrolledLessons.completed == True,
-            )
-            .distinct(models.EnrolledLessons.lesson_id)
-            .group_by(models.EnrolledLessons.id)
-            .all()
+
+    try:
+        course = crud.courses.get_enrolled_course_by_id(
+            db, user, course_id, include_lessons
         )
-        enrolled_course_with_lessons = (
-            db.query(
-                models.EnrolledCourses,
-            )
-            .filter_by(user_id=user.id, course_id=course_id)
-            .first()
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"data": course},
         )
-        if enrolled_course_with_lessons:
-            total_lessons_count = 0
-            total_completed_lessons_count = 0
-            for lesson in enrolled_course_with_lessons.course.lessons:
-                total_lessons_count += 1
-                if lesson.id in [
-                    lesson_enrolled.lesson_id
-                    for lesson_enrolled in completed_lessons_count_query
-                    if lesson_enrolled.lesson_id == lesson.id
-                ]:
-                    total_completed_lessons_count += 1
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content={
-                    "data": {
-                        "id": enrolled_course_with_lessons.id,
-                        "course_id": enrolled_course_with_lessons.course_id,
-                        "name": enrolled_course_with_lessons.course.name,
-                        "description": enrolled_course_with_lessons.course.description,
-                        "featured": enrolled_course_with_lessons.course.featured,
-                        "enrolled": True,
-                        "start_date": str(enrolled_course_with_lessons.start_date),
-                        "end_date": str(enrolled_course_with_lessons.end_date),
-                        "total_lessons_count": total_lessons_count,
-                        "total_completed_lessons_count": total_completed_lessons_count,
-                        "lessons": [
-                            {
-                                "id": lesson.id,
-                                "start_date": str(
-                                    enrolled_course_with_lessons.start_date
-                                ),
-                                "end_date": str(enrolled_course_with_lessons.end_date),
-                                "name": lesson.name,
-                                "description": lesson.description,
-                                "type": lesson.type,
-                                "number_of_answers": lesson.number_of_answers,
-                                "completed": lesson.id
-                                in [
-                                    lesson_enrolled.lesson_id
-                                    for lesson_enrolled in completed_lessons_count_query
-                                    if lesson_enrolled.lesson_id == lesson.id
-                                ],
-                            }
-                            for lesson in enrolled_course_with_lessons.course.lessons
-                        ],
-                    },
-                    "error": None,
-                },
-            )
-        else:
-            return JSONResponse(
-                status_code=status.HTTP_404_NOT_FOUND,
-                content={"error": "Course not found"},
-            )
-    else:
-        enrolled_course = (
-            db.query(
-                models.EnrolledCourses,
-            )
-            .filter_by(user_id=user.id, course_id=course_id)
-            .join(models.Courses, models.Courses.id == models.EnrolledCourses.course_id)
-            .first()
+    except ValueError as err:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": str(err)},
         )
-        if enrolled_course:
-            return JSONResponse(
-                status_code=status.HTTP_200_OK,
-                content={
-                    "data": {
-                        "id": enrolled_course.id,
-                        "course_id": enrolled_course.course_id,
-                        "name": enrolled_course.course.name,
-                        "description": enrolled_course.course.description,
-                        "featured": enrolled_course.course.featured,
-                        "enrolled": True,
-                        "start_date": str(enrolled_course.start_date),
-                        "end_date": str(enrolled_course.end_date),
-                    },
-                    "error": None,
-                },
-            )
-        else:
-            return JSONResponse(
-                status_code=status.HTTP_404_NOT_FOUND,
-                content={"error": "Course not found"},
-            )
 
 
 @router.post("/course", tags=["courses"], response_model=CourseJoinResponse)

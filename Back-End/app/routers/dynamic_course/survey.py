@@ -4,12 +4,12 @@ from fastapi_jwt_auth import AuthJWT
 from sqlalchemy.orm import Session
 from app.schemas.dynamic_course import (
     DynamicCourseSurveyAnswerCreateRequest,
-    DynamicCourseSurveyAnswerCreateResponse,
     DynamicCourseSurveyQuestionCreateRequest,
     DynamicCourseSurveyQuestionCreateResponse,
     DynamicCourseSurveyCreateRequest,
     DynamicCourseSurveyCreateResponse,
     DynamicCourseSurveyUserResultsCreateRequest,
+    DynamicCourseSurveyWithAnswersCreateRequest,
 )
 from app.routers import deps
 from app import models
@@ -20,8 +20,8 @@ router = APIRouter()
 
 
 @router.post(
-    "/dynamic-courses/surveys",
-    tags=["survey"],
+    "/surveys",
+    tags=["surveys"],
     response_model=DynamicCourseSurveyCreateResponse,
 )
 def create_dynamic_course_survey(
@@ -48,6 +48,11 @@ def create_dynamic_course_survey(
             content={"error": "User not found"},
         )
 
+    if request_data.data.featured is True:
+        db.query(models.DynamicCourseSurvey).filter_by(featured=True).update(
+            {"featured": False}
+        )
+
     survey = models.DynamicCourseSurvey(
         name=request_data.data.name,
         featured=request_data.data.featured,
@@ -67,8 +72,8 @@ def create_dynamic_course_survey(
 
 
 @router.post(
-    "/dynamic-courses/surveys/questions",
-    tags=["survey"],
+    "/surveys/questions",
+    tags=["surveys"],
     response_model=DynamicCourseSurveyQuestionCreateResponse,
 )
 def create_dynamic_course_survey_question(
@@ -95,6 +100,31 @@ def create_dynamic_course_survey_question(
             content={"error": "User not found"},
         )
 
+    if request_data.data.bulk and request_data.data.questions:
+        questions = []
+        for question_item in request_data.data.questions:
+            question_ = models.DynamicCourseSurveyQuestions(
+                question=question_item,
+                survey_id=request_data.data.survey_id,
+            )
+            questions.append(question_)
+            db.add(question_)
+            db.commit()
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={
+                "data": {
+                    "survey_id": request_data.data.survey_id,
+                    "questions": [
+                        {
+                            "id": question.id,
+                            "question": question.question,
+                        }
+                        for question in questions
+                    ],
+                }
+            },
+        )
     survey_question = models.DynamicCourseSurveyQuestions(
         question=request_data.data.question,
         survey_id=request_data.data.survey_id,
@@ -115,8 +145,8 @@ def create_dynamic_course_survey_question(
 
 
 @router.get(
-    "/dynamic-courses/surveys/{survey_id}",
-    tags=["survey"],
+    "/surveys/{survey_id}",
+    tags=["surveys"],
 )
 def get_dynamic_course_survey_by_id(
     survey_id: int = Path(title="id of the survey"),
@@ -159,6 +189,7 @@ def get_dynamic_course_survey_by_id(
             "data": {
                 "id": survey.id,
                 "name": survey.name,
+                "featured": survey.featured,
                 "questions": [
                     {
                         "question_id": survey_question.id,
@@ -181,8 +212,70 @@ def get_dynamic_course_survey_by_id(
 
 
 @router.get(
-    "/dynamic-courses/survey/featured",
-    tags=["survey"],
+    "/surveys",
+    tags=["surveys"],
+)
+def get_dynamic_course_surveys(
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    surveys = (
+        db.query(models.DynamicCourseSurvey)
+        .join(
+            models.DynamicCourseSurveyQuestions,
+            models.DynamicCourseSurveyQuestions.survey_id
+            == models.DynamicCourseSurvey.id,
+        )
+        .join(
+            models.DynamicCourseSurveyAnswers,
+            models.DynamicCourseSurveyAnswers.question_id
+            == models.DynamicCourseSurveyQuestions.id,
+        )
+        .all()
+    )
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": [
+                {
+                    "id": survey.id,
+                    "name": survey.name,
+                    "featured": survey.featured,
+                    "questions": [
+                        {
+                            "question_id": survey_question.id,
+                            "question": survey_question.question,
+                            "answers": [
+                                {
+                                    "answer_id": survey_answer.id,
+                                    "name": survey_answer.name,
+                                    "rule_type": survey_answer.rule_type,
+                                    "rule_value": survey_answer.rule_value,
+                                }
+                                for survey_answer in survey_question.answers
+                            ],
+                        }
+                        for survey_question in survey.questions
+                    ],
+                }
+                for survey in surveys
+            ]
+        },
+    )
+
+
+@router.get(
+    "/survey/featured",
+    tags=["surveys"],
 )
 def get_dynamic_course_survey_featured(
     db: Session = Depends(deps.get_db),
@@ -224,6 +317,7 @@ def get_dynamic_course_survey_featured(
             "data": {
                 "id": survey.id,
                 "name": survey.name,
+                "featured": survey.featured,
                 "questions": [
                     {
                         "question_id": survey_question.id,
@@ -246,9 +340,8 @@ def get_dynamic_course_survey_featured(
 
 
 @router.post(
-    "/dynamic-courses/surveys/answers",
-    tags=["survey"],
-    response_model=DynamicCourseSurveyAnswerCreateResponse,
+    "/surveys/answers",
+    tags=["surveys"],
 )
 def create_dynamic_course_survey_answer(
     request_data: DynamicCourseSurveyAnswerCreateRequest,
@@ -287,47 +380,184 @@ def create_dynamic_course_survey_answer(
             content={"error": "Question for question_id not found"},
         )
 
-    # if rule_type and rule_value is 0, then skip lesson for this question
-    # if rule_type is 1, then rule_value is lesson_id for this question
-    if request_data.data.rule_type == 0:
-        rule_type = 0
-        rule_value = 0
-    elif request_data.data.rule_type == 1:
-        rule_type = 1
-        lesson = (
-            db.query(models.Lessons).filter_by(id=request_data.data.rule_value).first()
-        )
-        if lesson is None:
-            return JSONResponse(
-                status_code=status.HTTP_404_NOT_FOUND,
-                content={"error": "Lesson for rule_value not found"},
+    if request_data.data.bulk and request_data.data.answers:
+        answers_list = []
+        for answer_item in request_data.data.answers:
+            # if rule_type and rule_value is 0, then skip lesson for this question
+            # if rule_type is 1, then rule_value is lesson_id for this question
+            if answer_item.rule_type == 0:
+                rule_type = 0
+                rule_value = 0
+            elif answer_item.rule_type == 1:
+                rule_type = 1
+                lesson = (
+                    db.query(models.Lessons)
+                    .filter_by(id=answer_item.rule_value)
+                    .first()
+                )
+                if lesson is None:
+                    return JSONResponse(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        content={"error": "Lesson for rule_value not found"},
+                    )
+                rule_value = lesson.id
+            answer_ = models.DynamicCourseSurveyAnswers(
+                question_id=question.id,
+                name=answer_item.name,
+                rule_type=rule_type,
+                rule_value=rule_value,
             )
-        rule_value = lesson.id
+            answers_list.append(answer_)
+            db.add(answer_)
+            db.commit()
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={
+                "data": {
+                    "question_id": question.id,
+                    "answers": [
+                        {
+                            "id": answer.id,
+                            "name": answer.name,
+                            "rule_type": answer.rule_type,
+                            "rule_value": answer.rule_value,
+                        }
+                        for answer in answers_list
+                    ],
+                }
+            },
+        )
+    else:
+        # if rule_type and rule_value is 0, then skip lesson for this question
+        # if rule_type is 1, then rule_value is lesson_id for this question
+        if request_data.data.rule_type == 0:
+            rule_type = 0
+            rule_value = 0
+        elif request_data.data.rule_type == 1:
+            rule_type = 1
+            lesson = (
+                db.query(models.Lessons)
+                .filter_by(id=request_data.data.rule_value)
+                .first()
+            )
+            if lesson is None:
+                return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={"error": "Lesson for rule_value not found"},
+                )
+            rule_value = lesson.id
 
-    question_answer = models.DynamicCourseSurveyAnswers(
-        question_id=question.id,
-        name=request_data.data.name,
-        rule_type=rule_type,
-        rule_value=rule_value,
+        question_answer = models.DynamicCourseSurveyAnswers(
+            question_id=question.id,
+            name=request_data.data.name,
+            rule_type=rule_type,
+            rule_value=rule_value,
+        )
+        db.add(question_answer)
+        db.commit()
+
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={
+                "data": {
+                    "id": question_answer.id,
+                    "question_id": question_answer.question_id,
+                    "name": question_answer.name,
+                    "rule_type": question_answer.rule_type,
+                    "rule_value": question_answer.rule_value,
+                },
+            },
+        )
+
+
+@router.post(
+    "/surveys/question",
+    tags=["surveys"],
+)
+def create_dynamic_course_survey_question_with_answers(
+    request_data: DynamicCourseSurveyWithAnswersCreateRequest,
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    rule_type = 0
+    rule_value = 0
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
+
+    survey_question = models.DynamicCourseSurveyQuestions(
+        question=request_data.data.question,
+        survey_id=request_data.data.survey_id,
     )
-    db.add(question_answer)
+    db.add(survey_question)
     db.commit()
+
+    answers_list = []
+    for answer_item in request_data.data.answers:
+        # if rule_type and rule_value is 0, then skip lesson for this question
+        # if rule_type is 1, then rule_value is lesson_id for this question
+        if answer_item.rule_type == 0:
+            rule_type = 0
+            rule_value = 0
+        elif answer_item.rule_type == 1:
+            rule_type = 1
+            lesson = (
+                db.query(models.Lessons).filter_by(id=answer_item.rule_value).first()
+            )
+            if lesson is None:
+                return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={"error": "Lesson for rule_value not found"},
+                )
+            rule_value = lesson.id
+        answer_ = models.DynamicCourseSurveyAnswers(
+            question_id=survey_question.id,
+            name=answer_item.name,
+            rule_type=rule_type,
+            rule_value=rule_value,
+        )
+        answers_list.append(answer_)
+        db.add(answer_)
+        db.commit()
 
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content={
-            "id": question_answer.id,
-            "question_id": question_answer.question_id,
-            "name": question_answer.name,
-            "rule_type": question_answer.rule_type,
-            "rule_value": question_answer.rule_value,
+            "data": {
+                "id": survey_question.id,
+                "answers": [
+                    {
+                        "id": answer.id,
+                        "question_id": survey_question.id,
+                        "name": answer.name,
+                        "rule_type": answer.rule_type,
+                        "rule_value": answer.rule_value,
+                    }
+                    for answer in answers_list
+                ],
+            }
         },
     )
 
 
 @router.post(
-    "/dynamic-courses/surveys/user/answers",
-    tags=["survey"],
+    "/surveys/user/answers",
+    tags=["surveys"],
     response_model=DynamicCourseSurveyQuestionCreateResponse,
 )
 def create_dynamic_course_survey_user_results(
@@ -412,8 +642,8 @@ def create_dynamic_course_survey_user_results(
 
 
 @router.get(
-    "/dynamic-courses/surveys/{survey_id}/user/results",
-    tags=["survey"],
+    "/surveys/{survey_id}/user/results",
+    tags=["surveys"],
 )
 def get_dynamic_course_survey_user_results(
     survey_id: int = Path(title="id of the survey"),
@@ -463,5 +693,60 @@ def get_dynamic_course_survey_user_results(
                 }
                 for result in survey_results
             ]
+        },
+    )
+
+
+@router.delete("/surveys/{survey_id}", tags=["surveys"])
+def delete_dynamic_course_survey(
+    survey_id: int = Path(title="id of the survey to delete"),
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
+    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    db.query(models.DynamicCourseSurveyUserResults).filter_by(
+        survey_id=survey_id
+    ).delete()
+    questions = (
+        db.query(models.DynamicCourseSurveyQuestions)
+        .filter_by(survey_id=survey_id)
+        .all()
+    )
+    for question in questions:
+        db.query(models.DynamicCourseSurveyAnswers).filter_by(
+            question_id=question.id
+        ).delete()
+    db.query(models.DynamicCourseSurveyQuestions).filter_by(
+        survey_id=survey_id
+    ).delete()
+    db.query(models.DynamicCourseSurvey).filter_by(id=survey_id).delete()
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": {
+                "id": survey_id,
+            },
+            "error": None,
         },
     )
