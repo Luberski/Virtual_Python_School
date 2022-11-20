@@ -463,10 +463,10 @@ export default function ManageCourseAndLessons({
             : ISO6391.getName(course.lang)}
         </div>
       )}
-      {tags && tags.length > 0 && (
-        <div className="mb-2 flex max-h-16 flex-wrap overflow-auto">
-          {translations('Meta.tags')}:&nbsp;
-          {tags.map((tag, index) => (
+      <div className="mb-2 flex max-h-16 flex-wrap overflow-auto">
+        {translations('Meta.tags')}:&nbsp;
+        {tags?.length > 0 &&
+          tags.map((tag, index) => (
             <div
               key={tag.id}
               className={`mr-1 inline-flex h-6 w-fit rounded-lg px-3 py-1 text-center text-xs font-semibold ${
@@ -482,20 +482,21 @@ export default function ManageCourseAndLessons({
               </button>
             </div>
           ))}
-          <form
-            className="flex flex-col items-start justify-center space-y-6"
-            onSubmit={handleTagAddSubmit(onTagsCreateSubmit)}>
-            <input
-              type="text"
-              name="name"
-              placeholder={translations('Tags.add-tag')}
-              className="mr-1 h-6 w-fit rounded-lg border border-dashed border-indigo-900 bg-transparent px-3 py-1 text-center text-xs font-semibold text-indigo-900 hover:bg-indigo-100 focus:ring-0 dark:border-indigo-300 dark:text-indigo-200 dark:placeholder:text-indigo-300 dark:hover:bg-indigo-200 dark:hover:text-indigo-900 dark:hover:placeholder:text-indigo-900"
-              {...registerTagAdd('name')}
-            />
-            <input type="submit" hidden />
-          </form>
-        </div>
-      )}
+        <form
+          className="flex flex-col items-start justify-center space-y-6"
+          onSubmit={handleTagAddSubmit(onTagsCreateSubmit)}>
+          <input
+            type="text"
+            name="name"
+            required
+            placeholder={translations('Tags.add-tag')}
+            className="mr-1 h-6 w-fit rounded-lg border border-dashed border-indigo-900 bg-transparent px-3 py-1 text-center text-xs font-semibold text-indigo-900 hover:bg-indigo-100 focus:ring-0 dark:border-indigo-300 dark:text-indigo-200 dark:placeholder:text-indigo-300 dark:hover:bg-indigo-200 dark:hover:text-indigo-900 dark:hover:placeholder:text-indigo-900"
+            {...registerTagAdd('name')}
+          />
+          <input type="submit" hidden />
+        </form>
+      </div>
+
       {course?.description && (
         <p className="word-wrap mb-6">
           {translations('Manage.description')}:&nbsp;{course?.description}

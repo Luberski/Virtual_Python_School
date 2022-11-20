@@ -317,7 +317,11 @@ def create_course_tag(
     db: Session, course_tag_data: CourseTagCreateData
 ) -> models.CourseTags:
     try:
-        if db.query(models.CourseTags).filter_by(name=course_tag_data.name).first():
+        if (
+            db.query(models.CourseTags)
+            .filter_by(name=course_tag_data.name, course_id=course_tag_data.course_id)
+            .first()
+        ):
             raise ValueError("Course tag already exists")
         db_course_tag = models.CourseTags(
             course_id=course_tag_data.course_id, name=course_tag_data.name
