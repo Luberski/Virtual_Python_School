@@ -55,7 +55,7 @@ class CourseTags(Base):
     __tablename__ = "course_tags"
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
-    name = Column(String(100), unique=True)
+    name = Column(String(100), nullable=False)
 
 
 class Lessons(Base):
