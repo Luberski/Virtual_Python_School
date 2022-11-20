@@ -376,3 +376,53 @@ def get_total_enrolled_courses_count(db: Session, user: models.User) -> int:
         return enrolled_courses_count
     except ValueError as err:
         raise err
+
+
+def get_similar_courses(db: Session, user: models.User) -> list[models.Courses]:
+    try:
+        enrolled_courses = (
+            db.query(models.EnrolledCourses)
+            .filter_by(user_id=user.id)
+            .join(
+                models.Courses,
+                models.Courses.id == models.EnrolledCourses.course_id,
+            )
+            .all()
+        )
+        # pylint: disable=C2801
+        if enrolled_courses:
+            similar_courses = (
+                db.query(models.Courses)
+                .join(
+                    models.CourseTags,
+                    models.CourseTags.course_id == models.Courses.id,
+                )
+                .filter(
+                    models.Courses.id.notin_(
+                        [
+                            enrolled_course.course_id
+                            for enrolled_course in enrolled_courses
+                        ]
+                    ),
+                    models.Courses.lang.in_(
+                        [
+                            enrolled_course.course.lang
+                            for enrolled_course in enrolled_courses
+                        ]
+                    ),
+                    models.CourseTags.name.in_(
+                        [
+                            tag.name
+                            for enrolled_course in enrolled_courses
+                            for tag in enrolled_course.course.tags
+                        ]
+                    ),
+                )
+                .all()
+            )
+            if similar_courses:
+                return similar_courses
+            return []
+        raise ValueError("No enrolled courses found")
+    except ValueError as err:
+        raise err

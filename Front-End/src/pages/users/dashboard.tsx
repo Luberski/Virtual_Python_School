@@ -34,6 +34,10 @@ import IconButtonLink, {
   IconButtonLinkVariant,
 } from '@app/components/IconButtonLink';
 import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
+import {
+  fetchRecommendedCourses,
+  selectRecommendedCoursesData,
+} from '@app/features/recommender/recommendedCoursesSlice';
 
 export default function UserDashboardPage() {
   const t = useTranslations();
@@ -42,6 +46,7 @@ export default function UserDashboardPage() {
   const dispatch = useDispatch();
   const dashboardData = useAppSelector(selectDashboardData);
   const enrolledCourses = useAppSelector(selectEnrolledCoursesData);
+  const recommendedCoursesData = useAppSelector(selectRecommendedCoursesData);
 
   if (!user && !isLoggedIn) {
     return null;
@@ -222,6 +227,77 @@ export default function UserDashboardPage() {
                   )}
                 </div>
               </div>
+              <div className="my-6">
+                <div className="flex flex-col">
+                  <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
+                    {t('Courses.recommended-courses')}
+                  </h3>
+                  {recommendedCoursesData && recommendedCoursesData.length > 0 && (
+                    <div className="flex max-w-sm flex-col items-center space-y-6 py-1 sm:max-w-fit sm:flex-row sm:space-y-0 sm:space-x-4 sm:overflow-x-auto">
+                      {recommendedCoursesData.map((recommendedCourse) => {
+                        const intl = new Intl.DisplayNames(router.locale, {
+                          type: 'language',
+                        });
+                        return (
+                          <FancyCard
+                            key={recommendedCourse.id}
+                            title={recommendedCourse.name}
+                            description={
+                              <div className="flex h-32 flex-col">
+                                {recommendedCourse.lang && (
+                                  <div className="mb-2 text-sm">
+                                    {t('Meta.language')}:&nbsp;
+                                    {intl?.of(recommendedCourse.lang).length > 2
+                                      ? intl.of(recommendedCourse.lang)
+                                      : ISO6391.getName(recommendedCourse.lang)}
+                                  </div>
+                                )}
+                                {recommendedCourse.tags &&
+                                  recommendedCourse.tags.length > 0 && (
+                                    <div className="mb-2 flex max-h-16 flex-wrap overflow-auto text-sm">
+                                      {recommendedCourse.tags.map(
+                                        (tag, index) => (
+                                          <div
+                                            key={tag.id}
+                                            className={`mr-1 mt-1 h-6 w-fit rounded-lg px-3 py-1 text-center text-xs font-semibold ${
+                                              TAG_COLORS[
+                                                index % TAG_COLORS.length
+                                              ]
+                                            }`}>
+                                            {tag.name}
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
+                                  )}
+                                <div>{recommendedCourse.description}</div>
+                              </div>
+                            }
+                            cardColor={'bg-white'}
+                            shadowColor={'shadow-black/25'}
+                            hoverShadowColor="hover:shadow-black/25"
+                            bottomControls={
+                              <Link
+                                href={`/courses/${recommendedCourse.id}`}
+                                passHref={true}>
+                                <IconButtonLink
+                                  variant={
+                                    IconButtonLinkVariant.OUTLINE_PRIMARY
+                                  }
+                                  icon={
+                                    <InformationCircleIcon className="h-5 w-5" />
+                                  }>
+                                  {t('Home.more')}
+                                </IconButtonLink>
+                              </Link>
+                            }
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
           <Footer />
@@ -242,6 +318,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
           limit: COURSES_LIMIT,
         })
       );
+      await store.dispatch(fetchRecommendedCourses());
 
       return {
         props: {

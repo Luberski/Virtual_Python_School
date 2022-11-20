@@ -48,7 +48,8 @@
     "delete-course-confirmation": "Are you sure you want to DELETE this course?",
     "course-deleted": "Course deleted",
     "progress": "Progress",
-    "overview": "Overview"
+    "overview": "Overview",
+    "recommended-courses": "Recommended courses"
   },
   "Lessons": {
     "lessons": "Lessons",

@@ -48,7 +48,8 @@
     "delete-course-confirmation": "Czy na pewno chcesz USUNĄĆ ten kurs?",
     "course-deleted": "Kurs został usunięty",
     "progress": "Postęp",
-    "overview": "Przegląd"
+    "overview": "Przegląd",
+    "recommended-courses": "Polecane kursy"
   },
   "Lessons": {
     "lessons": "Lekcje",
