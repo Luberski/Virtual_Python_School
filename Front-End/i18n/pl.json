@@ -74,7 +74,10 @@
     "delete-lesson-confirmation": "Czy na pewno chcesz USUNĄĆ tą lekcję?",
     "lesson-deleted": "Lekcja została usunięta",
     "completed-lessons": "Ukończone lekcje",
-    "enrolled-lessons": "Przypisane lekcje"
+    "enrolled-lessons": "Przypisane lekcje",
+    "all-correct-answers": "Wszystkie poprawne odpowiedzi",
+    "all-incorrect-answers": "Wszystkie niepoprawne odpowiedzi",
+    "all-answers": "Wszystkie odpowiedzi"
   },
   "Playground": {
     "run": "Uruchom",

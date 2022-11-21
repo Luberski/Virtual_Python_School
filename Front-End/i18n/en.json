@@ -74,7 +74,10 @@
     "delete-lesson-confirmation": "Are you sure you want to DELETE this lesson?",
     "lesson-deleted": "Lesson deleted",
     "completed-lessons": "Completed lessons",
-    "enrolled-lessons": "Enrolled lessons"
+    "enrolled-lessons": "Enrolled lessons",
+    "all-correct-answers": "All correct answers",
+    "all-incorrect-answers": "All incorrect answers",
+    "all-answers": "All answers"
   },
   "Playground": {
     "run": "Run",

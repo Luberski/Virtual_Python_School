@@ -5,6 +5,7 @@ import {
   AcademicCapIcon,
   BoltIcon,
   CheckBadgeIcon,
+  FaceFrownIcon,
   FaceSmileIcon,
   InformationCircleIcon,
 } from '@heroicons/react/24/outline';
@@ -76,38 +77,65 @@ export default function UserDashboardPage() {
         <div className="brand-shadow2 container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
           <div className="container mx-auto px-6 pt-6">
             <div className="flex flex-col">
-              <div className="flex">
-                {dashboardData && (
-                  <div className=" flex flex-col">
-                    <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
-                      {t('Dashboard.my-stats')}
-                    </h3>
-                    <div className="brand-shadow2 flex space-x-6 rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700">
-                      <div className="flex flex-col items-center justify-center text-purple-500">
-                        <AcademicCapIcon className="h-9 w-9" />
-                        <div className="text-2xl font-bold">
-                          {total_my_courses}
+              {dashboardData && (
+                <div className="flex flex-col">
+                  <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
+                    {t('Dashboard.my-stats')}
+                  </h3>
+                  <div className="flex flex-col space-y-6 sm:flex-row sm:space-x-6 sm:space-y-0">
+                    <div className="flex flex-col">
+                      <div className="brand-shadow2 flex space-x-6 rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700">
+                        <div className="flex flex-col items-center justify-center text-purple-500">
+                          <AcademicCapIcon className="h-9 w-9" />
+                          <div className="text-2xl font-bold">
+                            {total_my_courses}
+                          </div>
+                          <div>{t('Meta.title-enrolled-courses')}</div>
                         </div>
-                        <div>{t('Meta.title-enrolled-courses')}</div>
+                        <div className="flex flex-col items-center justify-center text-indigo-500">
+                          <CheckBadgeIcon className="h-9 w-9" />
+                          <div className="text-2xl font-bold">
+                            {dashboardData.total_enrolled_lessions_count}
+                          </div>
+                          <div>{t('Lessons.enrolled-lessons')}</div>
+                        </div>
+                        <div className="flex flex-col items-center justify-center text-emerald-500">
+                          <FaceSmileIcon className="h-9 w-9" />
+                          <div className="text-2xl font-bold">
+                            {dashboardData.total_completed_lessons_count}
+                          </div>
+                          <div>{t('Lessons.completed-lessons')}</div>
+                        </div>
                       </div>
-                      <div className="flex flex-col items-center justify-center text-indigo-500">
-                        <CheckBadgeIcon className="h-9 w-9" />
-                        <div className="text-2xl font-bold">
-                          {dashboardData.total_enrolled_lessions_count}
+                    </div>
+                    <div className="flex flex-col">
+                      <div className="brand-shadow2 flex space-x-6 rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700">
+                        <div className="flex flex-col items-center justify-center text-blue-500">
+                          <InformationCircleIcon className="h-9 w-9" />
+                          <div className="text-2xl font-bold">
+                            {dashboardData.total_number_of_answers}
+                          </div>
+                          <div>{t('Lessons.all-answers')}</div>
                         </div>
-                        <div>{t('Lessons.enrolled-lessons')}</div>
-                      </div>
-                      <div className="flex flex-col items-center justify-center text-emerald-500">
-                        <FaceSmileIcon className="h-9 w-9" />
-                        <div className="text-2xl font-bold">
-                          {dashboardData.total_completed_lessons_count}
+                        <div className="flex flex-col items-center justify-center text-emerald-500">
+                          <FaceSmileIcon className="h-9 w-9" />
+                          <div className="text-2xl font-bold">
+                            {dashboardData.total_number_of_correct_answers}
+                          </div>
+                          <div>{t('Lessons.all-correct-answers')}</div>
                         </div>
-                        <div>{t('Lessons.completed-lessons')}</div>
+                        <div className="flex flex-col items-center justify-center text-red-500">
+                          <FaceFrownIcon className="h-9 w-9" />
+                          <div className="text-2xl font-bold">
+                            {dashboardData.total_number_of_incorrect_answers}
+                          </div>
+                          <div>{t('Lessons.all-incorrect-answers')}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
               <div className="my-6">
                 <div className="flex flex-col">
                   <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">

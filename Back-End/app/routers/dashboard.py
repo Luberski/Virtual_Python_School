@@ -42,6 +42,13 @@ def get_dashboard_me(
         total_dynamic_courses_count = (
             crud.dynamic_courses.get_total_dynamic_courses_count(db, user)
         )
+        total_number_of_answers = crud.answers.get_total_number_of_answers(db, user)
+        total_number_of_correct_answers = (
+            crud.answers.get_total_number_of_correct_answers(db, user)
+        )
+        total_number_of_incorrect_answers = (
+            crud.answers.get_total_number_of_incorrect_answers(db, user)
+        )
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -51,6 +58,9 @@ def get_dashboard_me(
                     "total_enrolled_lessions_count": total_enrolled_lessons_count,
                     "total_enrolled_courses_count": total_enrolled_courses_count,
                     "total_dynamic_courses_count": total_dynamic_courses_count,
+                    "total_number_of_answers": total_number_of_answers,
+                    "total_number_of_correct_answers": total_number_of_correct_answers,
+                    "total_number_of_incorrect_answers": total_number_of_incorrect_answers,
                 }
             },
         )
