@@ -426,3 +426,33 @@ def get_similar_courses(db: Session, user: models.User) -> list[models.Courses]:
         raise ValueError("No enrolled courses found")
     except ValueError as err:
         raise err
+
+
+def get_lessons_for_incorrect_answers(
+    db: Session, user: models.User
+) -> list[models.Lessons]:
+    try:
+        incorrect_answers = (
+            db.query(models.AnswersHistory)
+            .filter_by(user_id=user.id, is_correct=False)
+            .all()
+        )
+        if incorrect_answers:
+            lessons = (
+                db.query(models.Lessons)
+                .filter(
+                    models.Lessons.id.in_(
+                        [
+                            incorrect_answer.lesson_id
+                            for incorrect_answer in incorrect_answers
+                        ]
+                    )
+                )
+                .all()
+            )
+            if lessons:
+                return lessons
+            return []
+        return []
+    except ValueError as err:
+        raise err

@@ -77,7 +77,8 @@
     "enrolled-lessons": "Enrolled lessons",
     "all-correct-answers": "All correct answers",
     "all-incorrect-answers": "All incorrect answers",
-    "all-answers": "All answers"
+    "all-answers": "All answers",
+    "recommended-lessons-to-retry-info": "We found some lessons that you might want to retry"
   },
   "Playground": {
     "run": "Run",
@@ -174,6 +175,7 @@
     "title-dynamic-course": "Dynamic course",
     "switch-locale": "Switch locale",
     "language": "Language",
-    "tags": "Tags"
+    "tags": "Tags",
+    "reminders": "Reminders"
   }
 }

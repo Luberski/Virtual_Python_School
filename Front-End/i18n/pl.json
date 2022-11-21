@@ -77,7 +77,8 @@
     "enrolled-lessons": "Przypisane lekcje",
     "all-correct-answers": "Wszystkie poprawne odpowiedzi",
     "all-incorrect-answers": "Wszystkie niepoprawne odpowiedzi",
-    "all-answers": "Wszystkie odpowiedzi"
+    "all-answers": "Wszystkie odpowiedzi",
+    "recommended-lessons-to-retry-info": "Znaleźliśmy niektóre lekcje, które możesz chcieć ponownie spróbować"
   },
   "Playground": {
     "run": "Uruchom",
@@ -175,6 +176,7 @@
     "title-dynamic-course": "Dynamiczny kurs",
     "switch-locale": "Zmień język",
     "language": "Język",
-    "tags": "Tagi"
+    "tags": "Tagi",
+    "reminders": "Przypomnienia"
   }
 }

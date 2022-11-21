@@ -39,6 +39,11 @@ import {
   fetchRecommendedCourses,
   selectRecommendedCoursesData,
 } from '@app/features/recommender/recommendedCoursesSlice';
+import {
+  fetchRecommendedLessons,
+  selectRecommendedLessonsData,
+} from '@app/features/recommender/recommendedLessonsSlice';
+import Alert from '@app/components/Alert';
 
 export default function UserDashboardPage() {
   const t = useTranslations();
@@ -48,6 +53,7 @@ export default function UserDashboardPage() {
   const dashboardData = useAppSelector(selectDashboardData);
   const enrolledCourses = useAppSelector(selectEnrolledCoursesData);
   const recommendedCoursesData = useAppSelector(selectRecommendedCoursesData);
+  const recommendedLessonsData = useAppSelector(selectRecommendedLessonsData);
 
   if (!user && !isLoggedIn) {
     return null;
@@ -136,12 +142,60 @@ export default function UserDashboardPage() {
                   </div>
                 </div>
               )}
-              <div className="my-6">
-                <div className="flex flex-col">
-                  <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
-                    {t('Meta.title-enrolled-courses')}
-                  </h3>
-                  {enrolledCourses && enrolledCourses.length > 0 && (
+              {recommendedLessonsData && recommendedLessonsData.length > 0 && (
+                <div className="my-6">
+                  <div className="flex flex-col">
+                    <h3 className="text-indigo-900 dark:text-indigo-300">
+                      {t('Meta.reminders')}
+                    </h3>
+                    <Alert className="my-6">
+                      <InformationCircleIcon className="mr-2 h-6 w-6 " />
+                      <p className="w-fit max-w-xs">
+                        {t('Lessons.recommended-lessons-to-retry-info')}
+                      </p>
+                    </Alert>
+                    <div className="flex max-w-sm flex-col items-center space-y-6 py-1 sm:max-w-fit sm:flex-row sm:space-y-0 sm:space-x-4 sm:overflow-x-auto">
+                      {recommendedLessonsData.map((recommendedLesson) => {
+                        return (
+                          <FancyCard
+                            key={recommendedLesson.id}
+                            title={recommendedLesson.name}
+                            description={
+                              <div className="flex flex-col">
+                                <div>{recommendedLesson.description}</div>
+                              </div>
+                            }
+                            cardColor={'bg-white'}
+                            shadowColor={'shadow-black/25'}
+                            hoverShadowColor="hover:shadow-black/25"
+                            bottomControls={
+                              <Link
+                                href={`/courses/${recommendedLesson.course_id}`}
+                                passHref={true}>
+                                <IconButtonLink
+                                  variant={
+                                    IconButtonLinkVariant.OUTLINE_PRIMARY
+                                  }
+                                  icon={
+                                    <InformationCircleIcon className="h-5 w-5" />
+                                  }>
+                                  {t('Home.more')}
+                                </IconButtonLink>
+                              </Link>
+                            }
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {enrolledCourses && enrolledCourses.length > 0 && (
+                <div className="my-6">
+                  <div className="flex flex-col">
+                    <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
+                      {t('Meta.title-enrolled-courses')}
+                    </h3>
                     <div className="flex max-w-sm flex-col items-center space-y-6 py-1 sm:max-w-fit sm:flex-row sm:space-y-0 sm:space-x-4 sm:overflow-x-auto">
                       {enrolledCourses.map((enrolledCourse) => {
                         const lessonsCompletedPercentage =
@@ -252,15 +306,15 @@ export default function UserDashboardPage() {
                         </Link>
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-              <div className="my-6">
-                <div className="flex flex-col">
-                  <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
-                    {t('Courses.recommended-courses')}
-                  </h3>
-                  {recommendedCoursesData && recommendedCoursesData.length > 0 && (
+              )}
+              {recommendedCoursesData && recommendedCoursesData.length > 0 && (
+                <div className="my-6">
+                  <div className="flex flex-col">
+                    <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
+                      {t('Courses.recommended-courses')}
+                    </h3>
                     <div className="flex max-w-sm flex-col items-center space-y-6 py-1 sm:max-w-fit sm:flex-row sm:space-y-0 sm:space-x-4 sm:overflow-x-auto">
                       {recommendedCoursesData.map((recommendedCourse) => {
                         const intl = new Intl.DisplayNames(router.locale, {
@@ -323,9 +377,9 @@ export default function UserDashboardPage() {
                         );
                       })}
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           <Footer />
@@ -347,6 +401,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
         })
       );
       await store.dispatch(fetchRecommendedCourses());
+      await store.dispatch(fetchRecommendedLessons());
 
       return {
         props: {

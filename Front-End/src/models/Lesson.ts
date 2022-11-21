@@ -1,5 +1,6 @@
 type Lesson = {
   id: number;
+  course_id?: number;
   name: string;
   description: string;
   type: number;

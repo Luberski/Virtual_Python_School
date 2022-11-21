@@ -32,6 +32,7 @@ import dynamicLessonReducer from '@app/features/dynamic-courses/dynamicLessonSli
 import dashboardReducer from '@app/features/dashboard/dashboardSlice';
 import courseTagsReducer from '@app/features/tags/courseTagsSlice';
 import recommendedCoursesReducer from '@app/features/recommender/recommendedCoursesSlice';
+import recommendedLessonsReducer from '@app/features/recommender/recommendedLessonsSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -61,6 +62,7 @@ const combinedReducers = combineReducers({
   dashboard: dashboardReducer,
   courseTags: courseTagsReducer,
   recommendedCourses: recommendedCoursesReducer,
+  recommendedLessons: recommendedLessonsReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -112,4 +114,5 @@ export type RootState = {
   dashboard: ReturnType<typeof dashboardReducer>;
   courseTags: ReturnType<typeof courseTagsReducer>;
   recommendedCourses: ReturnType<typeof recommendedCoursesReducer>;
+  recommendedLessons: ReturnType<typeof recommendedLessonsReducer>;
 };
