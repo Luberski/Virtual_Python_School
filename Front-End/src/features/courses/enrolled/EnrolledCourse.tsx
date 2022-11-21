@@ -83,8 +83,14 @@ export default function EnrolledCourse({
       {enrolledCourse ? (
         <div>
           <h1 className="text-indigo-900 dark:text-indigo-300">
-            <BoltIcon className="mr-1 mb-1 inline h-9 w-9" />
-            {enrolledCourse.name}
+            {enrolledCourse.is_dynamic ? (
+              <>
+                <BoltIcon className="mr-1 mb-1 inline h-9 w-9" />
+                {translations('DynamicCourse.course-name')}
+              </>
+            ) : (
+              enrolledCourse.name
+            )}
           </h1>
           <p className="word-wrap mb-6 text-2xl">
             {enrolledCourse.description}
