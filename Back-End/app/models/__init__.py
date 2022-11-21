@@ -118,10 +118,12 @@ class DynamicCourseSurveyUserResults(Base):
     )
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
     question_id = Column(
-        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
+        Integer, ForeignKey(
+            "dynamic_course_survey_questions.id", ondelete="CASCADE")
     )
     answer_id = Column(
-        Integer, ForeignKey("dynamic_course_survey_answers.id", ondelete="CASCADE")
+        Integer, ForeignKey(
+            "dynamic_course_survey_answers.id", ondelete="CASCADE")
     )
     survey = relationship("DynamicCourseSurvey")
 
@@ -131,7 +133,8 @@ class DynamicCourseSurveyAnswers(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     question_id = Column(
-        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
+        Integer, ForeignKey(
+            "dynamic_course_survey_questions.id", ondelete="CASCADE")
     )
     rule_type = Column(Integer)
     rule_value = Column(Integer)
@@ -197,5 +200,4 @@ class JoinedClassrooms(Base):
     classroom_id = Column(Integer, ForeignKey("classrooms.id"))
     user_id = Column(Integer, ForeignKey("user.id"))
     is_teacher = Column(Boolean, default=False, nullable=False)
-    classroom = Column(Integer, ForeignKey("classrooms.id"))
     user = relationship("User", back_populates="joined_classroom")

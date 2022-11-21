@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
-import type { Classroom } from '@app/models/Classroom';
+import type Classroom from '@app/models/Classroom';
 
 type ClassroomDescriptorProps = {
   classroom: Classroom;

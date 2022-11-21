@@ -3,5 +3,7 @@ export type Classroom = {
   name: string;
   teacher_id: number;
   num_of_students: number;
-  isPublic: boolean;
+  is_public: boolean;
 };
+
+export default Classroom;

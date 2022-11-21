@@ -1,20 +1,17 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import StyledDialog from '@app/components/StyledDialog';
 import FancyToast from '@app/components/FancyToast';
 import ClassroomDescriptorWrapper from '@app/components/ClassroomDescriptorWrapper';
-import type { Classroom } from '@app/models/Classroom';
+import type Classroom from '@app/models/Classroom';
 import { joinClassroom } from '@app/features/classrooms/joinClassroomSlice';
 import { createClassroom } from '@app/features/classrooms/classroomsSlice';
 import { useRef, useState } from 'react';
 import Checkbox from '@app/components/Checkbox';
 import Button, { ButtonVariant } from '@app/components/Button';
-import IconButton from '@app/components/IconButton';
 import { Controller, useForm } from 'react-hook-form';
-import { XMarkIcon } from '@heroicons/react/20/solid';
 import Input from '@app/components/Input';
 
 type ClassroomsProps = {
@@ -36,7 +33,7 @@ export default function Classrooms({
   const { control, register, handleSubmit, setValue } =
     useForm<{
       name: string;
-      isPublic: boolean;
+      is_public: boolean;
     }>();
 
   const cancelButtonRef = useRef(null);
@@ -54,17 +51,16 @@ export default function Classrooms({
   const openCreateClassroomDialog = () => {
     setIsCreateClassroomDialogOpen(true);
   };
-
   const onClassroomCreateSubmit = async (data: {
     name: string;
-    isPublic: boolean;
+    is_public: boolean;
   }) => {
-    const { name, isPublic } = data;
+    const { name, is_public } = data;
 
     try {
-      dispatch(createClassroom({ name, isPublic }));
+      dispatch(createClassroom({ name, is_public }));
       setValue('name', '');
-      setValue('isPublic', false);
+      setValue('is_public', false);
       notify();
     } catch (error) {
       console.error(error);
@@ -136,10 +132,9 @@ export default function Classrooms({
                   )}></Input>
                 <div className="flex items-center">
                   <Checkbox
-                    id="isPublic"
-                    label="isPublic"
-                    name="isPublic"
-                    required
+                    id="is_public"
+                    label="is_public"
+                    name="is_public"
                     register={register}></Checkbox>
                   <label htmlFor="featured" className="ml-2">
                     {translations('Classrooms.is-public-checkbox')}

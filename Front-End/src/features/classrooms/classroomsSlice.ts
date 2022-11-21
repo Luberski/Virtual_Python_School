@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Classroom } from '@app/models/Classroom';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Classroom from '@app/models/Classroom';
+import type ApiPayload from '@app/models/ApiPayload';
 
 export type ClassroomsState = {
   data: Classroom[];
@@ -19,12 +19,11 @@ const initialState: ClassroomsState = {
 
 export const fetchClassrooms = createAsyncThunk(
   'api/classrooms',
-  async (showFull: boolean, thunkApi) => {
+  async (_, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const endpoint = `classrooms?showFull=${showFull}`;
-      const res = await apiClient.get(endpoint, {
+      const res = await apiClient.get('classrooms', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -40,12 +39,12 @@ export const fetchClassrooms = createAsyncThunk(
 );
 
 // export const deleteClassroom = createAsyncThunk(
-//   'api/courses/delete',
+//   'api/classrooms/delete',
 //   async (id: string | number, thunkApi) => {
 //     try {
 //       const state = thunkApi.getState() as RootState;
 //       const { accessToken } = state.auth.token;
-//       const res = await apiClient.delete(`courses/${id}`, {
+//       const res = await apiClient.delete(`classrooms/${id}`, {
 //         headers: {
 //           Authorization: `Bearer ${accessToken}`,
 //         },
@@ -60,32 +59,31 @@ export const fetchClassrooms = createAsyncThunk(
 //   }
 // );
 
-export const createClassroom = createAsyncThunk(
-  'api/courses/create',
-  async ({ name, isPublic }: { name: string; isPublic: boolean }, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('classrooms', {
-        json: {
-          data: { name, isPublic },
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+export const createClassroom = createAsyncThunk<
+  ApiPayload<Classroom>,
+  { name: string; is_public: boolean }
+>('api/classrooms/create', async ({ name, is_public }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('classrooms', {
+      json: {
+        data: { name, is_public },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const data = await res.json();
+    return data as ApiPayload<Classroom>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const classroomsSlice = createSlice({
-  name: 'courses',
+  name: 'classrooms',
   initialState,
   reducers: {},
   extraReducers(builder) {
@@ -93,7 +91,7 @@ export const classroomsSlice = createSlice({
       .addCase(HYDRATE, (state, action) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        return Object.assign({}, state, { ...action.payload.courses });
+        return Object.assign({}, state, { ...action.payload.classrooms });
       })
       .addCase(fetchClassrooms.pending, (state) => {
         state.status = 'pending';
@@ -119,20 +117,20 @@ export const classroomsSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-    // .addCase(
-    //   deleteClassroom.fulfilled,
-    //   (state, { payload }: { payload: ApiPayload | any }) => {
-    //     state.data = state.data.filter(
-    //       (course) => course.id !== payload.data.id
-    //     );
-    //   }
-    // )
-    .addCase(
-      createClassroom.fulfilled,
-      (state, { payload }: { payload: ApiPayload | any }) => {
-        state.data = [...state.data, payload.data];
-      }
-    );
+      // .addCase(
+      //   deleteClassroom.fulfilled,
+      //   (state, { payload }: { payload: ApiPayload | any }) => {
+      //     state.data = state.data.filter(
+      //       (classroom) => classroom.id !== payload.data.id
+      //     );
+      //   }
+      // )
+      .addCase(
+        createClassroom.fulfilled,
+        (state, { payload }: { payload: ApiPayload | any }) => {
+          state.data = [...state.data, payload.data];
+        }
+      );
   },
 });
 
