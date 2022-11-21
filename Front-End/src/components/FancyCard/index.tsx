@@ -24,7 +24,7 @@ export default function FancyCard({
       className={`flex flex-col justify-between p-6 ${cardColor} ${darkCardColor} brand-shadow2 border shadow-black/25 dark:border-neutral-400 ${hoverShadowColor} transition duration-500 ease-in-out ${shadowColor} max-h-[768px] w-80 rounded-lg text-neutral-700 dark:text-neutral-100`}>
       <div className="break-words text-xl font-bold">{title}</div>
       <div className="h-full truncate break-words">{description}</div>
-      <div className="mt-3 items-end">{bottomControls}</div>
+      <div className="mt-3 items-end pt-1">{bottomControls}</div>
     </div>
   );
 }

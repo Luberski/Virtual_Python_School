@@ -83,7 +83,7 @@ export default function EnrolledCourses({
                         ))}
                       </div>
                     )}
-                    <div>{enrolledCourse.description}</div>
+                    <div className="truncate">{enrolledCourse.description}</div>
                     <div>
                       <div className="mt-4 mb-1 text-xs text-neutral-400">
                         {translations('Lessons.list-of-lessons')}

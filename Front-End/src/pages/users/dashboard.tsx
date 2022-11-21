@@ -160,11 +160,7 @@ export default function UserDashboardPage() {
                           <FancyCard
                             key={recommendedLesson.id}
                             title={recommendedLesson.name}
-                            description={
-                              <div className="flex flex-col">
-                                <div>{recommendedLesson.description}</div>
-                              </div>
-                            }
+                            description={recommendedLesson.description}
                             cardColor={'bg-white'}
                             shadowColor={'shadow-black/25'}
                             hoverShadowColor="hover:shadow-black/25"
@@ -259,7 +255,9 @@ export default function UserDashboardPage() {
                                       ))}
                                     </div>
                                   )}
-                                <div>{enrolledCourse.description}</div>
+                                <div className="truncate">
+                                  {enrolledCourse.description}
+                                </div>
                               </div>
                             }
                             cardColor={

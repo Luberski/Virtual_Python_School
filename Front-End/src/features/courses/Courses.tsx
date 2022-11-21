@@ -87,7 +87,7 @@ export default function Courses({ courses, translations }: CoursesProps) {
                         ))}
                       </div>
                     )}
-                    {course.description}
+                    <div className="truncate">{course.description}</div>
                     <div>
                       <div className="mt-4 mb-1 text-xs text-neutral-400">
                         {translations('Lessons.list-of-lessons')}
