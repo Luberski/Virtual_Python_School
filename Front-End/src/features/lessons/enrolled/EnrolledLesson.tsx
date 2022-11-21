@@ -21,7 +21,7 @@ import {
   selectAnswerStatus,
 } from '@app/features/lessons/answerSlice';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
-import FancyToast from '@app/components/FancyToast';
+import FancyToast, { FancyToastVariant } from '@app/components/FancyToast';
 import type EnrolledLessonModel from '@app/models/EnrolledLesson';
 import { useAppSelector } from '@app/hooks';
 
@@ -62,7 +62,7 @@ export default function EnrolledLesson({
   const playgroundStatus = useAppSelector(selectPlaygroundStatus);
 
   const notify = useCallback(
-    (isSucces = true) => {
+    (isSucces: boolean) => {
       if (isSucces) {
         return toast.custom(
           (to) => (
@@ -79,7 +79,7 @@ export default function EnrolledLesson({
             <FancyToast
               message={translations('Lessons.incorrect-answer')}
               toastObject={to}
-              className="border-red-500 bg-red-200 text-red-900"
+              variant={FancyToastVariant.ERROR}
             />
           ),
           { position: 'top-center', duration: 500 }
