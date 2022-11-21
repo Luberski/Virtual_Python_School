@@ -1,6 +1,11 @@
 import clsx from 'clsx';
 
-export default function Alert({ children, className, ...props }) {
+type AlertProps = {
+  className?: string;
+  children: React.ReactNode;
+};
+
+export default function Alert({ children, className, ...props }: AlertProps) {
   return (
     <div
       className={clsx(

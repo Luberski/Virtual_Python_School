@@ -62,7 +62,6 @@ def get_recommended_courses_by_course_tags(
         )
 
 
-# get the lessons for incorrect answers
 @router.get("/recommender/lessons", tags=["recommender"])
 def get_lessons_for_incorrect_answers(
     db: Session = Depends(deps.get_db),
