@@ -42,9 +42,8 @@ class ClassroomsAllResponse(BaseJSONResponse):
 class ClassroomJoinResponseData(BaseModel):
     id: int
     user_id: int
-    start_date: str
-    end_date: str
-    completed: Optional[bool] = False
+    classroom_id: int
+    is_teacher: bool
 
 
 class ClassroomJoinResponse(BaseJSONResponse):

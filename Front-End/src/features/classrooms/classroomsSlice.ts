@@ -82,6 +82,30 @@ export const createClassroom = createAsyncThunk<
   }
 });
 
+export const joinClassroom = createAsyncThunk<
+  ApiPayload<Classroom>,
+  number | string
+>('api/classroom/join', async (id, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('classroom', {
+      json: {
+        data: { classroom_id: id },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await res.json();
+    return data as ApiPayload<Classroom>;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
 export const classroomsSlice = createSlice({
   name: 'classrooms',
   initialState,
@@ -117,6 +141,30 @@ export const classroomsSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
+      .addCase(joinClassroom.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        joinClassroom.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload | any }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(joinClassroom.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
       // .addCase(
       //   deleteClassroom.fulfilled,
       //   (state, { payload }: { payload: ApiPayload | any }) => {
@@ -127,7 +175,7 @@ export const classroomsSlice = createSlice({
       // )
       .addCase(
         createClassroom.fulfilled,
-        (state, { payload }: { payload: ApiPayload | any }) => {
+        (state, { payload }: { payload: ApiPayload<Classroom> }) => {
           state.data = [...state.data, payload.data];
         }
       );

@@ -26,7 +26,6 @@ def create_classroom(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
 ):
-    print("create_classroom")
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
     if username is None:
@@ -39,20 +38,17 @@ def create_classroom(
         .filter(models.Classrooms.name == request_data.data.name)
         .first()
     )
-    print(check_if_classroom_exists)
     if check_if_classroom_exists:
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
             content={"error": "Classroom already exists"},
         )
     user = db.query(models.User).filter_by(username=username).first()
-    print(user)
     check_if_user_has_classroom = (
         db.query(models.Classrooms)
         .filter(models.Classrooms.teacher_id == user.id)
         .first()
     )
-    print(check_if_user_has_classroom)
     if check_if_user_has_classroom:
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
@@ -65,6 +61,19 @@ def create_classroom(
     )
 
     db.add(new_classroom)
+    db.commit()
+
+    highest_id = db.query(func.max(models.Classrooms.id)).scalar()
+    if highest_id is None:
+        return JSONResponse(
+            status_code=status.HTTP_409_CONFLICT,
+            content={"error": "There is no classrooms in database"},
+        )
+    joined_classroom = models.JoinedClassrooms(
+        user_id=user.id, classroom_id=highest_id, is_teacher=True
+    )
+
+    db.add(joined_classroom)
     db.commit()
 
     return JSONResponse(
@@ -151,7 +160,7 @@ def get_classrooms_all(
 
 
 @router.post("/classroom", tags=["classrooms"], response_model=ClassroomJoinResponse)
-def join_classroom_me(
+def join_classroom(
     request_data: ClassroomJoinRequest,
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
@@ -165,38 +174,38 @@ def join_classroom_me(
         )
     user = db.query(models.User).filter_by(username=username).first()
 
-    classroom_wanted = request_data.data.classroom_id
-    if classroom_wanted is None:
+    target_classroom_id = request_data.data.classroom_id
+    if target_classroom_id is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "Classroom does not exist"},
         )
-    classroom_query = db.query(models.Classrooms).filter_by(
-        id=classroom_wanted).first()
-    if classroom_query is None:
+    target_classroom = db.query(models.Classrooms).filter_by(
+        id=target_classroom_id).first()
+    if target_classroom is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "Classroom not found"},
         )
 
-    check_already_joined = (
+    user_occurences_in_classrooms = (
         db.query(models.JoinedClassrooms)
         .filter_by(user_id=user.id)
         .first()
     )
-    if check_already_joined:
+    if user_occurences_in_classrooms:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={
                 "error": "User cannot join the same classroom or multiple classrooms"},
         )
 
-    joined_classroom = models.JoinedClassrooms(
-        classroom_id=classroom_query.id,
+    new_record = models.JoinedClassrooms(
+        classroom_id=target_classroom.id,
         user_id=user.id,
         is_teacher=False,
     )
-    db.add(joined_classroom)
+    db.add(new_record)
     db.commit()
 
     return JSONResponse(
@@ -204,9 +213,9 @@ def join_classroom_me(
         content={
             "data": {
                 "username": username,
-                "user_id": joined_classroom.user_id,
-                "id": joined_classroom.classroom_id,
-                "is_teacher": joined_classroom.is_teacher,
+                "user_id": new_record.user_id,
+                "id": new_record.classroom_id,
+                "is_teacher": new_record.is_teacher,
             },
             "error": None,
         },

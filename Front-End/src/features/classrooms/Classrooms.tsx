@@ -7,18 +7,22 @@ import FancyToast from '@app/components/FancyToast';
 import ClassroomDescriptorWrapper from '@app/components/ClassroomDescriptorWrapper';
 import type Classroom from '@app/models/Classroom';
 import { joinClassroom } from '@app/features/classrooms/joinClassroomSlice';
-import { createClassroom } from '@app/features/classrooms/classroomsSlice';
-import { useRef, useState } from 'react';
+import {
+  createClassroom,
+  selectClassroomsData,
+  selectClassroomsStatus,
+} from '@app/features/classrooms/classroomsSlice';
+import { useEffect, useRef, useState } from 'react';
 import Checkbox from '@app/components/Checkbox';
 import Button, { ButtonVariant } from '@app/components/Button';
 import { Controller, useForm } from 'react-hook-form';
 import Input from '@app/components/Input';
+import { useAppSelector } from '@app/hooks';
 
 type ClassroomsProps = {
   classrooms: Classroom[];
   translations: (key: string) => string;
 };
-
 export default function Classrooms({
   classrooms,
   translations,
@@ -29,6 +33,21 @@ export default function Classrooms({
 
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const classroomData = useAppSelector(selectClassroomsData);
+  const classroomStatus = useAppSelector(selectClassroomsStatus);
+
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  useEffect(() => {
+    if (
+      shouldRedirect &&
+      classroomStatus === 'succeeded' &&
+      classroomData?.length > 0
+    ) {
+      router.push(`/classrooms/${classroomData[0]?.id}`);
+    }
+  }, [shouldRedirect, classroomStatus, classroomData, router]);
 
   const { control, register, handleSubmit, setValue } =
     useForm<{
@@ -61,7 +80,7 @@ export default function Classrooms({
       dispatch(createClassroom({ name, is_public }));
       setValue('name', '');
       setValue('is_public', false);
-      notify();
+      setShouldRedirect(true);
     } catch (error) {
       console.error(error);
     }
@@ -155,7 +174,7 @@ export default function Classrooms({
             </form>
           </div>
         </StyledDialog>
-        <StyledDialog
+        {/* <StyledDialog
           title={translations('Classrooms.link-join')}
           isOpen={isLinkDialogOpen}
           onClose={closeLinkDialog}>
@@ -186,7 +205,7 @@ export default function Classrooms({
               </div>
             </form>
           </div>
-        </StyledDialog>
+        </StyledDialog> */}
       </div>
       {classrooms && classrooms.length > 0 ? (
         <div className="flex flex-col justify-center space-y-6">
