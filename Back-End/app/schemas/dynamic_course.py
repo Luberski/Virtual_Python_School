@@ -3,11 +3,21 @@ from pydantic import BaseModel
 from app.schemas.base import BaseJSONRequest, BaseJSONResponse
 
 
+class DynamicCourseSurveyAnswerItem(BaseModel):
+    id: Optional[int] = None
+    name: Optional[str] = None
+    rule_type: Optional[int] = None
+    rule_value: Optional[int] = None
+
+
 class DynamicCourseSurveyAnswerCreateRequestData(BaseModel):
     question_id: int
-    name: str
-    rule_type: int
-    rule_value: int
+    id: Optional[int] = None
+    name: Optional[str] = None
+    rule_type: Optional[int] = None
+    rule_value: Optional[int] = None
+    bulk: Optional[bool] = False
+    answers: Optional[list[DynamicCourseSurveyAnswerItem]] = None
 
 
 class DynamicCourseSurveyAnswerCreateRequest(BaseJSONRequest):
@@ -22,13 +32,25 @@ class DynamicCourseSurveyAnswerCreateResponseData(BaseModel):
     rule_value: int
 
 
+class DynamicCourseSurveyWithAnswersCreateRequestData(BaseModel):
+    question: str
+    survey_id: int
+    answers: Optional[list[DynamicCourseSurveyAnswerItem]] = None
+
+
+class DynamicCourseSurveyWithAnswersCreateRequest(BaseJSONRequest):
+    data: DynamicCourseSurveyWithAnswersCreateRequestData
+
+
 class DynamicCourseSurveyAnswerCreateResponse(BaseJSONResponse):
     data: DynamicCourseSurveyAnswerCreateResponseData
 
 
 class DynamicCourseSurveyQuestionCreateRequestData(BaseModel):
-    question: str
+    question: Optional[str] = None
     survey_id: int
+    bulk: Optional[bool] = False
+    questions: Optional[list] = None
 
 
 class DynamicCourseSurveyQuestionCreateRequest(BaseJSONRequest):

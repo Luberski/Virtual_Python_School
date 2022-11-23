@@ -1,11 +1,12 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import type { Course } from '@app/models/Course';
-import Link from 'next/link';
-import IconButton, {IconButtonVariant} from '@app/components/IconButton';
-import IconButtonLink, {IconButtonLinkVariant} from '@app/components/IconButtonLink';
 import { CheckBadgeIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/20/solid';
 import FancyCard from '.';
+import IconButtonLink, {
+  IconButtonLinkVariant,
+} from '@app/components/IconButtonLink';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import type Course from '@app/models/Course';
 
 export default {
   title: 'FancyCard',
@@ -50,44 +51,40 @@ const course: Course = {
 
 export const Default: ComponentStory<typeof FancyCard> = (args) => (
   <FancyCard
-              key={course.id}
-              title={course.name}
-              description={
-                <div className="flex flex-col">
-                  {course.description}
-                  <div>
-                    <div className="mt-4 mb-1 text-xs text-neutral-400">
-                    </div>
-                    {course.lessons?.length > 0 &&
-                      course.lessons?.map((lesson) => (
-                        <div key={lesson.id}>
-                          <div className="text-indigo-900 dark:text-indigo-300">
-                            {lesson.name}
-                          </div>
-                        </div>
-                      ))}
-                    ...
+    key={course.id}
+    title={course.name}
+    description={
+      <div className="flex flex-col">
+        {course.description}
+        <div>
+          <div className="mt-4 mb-1 text-xs text-neutral-400">
+            {course.lessons?.length > 0 &&
+              course.lessons?.map((lesson) => (
+                <div key={lesson.id}>
+                  <div className="text-indigo-900 dark:text-indigo-300">
+                    {lesson.name}
                   </div>
                 </div>
-              }
-              cardColor="bg-white"
-              shadowColor="shadow-black/25"
-              hoverShadowColor="hover:shadow-black/25"
-              bottomControls={
-                course.enrolled ? (
-                  <Link href={`/courses/enrolled`} passHref={true}>
-                    <IconButtonLink
-                      className="w-fit"
-                      variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
-                      icon={<CheckBadgeIcon className="h-5 w-5" />}>
-                    </IconButtonLink>
-                  </Link>
-                ) : (
-                  <IconButton
-                    variant={IconButtonVariant.PRIMARY}
-                    icon={<CheckCircleIcon className="h-5 w-5" />}>
-                  </IconButton>
-                )
-              }
-            />
+              ))}
+            ...
+          </div>
+        </div>
+      </div>
+    }
+    cardColor="bg-white"
+    shadowColor="shadow-black/25"
+    hoverShadowColor="hover:shadow-black/25"
+    bottomControls={
+      course.enrolled ? (
+        <IconButtonLink
+          className="w-fit"
+          variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
+          icon={<CheckBadgeIcon className="h-5 w-5" />}></IconButtonLink>
+      ) : (
+        <IconButton
+          variant={IconButtonVariant.PRIMARY}
+          icon={<CheckCircleIcon className="h-5 w-5" />}></IconButton>
+      )
+    }
+  />
 );

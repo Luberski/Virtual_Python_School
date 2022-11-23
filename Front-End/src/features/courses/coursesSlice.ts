@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Course } from '@app/models/Course';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Course from '@app/models/Course';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type CoursesState = {
   data: Course[];
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,40 +18,34 @@ const initialState: CoursesState = {
   error: null,
 };
 
-export const fetchCourses = createAsyncThunk(
-  'api/courses',
-  async (
-    {
-      includeLessons = false,
-      limitLessons,
-    }: { includeLessons?: boolean; limitLessons?: number | null },
-    thunkApi
-  ) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      let endpoint = `courses?include_lessons=${includeLessons}`;
-      if (limitLessons) {
-        endpoint = `courses?include_lessons=true&limit_lessons=${limitLessons}`;
-      }
-      const res = await apiClient.get(endpoint, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
+export const fetchCourses = createAsyncThunk<
+  ApiPayload<Course[]>,
+  { includeLessons?: boolean; limitLessons?: number | null }
+>('api/courses', async ({ includeLessons = false, limitLessons }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    let endpoint = `courses?include_lessons=${includeLessons}`;
+    if (limitLessons) {
+      endpoint = `courses?include_lessons=true&limit_lessons=${limitLessons}`;
     }
-  }
-);
+    const res = await apiClient.get(endpoint, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-export const deleteCourse = createAsyncThunk(
+    const data = await res.json();
+    return data as ApiPayload<Course[]>;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
+export const deleteCourse = createAsyncThunk<ApiPayload<Course>, number>(
   'api/courses/delete',
-  async (id: string | number, thunkApi) => {
+  async (id, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -61,7 +56,7 @@ export const deleteCourse = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Course>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -69,22 +64,18 @@ export const deleteCourse = createAsyncThunk(
   }
 );
 
-export const createCourse = createAsyncThunk(
+export const createCourse = createAsyncThunk<
+  ApiPayload<Course>,
+  { name: string; description: string; featured: boolean; lang: string }
+>(
   'api/courses/create',
-  async (
-    {
-      name,
-      description,
-      featured = false,
-    }: { name: string; description: string; featured: boolean },
-    thunkApi
-  ) => {
+  async ({ name, description, featured = false, lang = 'en' }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
       const res = await apiClient.post('courses', {
         json: {
-          data: { name, description, featured },
+          data: { name, description, featured, lang },
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -92,7 +83,7 @@ export const createCourse = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Course>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -118,7 +109,7 @@ export const coursesSlice = createSlice({
         fetchCourses.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Course[]> }
         ) => {
           if (error) {
             state.data = null;
@@ -137,7 +128,7 @@ export const coursesSlice = createSlice({
       })
       .addCase(
         deleteCourse.fulfilled,
-        (state, { payload }: { payload: ApiPayload | any }) => {
+        (state, { payload }: { payload: ApiPayload<Course> }) => {
           state.data = state.data.filter(
             (course) => course.id !== payload.data.id
           );
@@ -145,7 +136,7 @@ export const coursesSlice = createSlice({
       )
       .addCase(
         createCourse.fulfilled,
-        (state, { payload }: { payload: ApiPayload | any }) => {
+        (state, { payload }: { payload: ApiPayload<Course> }) => {
           state.data = [...state.data, payload.data];
         }
       );

@@ -4,10 +4,10 @@ export enum RuleType {
 }
 
 type SurveyAnswer = {
-  answer_id: number;
+  answer_id?: number;
   name: string;
-  rule_type: RuleType;
-  rule_value: number;
+  rule_type?: RuleType;
+  rule_value?: number;
 };
 
 export default SurveyAnswer;

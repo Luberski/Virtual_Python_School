@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, Path, status
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
@@ -103,31 +104,68 @@ def check_answer(
             },
         )
 
-    if answer_status is True:
-        lesson_enrolled = (
-            db.query(models.EnrolledLessons)
-            .filter_by(
-                id=request_data.data.enrolled_lesson_id,
-                user_id=user.id,
-                lesson_id=lesson_id,
-            )
-            .first()
-        )
-        lesson_enrolled.completed = True
-        db.commit()
+    answer_history = models.AnswersHistory(
+        answer_id=answers[0].id,
+        lesson_id=lesson_id,
+        user_id=user.id,
+        answer=request_data.data.answer,
+        is_correct=answer_status,
+        date=datetime.now(),
+    )
+    db.add(answer_history)
+    db.commit()
 
-        return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={
-                "data": {
-                    "id": answer_valid.id,
-                    "status": answer_status,
-                    "lesson_id": answer_valid.lesson_id,
-                    "completed": lesson_enrolled.completed,
+    if answer_status is True:
+        if request_data.data.enrolled_lesson_id is not None:
+            lesson_enrolled = (
+                db.query(models.EnrolledLessons)
+                .filter_by(
+                    id=request_data.data.enrolled_lesson_id,
+                    user_id=user.id,
+                    lesson_id=lesson_id,
+                )
+                .first()
+            )
+            lesson_enrolled.completed = True
+            db.commit()
+
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "data": {
+                        "id": answer_valid.id,
+                        "status": answer_status,
+                        "lesson_id": answer_valid.lesson_id,
+                        "completed": lesson_enrolled.completed,
+                    },
+                    "error": None,
                 },
-                "error": None,
-            },
-        )
+            )
+        if request_data.data.dynamic_lesson_id is not None:
+            dynamic_lesson = (
+                db.query(models.DynamicLessons)
+                .filter_by(
+                    id=request_data.data.dynamic_lesson_id,
+                    user_id=user.id,
+                    lesson_id=lesson_id,
+                )
+                .first()
+            )
+            dynamic_lesson.completed = True
+            db.commit()
+
+            return JSONResponse(
+                status_code=status.HTTP_200_OK,
+                content={
+                    "data": {
+                        "id": answer_valid.id,
+                        "status": answer_status,
+                        "lesson_id": answer_valid.lesson_id,
+                        "completed": dynamic_lesson.completed,
+                    },
+                    "error": None,
+                },
+            )
     else:
         return JSONResponse(
             status_code=status.HTTP_200_OK,

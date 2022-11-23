@@ -1,48 +1,49 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type ApiPayload from '@app/models/ApiPayload';
 import type { RuleType } from '@app/models/SurveyAnswer';
+import type ApiStatus from '@app/models/ApiStatus';
+
+export type AnswerData = {
+  id?: number;
+  question_id?: number;
+  name: string;
+  rule_type: RuleType;
+  rule_value: number;
+};
 
 export type SurveyAnswerState = {
-  data: {
-    id: number;
-    question_id: number;
-    name: string;
-    rule_type: RuleType;
-    rule_value: number;
-  };
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  data: AnswerData;
+  answers: AnswerData[];
+  status: ApiStatus;
   error: string | null;
 };
 
 const initialState: SurveyAnswerState = {
   data: null,
+  answers: [],
   status: 'idle',
   error: null,
 };
 
-export const createSurveyAnswer = createAsyncThunk(
+export const createSurveyAnswer = createAsyncThunk<
+  ApiPayload<AnswerData>,
+  {
+    questionId: number;
+    name: string;
+    ruleType: RuleType;
+    ruleValue: number;
+  }
+>(
   'api/surveys/answers/create',
-  async (
-    {
-      questionId,
-      name,
-      ruleType,
-      ruleValue,
-    }: {
-      questionId: number;
-      name: string;
-      ruleType: RuleType;
-      ruleValue: number;
-    },
-    thunkApi
-  ) => {
+  async ({ questionId, name, ruleType, ruleValue }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys/answers', {
+      const res = await apiClient.post('surveys/answers', {
         json: {
           data: {
             question_id: questionId,
@@ -57,7 +58,7 @@ export const createSurveyAnswer = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<AnswerData>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -68,7 +69,11 @@ export const createSurveyAnswer = createAsyncThunk(
 export const surveyAnswerSlice = createSlice({
   name: 'surveyAnswer',
   initialState,
-  reducers: {},
+  reducers: {
+    addSurveyAnswer: (state, { payload }: PayloadAction<AnswerData>) => {
+      state.answers = [...state.answers, payload];
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
@@ -78,7 +83,6 @@ export const surveyAnswerSlice = createSlice({
           ...action.payload.surveyAnswer,
         });
       })
-
       .addCase(createSurveyAnswer.pending, (state) => {
         state.status = 'pending';
       })
@@ -86,7 +90,7 @@ export const surveyAnswerSlice = createSlice({
         createSurveyAnswer.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<AnswerData> }
         ) => {
           if (error) {
             state.data = null;
@@ -94,6 +98,7 @@ export const surveyAnswerSlice = createSlice({
             state.status = 'failed';
           } else {
             state.data = data;
+            state.answers.push(data);
             state.error = null;
             state.status = 'succeeded';
           }
@@ -108,9 +113,13 @@ export const surveyAnswerSlice = createSlice({
 
 export const selectSurveyAnswerData = (state: RootState) =>
   state.surveyAnswer.data;
+export const selectSurveyAnswers = (state: RootState) =>
+  state.surveyAnswer.answers;
 export const selectSurveyAnswerError = (state: RootState) =>
   state.surveyAnswer.error;
 export const selectSurveyAnswerStatus = (state: RootState) =>
   state.surveyAnswer.status;
+
+export const { addSurveyAnswer } = surveyAnswerSlice.actions;
 
 export default surveyAnswerSlice.reducer;

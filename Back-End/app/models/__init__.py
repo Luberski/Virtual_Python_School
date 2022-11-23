@@ -28,13 +28,15 @@ class User(Base):
 class EnrolledCourses(Base):
     __tablename__ = "enrolled_courses"
     id = Column(Integer, primary_key=True)
-    course_id = Column(Integer, ForeignKey("courses.id"))
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
     user_id = Column(Integer, ForeignKey("user.id"))
     start_date = Column(DateTime())
     end_date = Column(DateTime())
     completed = Column(Boolean, default=False, nullable=False)
     course = relationship("Courses")
-    enrolled_lessons = relationship("EnrolledLessons")
+    enrolled_lessons = relationship(
+        "EnrolledLessons", cascade="all, delete", passive_deletes=True
+    )
 
 
 class Courses(Base):
@@ -43,7 +45,17 @@ class Courses(Base):
     name = Column(String(100))
     description = Column(String(2000))
     featured = Column(Boolean, default=False, nullable=False)
-    lessons = relationship("Lessons", lazy="dynamic")
+    lessons = relationship("Lessons", lazy="dynamic", cascade="all, delete")
+    # ISO 639-1 Letter Language Codes
+    lang = Column(String(2), default="en")
+    tags = relationship("CourseTags", lazy="dynamic", cascade="all, delete")
+
+
+class CourseTags(Base):
+    __tablename__ = "course_tags"
+    id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
+    name = Column(String(100), nullable=False)
 
 
 class Lessons(Base):
@@ -51,17 +63,19 @@ class Lessons(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     description = Column(String(2000))
-    course_id = Column(Integer, ForeignKey("courses.id"))
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
     type = Column(Integer)
     number_of_answers = Column(Integer)
-    answers = relationship("Answers")
+    answers = relationship("Answers", cascade="all, delete")
 
 
 class EnrolledLessons(Base):
     __tablename__ = "enrolled_lessons"
     id = Column(Integer, primary_key=True)
-    lesson_id = Column(Integer, ForeignKey("lessons.id"))
-    enrolled_course_id = Column(Integer, ForeignKey("enrolled_courses.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+    enrolled_course_id = Column(
+        Integer, ForeignKey("enrolled_courses.id", ondelete="CASCADE")
+    )
     user_id = Column(Integer, ForeignKey("user.id"))
     start_date = Column(DateTime())
     end_date = Column(DateTime())
@@ -73,7 +87,18 @@ class Answers(Base):
     __tablename__ = "answers"
     id = Column(Integer, primary_key=True)
     final_answer = Column(String(500))
-    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+
+
+class AnswersHistory(Base):
+    __tablename__ = "answers_history"
+    id = Column(Integer, primary_key=True)
+    answer_id = Column(Integer, ForeignKey("answers.id", ondelete="CASCADE"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    answer = Column(String(500))
+    is_correct = Column(Boolean, default=False, nullable=False)
+    date = Column(DateTime())
 
 
 class Roles(Base):
@@ -86,10 +111,16 @@ class Roles(Base):
 class DynamicCourseSurveyUserResults(Base):
     __tablename__ = "dynamic_course_survey_user_results"
     id = Column(Integer, primary_key=True)
-    survey_id = Column(Integer, ForeignKey("dynamic_course_survey.id"))
-    user_id = Column(Integer, ForeignKey("user.id"))
-    question_id = Column(Integer, ForeignKey("dynamic_course_survey_questions.id"))
-    answer_id = Column(Integer, ForeignKey("dynamic_course_survey_answers.id"))
+    survey_id = Column(
+        Integer, ForeignKey("dynamic_course_survey.id", ondelete="CASCADE")
+    )
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
+    question_id = Column(
+        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
+    )
+    answer_id = Column(
+        Integer, ForeignKey("dynamic_course_survey_answers.id", ondelete="CASCADE")
+    )
     survey = relationship("DynamicCourseSurvey")
 
 
@@ -97,7 +128,9 @@ class DynamicCourseSurveyAnswers(Base):
     __tablename__ = "dynamic_course_survey_answers"
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    question_id = Column(Integer, ForeignKey("dynamic_course_survey_questions.id"))
+    question_id = Column(
+        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
+    )
     rule_type = Column(Integer)
     rule_value = Column(Integer)
 
@@ -105,16 +138,24 @@ class DynamicCourseSurveyAnswers(Base):
 class DynamicCourseSurveyQuestions(Base):
     __tablename__ = "dynamic_course_survey_questions"
     id = Column(Integer, primary_key=True)
-    survey_id = Column(Integer, ForeignKey("dynamic_course_survey.id"))
+    survey_id = Column(
+        Integer, ForeignKey("dynamic_course_survey.id", ondelete="CASCADE")
+    )
     question = Column(String(500))
-    answers = relationship("DynamicCourseSurveyAnswers")
+    answers = relationship(
+        "DynamicCourseSurveyAnswers", cascade="all, delete", passive_deletes=True
+    )
 
 
 class DynamicCourseSurvey(Base):
     __tablename__ = "dynamic_course_survey"
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    questions = relationship("DynamicCourseSurveyQuestions")
+    questions = relationship(
+        "DynamicCourseSurveyQuestions",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
     featured = Column(Boolean, default=False, nullable=False)
 
 
@@ -123,6 +164,10 @@ class DynamicLessons(Base):
     id = Column(Integer, primary_key=True)
     dynamic_course_id = Column(Integer, ForeignKey("dynamic_courses.id"))
     lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    completed = Column(Boolean, default=False, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    start_date = Column(DateTime())
+    end_date = Column(DateTime())
 
 
 class DynamicCourses(Base):
@@ -130,4 +175,6 @@ class DynamicCourses(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     user_id = Column(Integer, ForeignKey("user.id"))
-    dynamic_lessons = relationship("DynamicLessons", lazy="dynamic")
+    dynamic_lessons = relationship(
+        "DynamicLessons", lazy="dynamic", cascade="all, delete", passive_deletes=True
+    )

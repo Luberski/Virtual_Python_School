@@ -1,41 +1,68 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import type Survey from '@app/models/Survey';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type SurveyState = {
   data: Survey;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  featured: boolean;
+  status: ApiStatus;
   error: string | null;
 };
 
 const initialState: SurveyState = {
   data: null,
+  featured: true,
   status: 'idle',
   error: null,
 };
 
-export const createSurvey = createAsyncThunk(
-  'api/dynamic-courses/surveys/create',
-  async (name: string, thunkApi) => {
+export const createSurvey = createAsyncThunk<
+  ApiPayload<Survey>,
+  {
+    name: string;
+  }
+>('api/surveys/create', async ({ name }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('surveys', {
+      json: {
+        data: {
+          name,
+          featured: state.survey.featured,
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await res.json();
+    return data as ApiPayload<Survey>;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
+export const fetchSurvey = createAsyncThunk<ApiPayload<Survey>, number>(
+  'api/surveys',
+  async (id, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys', {
-        json: {
-          data: {
-            name,
-          },
-        },
+      const res = await apiClient.get(`surveys/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Survey>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -43,39 +70,19 @@ export const createSurvey = createAsyncThunk(
   }
 );
 
-export const fetchSurvey = createAsyncThunk(
-  'api/dynamic-courses/surveys',
-  async (id: number, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`dynamic-courses/surveys/${id}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-);
-
-export const fetchFeaturedSurvey = createAsyncThunk(
-  'api/dynamic-courses/surveys/featured',
+export const fetchFeaturedSurvey = createAsyncThunk<ApiPayload<Survey>>(
+  'api/surveys/featured',
   async (_: void, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`dynamic-courses/survey/featured`, {
+      const res = await apiClient.get(`survey/featured`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Survey>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -86,7 +93,11 @@ export const fetchFeaturedSurvey = createAsyncThunk(
 export const surveySlice = createSlice({
   name: 'survey',
   initialState,
-  reducers: {},
+  reducers: {
+    setSurveyAsFeatured: (state, { payload }: PayloadAction<boolean>) => {
+      state.featured = payload;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
@@ -101,7 +112,7 @@ export const surveySlice = createSlice({
         fetchSurvey.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Survey> }
         ) => {
           if (error) {
             state.data = null;
@@ -125,7 +136,7 @@ export const surveySlice = createSlice({
         fetchFeaturedSurvey.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Survey> }
         ) => {
           if (error) {
             state.data = null;
@@ -149,7 +160,7 @@ export const surveySlice = createSlice({
         createSurvey.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Survey> }
         ) => {
           if (error) {
             state.data = null;
@@ -172,5 +183,7 @@ export const surveySlice = createSlice({
 export const selectSurveyData = (state: RootState) => state.survey.data;
 export const selectSurveyError = (state: RootState) => state.survey.error;
 export const selectSurveyStatus = (state: RootState) => state.survey.status;
+
+export const { setSurveyAsFeatured } = surveySlice.actions;
 
 export default surveySlice.reducer;

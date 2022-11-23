@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Lesson } from '@app/models/Lesson';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Lesson from '@app/models/Lesson';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type LessonsState = {
   data: Lesson[];
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,28 +18,28 @@ const initialState: LessonsState = {
   error: null,
 };
 
-export const fetchLessonsByCourseId = createAsyncThunk(
-  'api/lessons/byCourseId',
-  async (courseId: string, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`courses/${courseId}/lessons`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+export const fetchLessonsByCourseId = createAsyncThunk<
+  ApiPayload<Lesson[]>,
+  number
+>('api/lessons/byCourseId', async (courseId, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.get(`courses/${courseId}/lessons`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<Lesson[]>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
-export const fetchAllLessons = createAsyncThunk(
+export const fetchAllLessons = createAsyncThunk<ApiPayload<Lesson[]>>(
   'api/lessons/all',
   async (_: void, thunkApi) => {
     try {
@@ -51,7 +52,7 @@ export const fetchAllLessons = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Lesson[]>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -59,9 +60,9 @@ export const fetchAllLessons = createAsyncThunk(
   }
 );
 
-export const deleteLesson = createAsyncThunk(
+export const deleteLesson = createAsyncThunk<ApiPayload<Lesson>, number>(
   'api/lessons/delete',
-  async (id: string | number, thunkApi) => {
+  async (id, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -72,7 +73,7 @@ export const deleteLesson = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Lesson>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -80,24 +81,20 @@ export const deleteLesson = createAsyncThunk(
   }
 );
 
-export const createLesson = createAsyncThunk(
+export const createLesson = createAsyncThunk<
+  ApiPayload<Lesson>,
+  {
+    courseId: number;
+    name: string;
+    description: string;
+    type: number;
+    numberOfAnswers: number;
+    answer: string;
+  }
+>(
   'api/lessons/create',
   async (
-    {
-      courseId,
-      name,
-      description,
-      type,
-      numberOfAnswers,
-      answer,
-    }: {
-      courseId: string;
-      name: string;
-      description: string;
-      type: number;
-      numberOfAnswers: number;
-      answer: string;
-    },
+    { courseId, name, description, type, numberOfAnswers, answer },
     thunkApi
   ) => {
     try {
@@ -120,7 +117,7 @@ export const createLesson = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Lesson>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -129,26 +126,21 @@ export const createLesson = createAsyncThunk(
 );
 
 // TODO: support more fields
-export const editLesson = createAsyncThunk(
+export const editLesson = createAsyncThunk<
+  ApiPayload<Lesson>,
+  {
+    courseId: number;
+    lessonId: number;
+    name?: string;
+    description?: string;
+    type?: number;
+    numberOfAnswers?: number;
+    answer?: string;
+  }
+>(
   'api/lessons/edit',
   async (
-    {
-      courseId,
-      lessonId,
-      name,
-      description,
-      type,
-      numberOfAnswers,
-      answer,
-    }: {
-      courseId: number;
-      lessonId: number;
-      name?: string;
-      description?: string;
-      type?: number;
-      numberOfAnswers?: number;
-      answer?: string;
-    },
+    { courseId, lessonId, name, description, type, numberOfAnswers, answer },
     thunkApi
   ) => {
     try {
@@ -172,7 +164,7 @@ export const editLesson = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Lesson>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -198,7 +190,7 @@ export const lessonsSlice = createSlice({
         fetchLessonsByCourseId.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Lesson[]> }
         ) => {
           if (error) {
             state.data = null;
@@ -220,7 +212,7 @@ export const lessonsSlice = createSlice({
       })
       .addCase(
         deleteLesson.fulfilled,
-        (state, { payload }: { payload: ApiPayload | any }) => {
+        (state, { payload }: { payload: ApiPayload<Lesson> }) => {
           state.data = state.data.filter(
             (course) => course.id !== payload.data.id
           );
@@ -234,7 +226,7 @@ export const lessonsSlice = createSlice({
       })
       .addCase(
         createLesson.fulfilled,
-        (state, { payload }: { payload: ApiPayload | any }) => {
+        (state, { payload }: { payload: ApiPayload<Lesson> }) => {
           state.data = [...state.data, payload.data];
         }
       )
@@ -246,7 +238,7 @@ export const lessonsSlice = createSlice({
       })
       .addCase(
         editLesson.fulfilled,
-        (state, { payload }: { payload: ApiPayload | any }) => {
+        (state, { payload }: { payload: ApiPayload<Lesson> }) => {
           state.data = state.data
             .map((lesson) => {
               if (lesson.id === payload.data.id) {
@@ -267,7 +259,7 @@ export const lessonsSlice = createSlice({
         fetchAllLessons.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Lesson[]> }
         ) => {
           if (error) {
             state.data = null;

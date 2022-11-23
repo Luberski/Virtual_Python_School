@@ -3,11 +3,12 @@ import { HYDRATE } from 'next-redux-wrapper';
 import type SurveyResults from '@app/models/SurveyResults';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type SurveyResultsState = {
   data: SurveyResults;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,35 +18,35 @@ const initialState: SurveyResultsState = {
   error: null,
 };
 
-export const sendSurveyResults = createAsyncThunk(
-  'api/dynamic-courses/surveys/results',
-  async (surveyResults: SurveyResults, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses/surveys/user/answers', {
-        json: {
-          data: {
-            survey_id: surveyResults.surveyId,
-            survey_results: surveyResults.surveyResults.map((result) => ({
-              question_id: result.questionId,
-              answer_id: result.answerId,
-            })),
-          },
+export const sendSurveyResults = createAsyncThunk<
+  ApiPayload<SurveyResults>,
+  SurveyResults
+>('api/surveys/results', async (surveyResults, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('surveys/user/answers', {
+      json: {
+        data: {
+          survey_id: surveyResults.surveyId,
+          survey_results: surveyResults.surveyResults.map((result) => ({
+            question_id: result.questionId,
+            answer_id: result.answerId,
+          })),
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<SurveyResults>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const surveyResultsSlice = createSlice({
   name: 'surveyResults',
@@ -66,7 +67,7 @@ export const surveyResultsSlice = createSlice({
         sendSurveyResults.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<SurveyResults> }
         ) => {
           if (error) {
             state.data = null;

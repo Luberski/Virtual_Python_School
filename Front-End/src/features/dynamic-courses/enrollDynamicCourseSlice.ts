@@ -3,11 +3,12 @@ import { HYDRATE } from 'next-redux-wrapper';
 import type EnrollDynamicCourse from '@app/models/EnrollDynamicCourse';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type EnrollDynamicCourseState = {
   data: EnrollDynamicCourse;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,32 +18,32 @@ const initialState: EnrollDynamicCourseState = {
   error: null,
 };
 
-export const enrollDynamicCourse = createAsyncThunk(
-  'api/dynamic-courses/enroll',
-  async ({ surveyId, name }: { surveyId: number; name: string }, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.post('dynamic-courses', {
-        json: {
-          data: {
-            survey_id: surveyId,
-            name,
-          },
+export const enrollDynamicCourse = createAsyncThunk<
+  ApiPayload<EnrollDynamicCourse>,
+  { surveyId: number; name: string }
+>('api/dynamic-courses/enroll', async ({ surveyId, name }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('dynamic-courses', {
+      json: {
+        data: {
+          survey_id: surveyId,
+          name,
         },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<EnrollDynamicCourse>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const enrollDynamicCourseSlice = createSlice({
   name: 'enrollDynamicCourse',
@@ -65,7 +66,9 @@ export const enrollDynamicCourseSlice = createSlice({
         enrollDynamicCourse.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          {
+            payload: { data, error },
+          }: { payload: ApiPayload<EnrollDynamicCourse> }
         ) => {
           if (error) {
             state.data = null;

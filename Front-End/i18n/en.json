@@ -46,7 +46,10 @@
     "course-edited": "Course edited",
     "delete-course": "Delete course",
     "delete-course-confirmation": "Are you sure you want to DELETE this course?",
-    "course-deleted": "Course deleted"
+    "course-deleted": "Course deleted",
+    "progress": "Progress",
+    "overview": "Overview",
+    "recommended-courses": "Recommended courses"
   },
   "Lessons": {
     "lessons": "Lessons",
@@ -69,7 +72,13 @@
     "edit-lesson": "Edit lesson",
     "delete-lesson": "Delete lesson",
     "delete-lesson-confirmation": "Are you sure you want to DELETE this lesson?",
-    "lesson-deleted": "Lesson deleted"
+    "lesson-deleted": "Lesson deleted",
+    "completed-lessons": "Completed lessons",
+    "enrolled-lessons": "Enrolled lessons",
+    "all-correct-answers": "All correct answers",
+    "all-incorrect-answers": "All incorrect answers",
+    "all-answers": "All answers",
+    "recommended-lessons-to-retry-info": "We found some lessons that you might want to retry"
   },
   "Playground": {
     "run": "Run",
@@ -93,18 +102,24 @@
     "no-short": "No.",
     "try": "Try",
     "completed": "Completed",
-    "status": "Status"
+    "status": "Status",
+    "user-id": "User ID"
   },
   "DynamicCourse": {
     "leading": "Dynamic Course",
-    "course-name": "My Dynamic Course",
+    "course-name": "My dynamic course",
     "list-of-dynamic-courses": "List of dynamic courses",
     "guide-alert-1-step": "To activate the dynamic course you need to create a survey.\nBased on this survey, a dynamic course will be automatically created for each user.",
     "guide-alert-2-step": "Create a new survey with questions.\nEvery question has an answer.\nYou can add rules for each answer.\nEach rule determines whether to suggest or skip a lesson.\nWhen the user conducts such a survey, the system based on the answer rules has the ability to prepare a dynamic course only with lessons that are more suited to the user's skill level.",
     "guide-alert-3-step": "Add questions to the survey.\nThen assign each answer to the lesson.\nOn this basis, the system will create a survey and decide which lessons will be shown to the user.",
     "guide-alert-question": "Add question to the survey.\nThen assign each answer to the rule.\nOn this basis, the system will create a survey and decide which lessons will be shown to the user in thier dynamic course.",
     "guide-alert-rules": "Choose a rule for each answer.\nBased on this rule, it will be determined which lesson is to be selected and added to the dynamic course after completing the survey.",
-    "introduction": "Introduction"
+    "introduction": "Introduction",
+    "delete-dynamic-course": "Delete dynamic course",
+    "delete-dynamic-course-confirmation": "Are you sure you want to DELETE this dynamic course?",
+    "dynamic-course-deleted": "Dynamic course deleted",
+    "no-dynamic-courses-found": "No dynamic courses found",
+    "try-dynamic-course": "Try dynamic course"
   },
   "Survey": {
     "leading": "Dynamic Course Survey",
@@ -113,11 +128,20 @@
     "not-found": "Survey not found",
     "list-of-surveys": "List of surveys",
     "questions": "Questions",
+    "no-questions-added": "No questions added",
+    "added-questions": "Added questions",
     "question": "Question",
     "add-question-for-survey": "Add question for a survey",
     "add-question": "Add question",
     "rules": "Rules",
-    "add-new-rule": "Add new rule"
+    "add-new-rule": "Add new rule",
+    "survey-created": "Survey created",
+    "survey-preview": "Survey preview",
+    "delete-survey": "Delete survey",
+    "delete-survey-confirmation": "Are you sure you want to DELETE this survey?",
+    "survey-deleted": "Survey deleted",
+    "featured": "Set as featured survey for a dynamic course for all users",
+    "no-surveys-found": "No surveys found"
   },
   "Form": {
     "step-of": "Step {currentStep} of {steps}",
@@ -126,6 +150,16 @@
     "finish": "Finish",
     "submit": "Submit",
     "begin": "Begin"
+  },
+  "Dashboard": {
+    "my-stats": "My stats"
+  },
+  "Tags": {
+    "add-tag": "Add tag",
+    "tag-name": "Tag name",
+    "tag-added": "Tag added",
+    "delete-tag": "Delete tag",
+    "tag-deleted": "Tag deleted"
   },
   "Meta": {
     "title-home": "Home",
@@ -137,6 +171,11 @@
     "title-register": "Register",
     "title-course": "Course",
     "title-lesson": "Lesson",
-    "title-dynamic-course": "Dynamic course"
+    "title-dashboard": "Dashboard",
+    "title-dynamic-course": "Dynamic course",
+    "switch-locale": "Switch locale",
+    "language": "Language",
+    "tags": "Tags",
+    "reminders": "Reminders"
   }
 }

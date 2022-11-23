@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { EnrolledLesson } from '@app/models/EnrolledLesson';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type EnrolledLesson from '@app/models/EnrolledLesson';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type EnrolledLessonState = {
   data: EnrolledLesson;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,18 +18,15 @@ const initialState: EnrolledLessonState = {
   error: null,
 };
 
-export const fetchEnrolledLesson = createAsyncThunk(
+export const fetchEnrolledLesson = createAsyncThunk<
+  ApiPayload<EnrolledLesson>,
+  {
+    lessonId: number;
+    enrolledLessonId: number;
+  }
+>(
   'api/courses/courseId/enrolledLesson/enrolledLessonId',
-  async (
-    {
-      lessonId,
-      enrolledLessonId,
-    }: {
-      lessonId: number;
-      enrolledLessonId: number;
-    },
-    thunkApi
-  ) => {
+  async ({ lessonId, enrolledLessonId }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -42,7 +40,7 @@ export const fetchEnrolledLesson = createAsyncThunk(
       );
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<EnrolledLesson>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -68,7 +66,7 @@ export const enrolledLessonSlice = createSlice({
         fetchEnrolledLesson.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<EnrolledLesson> }
         ) => {
           if (error) {
             state.data = null;

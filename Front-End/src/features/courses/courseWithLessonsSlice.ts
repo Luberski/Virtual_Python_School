@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Course } from '@app/models/Course';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Course from '@app/models/Course';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type CourseState = {
   data: Course;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,32 +18,29 @@ const initialState: CourseState = {
   error: null,
 };
 
-export const fetchCourseWithLessons = createAsyncThunk(
-  'api/course/with-lessons',
-  async (
-    { id, limitLessons }: { id: string | number; limitLessons?: number | null },
-    thunkApi
-  ) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      let endpoint = `courses/${id}?include_lessons=true`;
-      if (limitLessons) {
-        endpoint = `courses/${id}?include_lessons=true&limit_lessons=${limitLessons}`;
-      }
-      const res = await apiClient.get(endpoint, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
+export const fetchCourseWithLessons = createAsyncThunk<
+  ApiPayload<Course>,
+  { id: number; limitLessons?: number | null }
+>('api/course/with-lessons', async ({ id, limitLessons }, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    let endpoint = `courses/${id}?include_lessons=true`;
+    if (limitLessons) {
+      endpoint = `courses/${id}?include_lessons=true&limit_lessons=${limitLessons}`;
     }
+    const res = await apiClient.get(endpoint, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const data = await res.json();
+    return data as ApiPayload<Course>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
+});
 
 export const courseWithLessonsSlice = createSlice({
   name: 'courseWithLessons',
@@ -65,7 +63,7 @@ export const courseWithLessonsSlice = createSlice({
         fetchCourseWithLessons.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Course> }
         ) => {
           if (error) {
             state.data = null;

@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Playground } from '@app/models/Playground';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Playground from '@app/models/Playground';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type PlaygroundState = {
   data: Playground;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,21 +18,23 @@ const initialState: PlaygroundState = {
   error: null,
 };
 
-export const sendCode = createAsyncThunk(
-  'api/playground',
-  async ({ content }: { content: string }) => {
-    try {
-      const res = await apiClient.post('playground', {
-        json: { data: { content } },
-      });
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+export const sendCode = createAsyncThunk<
+  ApiPayload<Playground>,
+  {
+    content: string;
   }
-);
+>('api/playground', async ({ content }) => {
+  try {
+    const res = await apiClient.post('playground', {
+      json: { data: { content } },
+    });
+    const data = await res.json();
+    return data as ApiPayload<Playground>;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
 
 export const playgroundSlice = createSlice({
   name: 'playground',
@@ -51,7 +54,7 @@ export const playgroundSlice = createSlice({
         sendCode.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Playground> }
         ) => {
           if (error) {
             state.data = {

@@ -24,8 +24,15 @@ import surveyReducer from '@app/features/dynamic-courses/survey/surveySlice';
 import surveyResultsReducer from '@app/features/dynamic-courses/survey/surveyResultsSlice';
 import enrollDynamicCourseReducer from '@app/features/dynamic-courses/enrollDynamicCourseSlice';
 import dynamicCourseReducer from '@app/features/dynamic-courses/dynamicCourseSlice';
+import dynamicCoursesReducer from '@app/features/dynamic-courses/dynamicCoursesSlice';
 import surveyQuestionReducer from '@app/features/dynamic-courses/survey/surveyQuestionSlice';
 import surveyAnswerReducer from '@app/features/dynamic-courses/survey/surveyAnswerSlice';
+import surveysReducer from '@app/features/dynamic-courses/survey/surveysSlice';
+import dynamicLessonReducer from '@app/features/dynamic-courses/dynamicLessonSlice';
+import dashboardReducer from '@app/features/dashboard/dashboardSlice';
+import courseTagsReducer from '@app/features/tags/courseTagsSlice';
+import recommendedCoursesReducer from '@app/features/recommender/recommendedCoursesSlice';
+import recommendedLessonsReducer from '@app/features/recommender/recommendedLessonsSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -47,8 +54,15 @@ const combinedReducers = combineReducers({
   surveyResults: surveyResultsReducer,
   enrollDynamicCourse: enrollDynamicCourseReducer,
   dynamicCourse: dynamicCourseReducer,
+  dynamicCourses: dynamicCoursesReducer,
+  dynamicLesson: dynamicLessonReducer,
   surveyQuestion: surveyQuestionReducer,
   surveyAnswer: surveyAnswerReducer,
+  surveys: surveysReducer,
+  dashboard: dashboardReducer,
+  courseTags: courseTagsReducer,
+  recommendedCourses: recommendedCoursesReducer,
+  recommendedLessons: recommendedLessonsReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -92,6 +106,13 @@ export type RootState = {
   surveyResults: ReturnType<typeof surveyResultsReducer>;
   enrollDynamicCourse: ReturnType<typeof enrollDynamicCourseReducer>;
   dynamicCourse: ReturnType<typeof dynamicCourseReducer>;
+  dynamicCourses: ReturnType<typeof dynamicCoursesReducer>;
+  dynamicLesson: ReturnType<typeof dynamicLessonReducer>;
   surveyQuestion: ReturnType<typeof surveyQuestionReducer>;
   surveyAnswer: ReturnType<typeof surveyAnswerReducer>;
+  surveys: ReturnType<typeof surveysReducer>;
+  dashboard: ReturnType<typeof dashboardReducer>;
+  courseTags: ReturnType<typeof courseTagsReducer>;
+  recommendedCourses: ReturnType<typeof recommendedCoursesReducer>;
+  recommendedLessons: ReturnType<typeof recommendedLessonsReducer>;
 };

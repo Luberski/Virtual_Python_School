@@ -38,15 +38,18 @@
     "featured": "Wyróżniony",
     "featured-on-homepage": "Ustaw kurs jako wyróżniony na stronie głównej",
     "no-courses-found": "Nie znaleziono kursów",
-    "no-enrolled-courses-found": "Nie znaleziono zapisanych kursów",
+    "no-enrolled-courses-found": "Nie znaleziono przypisanych kursów",
     "course-not-found": "Nie znaleziono kursu",
     "course-enrolled": "Zapisano do kursu",
-    "enrolled": "Zapisano",
+    "enrolled": "Przypisano",
     "edit-course": "Edytuj kurs",
     "course-edited": "Kurs został edytowany",
     "delete-course": "Usuń kurs",
     "delete-course-confirmation": "Czy na pewno chcesz USUNĄĆ ten kurs?",
-    "course-deleted": "Kurs został usunięty"
+    "course-deleted": "Kurs został usunięty",
+    "progress": "Postęp",
+    "overview": "Przegląd",
+    "recommended-courses": "Polecane kursy"
   },
   "Lessons": {
     "lessons": "Lekcje",
@@ -69,7 +72,13 @@
     "edit-lesson": "Edytuj lekcję",
     "delete-lesson": "Usuń lekcję",
     "delete-lesson-confirmation": "Czy na pewno chcesz USUNĄĆ tą lekcję?",
-    "lesson-deleted": "Lekcja została usunięta"
+    "lesson-deleted": "Lekcja została usunięta",
+    "completed-lessons": "Ukończone lekcje",
+    "enrolled-lessons": "Przypisane lekcje",
+    "all-correct-answers": "Wszystkie poprawne odpowiedzi",
+    "all-incorrect-answers": "Wszystkie niepoprawne odpowiedzi",
+    "all-answers": "Wszystkie odpowiedzi",
+    "recommended-lessons-to-retry-info": "Znaleźliśmy niektóre lekcje, które możesz chcieć ponownie spróbować"
   },
   "Playground": {
     "run": "Uruchom",
@@ -93,7 +102,8 @@
     "no-short": "Lp.",
     "try": "Spróbuj",
     "completed": "Ukończone",
-    "status": "Status"
+    "status": "Status",
+    "user-id": "User ID"
   },
   "DynamicCourse": {
     "leading": "Kurs dynamiczny",
@@ -104,7 +114,12 @@
     "guide-alert-3-step": "Dodaj pytania do ankiety.\nNastępnie przypisz każdą odpowiedź do lekcji.\nNa tej podstawie system utworzy ankietę i zdecyduje, które lekcje zostaną pokazane użytkownikowi.",
     "guide-alert-question": "Dodaj pytanie do ankiety.\nNastępnie przypisz każdą odpowiedź do reguły.\nNa tej podstawie system utworzy ankietę i zdecyduje, które lekcje zostaną pokazane użytkownikowi w jego dynamicznym kursie.",
     "guide-alert-rules": "Wybierz regułę dla każdej odpowiedzi.\nNa podstawie tej reguły zostanie ustalone, która lekcja zostanie wybrana i dodana do dynamicznego kursu po wypełnieniu ankiety.",
-    "introduction": "Wprowadzenie"
+    "introduction": "Wprowadzenie",
+    "delete-dynamic-course": "Usuń kurs dynamiczny",
+    "delete-dynamic-course-confirmation": "Czy na pewno chcesz USUNĄĆ ten kurs dynamiczny?",
+    "dynamic-course-deleted": "Kurs dynamiczny został usunięty",
+    "no-dynamic-courses-found": "Nie znaleziono kursów dynamicznych",
+    "try-dynamic-course": "Wypróbuj kurs dynamiczny"
   },
   "Survey": {
     "leading": "Ankieta kursu dynamicznego",
@@ -113,11 +128,21 @@
     "not-found": "Nie znaleziono ankiety",
     "list-of-surveys": "Lista ankiet",
     "questions": "Pytania",
+    "no-questions-added": "Nie dodano jeszcze pytań",
+    "added-questions": "Dodane pytania",
     "question": "Pytanie",
+    "no-question-added": "Nie dodano jeszcze żadnego pytania",
     "add-question-for-survey": "Dodaj pytanie do ankiety",
     "add-question": "Dodaj pytanie",
     "rules": "Reguły",
-    "add-new-rule": "Dodaj nową regułę"
+    "add-new-rule": "Dodaj nową regułę",
+    "survey-created": "Utworzono ankietę",
+    "survey-preview": "Podgląd ankiety",
+    "delete-survey": "Usuń ankietę",
+    "delete-survey-confirmation": "Czy na pewno chcesz USUNĄĆ tą ankietę?",
+    "survey-deleted": "Ankieta została usunięta",
+    "featured": "Ustaw jako rekomendowaną ankietę dla dynamicznego kursu dla wszystkich użytkowników",
+    "no-surveys-found": "Nie znaleziono ankiet"
   },
   "Form": {
     "step-of": "Krok {currentStep} z {steps}",
@@ -127,16 +152,31 @@
     "submit": "Wyślij",
     "begin": "Rozpocznij"
   },
+  "Dashboard": {
+    "my-stats": "Moje statystyki"
+  },
+  "Tags": {
+    "add-tag": "Dodaj tag",
+    "tag-name": "Nazwa tagu",
+    "tag-added": "Tag został dodany",
+    "delete-tag": "Usuń tag",
+    "tag-deleted": "Tag został usunięty"
+  },
   "Meta": {
     "title-home": "Strona główna",
     "title-courses": "Kursy",
-    "title-enrolled-courses": "Zapisane kursy",
+    "title-enrolled-courses": "Przypisane kursy",
     "title-playground": "Code Playground",
     "title-manage": "Zarządzaj",
     "title-login": "Logowanie",
     "title-register": "Rejestracja",
     "title-course": "Kurs",
     "title-lesson": "Lekcja",
-    "title-dynamic-course": "Dynamiczny kurs"
+    "title-dashboard": "Panel użytkownika",
+    "title-dynamic-course": "Dynamiczny kurs",
+    "switch-locale": "Zmień język",
+    "language": "Język",
+    "tags": "Tagi",
+    "reminders": "Przypomnienia"
   }
 }

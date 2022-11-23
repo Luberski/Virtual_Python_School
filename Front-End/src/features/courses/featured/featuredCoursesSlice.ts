@@ -2,12 +2,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
 import type { RootState } from '@app/store';
-import type { Course } from '@app/models/Course';
-import type { ApiPayload } from '@app/models/ApiPayload';
+import type Course from '@app/models/Course';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type FeaturedCoursesState = {
   data: Course[] | null;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -17,14 +18,14 @@ const initialState: FeaturedCoursesState = {
   error: null,
 };
 
-export const fetchFeaturedCourses = createAsyncThunk(
+export const fetchFeaturedCourses = createAsyncThunk<ApiPayload<Course[]>>(
   'api/courses/featured',
   async (_: void) => {
     try {
       const res = await apiClient.get('courses/featured', {});
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Course[]>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -50,7 +51,7 @@ export const featuredCoursesSlice = createSlice({
         fetchFeaturedCourses.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Course[]> }
         ) => {
           if (error) {
             state.data = null;
