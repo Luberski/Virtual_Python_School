@@ -12,4 +12,18 @@ export default ky.extend({
     'Access-Control-Allow-Private-Network': '*',
     'Access-Control-Allow-Origin': '*',
   },
+  hooks: {
+    beforeError: [
+      async (error) => {
+        const { response } = error;
+        if (response && response.body) {
+          const data = await response.json();
+          if (data.error) {
+            error.message = `${data.error}`;
+          }
+        }
+        return error;
+      },
+    ],
+  },
 });
