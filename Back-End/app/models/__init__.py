@@ -15,8 +15,8 @@ class User(Base):
     email = Column(String(100), unique=True)
     course_id = relationship("EnrolledCourses")
     role_id = Column(Integer, ForeignKey("roles.id"))
-    joined_classroom = relationship(
-        "JoinedClassrooms", back_populates="user", uselist=False)
+    classroom_sessions = relationship(
+        "ClassroomSessions", back_populates="user", uselist=False)
 
     @staticmethod
     def generate_hash(password):
@@ -191,13 +191,13 @@ class Classrooms(Base):
     name = Column(String(50))
     teacher_id = Column(Integer, ForeignKey("user.id"))
     is_public = Column(Boolean, default=False, nullable=False)
-    users = relationship("JoinedClassrooms")
+    users = relationship("ClassroomSessions")
 
 
-class JoinedClassrooms(Base):
-    __tablename__ = "joined_classrooms"
+class ClassroomSessions(Base):
+    __tablename__ = "classroom_sessions"
     id = Column(Integer, primary_key=True)
     classroom_id = Column(Integer, ForeignKey("classrooms.id"))
     user_id = Column(Integer, ForeignKey("user.id"))
     is_teacher = Column(Boolean, default=False, nullable=False)
-    user = relationship("User", back_populates="joined_classroom")
+    user = relationship("User", back_populates="classroom_sessions")

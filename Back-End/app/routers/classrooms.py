@@ -69,11 +69,11 @@ def create_classroom(
             status_code=status.HTTP_409_CONFLICT,
             content={"error": "There is no classrooms in database"},
         )
-    joined_classroom = models.JoinedClassrooms(
+    classroom_sessions = models.ClassroomSessions(
         user_id=user.id, classroom_id=highest_id, is_teacher=True
     )
 
-    db.add(joined_classroom)
+    db.add(classroom_sessions)
     db.commit()
 
     return JSONResponse(
@@ -142,8 +142,6 @@ def get_classrooms_all(
         ClassroomsAllResponseDataCollection()
     )
 
-    print(include_private)
-
     classrooms = None
     if not include_private:
         classrooms = (
@@ -203,7 +201,7 @@ def join_classroom(
         )
 
     user_occurences_in_classrooms = (
-        db.query(models.JoinedClassrooms)
+        db.query(models.ClassroomSessions)
         .filter_by(user_id=user.id)
         .first()
     )
@@ -214,7 +212,7 @@ def join_classroom(
                 "error": "User cannot join the same classroom or multiple classrooms"},
         )
 
-    new_record = models.JoinedClassrooms(
+    new_record = models.ClassroomSessions(
         classroom_id=target_classroom.id,
         user_id=user.id,
         is_teacher=False,
