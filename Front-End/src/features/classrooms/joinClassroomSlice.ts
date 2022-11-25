@@ -17,9 +17,9 @@ const initialState: ClassroomState = {
   error: null,
 };
 
-export const joinClassroom = createAsyncThunk(
+export const joinClassroom = createAsyncThunk<ApiPayload<Classroom>, number>(
   'api/classroom/join',
-  async (id: string | number, thunkApi) => {
+  async (id, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -33,7 +33,7 @@ export const joinClassroom = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Classroom>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -59,7 +59,7 @@ export const joinClassroomSlice = createSlice({
         joinClassroom.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Classroom> }
         ) => {
           if (error) {
             state.data = null;

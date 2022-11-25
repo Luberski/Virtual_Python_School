@@ -1,6 +1,6 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import ClassroomDescriptorWrapper from './ClassroomDescriptorWrapper';
 import type Classroom from '@app/models/Classroom';
+import ClassroomDescriptorWrapper from './ClassroomDescriptorWrapper';
 
 export default {
   title: 'ClassroomDescriptorWrapper',

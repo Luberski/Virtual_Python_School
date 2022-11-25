@@ -1,21 +1,19 @@
 import Image from 'next/image';
-import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import StyledDialog from '@app/components/StyledDialog';
-import FancyToast from '@app/components/FancyToast';
 import ClassroomDescriptorWrapper from '@app/components/ClassroomDescriptorWrapper';
 import type Classroom from '@app/models/Classroom';
-import { joinClassroom } from '@app/features/classrooms/joinClassroomSlice';
 import {
   createClassroom,
   selectClassroomsData,
   selectClassroomsStatus,
+  selectClassroomsError,
 } from '@app/features/classrooms/classroomsSlice';
-import { useEffect, useRef, useState } from 'react';
 import Checkbox from '@app/components/Checkbox';
 import Button, { ButtonVariant } from '@app/components/Button';
-import { Controller, useForm } from 'react-hook-form';
 import Input from '@app/components/Input';
 import { useAppSelector } from '@app/hooks';
 
@@ -27,7 +25,6 @@ export default function Classrooms({
   classrooms,
   translations,
 }: ClassroomsProps) {
-  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
   const [isCreateClassroomDialogOpen, setIsCreateClassroomDialogOpen] =
     useState(false);
 
@@ -36,8 +33,10 @@ export default function Classrooms({
 
   const classroomData = useAppSelector(selectClassroomsData);
   const classroomStatus = useAppSelector(selectClassroomsStatus);
+  const classroomError = useAppSelector(selectClassroomsError);
 
   const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [shouldErr, setShouldErr] = useState(false);
 
   useEffect(() => {
     if (
@@ -49,7 +48,13 @@ export default function Classrooms({
     }
   }, [shouldRedirect, classroomStatus, classroomData, router]);
 
-  const { control, register, handleSubmit, setValue } =
+  useEffect(() => {
+    if (shouldErr && classroomStatus === 'failed') {
+      console.log('classroomError', classroomError);
+    }
+  }, [classroomError, shouldErr, classroomStatus]);
+
+  const { register, handleSubmit, setValue } =
     useForm<{
       name: string;
       is_public: boolean;
@@ -57,12 +62,8 @@ export default function Classrooms({
 
   const cancelButtonRef = useRef(null);
 
-  const closeLinkDialog = () => {
-    setIsLinkDialogOpen(false);
-  };
-  const openLinkDialog = () => {
-    setIsLinkDialogOpen(true);
-  };
+  
+
 
   const closeCreateClassroomDialog = () => {
     setIsCreateClassroomDialogOpen(false);
@@ -75,43 +76,17 @@ export default function Classrooms({
     is_public: boolean;
   }) => {
     const { name, is_public } = data;
+    setValue('name', '');
+    setValue('is_public', false);
+    closeCreateClassroomDialog();
 
     try {
-      dispatch(createClassroom({ name, is_public }));
-      setValue('name', '');
-      setValue('is_public', false);
+      await dispatch(createClassroom({ name, is_public })).unwrap();
       setShouldRedirect(true);
     } catch (error) {
-      console.error(error);
+      setShouldErr(true);
     }
   };
-
-  const handleClassroomJoin = (classroomId: number) => async () => {
-    await dispatch(joinClassroom(classroomId));
-    notify();
-    // wait 1 second to show the toast
-    setTimeout(() => {
-      toast.remove('classroom-joined-notification');
-      router.push(`/classrooms/${classroomId}`);
-    }, 1000);
-  };
-
-  const notify = () =>
-    toast.custom(
-      (to) =>
-        to.visible && (
-          <FancyToast
-            message={translations('Courses.course-enrolled')}
-            toastObject={to}
-            className="border-indigo-500 bg-indigo-200 text-indigo-900"
-          />
-        ),
-      {
-        id: 'classroom-joined-notification',
-        position: 'top-center',
-        duration: 1000,
-      }
-    );
 
   return (
     <>
@@ -123,13 +98,7 @@ export default function Classrooms({
           ref={cancelButtonRef}>
           {translations('Classrooms.create')}
         </Button>
-        <Button
-          variant={ButtonVariant.PRIMARY}
-          type="button"
-          onClick={openLinkDialog}
-          ref={cancelButtonRef}>
-          {translations('Classrooms.link-join')}
-        </Button>
+
         <StyledDialog
           title={translations('Classrooms.create')}
           isOpen={isCreateClassroomDialogOpen}
@@ -174,38 +143,6 @@ export default function Classrooms({
             </form>
           </div>
         </StyledDialog>
-        {/* <StyledDialog
-          title={translations('Classrooms.link-join')}
-          isOpen={isLinkDialogOpen}
-          onClose={closeLinkDialog}>
-          <div className="py-6">
-            <form
-              method="dialog"
-              onSubmit={handleSubmit(onClassroomCreateSubmit)}>
-              <div className="flex flex-col gap-y-2">
-                <Input
-                  label="name"
-                  name="name"
-                  type="text"
-                  register={register}
-                  required
-                  maxLength={50}
-                  placeholder={translations('Classrooms.link')}></Input>
-              </div>
-              <div className="mt-6 flex flex-row items-center justify-end">
-                <Button
-                  onClick={closeLinkDialog}
-                  className="mr-2"
-                  variant={ButtonVariant.DANGER}>
-                  Cancel
-                </Button>
-                <Button type="submit" variant={ButtonVariant.PRIMARY}>
-                  Send
-                </Button>
-              </div>
-            </form>
-          </div>
-        </StyledDialog> */}
       </div>
       {classrooms && classrooms.length > 0 ? (
         <div className="flex flex-col justify-center space-y-6">

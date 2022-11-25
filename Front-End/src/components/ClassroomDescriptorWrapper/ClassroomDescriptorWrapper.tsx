@@ -1,6 +1,6 @@
 import React from 'react';
-import ClassroomDescriptor from '../ClassroomDescriptor';
 import type Classroom from '@app/models/Classroom';
+import ClassroomDescriptor from '../ClassroomDescriptor';
 
 type ClassroomDescriptorWrapperProps = {
   classroomArr: Classroom[];

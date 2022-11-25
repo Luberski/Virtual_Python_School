@@ -1,9 +1,8 @@
 import React from 'react';
-import Link from 'next/link';
-import Button, { ButtonVariant } from '@app/components/Button';
-import type Classroom from '@app/models/Classroom';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
+import Button, { ButtonVariant } from '@app/components/Button';
+import type Classroom from '@app/models/Classroom';
 import { joinClassroom } from '@app/features/classrooms/classroomsSlice';
 
 type ClassroomDescriptorProps = {

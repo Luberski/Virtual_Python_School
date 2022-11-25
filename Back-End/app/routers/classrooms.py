@@ -122,6 +122,8 @@ def delete_classroom(
 def get_classrooms_all(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
+    include_private: Union[bool, None] = Query(
+        False, title="Include private classrooms"),
 ):
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
@@ -140,7 +142,20 @@ def get_classrooms_all(
         ClassroomsAllResponseDataCollection()
     )
 
-    classrooms = db.query(models.Classrooms).all()
+    print(include_private)
+
+    classrooms = None
+    if not include_private:
+        classrooms = (
+            db.query(models.Classrooms)
+            .filter(models.Classrooms.is_public == True)
+            .all()
+        )
+    else:
+        classrooms = (
+            db.query(models.Classrooms)
+            .all()
+        )
     if classrooms:
         for classroom in classrooms:
             classrooms_response_data.append(
@@ -151,7 +166,6 @@ def get_classrooms_all(
                     "is_public": classroom.is_public,
                 }
             )
-    # Add support for showFull
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,

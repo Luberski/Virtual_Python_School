@@ -17,47 +17,27 @@ const initialState: ClassroomsState = {
   error: null,
 };
 
-export const fetchClassrooms = createAsyncThunk(
-  'api/classrooms',
-  async (_, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.get('classrooms', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+export const fetchClassrooms = createAsyncThunk<
+  ApiPayload<Classroom[]>,
+  boolean | null
+>('api/classrooms', async (includePrivate = false, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const endpoint = `classrooms?include_private=${includePrivate}`;
+    const res = await apiClient.get(endpoint, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    const data = await res.json();
+    return data as ApiPayload<Classroom[]>;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
-);
-
-// export const deleteClassroom = createAsyncThunk(
-//   'api/classrooms/delete',
-//   async (id: string | number, thunkApi) => {
-//     try {
-//       const state = thunkApi.getState() as RootState;
-//       const { accessToken } = state.auth.token;
-//       const res = await apiClient.delete(`classrooms/${id}`, {
-//         headers: {
-//           Authorization: `Bearer ${accessToken}`,
-//         },
-//       });
-
-//       const data = await res.json();
-//       return data;
-//     } catch (error) {
-//       console.error(error);
-//       throw error;
-//     }
-//   }
-// );
+});
 
 export const createClassroom = createAsyncThunk<
   ApiPayload<Classroom>,
@@ -82,29 +62,29 @@ export const createClassroom = createAsyncThunk<
   }
 });
 
-export const joinClassroom = createAsyncThunk<
-  ApiPayload<Classroom>,
-  number | string
->('api/classroom/join', async (id, thunkApi) => {
-  try {
-    const state = thunkApi.getState() as RootState;
-    const { accessToken } = state.auth.token;
-    const res = await apiClient.post('classroom', {
-      json: {
-        data: { classroom_id: id },
-      },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+export const joinClassroom = createAsyncThunk<ApiPayload<Classroom>, number>(
+  'api/classroom/join',
+  async (id, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.post('classroom', {
+        json: {
+          data: { classroom_id: id },
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-    const data = await res.json();
-    return data as ApiPayload<Classroom>;
-  } catch (error) {
-    console.error(error);
-    throw error;
+      const data = await res.json();
+      return data as ApiPayload<Classroom>;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
-});
+);
 
 export const classroomsSlice = createSlice({
   name: 'classrooms',
@@ -124,7 +104,7 @@ export const classroomsSlice = createSlice({
         fetchClassrooms.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Classroom[]> }
         ) => {
           if (error) {
             state.data = null;
@@ -148,14 +128,14 @@ export const classroomsSlice = createSlice({
         joinClassroom.fulfilled,
         (
           state,
-          { payload: { data, error } }: { payload: ApiPayload | any }
+          { payload: { data, error } }: { payload: ApiPayload<Classroom> }
         ) => {
           if (error) {
             state.data = null;
             state.error = error;
             state.status = 'failed';
           } else {
-            state.data = data;
+            state.data = [...state.data, data];
             state.error = null;
             state.status = 'succeeded';
           }
@@ -165,20 +145,20 @@ export const classroomsSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-      // .addCase(
-      //   deleteClassroom.fulfilled,
-      //   (state, { payload }: { payload: ApiPayload | any }) => {
-      //     state.data = state.data.filter(
-      //       (classroom) => classroom.id !== payload.data.id
-      //     );
-      //   }
-      // )
       .addCase(
         createClassroom.fulfilled,
         (state, { payload }: { payload: ApiPayload<Classroom> }) => {
           state.data = [...state.data, payload.data];
         }
-      );
+      )
+      .addCase(createClassroom.rejected, (state, action) => {
+        state.status = 'failed';
+        console.error(`Error: ${action}`);
+        state.error = action.error.message;
+      })
+      .addCase(createClassroom.pending, (state) => {
+        state.status = 'pending';
+      });
   },
 });
 
