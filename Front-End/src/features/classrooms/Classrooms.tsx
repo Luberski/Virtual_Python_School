@@ -10,8 +10,11 @@ import {
   createClassroom,
   selectClassroomsData,
   selectClassroomsStatus,
-  selectClassroomsError,
 } from '@app/features/classrooms/classroomsSlice';
+import {
+  fetchClassroomSessions,
+  selectClassroomSessionsData,
+} from '@app/features/classrooms/sessions/classroomSessionsSlice';
 import Checkbox from '@app/components/Checkbox';
 import Button, { ButtonVariant } from '@app/components/Button';
 import Input from '@app/components/Input';
@@ -33,26 +36,32 @@ export default function Classrooms({
 
   const classroomData = useAppSelector(selectClassroomsData);
   const classroomStatus = useAppSelector(selectClassroomsStatus);
-  const classroomError = useAppSelector(selectClassroomsError);
+  const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
 
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const [shouldErr, setShouldErr] = useState(false);
+  const [redirectId, setRedirectId] = useState(0);
+
+  useEffect(() => {
+    fetchSessions().catch(console.error);
+  }, []);
 
   useEffect(() => {
     if (
-      shouldRedirect &&
-      classroomStatus === 'succeeded' &&
-      classroomData?.length > 0
+      (shouldRedirect &&
+        classroomStatus === 'succeeded' &&
+        classroomData?.length > 0) ||
+      (classroomSessionsData?.length > 0 && shouldRedirect)
     ) {
-      router.push(`/classrooms/${classroomData[0]?.id}`);
+      router.push(`/classrooms/${redirectId}`);
     }
-  }, [shouldRedirect, classroomStatus, classroomData, router]);
-
-  useEffect(() => {
-    if (shouldErr && classroomStatus === 'failed') {
-      console.log('classroomError', classroomError);
-    }
-  }, [classroomError, shouldErr, classroomStatus]);
+  }, [
+    shouldRedirect,
+    classroomStatus,
+    classroomData,
+    router,
+    classroomSessionsData,
+    redirectId,
+  ]);
 
   const { register, handleSubmit, setValue } =
     useForm<{
@@ -62,15 +71,19 @@ export default function Classrooms({
 
   const cancelButtonRef = useRef(null);
 
-  
-
-
   const closeCreateClassroomDialog = () => {
     setIsCreateClassroomDialogOpen(false);
   };
   const openCreateClassroomDialog = () => {
     setIsCreateClassroomDialogOpen(true);
   };
+  const redirectToClassroom = (id: number) => {
+    if (id) {
+      setRedirectId(id);
+      setShouldRedirect(true);
+    }
+  };
+
   const onClassroomCreateSubmit = async (data: {
     name: string;
     is_public: boolean;
@@ -78,14 +91,29 @@ export default function Classrooms({
     const { name, is_public } = data;
     setValue('name', '');
     setValue('is_public', false);
-    closeCreateClassroomDialog();
 
     try {
-      await dispatch(createClassroom({ name, is_public })).unwrap();
-      setShouldRedirect(true);
+      await dispatch(createClassroom({ name, is_public }))
+        .unwrap()
+        .then((result) => {
+          if (result.data) {
+            redirectToClassroom(result.data.id);
+          }
+        });
     } catch (error) {
-      setShouldErr(true);
+      console.error(error);
     }
+    closeCreateClassroomDialog();
+  };
+
+  const fetchSessions = async () => {
+    await dispatch(fetchClassroomSessions())
+      .unwrap()
+      .then((result) => {
+        if (result.data.length > 0) {
+          redirectToClassroom(result.data[0].classroom_id);
+        }
+      });
   };
 
   return (

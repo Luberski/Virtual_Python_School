@@ -147,8 +147,19 @@ export const classroomsSlice = createSlice({
       })
       .addCase(
         createClassroom.fulfilled,
-        (state, { payload }: { payload: ApiPayload<Classroom> }) => {
-          state.data = [...state.data, payload.data];
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload<Classroom> }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = [...state.data, data];
+            state.error = null;
+            state.status = 'succeeded';
+          }
         }
       )
       .addCase(createClassroom.rejected, (state, action) => {
