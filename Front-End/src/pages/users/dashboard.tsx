@@ -22,7 +22,7 @@ import {
   fetchRecommendedLessons,
   selectRecommendedLessonsData,
 } from '@app/features/recommender/recommendedLessonsSlice';
-import Dashboard from '@app/features/dashboard/dashboard';
+import Dashboard from '@app/features/dashboard/Dashboard';
 
 export default function UserDashboardPage() {
   const t = useTranslations();
