@@ -34,7 +34,7 @@ describe('Manage Courses Page', () => {
       .contains(pl.Manage['delete'].toString())
       .click();
     cy.get('h3').should('contain', pl.Courses['delete-course'].toString());
-    cy.get('button[name="dialog-delete-course"]')
+    cy.get('button[name="dialog-delete-course-button"]')
       .contains(pl.Manage['delete'].toString())
       .click();
 

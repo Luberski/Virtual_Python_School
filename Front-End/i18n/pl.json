@@ -132,7 +132,7 @@
     "added-questions": "Dodane pytania",
     "question": "Pytanie",
     "no-question-added": "Nie dodano jeszcze żadnego pytania",
-    "add-question-for-survey": "Dodaj pytanie do ankiety",
+    "add-question-to-survey": "Dodaj pytanie do ankiety",
     "add-question": "Dodaj pytanie",
     "rules": "Reguły",
     "add-new-rule": "Dodaj nową regułę",
@@ -142,7 +142,11 @@
     "delete-survey-confirmation": "Czy na pewno chcesz USUNĄĆ tą ankietę?",
     "survey-deleted": "Ankieta została usunięta",
     "featured": "Ustaw jako rekomendowaną ankietę dla dynamicznego kursu dla wszystkich użytkowników",
-    "no-surveys-found": "Nie znaleziono ankiet"
+    "no-surveys-found": "Nie znaleziono ankiet",
+    "nothing": "Nic",
+    "something": "Trochę",
+    "good": "Dobrze",
+    "great": "Świetnie"
   },
   "Form": {
     "step-of": "Krok {currentStep} z {steps}",
@@ -150,7 +154,8 @@
     "next": "Dalej",
     "finish": "Zakończ",
     "submit": "Wyślij",
-    "begin": "Rozpocznij"
+    "begin": "Rozpocznij",
+    "skip": "Pomiń"
   },
   "Dashboard": {
     "my-stats": "Moje statystyki"

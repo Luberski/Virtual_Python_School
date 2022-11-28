@@ -131,7 +131,7 @@
     "no-questions-added": "No questions added",
     "added-questions": "Added questions",
     "question": "Question",
-    "add-question-for-survey": "Add question for a survey",
+    "add-question-to-survey": "Add question to the survey",
     "add-question": "Add question",
     "rules": "Rules",
     "add-new-rule": "Add new rule",
@@ -141,7 +141,11 @@
     "delete-survey-confirmation": "Are you sure you want to DELETE this survey?",
     "survey-deleted": "Survey deleted",
     "featured": "Set as featured survey for a dynamic course for all users",
-    "no-surveys-found": "No surveys found"
+    "no-surveys-found": "No surveys found",
+    "nothing": "Nothing",
+    "something": "Something",
+    "good": "Good",
+    "great": "Great"
   },
   "Form": {
     "step-of": "Step {currentStep} of {steps}",
@@ -149,7 +153,8 @@
     "next": "Next",
     "finish": "Finish",
     "submit": "Submit",
-    "begin": "Begin"
+    "begin": "Begin",
+    "skip": "Skip"
   },
   "Dashboard": {
     "my-stats": "My stats"

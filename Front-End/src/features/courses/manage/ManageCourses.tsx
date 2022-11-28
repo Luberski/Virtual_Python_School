@@ -275,7 +275,7 @@ export default function ManageCourses({
           </p>
           <div className="flex space-x-4 py-3">
             <Button
-              name="dialog-delete-course"
+              name="dialog-delete-course-button"
               type="button"
               variant={ButtonVariant.DANGER}
               onClick={handleDeleteCourse}>

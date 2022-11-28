@@ -370,7 +370,7 @@ export default function GuidedDynamicCourseForm({
         )}
       </GuidedDynamicCourseFormCard>
       <StyledDialog
-        title={translations('Survey.add-question-for-survey')}
+        title={translations('Survey.add-question-to-survey')}
         isOpen={isAddQuestionDialogOpen}
         icon={
           <div className="h-fit rounded-lg bg-indigo-100 p-2">
@@ -430,7 +430,10 @@ export default function GuidedDynamicCourseForm({
               </Alert>
               <div className="mt-6 flex flex-col space-y-6">
                 <div className="flex flex-col space-y-2">
-                  <div className="text-lg">Answer: Nothing</div>
+                  <div className="text-lg">
+                    {translations('Lessons.answer')}:&nbsp;
+                    {translations('Survey.nothing')}
+                  </div>
                   <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
@@ -438,6 +441,7 @@ export default function GuidedDynamicCourseForm({
                       rules={{ required: !skipLesson1 }}
                       render={({ field: { onChange } }) => (
                         <Select
+                          dataTestId="select-lesson-1"
                           className={
                             errors.selectedLesson1 &&
                             errors.selectedLesson1.type === 'required' &&
@@ -473,18 +477,22 @@ export default function GuidedDynamicCourseForm({
                       )}
                     />
                     <Button
+                      id="skip-lesson-1"
                       variant={
                         skipLesson1
                           ? ButtonVariant.PRIMARY
                           : ButtonVariant.OUTLINE_PRIMARY
                       }
                       onClick={handleSkipLesson1}>
-                      Skip
+                      {translations('Form.skip')}
                     </Button>
                   </div>
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <div className="text-lg">Answer: Something</div>
+                  <div className="text-lg">
+                    {translations('Lessons.answer')}:&nbsp;
+                    {translations('Survey.something')}
+                  </div>
                   <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
@@ -492,6 +500,7 @@ export default function GuidedDynamicCourseForm({
                       rules={{ required: !skipLesson2 }}
                       render={({ field: { onChange } }) => (
                         <Select
+                          dataTestId="select-lesson-2"
                           className={
                             errors.selectedLesson2 &&
                             errors.selectedLesson2.type === 'required' &&
@@ -527,18 +536,22 @@ export default function GuidedDynamicCourseForm({
                       )}
                     />
                     <Button
+                      id="skip-lesson-2"
                       variant={
                         skipLesson2
                           ? ButtonVariant.PRIMARY
                           : ButtonVariant.OUTLINE_PRIMARY
                       }
                       onClick={handleSkipLesson2}>
-                      Skip
+                      {translations('Form.skip')}
                     </Button>
                   </div>
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <div className="text-lg">Answer: Good</div>
+                  <div className="text-lg">
+                    {translations('Lessons.answer')}:&nbsp;
+                    {translations('Survey.good')}
+                  </div>
                   <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
@@ -546,6 +559,7 @@ export default function GuidedDynamicCourseForm({
                       rules={{ required: !skipLesson3 }}
                       render={({ field: { onChange } }) => (
                         <Select
+                          dataTestId="select-lesson-3"
                           className={
                             errors.selectedLesson3 &&
                             errors.selectedLesson3.type === 'required' &&
@@ -581,18 +595,22 @@ export default function GuidedDynamicCourseForm({
                       )}
                     />
                     <Button
+                      id="skip-lesson-3"
                       variant={
                         skipLesson3
                           ? ButtonVariant.PRIMARY
                           : ButtonVariant.OUTLINE_PRIMARY
                       }
                       onClick={handleSkipLesson3}>
-                      Skip
+                      {translations('Form.skip')}
                     </Button>
                   </div>
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <div className="text-lg">Answer: Great</div>
+                  <div className="text-lg">
+                    {translations('Lessons.answer')}:&nbsp;
+                    {translations('Survey.great')}
+                  </div>
                   <div className="flex flex-col items-start space-y-2 sm:flex-row sm:items-stretch sm:space-x-2 sm:space-y-1">
                     <Controller
                       control={control}
@@ -600,6 +618,7 @@ export default function GuidedDynamicCourseForm({
                       rules={{ required: !skipLesson4 }}
                       render={({ field: { onChange } }) => (
                         <Select
+                          dataTestId="select-lesson-4"
                           className={
                             errors.selectedLesson4 &&
                             errors.selectedLesson4.type === 'required' &&
@@ -635,13 +654,14 @@ export default function GuidedDynamicCourseForm({
                       )}
                     />
                     <Button
+                      id="skip-lesson-4"
                       variant={
                         skipLesson4
                           ? ButtonVariant.PRIMARY
                           : ButtonVariant.OUTLINE_PRIMARY
                       }
                       onClick={handleSkipLesson4}>
-                      Skip
+                      {translations('Form.skip')}
                     </Button>
                   </div>
                 </div>

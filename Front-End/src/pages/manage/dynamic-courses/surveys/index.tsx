@@ -130,6 +130,7 @@ export default function ManageSurveysPage() {
                 </p>
                 <div className="flex space-x-4 py-3">
                   <Button
+                    name="dialog-delete-survey-button"
                     type="button"
                     variant={ButtonVariant.DANGER}
                     onClick={handleDeleteSurvey}>
@@ -164,7 +165,7 @@ export default function ManageSurveysPage() {
                   </thead>
                   <tbody className="divide-y divide-neutral-200">
                     {surveys.map((survey, key) => (
-                      <tr key={survey.id}>
+                      <tr key={survey.id} data-testid={`survey-${key}`}>
                         <td className="p-4">{(key += 1)}</td>
                         <td className="break-words p-4">{survey.name}</td>
                         <td className="p-4 text-center">

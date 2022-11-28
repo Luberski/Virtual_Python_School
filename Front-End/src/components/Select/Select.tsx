@@ -16,6 +16,7 @@ type SelectProps = {
   setSelected: (option: Option) => void;
   disabled?: boolean;
   className?: string;
+  dataTestId?: string;
 };
 
 export default function Select({
@@ -24,12 +25,13 @@ export default function Select({
   setSelected,
   disabled,
   className,
+  dataTestId = 'select-button',
 }: SelectProps) {
   return (
     <Listbox value={selected} onChange={setSelected} disabled={disabled}>
       <div className="relative mt-1 w-full">
         <Listbox.Button
-          data-testid="select-button"
+          data-testid={dataTestId}
           // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
           className={clsx(
             'relative w-72 cursor-pointer rounded-lg border border-neutral-300 bg-neutral-50 py-2 pl-4 pr-10 text-left text-neutral-900 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white sm:w-96 sm:text-sm',
@@ -51,7 +53,7 @@ export default function Select({
           <Listbox.Options
             // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
             className="brand-shadow absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-lg bg-neutral-50 py-1 text-base shadow-neutral-900 ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-700 sm:text-sm">
-            {options.map((item) => (
+            {options.map((item, key) => (
               <Listbox.Option
                 key={item.id}
                 className={({ active }) =>
@@ -66,6 +68,7 @@ export default function Select({
                 {({ selected }) => (
                   <>
                     <span
+                      data-testid={`select-option-${key}`}
                       className={`block truncate ${
                         selected ? 'font-bold' : 'font-normal'
                       }`}>
