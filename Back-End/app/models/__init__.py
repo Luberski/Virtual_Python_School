@@ -178,3 +178,40 @@ class DynamicCourses(Base):
     dynamic_lessons = relationship(
         "DynamicLessons", lazy="dynamic", cascade="all, delete", passive_deletes=True
     )
+
+
+class KnowledgeTestQuestions(Base):
+    __tablename__ = "knowledge_test_questions"
+    id = Column(Integer, primary_key=True)
+    question = Column(String(500))
+    answer = Column(String(500))
+    knowledge_test_id = Column(
+        Integer, ForeignKey("knowledge_test.id", ondelete="CASCADE")
+    )
+
+
+class KnowledgeTest(Base):
+    __tablename__ = "knowledge_test"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    questions = relationship(
+        "KnowledgeTestQuestions",
+        lazy="dynamic",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+
+
+class KnowledgeTestUserResults(Base):
+    __tablename__ = "knowledge_test_user_results"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    knowledge_test_id = Column(
+        Integer, ForeignKey("knowledge_test.id", ondelete="CASCADE")
+    )
+    question_id = Column(
+        Integer, ForeignKey("knowledge_test_questions.id", ondelete="CASCADE")
+    )
+    answer = Column(String(500))
+    is_correct = Column(Boolean, default=False, nullable=False)

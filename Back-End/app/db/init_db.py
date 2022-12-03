@@ -17,6 +17,9 @@ from app.models import (
     DynamicCourses,
     DynamicLessons,
     CourseTags,
+    KnowledgeTest,
+    KnowledgeTestQuestions,
+    KnowledgeTestUserResults,
 )
 
 

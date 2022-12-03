@@ -22,6 +22,9 @@ from app.models import (
     DynamicCourses,
     DynamicLessons,
     CourseTags,
+    KnowledgeTest,
+    KnowledgeTestQuestions,
+    KnowledgeTestUserResults,
 )
 
 # this is the Alembic Config object, which provides
