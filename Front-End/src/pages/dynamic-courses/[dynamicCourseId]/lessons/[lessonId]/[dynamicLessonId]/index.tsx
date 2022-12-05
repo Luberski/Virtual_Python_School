@@ -10,6 +10,10 @@ import {
   fetchDynamicLesson,
   selectDynamicLessonData,
 } from '@app/features/dynamic-courses/dynamicLessonSlice';
+import {
+  fetchKnowledgeTestByLessonId,
+  selectKnowledgeTestData,
+} from '@app/features/dynamic-courses/knowledge-test/knowledgeTestSlice';
 
 type Props = {
   dynamicCourseId: string;
@@ -26,6 +30,7 @@ export default function DynamicLessonPage({
   const dispatch = useDispatch();
   const t = useTranslations();
   const dynamicLesson = useAppSelector(selectDynamicLessonData);
+  const knowledgeTestData = useAppSelector(selectKnowledgeTestData);
 
   if (!user && !isLoggedIn) {
     return null;
@@ -61,6 +66,7 @@ export default function DynamicLessonPage({
                 enrolledLessonId={dynamicLessonId}
                 courseId={dynamicCourseId}
                 lessonId={lessonId}
+                knowledgeTest={knowledgeTestData}
               />
             )}
           </div>
@@ -86,6 +92,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
           dynamicLessonId: Number(dynamicLessonId),
         })
       );
+      await store.dispatch(fetchKnowledgeTestByLessonId(Number(lessonId)));
 
       return {
         props: {

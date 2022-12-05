@@ -48,6 +48,27 @@ export const fetchLesson = createAsyncThunk<
   }
 );
 
+export const fetchLessonById = createAsyncThunk<ApiPayload<Lesson>, number>(
+  'api/lessons/lessonId',
+  async (lessonId, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.get(`lessons/${lessonId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json();
+      return data as ApiPayload<Lesson>;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 export const lessonSlice = createSlice({
   name: 'lesson',
   initialState,
@@ -80,6 +101,30 @@ export const lessonSlice = createSlice({
         }
       )
       .addCase(fetchLesson.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(fetchLessonById.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        fetchLessonById.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload<Lesson> }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(fetchLessonById.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

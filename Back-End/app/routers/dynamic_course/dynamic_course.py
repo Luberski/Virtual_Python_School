@@ -38,41 +38,105 @@ def create_dynamic_course_from_survey_user_results(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-    survey_results = (
-        db.query(models.DynamicCourseSurveyUserResults)
-        .filter_by(survey_id=request_data.data.survey_id, user_id=user.id)
-        .all()
-    )
-    if survey_results is None:
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"error": "Survey results not found"},
-        )
-
     lessons_list = []
     lessons_found = False
-    for survey_result in survey_results:
-        survey_answer = (
-            db.query(models.DynamicCourseSurveyAnswers)
-            .filter_by(
-                id=survey_result.answer_id,
-                question_id=survey_result.question_id,
-                rule_type=1,
-            )
-            .first()
+
+    if request_data.data.survey_id:
+        survey_results = (
+            db.query(models.DynamicCourseSurveyUserResults)
+            .filter_by(survey_id=request_data.data.survey_id, user_id=user.id)
+            .all()
         )
-        if survey_answer:
+        if survey_results is None:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Survey results not found"},
+            )
+
+        for survey_result in survey_results:
+            survey_answer = (
+                db.query(models.DynamicCourseSurveyAnswers)
+                .filter_by(
+                    id=survey_result.answer_id,
+                    question_id=survey_result.question_id,
+                    rule_type=1,
+                )
+                .first()
+            )
+            if survey_answer:
+                lesson = (
+                    db.query(models.Lessons)
+                    .filter_by(id=survey_answer.rule_value)
+                    .first()
+                )
+                if lesson is None:
+                    return JSONResponse(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        content={"error": "Lesson for answer_id not found"},
+                    )
+                if lesson not in lessons_list:
+                    lessons_list.append(lesson)
+                    lessons_found = True
+
+    if request_data.data.knowledge_test_id:
+        knowledge_test_results = (
+            db.query(models.KnowledgeTestUserResults)
+            .filter_by(
+                knowledge_test_id=request_data.data.knowledge_test_id, user_id=user.id
+            )
+            .all()
+        )
+        if knowledge_test_results is None:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Knowledge test results not found"},
+            )
+
+        for knowledge_test_result in knowledge_test_results:
+            knowledge_test = (
+                db.query(models.KnowledgeTest)
+                .filter_by(id=knowledge_test_result.knowledge_test_id)
+                .first()
+            )
+            if knowledge_test is None:
+                return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={"error": "Knowledge test not found"},
+                )
             lesson = (
-                db.query(models.Lessons).filter_by(id=survey_answer.rule_value).first()
+                db.query(models.Lessons).filter_by(id=knowledge_test.lesson_id).first()
             )
             if lesson is None:
                 return JSONResponse(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    content={"error": "Lesson for answer_id not found"},
+                    content={"error": "Lesson for knowledge test not found"},
                 )
             if lesson not in lessons_list:
                 lessons_list.append(lesson)
                 lessons_found = True
+
+    if request_data.data.knowledge_test_ids:
+        for knowledge_test_id in request_data.data.knowledge_test_ids:
+            knowledge_test = (
+                db.query(models.KnowledgeTest).filter_by(id=knowledge_test_id).first()
+            )
+            if knowledge_test is None:
+                return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={"error": "Knowledge test not found"},
+                )
+            lesson = (
+                db.query(models.Lessons).filter_by(id=knowledge_test.lesson_id).first()
+            )
+            if lesson is None:
+                return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={"error": "Lesson for knowledge test not found"},
+                )
+            if lesson not in lessons_list:
+                lessons_list.append(lesson)
+                lessons_found = True
+
     if lessons_found:
         new_dynamic_course = models.DynamicCourses(
             name=request_data.data.name,

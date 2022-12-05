@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import {
   PencilIcon as PencilIconOutline,
@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import ISO6391 from 'iso-639-1';
 import { nanoid } from '@reduxjs/toolkit';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import {
   createLesson,
   deleteLesson,
@@ -39,6 +40,15 @@ import {
   deleteCourseTag,
 } from '@app/features/tags/courseTagsSlice';
 import type CourseTag from '@app/models/CourseTag';
+import IconButtonLink, {
+  IconButtonLinkVariant,
+} from '@app/components/IconButtonLink';
+import {
+  fetchKnowledgeTestByLessonId,
+  selectKnowledgeTestData,
+} from '@app/features/dynamic-courses/knowledge-test/knowledgeTestSlice';
+import { useAppSelector } from '@app/hooks';
+import { deleteKnowledgeTestByLessonId } from '@app/features/dynamic-courses/knowledge-test/knowledgeTestsSlice';
 
 type ManageCourseAndLessonsProps = {
   course: Course;
@@ -114,6 +124,9 @@ export default function ManageCourseAndLessons({
   const [selectedLang, setSelectedLang] = useState(
     languageOptions.find((option) => option.value === course?.lang)
   );
+  const currentLessonKnowledgeTestData = useAppSelector(
+    selectKnowledgeTestData
+  );
 
   const closeLessonCreateDialog = () => {
     setIsLessonCreateDialogOpen(false);
@@ -149,6 +162,15 @@ export default function ManageCourseAndLessons({
     setCurrentLessonId(lessonId);
     setIsLessonDeleteDialogOpen(true);
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      await dispatch(fetchKnowledgeTestByLessonId(currentLessonId));
+    }
+    if (currentLessonId) {
+      fetchData();
+    }
+  }, [currentLessonId, dispatch]);
 
   const onLessonCreateSubmit = async (data: {
     name: string;
@@ -274,6 +296,12 @@ export default function ManageCourseAndLessons({
   const handleCourseTagDelete = (tagId: number) => async () => {
     await dispatch(deleteCourseTag(tagId));
     notifyTagDeleted();
+  };
+
+  const handleDeleteKnowledgeTest = async () => {
+    await dispatch(deleteKnowledgeTestByLessonId(currentLessonId));
+    closeLessonEditDialog();
+    notifyKnowledgeTestDeleted();
   };
 
   const notify = () =>
@@ -415,6 +443,30 @@ export default function ManageCourseAndLessons({
       ),
       {
         id: 'tag-deleted-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
+  const notifyKnowledgeTestDeleted = () =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-red-500 bg-red-200 py-3 px-4 text-red-900 shadow-red-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">
+                {translations('KnowledgeTest.knowledge-test-deleted')}
+              </p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'knowledge-test-deleted-notification',
         position: 'top-center',
         duration: 1000,
       }
@@ -680,6 +732,25 @@ export default function ManageCourseAndLessons({
               maxLength={100}
               placeholder={translations('Lessons.answer')}
             />
+            {currentLessonKnowledgeTestData ? (
+              <IconButton
+                variant={IconButtonVariant.DANGER}
+                icon={<TrashIcon className="h-5 w-5" />}
+                onClick={handleDeleteKnowledgeTest}>
+                {translations('KnowledgeTest.delete-knowledge-test')}
+              </IconButton>
+            ) : (
+              <Link
+                href={`/manage/dynamic-courses/knowledge-test/lessons/${currentLessonId}`}
+                passHref>
+                <IconButtonLink
+                  variant={IconButtonLinkVariant.OUTLINE_PRIMARY}
+                  type="button"
+                  icon={<AcademicCapIcon className="h-6 w-6" />}>
+                  {translations('KnowledgeTest.create-knowledge-test')}
+                </IconButtonLink>
+              </Link>
+            )}
             <div className="flex justify-between space-x-4 py-3">
               <IconButton variant={IconButtonVariant.PRIMARY} type="submit">
                 {translations('Lessons.edit-lesson')}

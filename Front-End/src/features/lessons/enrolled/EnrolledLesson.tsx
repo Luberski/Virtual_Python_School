@@ -24,6 +24,8 @@ import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import FancyToast, { FancyToastVariant } from '@app/components/FancyToast';
 import type EnrolledLessonModel from '@app/models/EnrolledLesson';
 import { useAppSelector } from '@app/hooks';
+import type KnowledgeTest from '@app/models/KnowledgeTest';
+import KnowledgeTestForm from '@app/features/dynamic-courses/knowledge-test/KnowledgeTestForm';
 
 const Editor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -36,6 +38,7 @@ type Props = {
   enrolledLessonId: string;
   enrolledLesson: EnrolledLessonModel;
   isDynamic?: boolean;
+  knowledgeTest?: KnowledgeTest;
 };
 
 export default function EnrolledLesson({
@@ -45,6 +48,7 @@ export default function EnrolledLesson({
   enrolledLessonId,
   enrolledLesson,
   isDynamic,
+  knowledgeTest,
 }: Props) {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -60,6 +64,7 @@ export default function EnrolledLesson({
   const playgroundData = useAppSelector(selectPlaygroundData);
   const playgroundError = useAppSelector(selectPlaygroundError);
   const playgroundStatus = useAppSelector(selectPlaygroundStatus);
+  const [showKnowledgeTest, setShowKnowledgeTest] = useState(false);
 
   const notify = useCallback(
     (isSucces: boolean) => {
@@ -96,10 +101,14 @@ export default function EnrolledLesson({
         setIsExploding(true);
         setTimeout(() => {
           setIsExploding(false);
-          if (isDynamic) {
-            router.push(`/dynamic-courses/${courseId}`);
+          if (knowledgeTest) {
+            setShowKnowledgeTest(true);
           } else {
-            router.push(`/courses/${courseId}`);
+            if (isDynamic) {
+              router.push(`/dynamic-courses/${courseId}`);
+            } else {
+              router.push(`/courses/${courseId}`);
+            }
           }
         }, 2000);
       } else {
@@ -119,6 +128,7 @@ export default function EnrolledLesson({
     notify,
     courseId,
     isDynamic,
+    knowledgeTest,
   ]);
 
   const onSubmit = useMemo(
@@ -163,63 +173,29 @@ export default function EnrolledLesson({
   return (
     <>
       {enrolledLesson ? (
+        // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
-          <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
-            {translations('Meta.title-lesson')}:&nbsp;{enrolledLesson.name}
-          </h1>
-          <div className="my-9 self-end">
-            <IconButton
-              onClick={handleValue}
-              variant={IconButtonVariant.PRIMARY}
-              icon={
-                playgroundStatus === 'pending' ? (
-                  <svg
-                    className="mr-1 h-5 w-5 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                ) : (
-                  <PlayIcon className="h-5 w-5" />
-                )
-              }>
-              {translations('Playground.run')}
-            </IconButton>
-          </div>
-
-          <div className="flex w-full flex-col xl:flex-row">
-            <div className="brand-shadow2 m-2 flex flex-col rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700 xl:w-1/2">
-              <h2>{translations('Manage.description')}</h2>
-              <p className="h-[580px] overflow-auto whitespace-pre-line">
-                {enrolledLesson.description}
-              </p>
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="flex w-full flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-                <Input
-                  placeholder={translations('Lessons.answer')}
-                  label="answer"
-                  name="answer"
-                  className="w-full"
-                  required
-                  register={register}
-                />
+          {showKnowledgeTest ? (
+            <>
+              <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
+                {translations('KnowledgeTest.leading')}
+              </h1>
+              <KnowledgeTestForm
+                knowledgeTest={knowledgeTest}
+                translations={translations}
+              />
+            </>
+          ) : (
+            <>
+              <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
+                {translations('Meta.title-lesson')}:&nbsp;{enrolledLesson.name}
+              </h1>
+              <div className="my-9 self-end">
                 <IconButton
+                  onClick={handleValue}
                   variant={IconButtonVariant.PRIMARY}
-                  type="submit"
                   icon={
-                    answerStatus === 'pending' ? (
+                    playgroundStatus === 'pending' ? (
                       <svg
                         className="mr-1 h-5 w-5 animate-spin"
                         xmlns="http://www.w3.org/2000/svg"
@@ -238,50 +214,99 @@ export default function EnrolledLesson({
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                     ) : (
-                      <CheckIcon className="h-5 w-5" />
+                      <PlayIcon className="h-5 w-5" />
                     )
                   }>
-                  {translations('Lessons.check-answer')}
+                  {translations('Playground.run')}
                 </IconButton>
-                {isExploding && (
-                  <ConfettiExplosion
-                    duration={1500}
-                    floorHeight={200}
-                    floorWidth={600}
-                    force={0.4}
-                    particleCount={100}
+              </div>
+
+              <div className="flex w-full flex-col xl:flex-row">
+                <div className="brand-shadow2 m-2 flex flex-col rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700 xl:w-1/2">
+                  <h2>{translations('Manage.description')}</h2>
+                  <p className="h-[580px] overflow-auto whitespace-pre-line">
+                    {enrolledLesson.description}
+                  </p>
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex w-full flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+                    <Input
+                      placeholder={translations('Lessons.answer')}
+                      label="answer"
+                      name="answer"
+                      className="w-full"
+                      required
+                      register={register}
+                    />
+                    <IconButton
+                      variant={IconButtonVariant.PRIMARY}
+                      type="submit"
+                      icon={
+                        answerStatus === 'pending' ? (
+                          <svg
+                            className="mr-1 h-5 w-5 animate-spin"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24">
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        ) : (
+                          <CheckIcon className="h-5 w-5" />
+                        )
+                      }>
+                      {translations('Lessons.check-answer')}
+                    </IconButton>
+                    {isExploding && (
+                      <ConfettiExplosion
+                        duration={1500}
+                        floorHeight={200}
+                        floorWidth={600}
+                        force={0.4}
+                        particleCount={100}
+                      />
+                    )}
+                  </form>
+                </div>
+                <div className="brand-shadow2 m-2 flex flex-1 flex-col shadow-black/25">
+                  <Editor
+                    className="h-96"
+                    defaultLanguage="python"
+                    defaultValue=""
+                    onMount={handleEditorDidMount}
+                    theme="vs-dark"
                   />
-                )}
-              </form>
-            </div>
-            <div className="brand-shadow2 m-2 flex flex-1 flex-col shadow-black/25">
-              <Editor
-                className="h-96"
-                defaultLanguage="python"
-                defaultValue=""
-                onMount={handleEditorDidMount}
-                theme="vs-dark"
-              />
-              <div>
-                <div className="brand-shadow2 mx-auto h-96 rounded-lg border-black bg-black subpixel-antialiased shadow-black/25">
-                  <div
-                    className="flex h-6 items-center rounded-t border-b border-neutral-500 bg-neutral-200 text-center text-black dark:bg-neutral-800 dark:text-white"
-                    id="headerTerminal">
-                    <div className="mx-auto" id="terminaltitle">
-                      <p className="text-center">Terminal output</p>
+                  <div>
+                    <div className="brand-shadow2 mx-auto h-96 rounded-lg border-black bg-black subpixel-antialiased shadow-black/25">
+                      <div
+                        className="flex h-6 items-center rounded-t border-b border-neutral-500 bg-neutral-200 text-center text-black dark:bg-neutral-800 dark:text-white"
+                        id="headerTerminal">
+                        <div className="mx-auto" id="terminaltitle">
+                          <p className="text-center">Terminal output</p>
+                        </div>
+                      </div>
+                      <div
+                        className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
+                        id="console">
+                        <pre className="pb-1 text-white">
+                          {playgroundData?.content || playgroundError}
+                        </pre>
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
-                    id="console">
-                    <pre className="pb-1 text-white">
-                      {playgroundData?.content || playgroundError}
-                    </pre>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </>
       ) : (
         <h1 className="text-center first-letter:uppercase">

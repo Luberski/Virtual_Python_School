@@ -33,6 +33,11 @@ import dashboardReducer from '@app/features/dashboard/dashboardSlice';
 import courseTagsReducer from '@app/features/tags/courseTagsSlice';
 import recommendedCoursesReducer from '@app/features/recommender/recommendedCoursesSlice';
 import recommendedLessonsReducer from '@app/features/recommender/recommendedLessonsSlice';
+import knowledgeTestReducer from '@app/features/dynamic-courses/knowledge-test/knowledgeTestSlice';
+import knowledgeTestQuestionReducer from '@app/features/dynamic-courses/knowledge-test/knowledgeTestQuestionSlice';
+import knowledgeTestResultsReducer from '@app/features/dynamic-courses/knowledge-test/knowledgeTestResultsSlice';
+import knowledgeTestsReducer from '@app/features/dynamic-courses/knowledge-test/knowledgeTestsSlice';
+import knowledgeTestResultsStatsReducer from '@app/features/dynamic-courses/knowledge-test/knowledgeTestResultsStatsSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -63,6 +68,11 @@ const combinedReducers = combineReducers({
   courseTags: courseTagsReducer,
   recommendedCourses: recommendedCoursesReducer,
   recommendedLessons: recommendedLessonsReducer,
+  knowledgeTest: knowledgeTestReducer,
+  knowledgeTestQuestion: knowledgeTestQuestionReducer,
+  knowledgeTestResults: knowledgeTestResultsReducer,
+  knowledgeTests: knowledgeTestsReducer,
+  knowledgeTestResultsStats: knowledgeTestResultsStatsReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -115,4 +125,11 @@ export type RootState = {
   courseTags: ReturnType<typeof courseTagsReducer>;
   recommendedCourses: ReturnType<typeof recommendedCoursesReducer>;
   recommendedLessons: ReturnType<typeof recommendedLessonsReducer>;
+  knowledgeTest: ReturnType<typeof knowledgeTestReducer>;
+  knowledgeTestQuestion: ReturnType<typeof knowledgeTestQuestionReducer>;
+  knowledgeTestResults: ReturnType<typeof knowledgeTestResultsReducer>;
+  knowledgeTests: ReturnType<typeof knowledgeTestsReducer>;
+  knowledgeTestResultsStats: ReturnType<
+    typeof knowledgeTestResultsStatsReducer
+  >;
 };

@@ -100,7 +100,9 @@ class DynamicCourseSurveyUserResultsCreateRequest(BaseJSONRequest):
 
 
 class DynamicCourseCreateRequestData(BaseModel):
-    survey_id: int
+    survey_id: Optional[int] = None
+    knowledge_test_id: Optional[int] = None
+    knowledge_test_ids: Optional[list[int]] = None
     name: str
 
 

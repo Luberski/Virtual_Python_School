@@ -343,6 +343,20 @@ def create_knowledgetest_user_results(
                 status_code=status.HTTP_404_NOT_FOUND,
                 content={"error": "Question for question_id not found"},
             )
+
+        knowledgetest_user_results = (
+            db.query(models.KnowledgeTestUserResults)
+            .filter_by(
+                user_id=user.id,
+                knowledge_test_id=request_data.data.knowledge_test_id,
+                question_id=knowledgetest_results.question_id,
+            )
+            .first()
+        )
+        if knowledgetest_user_results is not None:
+            db.delete(knowledgetest_user_results)
+            db.commit()
+
         knowledgetest_result = models.KnowledgeTestUserResults(
             user_id=user.id,
             knowledge_test_id=knowledgetest.id,
@@ -519,8 +533,8 @@ def delete_knowledgetest_by_lesson_id(
     )
 
 
-@router.get("/knowledgetests/{knowledge_test_id}/user", tags=["knowledgetests"])
-def get_knowledgetest_user(
+@router.get("/knowledgetests/{knowledge_test_id}/stats", tags=["knowledgetests"])
+def get_check_knowledgetest_user_results(
     knowledge_test_id: int = Path(title="id of the knowledgetest"),
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
@@ -566,6 +580,10 @@ def get_knowledgetest_user(
         if not result.is_correct:
             test_passed = False
             break
+    total_answers = len(knowledgetest_results)
+    total_user_correct_answers = len(
+        [result for result in knowledgetest_results if result.is_correct is True]
+    )
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
@@ -574,6 +592,8 @@ def get_knowledgetest_user(
                 "knowledge_test_id": knowledge_test_id,
                 "user_id": user.id,
                 "test_passed": test_passed,
+                "total_answers": total_answers,
+                "total_correct_answers": total_user_correct_answers,
             }
         },
     )

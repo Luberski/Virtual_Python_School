@@ -20,30 +20,40 @@ const initialState: EnrollDynamicCourseState = {
 
 export const enrollDynamicCourse = createAsyncThunk<
   ApiPayload<EnrollDynamicCourse>,
-  { surveyId: number; name: string }
->('api/dynamic-courses/enroll', async ({ surveyId, name }, thunkApi) => {
-  try {
-    const state = thunkApi.getState() as RootState;
-    const { accessToken } = state.auth.token;
-    const res = await apiClient.post('dynamic-courses', {
-      json: {
-        data: {
-          survey_id: surveyId,
-          name,
-        },
-      },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    const data = await res.json();
-    return data as ApiPayload<EnrollDynamicCourse>;
-  } catch (error) {
-    console.error(error);
-    throw error;
+  {
+    surveyId?: number;
+    knowledgeTestId?: number;
+    knowledgeTestIds?: number[];
+    name: string;
   }
-});
+>(
+  'api/dynamic-courses/enroll',
+  async ({ surveyId, knowledgeTestId, knowledgeTestIds, name }, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.post('dynamic-courses', {
+        json: {
+          data: {
+            ...(surveyId && { survey_id: surveyId }),
+            ...(knowledgeTestId && { knowledge_test_id: knowledgeTestId }),
+            ...(knowledgeTestIds && { knowledge_test_ids: knowledgeTestIds }),
+            name,
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json();
+      return data as ApiPayload<EnrollDynamicCourse>;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
 
 export const enrollDynamicCourseSlice = createSlice({
   name: 'enrollDynamicCourse',
