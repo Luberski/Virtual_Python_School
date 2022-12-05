@@ -10,3 +10,27 @@ export const TAG_COLORS = [
   'bg-pink-200 text-pink-900',
   'bg-purple-200 text-purple-900',
 ];
+
+export enum Actions {
+  NONE = 0,
+  JOIN = 1,
+  JOINED = 2,
+  DISCONNECTED = 3,
+  CODE_CHANGE = 4,
+  SYNC_CODE = 5,
+  LEAVE = 6,
+}
+
+export enum ReadyState {
+  CONNECTING = 0,
+  OPEN = 1,
+  CLOSING = 2,
+  CLOSED = 3,
+}
+
+export const connectionStatus = {
+  [ReadyState.CONNECTING]: 'Connecting',
+  [ReadyState.OPEN]: 'Open',
+  [ReadyState.CLOSING]: 'Closing',
+  [ReadyState.CLOSED]: 'Closed',
+};

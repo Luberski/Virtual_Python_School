@@ -1,52 +1,140 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import Head from 'next/head';
 import { useDispatch } from 'react-redux';
-import { Toaster } from 'react-hot-toast';
 import { useAuthRedirect } from '@app/hooks';
-import { WEBSITE_TITLE } from '@app/constants';
-import Footer from '@app/components/Footer';
-
+import { Actions } from '@app/constants';
+import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
+import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
+import toast from 'react-hot-toast';
+import FancyToast from '@app/components/FancyToast';
 
-export default function ClassroomsPage() {
+export default function ClassroomsPage(props: {
+  classroomId: string;
+  i18n: unknown;
+}) {
+  const codeRef = useRef(null);
+  const { classroomId } = props;
   const [user, isLoggedIn] = useAuthRedirect();
   const t = useTranslations();
   const dispatch = useDispatch();
 
+  const [lastAction, setLastAction] = useState(null);
+  const socketRef = useRef(null);
+
+  const notify = (message: string) =>
+    toast.custom(
+      (to) =>
+        to.visible && (
+          <FancyToast
+            message={message}
+            toastObject={to}
+            className="border-indigo-500 bg-indigo-200 text-indigo-900"
+          />
+        ),
+      {
+        id: 'classroom-message',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
+  useEffect(() => {
+    const onMessage = (ev: { data: string; }) => {
+      const recv = JSON.parse(ev.data);
+      if (recv.action === Actions.JOINED && codeRef.current) {
+        notify('New user joined');
+      } else if (recv.action === Actions.CODE_CHANGE) {
+        codeRef.current = recv.value;
+      } else if (recv.action === Actions.LEAVE) {
+        notify('User left');
+      }
+
+      setLastAction(parseInt(recv.action));
+    };
+    codeRef.current = "print('Hello World')";
+    setLastAction(Actions.NONE);
+    const createSocket = async () => {
+      const ws = new WebSocket(`ws://localhost:5000/ws/${classroomId}`);
+      ws.onmessage = onMessage;
+      ws.onopen = () => {
+        socketRef.current.send(
+          JSON.stringify({
+            action: Actions.JOIN,
+            user_id: user.username,
+            value: null,
+          })
+        );
+      };
+      ws.onclose = () => {
+        notify('Connection closed');
+      };
+      ws.onerror = (error) => {
+        console.error(error);
+      };
+      return ws;
+    };
+
+    const init = async () => {
+      const ws = await createSocket();
+      socketRef.current = ws;
+      notify('Connected');
+    };
+
+    init();
+
+    return () => {
+      socketRef.current.close();
+    };
+  }, [classroomId, user.name, user.username]);
+
   return (
-    <>
-      <Head>
-        <title>
-          {t('Meta.title-classrooms')} - {WEBSITE_TITLE}
-        </title>
-      </Head>
-      <div className="h-full w-full">
-        <NavBar
-          user={user}
-          isLoggedIn={isLoggedIn}
-          logout={() =>
-            dispatch({
-              type: 'auth/logout',
-            })
-          }
-        />
-        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
-          <div className="space-y-2">
-            <h1 className="text-center text-indigo-900 dark:text-indigo-300">
-              {t('Classrooms.classrooms')}
-            </h1>
-            <p className="text-center text-xl">
-              {t('Classrooms.join-or-create')}
-            </p>
-          </div>
+    <div className="h-full w-full">
+      <NavBar
+        user={user}
+        isLoggedIn={isLoggedIn}
+        logout={() =>
+          dispatch({
+            type: 'auth/logout',
+          })
+        }
+      />
+      <div className="flex h-full w-full flex-row">
+        <div className="flex h-max w-1/6 flex-col bg-zinc-800 p-6"></div>
+        <div className="flex w-5/6 flex-col">
+          <ClassroomCodeEditor
+            socketRef={socketRef}
+            roomId={classroomId}
+            onCodeChange={(code) => {
+              codeRef.current = code;
+            }}
+            lastAction={lastAction}
+            setLastAction={setLastAction}
+            codeRef={codeRef}
+            translations={t}
+            user={user}
+          />
         </div>
-        <div className="container mx-auto px-6">
-          <h1>welcome to classroom</h1>
-        </div>
-        <Toaster />
-        <Footer />
       </div>
-    </>
+    </div>
   );
 }
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  () =>
+    async ({ locale, params }) => {
+      const { classroomId } = params as {
+        classroomId: string;
+      };
+
+      return {
+        props: {
+          classroomId,
+          i18n: Object.assign(
+            {},
+            await import(`../../../../i18n/${locale}.json`)
+          ),
+        },
+      };
+    }
+);

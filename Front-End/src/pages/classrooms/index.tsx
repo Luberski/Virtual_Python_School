@@ -61,7 +61,7 @@ export default function ClassroomsPage() {
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale }) => {
-      await store.dispatch(fetchClassrooms());
+      await store.dispatch(fetchClassrooms(false));
 
       return {
         props: {
