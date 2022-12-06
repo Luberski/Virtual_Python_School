@@ -103,6 +103,7 @@ class DynamicCourseCreateRequestData(BaseModel):
     survey_id: Optional[int] = None
     knowledge_test_id: Optional[int] = None
     knowledge_test_ids: Optional[list[int]] = None
+    global_knowledge_test_id: Optional[int] = None
     name: str
 
 

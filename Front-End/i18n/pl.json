@@ -90,6 +90,7 @@
     "manage-dynamic-courses": "Zarządzaj dynamicznymi kursami",
     "manage-surveys": "Zarządzaj ankietami",
     "manage-lessons": "Zarządzaj lekcjami",
+    "manage-global-knowledge-test": "Zarządzaj globalnym testem wiedzy",
     "edit": "Edytuj",
     "delete": "Usuń",
     "add": "Dodaj",
@@ -173,11 +174,12 @@
     "list-of-questions": "Lista pytań",
     "delete-knowledge-test": "Usuń test wiedzy dla tej lekcji",
     "leading": "Test wiedzy dla tej lekcji",
+    "leading-global": "Globalny test wiedzy",
     "introduction": "Wprowadzenie",
     "guide-alert-1-step": "Test wiedzy to zestaw pytań po lekcji.\nSłuży do sprawdzenia wiedzy użytkownika po lekcji.",
     "guide-alert-2-step": "Utwórz nowy test wiedzy z pytaniami.",
     "guide-alert-3-step": "Dodaj pytania z odpowiedziami do testu wiedzy.\nKażde pytanie może mieć jedną poprawną odpowiedź.",
-    "guide-alert-question": "Dodaj pytanie do ankiety.\nNastępnie dodaj poprawną odpowiedź do pytania.",
+    "guide-alert-question": "Dodaj pytanie do testu wiedzy.\nNastępnie dodaj poprawną odpowiedź do pytania.",
     "guide-alert-answer": "Dodaj poprawną odpowiedź do pytania.",
     "added-questions": "Dodane pytania",
     "knowledge-test-preview": "Podgląd testu wiedzy",
@@ -190,7 +192,10 @@
     "knowledge-test-failed": "Test wiedzy oblany!",
     "knowledge-test-passed": "Test wiedzy zaliczony!",
     "knowledge-test-completed": "Ukończono test wiedzy z wynikiem:",
-    "total-correct-answers": "Liczba poprawnych odpowiedzi:"
+    "total-correct-answers": "Liczba poprawnych odpowiedzi:",
+    "alert-missing-knowledge": "Na podstawie Twoich wyników, brakuje Ci pewnej wiedzy. Utworzyliśmy dla Ciebie kurs, abyś mógł się nauczyć brakującej wiedzy.",
+    "list-of-knowledge-tests": "Lista testów wiedzy",
+    "no-knowledge-tests-found": "Nie znaleziono testów wiedzy"
   },
   "Meta": {
     "title-home": "Strona główna",

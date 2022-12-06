@@ -162,12 +162,12 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                               </Menu.Item>
                               <Menu.Item>
                                 <Link
-                                  href="/manage/dynamic-courses/surveys"
+                                  href="/manage/dynamic-courses/global-knowledge-tests"
                                   passHref={true}>
                                   <ButtonLink
                                     sizeType={ButtonLinkSize.EXTRA_LARGE}
                                     variant={ButtonLinkVariant.FLAT_PRIMARY}>
-                                    {t('Manage.manage-surveys')}
+                                    {t('Manage.manage-global-knowledge-tests')}
                                   </ButtonLink>
                                 </Link>
                               </Menu.Item>

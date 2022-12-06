@@ -12,12 +12,17 @@ class KnowledgeTestCreateRequest(BaseJSONRequest):
     data: KnowledgeTestCreateRequestData
 
 
+class KnowledgeTestUserResultsCreateRequestDataQuestion(BaseModel):
+    question_id: int
+    answer: str
+
+
 class KnowledgeTestQuestionsCreateRequestData(BaseModel):
     knowledge_test_id: int
     question: Optional[str] = None
-    answer: str
+    answer: Optional[str] = None
     bulk: Optional[bool] = False
-    questions: Optional[list] = None
+    questions: Optional[list[KnowledgeTestUserResultsCreateRequestDataQuestion]] = None
 
 
 class KnowledgeTestQuestionsCreateRequest(BaseJSONRequest):

@@ -20,6 +20,9 @@ from app.models import (
     KnowledgeTest,
     KnowledgeTestQuestions,
     KnowledgeTestUserResults,
+    GlobalKnowledgeTest,
+    GlobalKnowledgeTestQuestions,
+    GlobalKnowledgeTestUserResults,
 )
 
 

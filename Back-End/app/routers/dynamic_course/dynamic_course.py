@@ -79,32 +79,34 @@ def create_dynamic_course_from_survey_user_results(
                     lessons_found = True
 
     if request_data.data.knowledge_test_id:
-        knowledge_test_results = (
+        global_knowledge_test_results = (
             db.query(models.KnowledgeTestUserResults)
             .filter_by(
                 knowledge_test_id=request_data.data.knowledge_test_id, user_id=user.id
             )
             .all()
         )
-        if knowledge_test_results is None:
+        if global_knowledge_test_results is None:
             return JSONResponse(
                 status_code=status.HTTP_404_NOT_FOUND,
                 content={"error": "Knowledge test results not found"},
             )
 
-        for knowledge_test_result in knowledge_test_results:
-            knowledge_test = (
+        for global_knowledge_test_result in global_knowledge_test_results:
+            global_knowledge_test = (
                 db.query(models.KnowledgeTest)
-                .filter_by(id=knowledge_test_result.knowledge_test_id)
+                .filter_by(id=global_knowledge_test_result.knowledge_test_id)
                 .first()
             )
-            if knowledge_test is None:
+            if global_knowledge_test is None:
                 return JSONResponse(
                     status_code=status.HTTP_404_NOT_FOUND,
                     content={"error": "Knowledge test not found"},
                 )
             lesson = (
-                db.query(models.Lessons).filter_by(id=knowledge_test.lesson_id).first()
+                db.query(models.Lessons)
+                .filter_by(id=global_knowledge_test.lesson_id)
+                .first()
             )
             if lesson is None:
                 return JSONResponse(
@@ -117,16 +119,18 @@ def create_dynamic_course_from_survey_user_results(
 
     if request_data.data.knowledge_test_ids:
         for knowledge_test_id in request_data.data.knowledge_test_ids:
-            knowledge_test = (
+            global_knowledge_test = (
                 db.query(models.KnowledgeTest).filter_by(id=knowledge_test_id).first()
             )
-            if knowledge_test is None:
+            if global_knowledge_test is None:
                 return JSONResponse(
                     status_code=status.HTTP_404_NOT_FOUND,
                     content={"error": "Knowledge test not found"},
                 )
             lesson = (
-                db.query(models.Lessons).filter_by(id=knowledge_test.lesson_id).first()
+                db.query(models.Lessons)
+                .filter_by(id=global_knowledge_test.lesson_id)
+                .first()
             )
             if lesson is None:
                 return JSONResponse(
@@ -136,6 +140,58 @@ def create_dynamic_course_from_survey_user_results(
             if lesson not in lessons_list:
                 lessons_list.append(lesson)
                 lessons_found = True
+
+    if request_data.data.global_knowledge_test_id:
+        global_knowledge_test_results = (
+            db.query(models.GlobalKnowledgeTestUserResults)
+            .filter_by(
+                global_knowledge_test_id=request_data.data.global_knowledge_test_id,
+                user_id=user.id,
+                is_correct=False,
+            )
+            .all()
+        )
+        if global_knowledge_test_results is None:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Global Knowledge test results not found"},
+            )
+
+        for global_knowledge_test_result in global_knowledge_test_results:
+            global_knowledge_test = (
+                db.query(models.GlobalKnowledgeTest)
+                .filter_by(id=global_knowledge_test_result.global_knowledge_test_id)
+                .first()
+            )
+            if global_knowledge_test is None:
+                return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={"error": "Global Knowledge test not found"},
+                )
+            global_knowledge_test_questions = (
+                db.query(models.GlobalKnowledgeTestQuestions)
+                .filter_by(global_knowledge_test_id=global_knowledge_test.id)
+                .all()
+            )
+            if global_knowledge_test_questions is None:
+                return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={"error": "Global Knowledge test questions not found"},
+                )
+            for global_knowledge_test_question in global_knowledge_test_questions:
+                lesson = (
+                    db.query(models.Lessons)
+                    .filter_by(id=global_knowledge_test_question.lesson_id)
+                    .first()
+                )
+                if lesson is None:
+                    return JSONResponse(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        content={"error": "Lesson for knowledge test not found"},
+                    )
+                if lesson not in lessons_list:
+                    lessons_list.append(lesson)
+                    lessons_found = True
 
     if lessons_found:
         new_dynamic_course = models.DynamicCourses(

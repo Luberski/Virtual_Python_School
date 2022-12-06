@@ -9,45 +9,53 @@ import type ApiStatus from '@app/models/ApiStatus';
 type QuestionData = {
   _id?: string;
   id?: number;
-  knowledge_test_id: number;
+  global_knowledge_test_id: number;
   question: string;
   answer: string;
+  lesson_id: number;
 };
 
-type CreateKnowledgeTestQuestionsResponse = ApiPayload & {
+type CreateGlobalKnowledgeTestQuestionsResponse = ApiPayload & {
   data: {
     questions: QuestionData[];
   };
 };
 
-export type KnowledgeTestQuestionState = {
-  data: QuestionData | CreateKnowledgeTestQuestionsResponse;
+export type GlobalKnowledgeTestQuestionState = {
+  data: QuestionData | CreateGlobalKnowledgeTestQuestionsResponse;
   questions: QuestionData[];
   status: ApiStatus;
   error: string | null;
 };
 
-const initialState: KnowledgeTestQuestionState = {
+const initialState: GlobalKnowledgeTestQuestionState = {
   data: null,
   questions: [],
   status: 'idle',
   error: null,
 };
 
-export const createKnowledgeTestQuestion = createAsyncThunk<
+export const createGlobalKnowledgeTestQuestion = createAsyncThunk<
   ApiPayload<QuestionData>,
-  { knowledgeTestId: number; question: string }
+  {
+    globalKnowledgeTestId: number;
+    question: string;
+    answer: string;
+    lessonId: number;
+  }
 >(
-  'api/knowledgeTests/questions/create',
-  async ({ knowledgeTestId, question }, thunkApi) => {
+  'api/globalKnowledgeTests/questions/create',
+  async ({ globalKnowledgeTestId, question, answer, lessonId }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('knowledgetests/questions', {
+      const res = await apiClient.post('globalknowledgetests/questions', {
         json: {
           data: {
-            knowledge_test_id: knowledgeTestId,
+            global_knowledge_test_id: globalKnowledgeTestId,
             question,
+            answer,
+            lesson_id: lessonId,
           },
         },
         headers: {
@@ -64,23 +72,24 @@ export const createKnowledgeTestQuestion = createAsyncThunk<
   }
 );
 
-export const createKnowledgeTestQuestions =
-  createAsyncThunk<CreateKnowledgeTestQuestionsResponse>(
-    'api/knowledgeTests/questions/create/bulk',
+export const createGlobalKnowledgeTestQuestions =
+  createAsyncThunk<CreateGlobalKnowledgeTestQuestionsResponse>(
+    'api/globalKnowledgeTests/questions/create/bulk',
     async (_: void, thunkApi) => {
       try {
         const state = thunkApi.getState() as RootState;
         const { accessToken } = state.auth.token;
-        const res = await apiClient.post('knowledgetests/questions', {
+        const res = await apiClient.post('globalknowledgetests/questions', {
           json: {
             data: {
-              knowledge_test_id: state.knowledgeTest.data.id,
+              global_knowledge_test_id: state.globalKnowledgeTest.data.id,
               bulk: true,
-              questions: state.knowledgeTestQuestion.questions.map(
+              questions: state.globalKnowledgeTestQuestion.questions.map(
                 (question) => {
                   return {
                     question: question.question,
                     answer: question.answer,
+                    lesson_id: question.lesson_id,
                   };
                 }
               ),
@@ -92,7 +101,7 @@ export const createKnowledgeTestQuestions =
         });
 
         const data = await res.json();
-        return data as CreateKnowledgeTestQuestionsResponse;
+        return data as CreateGlobalKnowledgeTestQuestionsResponse;
       } catch (error) {
         console.error(error);
         throw error;
@@ -100,21 +109,22 @@ export const createKnowledgeTestQuestions =
     }
   );
 
-export const createKnowledgeTestQuestionWithAnswer = createAsyncThunk<
+export const createGlobalKnowledgeTestQuestionWithAnswer = createAsyncThunk<
   ApiPayload<QuestionData>,
-  { question: string; answer: string }
+  { question: string; answer: string; lessonId: number }
 >(
-  'api/knowledgeTests/questions/answers/create',
-  async ({ question, answer }, thunkApi) => {
+  'api/globalKnowledgeTests/questions/answers/create',
+  async ({ question, answer, lessonId }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('knowledgetests/questions', {
+      const res = await apiClient.post('globalknowledgetests/questions', {
         json: {
           data: {
-            knowledge_test_id: state.knowledgeTest.data.id,
+            global_knowledge_test_id: state.globalKnowledgeTest.data.id,
             question,
             answer,
+            lesson_id: lessonId,
           },
         },
         headers: {
@@ -131,18 +141,20 @@ export const createKnowledgeTestQuestionWithAnswer = createAsyncThunk<
   }
 );
 
-export const createKnowledgeTestQuestionsWithAnswers = createAsyncThunk(
-  'api/knowledgeTests/questions/answers/create/bulk',
+export const createGlobalKnowledgeTestQuestionsWithAnswers = createAsyncThunk(
+  'api/globalKnowledgeTests/questions/answers/create/bulk',
   async (_: void, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
-      const questions = state.knowledgeTestQuestion.questions.map((question) =>
-        thunkApi.dispatch(
-          createKnowledgeTestQuestionWithAnswer({
-            question: question.question,
-            answer: question.answer,
-          })
-        )
+      const questions = state.globalKnowledgeTestQuestion.questions.map(
+        (question) =>
+          thunkApi.dispatch(
+            createGlobalKnowledgeTestQuestionWithAnswer({
+              question: question.question,
+              answer: question.answer,
+              lessonId: question.lesson_id,
+            })
+          )
       );
       await Promise.all(questions);
     } catch (error) {
@@ -152,17 +164,17 @@ export const createKnowledgeTestQuestionsWithAnswers = createAsyncThunk(
   }
 );
 
-export const knowledgeTestQuestionSlice = createSlice({
-  name: 'knowledgeTestQuestion',
+export const globalKnowledgeTestQuestionSlice = createSlice({
+  name: 'globalKnowledgeTestQuestion',
   initialState,
   reducers: {
-    addKnowledgeTestQuestion: (
+    addGlobalKnowledgeTestQuestion: (
       state,
       { payload }: PayloadAction<QuestionData>
     ) => {
       state.questions = [...state.questions, payload];
     },
-    removeKnowledgeTestQuestion: (
+    removeGlobalKnowledgeTestQuestion: (
       state,
       {
         payload,
@@ -181,15 +193,15 @@ export const knowledgeTestQuestionSlice = createSlice({
         return Object.assign({}, state, {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          ...action.payload.knowledgeTestQuestion,
+          ...action.payload.globalKnowledgeTestQuestion,
         });
       })
 
-      .addCase(createKnowledgeTestQuestion.pending, (state) => {
+      .addCase(createGlobalKnowledgeTestQuestion.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        createKnowledgeTestQuestion.fulfilled,
+        createGlobalKnowledgeTestQuestion.fulfilled,
         (
           state,
           { payload: { data, error } }: { payload: ApiPayload<QuestionData> }
@@ -206,20 +218,20 @@ export const knowledgeTestQuestionSlice = createSlice({
           }
         }
       )
-      .addCase(createKnowledgeTestQuestion.rejected, (state, action) => {
+      .addCase(createGlobalKnowledgeTestQuestion.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })
-      .addCase(createKnowledgeTestQuestions.pending, (state) => {
+      .addCase(createGlobalKnowledgeTestQuestions.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        createKnowledgeTestQuestions.fulfilled,
+        createGlobalKnowledgeTestQuestions.fulfilled,
         (
           state,
           {
             payload: { data, error },
-          }: { payload: CreateKnowledgeTestQuestionsResponse }
+          }: { payload: CreateGlobalKnowledgeTestQuestionsResponse }
         ) => {
           if (error) {
             state.data = null;
@@ -232,23 +244,25 @@ export const knowledgeTestQuestionSlice = createSlice({
           }
         }
       )
-      .addCase(createKnowledgeTestQuestions.rejected, (state, action) => {
+      .addCase(createGlobalKnowledgeTestQuestions.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
   },
 });
 
-export const selectKnowledgeTestQuestionData = (state: RootState) =>
-  state.knowledgeTestQuestion.data;
-export const selectKnowledgeTestQuestions = (state: RootState) =>
-  state.knowledgeTestQuestion.questions;
-export const selectKnowledgeTestQuestionError = (state: RootState) =>
-  state.knowledgeTestQuestion.error;
-export const selectKnowledgeTestQuestionStatus = (state: RootState) =>
-  state.knowledgeTestQuestion.status;
+export const selectGlobalKnowledgeTestQuestionData = (state: RootState) =>
+  state.globalKnowledgeTestQuestion.data;
+export const selectGlobalKnowledgeTestQuestions = (state: RootState) =>
+  state.globalKnowledgeTestQuestion.questions;
+export const selectGlobalKnowledgeTestQuestionError = (state: RootState) =>
+  state.globalKnowledgeTestQuestion.error;
+export const selectGlobalKnowledgeTestQuestionStatus = (state: RootState) =>
+  state.globalKnowledgeTestQuestion.status;
 
-export const { addKnowledgeTestQuestion, removeKnowledgeTestQuestion } =
-  knowledgeTestQuestionSlice.actions;
+export const {
+  addGlobalKnowledgeTestQuestion,
+  removeGlobalKnowledgeTestQuestion,
+} = globalKnowledgeTestQuestionSlice.actions;
 
-export default knowledgeTestQuestionSlice.reducer;
+export default globalKnowledgeTestQuestionSlice.reducer;

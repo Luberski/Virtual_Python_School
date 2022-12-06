@@ -215,3 +215,40 @@ class KnowledgeTestUserResults(Base):
     )
     answer = Column(String(500))
     is_correct = Column(Boolean, default=False, nullable=False)
+
+
+class GlobalKnowledgeTest(Base):
+    __tablename__ = "global_knowledge_test"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    questions = relationship(
+        "GlobalKnowledgeTestQuestions",
+        lazy="dynamic",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+
+
+class GlobalKnowledgeTestQuestions(Base):
+    __tablename__ = "global_knowledge_test_questions"
+    id = Column(Integer, primary_key=True)
+    question = Column(String(500))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    answer = Column(String(500))
+    global_knowledge_test_id = Column(
+        Integer, ForeignKey("global_knowledge_test.id", ondelete="CASCADE")
+    )
+
+
+class GlobalKnowledgeTestUserResults(Base):
+    __tablename__ = "global_knowledge_test_user_results"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    global_knowledge_test_id = Column(
+        Integer, ForeignKey("global_knowledge_test.id", ondelete="CASCADE")
+    )
+    question_id = Column(
+        Integer, ForeignKey("global_knowledge_test_questions.id", ondelete="CASCADE")
+    )
+    answer = Column(String(500))
+    is_correct = Column(Boolean, default=False, nullable=False)

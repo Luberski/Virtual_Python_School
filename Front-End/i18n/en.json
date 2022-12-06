@@ -90,6 +90,7 @@
     "manage-dynamic-courses": "Manage dynamic courses",
     "manage-surveys": "Manage surveys",
     "manage-lessons": "Manage lessons",
+    "manage-global-knowledge-tests": "Manage global knowledge tests",
     "edit": "Edit",
     "delete": "Delete",
     "add": "Add",
@@ -172,11 +173,12 @@
     "list-of-questions": "List of questions",
     "delete-knowledge-test": "Delete knowledge test for this lesson",
     "leading": "Knowledge test for lesson",
+    "leading-global": "Global knowledge test",
     "introduction": "Introduction",
     "guide-alert-1-step": "Knowledge test is a set of questions after lesson.\nIt is used to check the knowledge of the user after the lesson.",
     "guide-alert-2-step": "Create a new knowledge test with questions.",
     "guide-alert-3-step": "Add questions with answers to the knowledge test.\nEach question can have one correct answer.",
-    "guide-alert-question": "Add question to the survey.\nThen add correct answer to the question.",
+    "guide-alert-question": "Add question to the knowledge test.\nThen add correct answer to the question.",
     "guide-alert-answer": "Add correct answer to the question.",
     "added-questions": "Added questions",
     "knowledge-test-preview": "Knowledge test preview",
@@ -189,7 +191,10 @@
     "knowledge-test-failed": "Knowledge test failed!",
     "knowledge-test-passed": "Knowledge test passed!",
     "knowledge-test-completed": "You completed the knowledge test with score:",
-    "total-correct-answers": "Total correct answers:"
+    "total-correct-answers": "Total correct answers:",
+    "alert-missing-knowledge": "Based on your results, you are missing some knowledge.\nWe created a course for you to learn the missing knowledge.",
+    "list-of-knowledge-tests": "List of knowledge tests",
+    "no-knowledge-tests-found": "No knowledge tests found"
   },
   "Meta": {
     "title-home": "Home",

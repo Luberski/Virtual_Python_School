@@ -25,6 +25,9 @@ from app.models import (
     KnowledgeTest,
     KnowledgeTestQuestions,
     KnowledgeTestUserResults,
+    GlobalKnowledgeTest,
+    GlobalKnowledgeTestQuestions,
+    GlobalKnowledgeTestUserResults,
 )
 
 # this is the Alembic Config object, which provides

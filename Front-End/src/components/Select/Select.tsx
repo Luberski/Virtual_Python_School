@@ -3,7 +3,7 @@ import { CheckIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 import { Fragment } from 'react';
 
-type Option = {
+export type Option = {
   id: string | number;
   value: string;
   label: string;

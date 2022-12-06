@@ -24,6 +24,7 @@ from .routers import recommender
 from .routers.dynamic_course import dynamic_course
 from .routers.dynamic_course import survey
 from .routers.dynamic_course import knowledge_test
+from .routers.dynamic_course import global_knowledge_test
 
 token_expires = datetime.timedelta(days=30)
 
@@ -92,6 +93,10 @@ def get_application() -> FastAPI:
     )
     application.include_router(
         knowledge_test.router,
+        prefix=settings.API_PREFIX,
+    )
+    application.include_router(
+        global_knowledge_test.router,
         prefix=settings.API_PREFIX,
     )
     return application

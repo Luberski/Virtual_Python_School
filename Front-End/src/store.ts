@@ -38,6 +38,11 @@ import knowledgeTestQuestionReducer from '@app/features/dynamic-courses/knowledg
 import knowledgeTestResultsReducer from '@app/features/dynamic-courses/knowledge-test/knowledgeTestResultsSlice';
 import knowledgeTestsReducer from '@app/features/dynamic-courses/knowledge-test/knowledgeTestsSlice';
 import knowledgeTestResultsStatsReducer from '@app/features/dynamic-courses/knowledge-test/knowledgeTestResultsStatsSlice';
+import globalKnowledgeTestReducer from '@app/features/dynamic-courses/global-knowledge-test/globalKnowledgeTestSlice';
+import globalKnowledgeTestQuestionReducer from '@app/features/dynamic-courses/global-knowledge-test/globalKnowledgeTestQuestionSlice';
+import globalKnowledgeTestResultsReducer from '@app/features/dynamic-courses/global-knowledge-test/globalKnowledgeTestResultsSlice';
+import globalKnowledgeTestsReducer from '@app/features/dynamic-courses/global-knowledge-test/globalKnowledgeTestsSlice';
+import globalKnowledgeTestResultsStatsReducer from '@app/features/dynamic-courses/global-knowledge-test/globalKnowledgeTestResultsStatsSlice';
 
 const combinedReducers = combineReducers({
   auth: authReducer,
@@ -73,6 +78,11 @@ const combinedReducers = combineReducers({
   knowledgeTestResults: knowledgeTestResultsReducer,
   knowledgeTests: knowledgeTestsReducer,
   knowledgeTestResultsStats: knowledgeTestResultsStatsReducer,
+  globalKnowledgeTest: globalKnowledgeTestReducer,
+  globalKnowledgeTestQuestion: globalKnowledgeTestQuestionReducer,
+  globalKnowledgeTestResults: globalKnowledgeTestResultsReducer,
+  globalKnowledgeTests: globalKnowledgeTestsReducer,
+  globalKnowledgeTestResultsStats: globalKnowledgeTestResultsStatsReducer,
 });
 
 export const store = wrapMakeStore(() =>
@@ -131,5 +141,16 @@ export type RootState = {
   knowledgeTests: ReturnType<typeof knowledgeTestsReducer>;
   knowledgeTestResultsStats: ReturnType<
     typeof knowledgeTestResultsStatsReducer
+  >;
+  globalKnowledgeTest: ReturnType<typeof globalKnowledgeTestReducer>;
+  globalKnowledgeTestQuestion: ReturnType<
+    typeof globalKnowledgeTestQuestionReducer
+  >;
+  globalKnowledgeTestResults: ReturnType<
+    typeof globalKnowledgeTestResultsReducer
+  >;
+  globalKnowledgeTests: ReturnType<typeof globalKnowledgeTestsReducer>;
+  globalKnowledgeTestResultsStats: ReturnType<
+    typeof globalKnowledgeTestResultsStatsReducer
   >;
 };

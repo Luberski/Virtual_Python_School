@@ -24,11 +24,21 @@ export const enrollDynamicCourse = createAsyncThunk<
     surveyId?: number;
     knowledgeTestId?: number;
     knowledgeTestIds?: number[];
+    globalKnowledgeTestId?: number;
     name: string;
   }
 >(
   'api/dynamic-courses/enroll',
-  async ({ surveyId, knowledgeTestId, knowledgeTestIds, name }, thunkApi) => {
+  async (
+    {
+      surveyId,
+      knowledgeTestId,
+      knowledgeTestIds,
+      globalKnowledgeTestId,
+      name,
+    },
+    thunkApi
+  ) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -38,6 +48,9 @@ export const enrollDynamicCourse = createAsyncThunk<
             ...(surveyId && { survey_id: surveyId }),
             ...(knowledgeTestId && { knowledge_test_id: knowledgeTestId }),
             ...(knowledgeTestIds && { knowledge_test_ids: knowledgeTestIds }),
+            ...(globalKnowledgeTestId && {
+              global_knowledge_test_id: globalKnowledgeTestId,
+            }),
             name,
           },
         },
