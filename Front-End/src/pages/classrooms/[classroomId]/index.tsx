@@ -6,6 +6,7 @@ import { Actions } from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
+import Button, { ButtonVariant } from '@app/components/Button';
 import toast from 'react-hot-toast';
 import FancyToast from '@app/components/FancyToast';
 
@@ -20,6 +21,7 @@ export default function ClassroomsPage(props: {
   const dispatch = useDispatch();
 
   const [lastAction, setLastAction] = useState(null);
+  const [users, setUsers] = useState([]);
   const socketRef = useRef(null);
 
   const notify = (message: string) =>
@@ -39,15 +41,29 @@ export default function ClassroomsPage(props: {
       }
     );
 
+  const get_user_code = async (student: string) => {
+    socketRef.current.send(
+      JSON.stringify({
+        action: Actions.GET_CODE,
+        value: student,
+        teacher: user.username,
+      })
+    );
+    console.log('Getting code for user: ' + user);
+  };
+
   useEffect(() => {
-    const onMessage = (ev: { data: string; }) => {
+    const onMessage = (ev: { data: string }) => {
       const recv = JSON.parse(ev.data);
       if (recv.action === Actions.JOINED && codeRef.current) {
-        notify('New user joined');
+        // notify('New user joined');
+        console.log(`User: ${recv.value} joined, sending code`);
+        setUsers((users) => [...users, recv.value]);
       } else if (recv.action === Actions.CODE_CHANGE) {
         codeRef.current = recv.value;
       } else if (recv.action === Actions.LEAVE) {
-        notify('User left');
+        console.log('User:' + recv.value + ' left');
+        setUsers((users) => users.filter((u) => u !== recv.value));
       }
 
       setLastAction(parseInt(recv.action));
@@ -61,8 +77,7 @@ export default function ClassroomsPage(props: {
         socketRef.current.send(
           JSON.stringify({
             action: Actions.JOIN,
-            user_id: user.username,
-            value: null,
+            value: user.username,
           })
         );
       };
@@ -99,21 +114,45 @@ export default function ClassroomsPage(props: {
           })
         }
       />
-      <div className="flex h-full w-full flex-row">
-        <div className="flex h-max w-1/6 flex-col bg-zinc-800 p-6"></div>
-        <div className="flex w-5/6 flex-col">
-          <ClassroomCodeEditor
-            socketRef={socketRef}
-            roomId={classroomId}
-            onCodeChange={(code) => {
-              codeRef.current = code;
-            }}
-            lastAction={lastAction}
-            setLastAction={setLastAction}
-            codeRef={codeRef}
-            translations={t}
-            user={user}
-          />
+      <div className="flex h-screen w-full flex-row">
+        <div className="flex h-full w-1/6 flex-col border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
+          <h1 className="mb-4 text-center text-2xl font-bold">Users</h1>
+          {users.map((u) => (
+            <Button
+              key={u}
+              onClick={() => {
+                get_user_code(u);
+              }}
+              type="button"
+              variant={ButtonVariant.PRIMARY}>
+              {u}
+            </Button>
+          ))}
+        </div>
+
+        <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
+          <div className="flex h-16 w-full flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
+            <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
+              Run
+            </Button>
+            <Button variant={ButtonVariant.FLAT_SECONDARY}>
+              Allow editing
+            </Button>
+          </div>
+          <div className="w-full">
+            <ClassroomCodeEditor
+              socketRef={socketRef}
+              roomId={classroomId}
+              onCodeChange={(code) => {
+                codeRef.current = code;
+              }}
+              lastAction={lastAction}
+              setLastAction={setLastAction}
+              codeRef={codeRef}
+              translations={t}
+              user={user}
+            />
+          </div>
         </div>
       </div>
     </div>

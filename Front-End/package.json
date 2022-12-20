@@ -25,6 +25,7 @@
     "@heroicons/react": "^2.0.10",
     "@monaco-editor/react": "^4.4.5",
     "@reduxjs/toolkit": "^1.8.5",
+    "@uiw/codemirror-themes": "^4.19.4",
     "@uiw/react-codemirror": "^4.15.1",
     "clsx": "^1.2.1",
     "codemirror": "^6.0.1",
