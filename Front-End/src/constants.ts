@@ -11,7 +11,6 @@ export const TAG_COLORS = [
   'bg-purple-200 text-purple-900',
 ];
 
-
 export enum Actions {
   NONE = 0,
   JOIN = 1,
@@ -22,6 +21,10 @@ export enum Actions {
   LEAVE = 6,
   GET_CODE = 7,
   GET_CODE_RESPONSE = 8,
+  CODE_SUBMITTED = 9,
+  LOCK_CODE = 10,
+  UNLOCK_CODE = 11,
+  TEACHER_JOIN = 12,
 }
 
 export enum ReadyState {

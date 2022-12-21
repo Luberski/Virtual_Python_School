@@ -15,6 +15,7 @@ export default function ClassroomsPage(props: {
   i18n: unknown;
 }) {
   const codeRef = useRef(null);
+  const codeSyncAllowanceRef = useRef(false);
   const { classroomId } = props;
   const [user, isLoggedIn] = useAuthRedirect();
   const t = useTranslations();
@@ -49,7 +50,6 @@ export default function ClassroomsPage(props: {
         teacher: user.username,
       })
     );
-    console.log('Getting code for user: ' + user);
   };
 
   useEffect(() => {
@@ -57,12 +57,10 @@ export default function ClassroomsPage(props: {
       const recv = JSON.parse(ev.data);
       if (recv.action === Actions.JOINED && codeRef.current) {
         // notify('New user joined');
-        console.log(`User: ${recv.value} joined, sending code`);
         setUsers((users) => [...users, recv.value]);
       } else if (recv.action === Actions.CODE_CHANGE) {
         codeRef.current = recv.value;
       } else if (recv.action === Actions.LEAVE) {
-        console.log('User:' + recv.value + ' left');
         setUsers((users) => users.filter((u) => u !== recv.value));
       }
 
@@ -143,6 +141,7 @@ export default function ClassroomsPage(props: {
             <ClassroomCodeEditor
               socketRef={socketRef}
               roomId={classroomId}
+              codeSyncAllowanceRef={codeSyncAllowanceRef}
               onCodeChange={(code) => {
                 codeRef.current = code;
               }}

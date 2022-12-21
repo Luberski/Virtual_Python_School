@@ -11,3 +11,7 @@ class Actions(Enum):
     LEAVE = 6
     GET_CODE = 7
     GET_CODE_RESPONSE = 8
+    CODE_SUBMITTED = 9
+    LOCK_CODE = 10
+    UNLOCK_CODE = 11
+    TEACHER_JOIN = 12

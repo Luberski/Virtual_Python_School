@@ -12,6 +12,7 @@ type EditorProps = {
   translations: (key: string) => string;
   socketRef: MutableRefObject<WebSocket>;
   codeRef: MutableRefObject<string>;
+  codeSyncAllowanceRef: MutableRefObject<boolean>;
   lastAction: number;
   setLastAction: (action: number) => void;
   roomId: string;
@@ -82,6 +83,7 @@ const editorDarkTheme = createTheme({
 export default function ClassroomCodeEditor({
   socketRef,
   codeRef,
+  codeSyncAllowanceRef,
   onCodeChange,
   lastAction,
   setLastAction,
@@ -108,15 +110,23 @@ export default function ClassroomCodeEditor({
   const onChange = useCallback(
     (value: string) => {
       onCodeChange(value);
-      if (
-        socketRef.current.readyState === 1 &&
-        lastAction !== Actions.CODE_CHANGE &&
-        origin !== 'setValue'
-      ) {
-        debouncedSendData(value);
+      if (codeSyncAllowanceRef.current) {
+        if (
+          socketRef.current.readyState === 1 &&
+          lastAction !== Actions.CODE_CHANGE &&
+          origin !== 'setValue'
+        ) {
+          debouncedSendData(value);
+        }
       }
     },
-    [debouncedSendData, lastAction, onCodeChange, socketRef]
+    [
+      codeSyncAllowanceRef,
+      debouncedSendData,
+      lastAction,
+      onCodeChange,
+      socketRef,
+    ]
   );
 
   const { setContainer } = useCodeMirror({
