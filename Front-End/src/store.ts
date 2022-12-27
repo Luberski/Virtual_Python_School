@@ -31,7 +31,6 @@ import surveysReducer from '@app/features/dynamic-courses/survey/surveysSlice';
 import dynamicLessonReducer from '@app/features/dynamic-courses/dynamicLessonSlice';
 import dashboardReducer from '@app/features/dashboard/dashboardSlice';
 import classroomsReducer from '@app/features/classrooms/classroomsSlice';
-import joinClassroomReducer from '@app/features/classrooms/joinClassroomSlice';
 import classroomSessionsReducer from '@app/features/classrooms/sessions/classroomSessionsSlice';
 
 const combinedReducers = combineReducers({
@@ -55,7 +54,6 @@ const combinedReducers = combineReducers({
   enrollDynamicCourse: enrollDynamicCourseReducer,
   dynamicCourse: dynamicCourseReducer,
   classrooms: classroomsReducer,
-  joinClassroom: joinClassroomReducer,
   classroomSessions: classroomSessionsReducer,
   dynamicCourses: dynamicCoursesReducer,
   dynamicLesson: dynamicLessonReducer,
@@ -107,7 +105,6 @@ export type RootState = {
   enrollDynamicCourse: ReturnType<typeof enrollDynamicCourseReducer>;
   dynamicCourse: ReturnType<typeof dynamicCourseReducer>;
   classrooms: ReturnType<typeof classroomsReducer>;
-  joinClassroom: ReturnType<typeof joinClassroomReducer>;
   classroomSessions: ReturnType<typeof classroomSessionsReducer>;
   dynamicCourses: ReturnType<typeof dynamicCoursesReducer>;
   dynamicLesson: ReturnType<typeof dynamicLessonReducer>;
