@@ -21,6 +21,10 @@ def get_classrooms_all(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
 ):
+    response_data: ClassroomSessionsAllResponseDataCollection = (
+        ClassroomSessionsAllResponseDataCollection()
+    )
+    
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
     if username is None:
@@ -34,16 +38,13 @@ def get_classrooms_all(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-    classrooms_response_data: ClassroomSessionsAllResponseDataCollection = (
-        ClassroomSessionsAllResponseDataCollection()
-    )
 
     user_session = (
         db.query(models.ClassroomSessions)
         .filter(models.ClassroomSessions.user_id == user.id)
         .all()
     )
-    
+
     if user_session is None:
         return JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -51,7 +52,7 @@ def get_classrooms_all(
         )
     else:
         for session in user_session:
-            classrooms_response_data.append(
+            response_data.append(
                 {
                     "id": session.id,
                     "classroom_id": session.classroom_id,
@@ -61,5 +62,5 @@ def get_classrooms_all(
             )
         return JSONResponse(
             status_code=status.HTTP_200_OK,
-            content={"data": classrooms_response_data.dict(), "error": None},
+            content={"data": response_data.dict(), "error": None},
         )

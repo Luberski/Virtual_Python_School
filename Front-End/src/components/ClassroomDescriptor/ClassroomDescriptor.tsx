@@ -18,7 +18,7 @@ export default function ClassroomDescriptor({
   const handleClassroomJoin = (classroomId: number) => async () => {
     try {
       await dispatch(joinClassroom(classroomId));
-      router.push(`/classrooms/${classroomId}`);
+      router.push(`/classrooms/${classroomId}/student`);
     } catch (error) {
       console.error(error);
     }

@@ -9,7 +9,6 @@ import debounce from 'debounce';
 import { useTheme } from 'next-themes';
 
 type EditorProps = {
-  translations: (key: string) => string;
   socketRef: MutableRefObject<WebSocket>;
   codeRef: MutableRefObject<string>;
   codeSyncAllowanceRef: MutableRefObject<boolean>;

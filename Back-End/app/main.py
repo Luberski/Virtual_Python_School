@@ -106,6 +106,7 @@ app = get_application()
 
 class ConnectionManager:
     def __init__(self):
+        # TODO: Multiple teachers
         self.active_connections: Dict[int, List[WebSocket]] = dict()
         self.existing_classes: List[int] = []
         self.users: Dict[str, WebSocket] = dict()
@@ -216,6 +217,11 @@ async def payload_handler(payload: dict, class_id: int, websocket: WebSocket):
 
     elif clientPayload_action == actions.Actions.UNLOCK_CODE.value:
         response_payload = await payload_creator(action=actions.Actions.UNLOCK_CODE.value, value=clientPayload_value)
+        teacher_websocket = manager.get_teacher()
+        await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=teacher_websocket)
+
+    elif clientPayload_action == actions.Actions.CLASSROOM_DELETED.value:
+        response_payload = await payload_creator(action=actions.Actions.CLASSROOM_DELETED.value, value=clientPayload_value)
         teacher_websocket = manager.get_teacher()
         await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=teacher_websocket)
 

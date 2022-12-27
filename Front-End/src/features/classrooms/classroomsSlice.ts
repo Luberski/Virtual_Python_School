@@ -86,6 +86,27 @@ export const joinClassroom = createAsyncThunk<ApiPayload<Classroom>, number>(
   }
 );
 
+export const deleteClassroom = createAsyncThunk<ApiPayload<Classroom>, number>(
+  'api/classroom/delete',
+  async (id, thunkApi) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.delete(`classroom/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json();
+      return data as ApiPayload<Classroom>;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
 export const classroomsSlice = createSlice({
   name: 'classrooms',
   initialState,
@@ -169,6 +190,29 @@ export const classroomsSlice = createSlice({
       })
       .addCase(createClassroom.pending, (state) => {
         state.status = 'pending';
+      })
+      .addCase(deleteClassroom.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        deleteClassroom.fulfilled,
+        (state, { payload }: { payload: ApiPayload<Classroom> }) => {
+          if (payload.error) {
+            state.error = payload.error;
+            state.status = 'failed';
+          } else {
+            if (state.data != null) {
+              state.data = state.data.filter(
+                (classroom) => classroom.id !== payload.data.id
+              );
+            }
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(deleteClassroom.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });

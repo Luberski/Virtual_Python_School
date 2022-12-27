@@ -56,3 +56,19 @@ class ClassroomJoinData(BaseModel):
 
 class ClassroomJoinRequest(BaseJSONRequest):
     data: ClassroomJoinData
+
+
+class ClassroomDeleteResponseData(BaseModel):
+    id: int
+
+
+class ClassroomDeleteResponse(BaseJSONResponse):
+    data: ClassroomDeleteResponseData
+
+
+class ClassroomDeleteData(BaseModel):
+    classroom_id: int
+
+
+class ClassroomDeleteRequest(BaseJSONRequest):
+    data: ClassroomDeleteData

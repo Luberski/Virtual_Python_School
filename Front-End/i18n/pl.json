@@ -76,14 +76,25 @@
     "enrolled-lessons": "Przypisane lekcje"
   },
   "Classrooms": {
-    "classrooms": "Wirtualna klasy",
+    "cancel": "Anuluj",
+    "create": "Stwórz",
+    "delete": "Usuń",
+    "delete-classroom": "Usuń klasę",
+    "allow-editing": "Pozwól na edycję",
+    "lock-editing": "Zablokuj edycję",
+    "submit": "Wyślij",
+    "run": "Uruchom",
+    "users": "Uczestnicy",
+    "classrooms": "Wirtualna klasa",
     "join-or-create": "Stwórz własną, lub dołącz do istniejącej",
     "no-classrooms-found": "Nie znaleziono klas",
-    "create": "Stwórz nową klasę",
+    "create-new": "Stwórz nową klasę",
     "classroom-name": "Nazwa klasy",
     "link-join": "Dołącz za pomocą linku",
     "link": "Link",
-    "is-public-checkbox": "Ustaw klasę jako publiczną"
+    "is-public-checkbox": "Ustaw klasę jako publiczną",
+    "delete-popup-title": "Czy jesteś pewny że chcesz USUNĄĆ tą klasę?",
+    "classroom-deleted": "Klasa została usunięta pomyślnie"
   },
   "Playground": {
     "run": "Uruchom",
@@ -174,6 +185,8 @@
     "title-dynamic-course": "Dynamiczny kurs",
     "switch-locale": "Zmień język",
     "language": "Język",
-    "title-classrooms": "Wirtualna klasa"
+    "title-classrooms": "Wirtualna klasa",
+    "title-classrooms-leader": "Wirtualna klasa - Prowadzący",
+    "title-classrooms-participant": "Wirtualna klasa - Uczestnik"
   }
 }

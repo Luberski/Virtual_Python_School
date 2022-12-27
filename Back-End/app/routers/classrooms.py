@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Union
+
 from fastapi import APIRouter, Depends, status, Query, Path
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
@@ -14,6 +15,9 @@ from app.schemas.classroom import (
     ClassroomsAllResponseDataCollection,
     ClassroomJoinRequest,
     ClassroomJoinResponse,
+    ClassroomDeleteRequest,
+    ClassroomDeleteResponse,
+    ClassroomDeleteResponseData,
 )
 from app.settings import ADMIN_ID
 
@@ -90,9 +94,9 @@ def create_classroom(
     )
 
 
-@router.delete("/classrooms/{classroom_id}", tags=["classrooms"])
+@router.delete("/classroom/{classroom_id}", tags=["classrooms"], response_model=ClassroomDeleteResponse)
 def delete_classroom(
-    classroom_id: int = Path(title="id of the classroom to delete"),
+    classroom_id: int = Path(title="Id of the classroom to delete"),
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
 ):
@@ -103,6 +107,29 @@ def delete_classroom(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
+
+    # Check if classroom exists
+    classroom = db.query(models.Classrooms).filter_by(
+        id=classroom_id).first()
+    if classroom is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Classroom not found"},
+        )
+
+    # Check if user is teacher of the classroom
+    user = db.query(models.User).filter_by(username=username).first()
+    if classroom.teacher_id != user.id:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+
+    # Delete all sessions of the classroom
+    db.query(models.ClassroomSessions).filter_by(
+        classroom_id=classroom_id).delete()
+
+    # Delete classroom
     db.query(models.Classrooms).filter_by(id=classroom_id).delete()
 
     db.commit()
@@ -111,7 +138,7 @@ def delete_classroom(
         status_code=status.HTTP_200_OK,
         content={
             "data": {
-                "id": classroom_id,
+                "id": classroom_id
             },
             "error": None,
         },

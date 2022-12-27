@@ -76,14 +76,25 @@
     "enrolled-lessons": "Enrolled lessons"
   },
   "Classrooms": {
+    "cancel": "Cancel",
+    "create": "Create",
+    "delete": "Delete",
+    "delete-classroom": "Delete classroom",
+    "allow-editing": "Allow editing",
+    "lock-editing": "Lock editing",
+    "submit": "Submit",
+    "run": "Run",
+    "users": "Users",
     "classrooms": "Classrooms",
     "join-or-create": "Join or create a classroom",
     "no-classrooms-found": "No classrooms found",
-    "create": "Create new classroom",
+    "create-new": "Create new classroom",
     "classroom-name": "Classroom name",
     "link-join": "Join with a link",
     "link": "Link",
-    "is-public-checkbox": "Make it visible to everyone"
+    "is-public-checkbox": "Make classroom public",
+    "delete-popup-title": "Are you sure you want to DELETE this classroom?",
+    "classroom-deleted": "Classroom has been deleted successfully"
   },
   "Playground": {
     "run": "Run",
@@ -173,6 +184,8 @@
     "title-dynamic-course": "Dynamic course",
     "switch-locale": "Switch locale",
     "language": "Language",
-    "title-classrooms": "Virtual classroom"
+    "title-classrooms": "Virtual classroom",
+    "title-classrooms-leader": "Virtual classroom - Leader page",
+    "title-classrooms-member": "Virtual classroom - Participant page"
   }
 }

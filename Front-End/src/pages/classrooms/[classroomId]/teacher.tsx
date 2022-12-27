@@ -1,24 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useDispatch } from 'react-redux';
-import { useAuthRedirect } from '@app/hooks';
-import { Actions } from '@app/constants';
+import { useAppSelector, useAuthRedirect } from '@app/hooks';
+import { Actions, WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
 import Button, { ButtonVariant } from '@app/components/Button';
 import toast from 'react-hot-toast';
 import FancyToast from '@app/components/FancyToast';
+import {
+  deleteClassroom,
+  selectClassroomsStatus,
+} from '@app/features/classrooms/classroomsSlice';
+import StyledDialog from '@app/components/StyledDialog';
+import Head from 'next/head';
 
-export default function ClassroomsPage(props: {
+type ClassroomTeacherPageProps = {
   classroomId: string;
-  i18n: unknown;
-}) {
+};
+
+export default function ClassroomsTeacherPage({
+  classroomId,
+}: ClassroomTeacherPageProps) {
+  const [isDeleteClassroomDialogOpen, setIsDeleteClassroomDialogOpen] =
+    useState(false);
+  const classroomStatus = useAppSelector(selectClassroomsStatus);
   const codeRef = useRef(null);
   const codeSyncAllowanceRef = useRef(true);
-  const { classroomId } = props;
   const [user, isLoggedIn] = useAuthRedirect();
-  const t = useTranslations();
+  const translations = useTranslations();
   const dispatch = useDispatch();
 
   const [lastAction, setLastAction] = useState(null);
@@ -26,6 +37,38 @@ export default function ClassroomsPage(props: {
   const [usersSubmitted, setUsersSubmitted] = useState([]);
   const [isCodeSyncAllowed, setIsCodeSyncAllowed] = useState(true);
   const socketRef = useRef(null);
+
+  const onClassroomDeleteSubmit = async () => {
+    try {
+      await dispatch(deleteClassroom(parseInt(classroomId)))
+        .unwrap()
+        .then((result) => {
+          if (result.data.id.toString() === classroomId) {
+            notify(translations['Classrooms.classroom-deleted']);
+            // Send message to all students that the classroom has been deleted
+            socketRef.current.send(
+              JSON.stringify({
+                action: Actions.CLASSROOM_DELETED,
+                classroomId: classroomId,
+                value: null,
+              })
+            );
+
+            socketRef.current.close();
+            window.location.href = '/classrooms';
+          }
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const closeDeleteClassroomDialog = () => {
+    setIsDeleteClassroomDialogOpen(false);
+  };
+  const openDeleteClassroomDialog = () => {
+    setIsDeleteClassroomDialogOpen(true);
+  };
 
   const notify = (message: string) =>
     toast.custom(
@@ -100,6 +143,9 @@ export default function ClassroomsPage(props: {
     };
 
     const init = async () => {
+      // TODO: Check if the classroom exists -> if not, redirect to 404
+      // TODO: Check if the user is the teacher of the classroom -> if not, redirect to 404
+
       const ws = await createSocket();
       socketRef.current = ws;
       codeSyncAllowanceRef.current = true;
@@ -114,87 +160,125 @@ export default function ClassroomsPage(props: {
   }, [classroomId, user.name, user.username]);
 
   return (
-    <div className="h-full w-full">
-      <NavBar
-        user={user}
-        isLoggedIn={isLoggedIn}
-        logout={() =>
-          dispatch({
-            type: 'auth/logout',
-          })
-        }
-      />
-      <div className="flex h-screen w-full flex-row">
-        <div className="flex h-full w-1/6 flex-col border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
-          <h1 className="mb-4 text-center text-2xl font-bold">Users</h1>
-          {users.map((u) => (
+    <>
+      <Head>
+        <title>
+          {translations('Meta.title-courses')} - {WEBSITE_TITLE}
+        </title>
+      </Head>
+      <div className="flex h-screen w-full flex-col">
+        <NavBar
+          user={user}
+          isLoggedIn={isLoggedIn}
+          logout={() =>
+            dispatch({
+              type: 'auth/logout',
+            })
+          }
+        />
+        <div className="flex h-full flex-1 flex-row">
+          <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
+            <h1 className="mb-4 text-center text-2xl font-bold">
+              {translations('Classrooms.users')}
+            </h1>
+            {users.map((u) => (
+              <Button
+                key={u}
+                onClick={() => {
+                  get_user_code(u);
+                }}
+                type="button"
+                variant={ButtonVariant.PRIMARY}
+                disabled={!usersSubmitted.includes(u)}>
+                {u}
+              </Button>
+            ))}
+
             <Button
-              key={u}
-              onClick={() => {
-                get_user_code(u);
-              }}
+              variant={ButtonVariant.DANGER}
               type="button"
-              variant={ButtonVariant.PRIMARY}
-              disabled={!usersSubmitted.includes(u)}>
-              {u}
+              onClick={openDeleteClassroomDialog}>
+              {translations('Classrooms.delete-classroom')}
             </Button>
-          ))}
-        </div>
 
-        <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
-          <div className="flex h-16 w-full flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
-            <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
-              Run
-            </Button>
-            {!isCodeSyncAllowed ? (
-              <Button
-                variant={ButtonVariant.FLAT_SECONDARY}
-                onClick={() => {
-                  setIsCodeSyncAllowed(true);
-
-                  socketRef.current.send(
-                    JSON.stringify({
-                      action: Actions.LOCK_CODE,
-                      value: user.username,
-                    })
-                  );
-                }}>
-                Lock editing
-              </Button>
-            ) : (
-              <Button
-                variant={ButtonVariant.FLAT_SECONDARY}
-                onClick={() => {
-                  setIsCodeSyncAllowed(false);
-                  socketRef.current.send(
-                    JSON.stringify({
-                      action: Actions.UNLOCK_CODE,
-                      value: user.username,
-                    })
-                  );
-                }}>
-                Allow editing
-              </Button>
-            )}
+            <StyledDialog
+              title={translations('Classrooms.delete-popup-title')}
+              isOpen={isDeleteClassroomDialogOpen}
+              onClose={closeDeleteClassroomDialog}>
+              <div className="py-6">
+                <div className="mt-6 flex flex-row items-center justify-center">
+                  <Button
+                    onClick={closeDeleteClassroomDialog}
+                    className="mr-2"
+                    variant={ButtonVariant.PRIMARY}>
+                    {translations('Classrooms.cancel')}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={ButtonVariant.DANGER}
+                    onClick={onClassroomDeleteSubmit}>
+                    {translations('Classrooms.delete')}
+                  </Button>
+                </div>
+              </div>
+            </StyledDialog>
           </div>
-          <div className="w-full">
-            <ClassroomCodeEditor
-              socketRef={socketRef}
-              roomId={classroomId}
-              codeSyncAllowanceRef={codeSyncAllowanceRef}
-              onCodeChange={(code) => {
-                codeRef.current = code;
-              }}
-              lastAction={lastAction}
-              setLastAction={setLastAction}
-              codeRef={codeRef}
-              translations={t}
-              user={user}
-            />
+
+          <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
+            <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
+              <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
+                {translations('Classrooms.run')}
+              </Button>
+              {!isCodeSyncAllowed ? (
+                <Button
+                  variant={ButtonVariant.FLAT_SECONDARY}
+                  onClick={() => {
+                    setIsCodeSyncAllowed(true);
+
+                    socketRef.current.send(
+                      JSON.stringify({
+                        action: Actions.LOCK_CODE,
+                        value: user.username,
+                      })
+                    );
+                  }}>
+                  {translations('Classrooms.lock-editing')}
+                </Button>
+              ) : (
+                <Button
+                  variant={ButtonVariant.FLAT_SECONDARY}
+                  onClick={() => {
+                    setIsCodeSyncAllowed(false);
+                    socketRef.current.send(
+                      JSON.stringify({
+                        action: Actions.UNLOCK_CODE,
+                        value: user.username,
+                      })
+                    );
+                  }}>
+                  {translations('Classrooms.allow-editing')}
+                </Button>
+              )}
+            </div>
+            <div>
+              <ClassroomCodeEditor
+                socketRef={socketRef}
+                roomId={classroomId}
+                codeSyncAllowanceRef={codeSyncAllowanceRef}
+                onCodeChange={(code) => {
+                  codeRef.current = code;
+                }}
+                lastAction={lastAction}
+                setLastAction={setLastAction}
+                codeRef={codeRef}
+                translations={translations}
+                user={user}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -52,6 +52,7 @@ export default function Classrooms({
         classroomData?.length > 0) ||
       (classroomSessionsData?.length > 0 && shouldRedirect)
     ) {
+      // TODO: Redirect to the teacher/student classroom page depending on the user role
       router.push(`/classrooms/${redirectId}`);
     }
   }, [
@@ -124,11 +125,11 @@ export default function Classrooms({
           type="button"
           onClick={openCreateClassroomDialog}
           ref={cancelButtonRef}>
-          {translations('Classrooms.create')}
+          {translations('Classrooms.create-new')}
         </Button>
 
         <StyledDialog
-          title={translations('Classrooms.create')}
+          title={translations('Classrooms.create-new')}
           isOpen={isCreateClassroomDialogOpen}
           onClose={closeCreateClassroomDialog}>
           <div className="py-6">

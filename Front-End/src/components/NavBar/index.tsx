@@ -88,7 +88,8 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                 <Link href="/classrooms" passHref={true}>
                   <ButtonLink
                     variant={
-                      router.pathname === '/classrooms'
+                      router.pathname === '/classrooms' ||
+                      router.pathname === '/classrooms/[classroomId]'
                         ? ButtonLinkVariant.PRIMARY
                         : ButtonLinkVariant.FLAT_SECONDARY
                     }>
