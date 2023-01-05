@@ -169,6 +169,9 @@ class ConnectionManager:
     def get_teacher(self, class_id: int):
         return self.teacher[class_id]
 
+    def get_all_users_in_class(self, class_id: int):
+        return self.active_connections[class_id]
+
 
 manager = ConnectionManager()
 
@@ -188,6 +191,11 @@ async def payload_handler(payload: dict, class_id: int, websocket: WebSocket):
 
     elif clientPayload_action == actions.Actions.TEACHER_JOIN.value:
         manager.set_teacher(class_id, websocket)
+        users = []
+        for connection in manager.get_all_users_in_class(class_id):
+            users.append(manager.get_user_id_by_websocket(connection))
+        response_payload = await payload_creator(action=actions.Actions.SYNC_USERS.value, value=users)
+        await manager.send_personal_payload(payload=response_payload, websocket=websocket)
 
     elif clientPayload_action == actions.Actions.SYNC_CODE.value:
         response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))

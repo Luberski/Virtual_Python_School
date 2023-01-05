@@ -26,6 +26,7 @@ export enum Actions {
   UNLOCK_CODE = 11,
   TEACHER_JOIN = 12,
   CLASSROOM_DELETED = 13,
+  SYNC_USERS = 14,
 }
 
 export enum ReadyState {

@@ -97,7 +97,7 @@
     "delete-popup-title": "Are you sure you want to DELETE this classroom?",
     "classroom-deleted": "Classroom has been deleted successfully",
     "classroom-deleted-student": "Classroom has been deleted by the teacher",
-    "disconnected": "You have been disconnected from the classroom, please refresh the page",
+    "disconnected": "Lost connection with classroom server, please refresh the page",
     "student-joined": "has joined the classroom",
     "student-left": "has left the classroom"
   },

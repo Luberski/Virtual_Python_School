@@ -126,27 +126,27 @@ export default function ClassroomsTeacherPage({
       }
     );
 
-    const notifyClassroomDeleted = (i18msg: string) =>
-      toast.custom(
-        (to) => (
-          <button
-            type="button"
-            className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
-            onClick={() => toast.dismiss(to.id)}>
-            <div className="flex justify-center space-x-1">
-              <InformationCircleIcon className="h-6 w-6" />
-              <div>
-                <p className="font-bold">{i18msg}</p>
-              </div>
+  const notifyClassroomDeleted = (i18msg: string) =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{i18msg}</p>
             </div>
-          </button>
-        ),
-        {
-          id: 'classroom-deleted-notification',
-          position: 'top-center',
-          duration: 1000,
-        }
-      );
+          </div>
+        </button>
+      ),
+      {
+        id: 'classroom-deleted-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
 
   const onClassroomDeleteSubmit = async () => {
     try {
@@ -154,7 +154,9 @@ export default function ClassroomsTeacherPage({
         .unwrap()
         .then((result) => {
           if (result.data.id.toString() === classroomId) {
-            notifyClassroomDeleted(translations('Classrooms.classroom-deleted'));
+            notifyClassroomDeleted(
+              translations('Classrooms.classroom-deleted')
+            );
             // Send message to all students that the classroom has been deleted
             socketRef.current.send(
               JSON.stringify({
@@ -198,10 +200,10 @@ export default function ClassroomsTeacherPage({
     const onMessage = (ev: { data: string }) => {
       const recv = JSON.parse(ev.data);
       if (recv.action === Actions.JOINED && codeRef.current) {
+        setUsers((users) => [...users, recv.value]);
         notifyUserJoined(
           recv.value + ' ' + translations('Classrooms.student-joined')
         );
-        setUsers((users) => [...users, recv.value]);
       } else if (recv.action === Actions.CODE_CHANGE) {
         codeRef.current = recv.value;
       } else if (recv.action === Actions.LEAVE) {
@@ -215,6 +217,8 @@ export default function ClassroomsTeacherPage({
         codeRef.current = recv.value;
         setIsCodeSyncAllowed(false);
         setUsersSubmitted([]);
+      } else if (recv.action === Actions.SYNC_USERS) {
+        setUsers(recv.value.filter((u) => u !== null));
       }
 
       setLastAction(parseInt(recv.action));
