@@ -106,12 +106,12 @@ app = get_application()
 
 class ConnectionManager:
     def __init__(self):
-        # TODO: Multiple teachers
         self.active_connections: Dict[int, List[WebSocket]] = dict()
         self.existing_classes: List[int] = []
         self.users: Dict[str, WebSocket] = dict()
-        self.teacher: WebSocket = None
-        self.code: str = ""
+        self.teacher: Dict[int, WebSocket] = dict()
+        self.sync_code: Dict[str, WebSocket] = dict()
+        # TODO: Support for assignments
 
     async def connect(self, class_id: int, websocket: WebSocket):
         await websocket.accept()
@@ -154,17 +154,17 @@ class ConnectionManager:
             if user_websocket == websocket:
                 return user_id
 
-    def set_code(self, code: str):
-        self.code = code
+    def set_code(self, class_id: int, code: str):
+        self.sync_code[class_id] = code
 
-    def get_code(self):
-        return self.code
+    def get_code(self, class_id: int):
+        return self.sync_code[class_id]
 
-    def set_teacher(self, websocket: WebSocket):
-        self.teacher = websocket
+    def set_teacher(self, class_id: int, websocket: WebSocket):
+        self.teacher[class_id] = websocket
 
-    def get_teacher(self):
-        return self.teacher
+    def get_teacher(self, class_id: int):
+        return self.teacher[class_id]
 
 
 manager = ConnectionManager()
@@ -179,50 +179,50 @@ async def payload_handler(payload: dict, class_id: int, websocket: WebSocket):
         manager.set_user(clientPayload_value, websocket)
         await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=websocket)
 
-        if manager.get_code() and len(manager.active_connections[class_id]) > 1:
-            response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code())
+        if manager.get_code(class_id) and len(manager.active_connections[class_id]) > 1:
+            response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
             await manager.send_personal_payload(payload=response_payload, websocket=websocket)
 
     elif clientPayload_action == actions.Actions.TEACHER_JOIN.value:
-        manager.set_teacher(websocket)
+        manager.set_teacher(class_id, websocket)
 
     elif clientPayload_action == actions.Actions.SYNC_CODE.value:
-        response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code())
+        response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
         await manager.send_personal_payload(payload=response_payload, websocket=websocket)
 
     elif clientPayload_action == actions.Actions.CODE_CHANGE.value:
-        manager.set_code(clientPayload_value)
-        response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code())
+        manager.set_code(class_id, clientPayload_value)
+        response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
         await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=websocket)
 
     elif clientPayload_action == actions.Actions.GET_CODE.value:
-        response_payload = await payload_creator(action=actions.Actions.GET_CODE.value, value=manager.get_code())
+        response_payload = await payload_creator(action=actions.Actions.GET_CODE.value, value=manager.get_code(class_id))
         websocket = manager.get_user(clientPayload_value)
         await manager.send_personal_payload(payload=response_payload, websocket=websocket)
 
     elif clientPayload_action == actions.Actions.GET_CODE_RESPONSE.value:
         response_payload = await payload_creator(action=actions.Actions.GET_CODE_RESPONSE.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher()
+        teacher_websocket = manager.get_teacher(class_id)
         await manager.send_personal_payload(payload=response_payload, websocket=teacher_websocket)
 
     elif clientPayload_action == actions.Actions.CODE_SUBMITTED.value:
         response_payload = await payload_creator(action=actions.Actions.CODE_SUBMITTED.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher()
+        teacher_websocket = manager.get_teacher(class_id)
         await manager.send_personal_payload(payload=response_payload, websocket=teacher_websocket)
 
     elif clientPayload_action == actions.Actions.LOCK_CODE.value:
         response_payload = await payload_creator(action=actions.Actions.LOCK_CODE.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher()
+        teacher_websocket = manager.get_teacher(class_id)
         await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=teacher_websocket)
 
     elif clientPayload_action == actions.Actions.UNLOCK_CODE.value:
         response_payload = await payload_creator(action=actions.Actions.UNLOCK_CODE.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher()
+        teacher_websocket = manager.get_teacher(class_id)
         await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=teacher_websocket)
 
     elif clientPayload_action == actions.Actions.CLASSROOM_DELETED.value:
         response_payload = await payload_creator(action=actions.Actions.CLASSROOM_DELETED.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher()
+        teacher_websocket = manager.get_teacher(class_id)
         await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=teacher_websocket)
 
 
