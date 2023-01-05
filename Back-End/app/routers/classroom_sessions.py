@@ -24,7 +24,7 @@ def get_classrooms_all(
     response_data: ClassroomSessionsAllResponseDataCollection = (
         ClassroomSessionsAllResponseDataCollection()
     )
-    
+
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
     if username is None:

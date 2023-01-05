@@ -52,8 +52,12 @@ export default function Classrooms({
         classroomData?.length > 0) ||
       (classroomSessionsData?.length > 0 && shouldRedirect)
     ) {
-      // TODO: Redirect to the teacher/student classroom page depending on the user role
-      router.push(`/classrooms/${redirectId}`);
+      // TODO: Rewrite classroomSessionsData to return a single object instead of an array
+      if (classroomSessionsData[0].is_teacher) {
+        router.push(`/classrooms/${redirectId}/teacher`);
+      } else {
+        router.push(`/classrooms/${redirectId}/student`);
+      }
     }
   }, [
     shouldRedirect,

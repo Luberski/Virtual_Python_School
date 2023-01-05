@@ -158,7 +158,10 @@ class ConnectionManager:
         self.sync_code[class_id] = code
 
     def get_code(self, class_id: int):
-        return self.sync_code[class_id]
+        if class_id in self.sync_code:
+            return self.sync_code[class_id]
+        else:
+            return None
 
     def set_teacher(self, class_id: int, websocket: WebSocket):
         self.teacher[class_id] = websocket

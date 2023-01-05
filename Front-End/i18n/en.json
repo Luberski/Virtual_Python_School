@@ -86,6 +86,7 @@
     "run": "Run",
     "users": "Users",
     "classrooms": "Classrooms",
+    "connected": "Connected with classroom server",
     "join-or-create": "Join or create a classroom",
     "no-classrooms-found": "No classrooms found",
     "create-new": "Create new classroom",
@@ -94,7 +95,11 @@
     "link": "Link",
     "is-public-checkbox": "Make classroom public",
     "delete-popup-title": "Are you sure you want to DELETE this classroom?",
-    "classroom-deleted": "Classroom has been deleted successfully"
+    "classroom-deleted": "Classroom has been deleted successfully",
+    "classroom-deleted-student": "Classroom has been deleted by the teacher",
+    "disconnected": "You have been disconnected from the classroom, please refresh the page",
+    "student-joined": "has joined the classroom",
+    "student-left": "has left the classroom"
   },
   "Playground": {
     "run": "Run",

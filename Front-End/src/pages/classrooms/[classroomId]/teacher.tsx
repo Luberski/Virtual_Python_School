@@ -7,14 +7,14 @@ import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
 import Button, { ButtonVariant } from '@app/components/Button';
-import toast from 'react-hot-toast';
-import FancyToast from '@app/components/FancyToast';
+import toast, { Toaster } from 'react-hot-toast';
 import {
   deleteClassroom,
   selectClassroomsStatus,
 } from '@app/features/classrooms/classroomsSlice';
 import StyledDialog from '@app/components/StyledDialog';
 import Head from 'next/head';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 type ClassroomTeacherPageProps = {
   classroomId: string;
@@ -38,13 +38,123 @@ export default function ClassroomsTeacherPage({
   const [isCodeSyncAllowed, setIsCodeSyncAllowed] = useState(true);
   const socketRef = useRef(null);
 
+  const notifyUserJoined = (i18msg: string) =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{i18msg}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'classroom-user-joined-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
+  const notifyUserLeft = (i18msg: string) =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{i18msg}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'classroom-user-left-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
+  const notifyConnected = (i18msg: string) =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{i18msg}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'classroom-connected-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
+  const notifyDisconnected = (i18msg: string) =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{i18msg}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'classroom-disconnected-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
+    const notifyClassroomDeleted = (i18msg: string) =>
+      toast.custom(
+        (to) => (
+          <button
+            type="button"
+            className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+            onClick={() => toast.dismiss(to.id)}>
+            <div className="flex justify-center space-x-1">
+              <InformationCircleIcon className="h-6 w-6" />
+              <div>
+                <p className="font-bold">{i18msg}</p>
+              </div>
+            </div>
+          </button>
+        ),
+        {
+          id: 'classroom-deleted-notification',
+          position: 'top-center',
+          duration: 1000,
+        }
+      );
+
   const onClassroomDeleteSubmit = async () => {
     try {
       await dispatch(deleteClassroom(parseInt(classroomId)))
         .unwrap()
         .then((result) => {
           if (result.data.id.toString() === classroomId) {
-            notify(translations['Classrooms.classroom-deleted']);
+            notifyClassroomDeleted(translations('Classrooms.classroom-deleted'));
             // Send message to all students that the classroom has been deleted
             socketRef.current.send(
               JSON.stringify({
@@ -70,23 +180,6 @@ export default function ClassroomsTeacherPage({
     setIsDeleteClassroomDialogOpen(true);
   };
 
-  const notify = (message: string) =>
-    toast.custom(
-      (to) =>
-        to.visible && (
-          <FancyToast
-            message={message}
-            toastObject={to}
-            className="border-indigo-500 bg-indigo-200 text-indigo-900"
-          />
-        ),
-      {
-        id: 'classroom-message',
-        position: 'top-center',
-        duration: 1000,
-      }
-    );
-
   const get_user_code = async (student: string) => {
     socketRef.current.send(
       JSON.stringify({
@@ -105,10 +198,16 @@ export default function ClassroomsTeacherPage({
     const onMessage = (ev: { data: string }) => {
       const recv = JSON.parse(ev.data);
       if (recv.action === Actions.JOINED && codeRef.current) {
+        notifyUserJoined(
+          recv.value + ' ' + translations('Classrooms.student-joined')
+        );
         setUsers((users) => [...users, recv.value]);
       } else if (recv.action === Actions.CODE_CHANGE) {
         codeRef.current = recv.value;
       } else if (recv.action === Actions.LEAVE) {
+        notifyUserLeft(
+          recv.value + ' ' + translations('Classrooms.student-left')
+        );
         setUsers((users) => users.filter((u) => u !== recv.value));
       } else if (recv.action === Actions.CODE_SUBMITTED) {
         setUsersSubmitted((usersSubmitted) => [...usersSubmitted, recv.value]);
@@ -134,7 +233,7 @@ export default function ClassroomsTeacherPage({
         );
       };
       ws.onclose = () => {
-        notify('Connection closed');
+        notifyDisconnected(translations('Classrooms.disconnected'));
       };
       ws.onerror = (error) => {
         console.error(error);
@@ -149,7 +248,7 @@ export default function ClassroomsTeacherPage({
       const ws = await createSocket();
       socketRef.current = ws;
       codeSyncAllowanceRef.current = true;
-      notify('Connected');
+      notifyConnected(translations('Classrooms.connected'));
     };
 
     init();
@@ -161,6 +260,9 @@ export default function ClassroomsTeacherPage({
 
   return (
     <>
+      <div>
+        <Toaster position="top-center" reverseOrder={false} />
+      </div>
       <Head>
         <title>
           {translations('Meta.title-courses')} - {WEBSITE_TITLE}
@@ -178,22 +280,23 @@ export default function ClassroomsTeacherPage({
         />
         <div className="flex h-full flex-1 flex-row">
           <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
-            <h1 className="mb-4 text-center text-2xl font-bold">
-              {translations('Classrooms.users')}
-            </h1>
-            {users.map((u) => (
-              <Button
-                key={u}
-                onClick={() => {
-                  get_user_code(u);
-                }}
-                type="button"
-                variant={ButtonVariant.PRIMARY}
-                disabled={!usersSubmitted.includes(u)}>
-                {u}
-              </Button>
-            ))}
-
+            <div className="flex flex-col justify-start align-middle">
+              <h1 className="mb-4 text-center text-2xl font-bold">
+                {translations('Classrooms.users')}
+              </h1>
+              {users.map((u) => (
+                <Button
+                  key={u}
+                  onClick={() => {
+                    get_user_code(u);
+                  }}
+                  type="button"
+                  variant={ButtonVariant.PRIMARY}
+                  disabled={!usersSubmitted.includes(u)}>
+                  {u}
+                </Button>
+              ))}
+            </div>
             <Button
               variant={ButtonVariant.DANGER}
               type="button"
