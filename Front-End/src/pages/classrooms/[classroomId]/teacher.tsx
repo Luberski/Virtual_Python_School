@@ -348,6 +348,12 @@ export default function ClassroomsTeacherPage({
                         value: user.username,
                       })
                     );
+                    socketRef.current.send(
+                      JSON.stringify({
+                        action: Actions.CODE_CHANGE,
+                        value: codeRef.current,
+                      })
+                    );
                   }}>
                   {translations('Classrooms.lock-editing')}
                 </Button>

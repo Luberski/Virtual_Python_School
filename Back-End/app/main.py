@@ -109,7 +109,7 @@ class ConnectionManager:
         self.active_connections: Dict[int, List[WebSocket]] = dict()
         self.existing_classes: List[int] = []
         self.users: Dict[str, WebSocket] = dict()
-        self.teacher: Dict[int, WebSocket] = dict()
+        self.teachers: Dict[int, WebSocket] = dict()
         self.sync_code: Dict[str, WebSocket] = dict()
         # TODO: Support for assignments
 
@@ -164,10 +164,10 @@ class ConnectionManager:
             return None
 
     def set_teacher(self, class_id: int, websocket: WebSocket):
-        self.teacher[class_id] = websocket
+        self.teachers[class_id] = websocket
 
     def get_teacher(self, class_id: int):
-        return self.teacher[class_id]
+        return self.teachers[class_id]
 
     def get_all_users_in_class(self, class_id: int):
         return self.active_connections[class_id]
@@ -190,12 +190,16 @@ async def payload_handler(payload: dict, class_id: int, websocket: WebSocket):
             await manager.send_personal_payload(payload=response_payload, websocket=websocket)
 
     elif clientPayload_action == actions.Actions.TEACHER_JOIN.value:
-        manager.set_teacher(class_id, websocket)
-        users = []
-        for connection in manager.get_all_users_in_class(class_id):
-            users.append(manager.get_user_id_by_websocket(connection))
-        response_payload = await payload_creator(action=actions.Actions.SYNC_USERS.value, value=users)
-        await manager.send_personal_payload(payload=response_payload, websocket=websocket)
+        if(class_id in manager.teachers):
+            users = []
+            for connection in manager.get_all_users_in_class(class_id):
+                users.append(manager.get_user_id_by_websocket(connection))
+            response_users = await payload_creator(action=actions.Actions.SYNC_USERS.value, value=users)
+            response_code = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
+            await manager.send_personal_payload(payload=response_users, websocket=websocket)
+            await manager.send_personal_payload(payload=response_code, websocket=websocket)
+        else:
+            manager.set_teacher(class_id, websocket)
 
     elif clientPayload_action == actions.Actions.SYNC_CODE.value:
         response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
