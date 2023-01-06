@@ -41,33 +41,6 @@ export default function Classrooms({
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [redirectId, setRedirectId] = useState(0);
 
-  useEffect(() => {
-    fetchSessions().catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (
-      (shouldRedirect &&
-        classroomStatus === 'succeeded' &&
-        classroomData?.length > 0) ||
-      (classroomSessionsData?.length > 0 && shouldRedirect)
-    ) {
-      // TODO: Rewrite classroomSessionsData to return a single object instead of an array
-      if (classroomSessionsData[0].is_teacher) {
-        router.push(`/classrooms/${redirectId}/teacher`);
-      } else {
-        router.push(`/classrooms/${redirectId}/student`);
-      }
-    }
-  }, [
-    shouldRedirect,
-    classroomStatus,
-    classroomData,
-    router,
-    classroomSessionsData,
-    redirectId,
-  ]);
-
   const { register, handleSubmit, setValue } =
     useForm<{
       name: string;
@@ -102,23 +75,13 @@ export default function Classrooms({
         .unwrap()
         .then((result) => {
           if (result.data) {
-            redirectToClassroom(result.data.id);
+            router.push(`/classrooms/${result.data.id}/teacher`);
           }
         });
     } catch (error) {
       console.error(error);
     }
     closeCreateClassroomDialog();
-  };
-
-  const fetchSessions = async () => {
-    await dispatch(fetchClassroomSessions())
-      .unwrap()
-      .then((result) => {
-        if (result.data.length > 0) {
-          redirectToClassroom(result.data[0].classroom_id);
-        }
-      });
   };
 
   return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import { useDispatch } from 'react-redux';
@@ -6,7 +6,6 @@ import { Toaster } from 'react-hot-toast';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import { WEBSITE_TITLE } from '@app/constants';
 import Footer from '@app/components/Footer';
-
 import NavBar from '@app/components/NavBar';
 import { wrapper } from '@app/store';
 import {
@@ -14,12 +13,33 @@ import {
   selectClassroomsData,
 } from '@app/features/classrooms/classroomsSlice';
 import Classrooms from '@app/features/classrooms/Classrooms';
+import {
+  fetchClassroomSessions,
+  selectClassroomSessionsData,
+} from '@app/features/classrooms/sessions/classroomSessionsSlice';
+import router from 'next/router';
 
 export default function ClassroomsPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const t = useTranslations();
   const dispatch = useDispatch();
   const classrooms = useAppSelector(selectClassroomsData);
+  const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
+
+  useEffect(() => {
+    // TODO: Rewrite classroomSessionsData to return a single object instead of an array
+    if (classroomSessionsData.length) {
+      if (classroomSessionsData[0].is_teacher) {
+        router.push(
+          `/classrooms/${classroomSessionsData[0].classroom_id}/teacher`
+        );
+      } else {
+        router.push(
+          `/classrooms/${classroomSessionsData[0].classroom_id}/student`
+        );
+      }
+    }
+  }, []);
 
   return (
     <>
@@ -62,6 +82,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale }) => {
       await store.dispatch(fetchClassrooms(false));
+      await store.dispatch(fetchClassroomSessions());
 
       return {
         props: {
