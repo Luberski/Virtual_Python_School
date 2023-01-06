@@ -123,8 +123,13 @@ class ConnectionManager:
 
     def disconnect(self, class_id: int, websocket: WebSocket):
         self.active_connections[class_id].remove(websocket)
+        if(websocket in self.users.values()):
+            self.users.pop(self.get_user_id_by_websocket(websocket))
         if len(self.active_connections[class_id]) == 0:
             self.active_connections.pop(class_id)
+            self.existing_classes.remove(class_id)
+            if(class_id in self.teachers):
+                self.teachers.pop(class_id)
 
     async def send_personal_payload(self, payload: str, websocket: WebSocket):
         await websocket.send_text(payload)
@@ -261,7 +266,8 @@ async def websocket_endpoint(websocket: WebSocket, class_id: int):
             await payload_handler(payload=json.loads(resp), class_id=class_id, websocket=websocket)
 
     except WebSocketDisconnect:
+        user = manager.get_user_id_by_websocket(websocket)
         manager.disconnect(websocket=websocket, class_id=class_id)
-        if(class_id in manager.active_connections):
-            payload = await payload_creator(action=actions.Actions.LEAVE.value, value="{}".format(manager.get_user_id_by_websocket(websocket)))
+        if(class_id in manager.active_connections and user is not None):
+            payload = await payload_creator(action=actions.Actions.LEAVE.value, value="{}".format(user))
             await manager.broadcast_class(class_id=class_id, payload=payload)

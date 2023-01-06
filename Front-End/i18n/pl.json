@@ -98,8 +98,11 @@
     "classroom-deleted": "Klasa została usunięta pomyślnie",
     "classroom-deleted-student": "Klasa została usunięta przez prowadzącego",
     "disconnected": "Stracono połączenie z serwerem klasy, spróbuj odświeżyć stronę",
+    "connection-failed": "Wystąpił problem podczas łączenia się serwerem klasy, sprawdź czy klasa nadal istnieje i odśwież stronę",
+    "connecting": "Łączenie z serwerem klasy...",
     "student-joined": "dołączył/a do klasy",
-    "student-left": "opuścił/a klasę"
+    "student-left": "opuścił/a klasę",
+    "unauthorized": "Nie masz uprawnień aby wyświetlić tę stronę"
   },
   "Playground": {
     "run": "Uruchom",

@@ -25,10 +25,12 @@ export default function ClassroomsPage() {
   const dispatch = useDispatch();
   const classrooms = useAppSelector(selectClassroomsData);
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
+  const [shouldRender, setShouldRender] = React.useState(true);
 
   useEffect(() => {
     // TODO: Rewrite classroomSessionsData to return a single object instead of an array
-    if (classroomSessionsData.length) {
+    if (classroomSessionsData?.length > 0) {
+      setShouldRender(false);
       if (classroomSessionsData[0].is_teacher) {
         router.push(
           `/classrooms/${classroomSessionsData[0].classroom_id}/teacher`
@@ -42,39 +44,41 @@ export default function ClassroomsPage() {
   }, []);
 
   return (
-    <>
-      <Head>
-        <title>
-          {t('Meta.title-classrooms')} - {WEBSITE_TITLE}
-        </title>
-      </Head>
-      <div className="h-full w-full">
-        <NavBar
-          user={user}
-          isLoggedIn={isLoggedIn}
-          logout={() =>
-            dispatch({
-              type: 'auth/logout',
-            })
-          }
-        />
-        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
-          <div className="space-y-2">
-            <h1 className="text-center text-indigo-900 dark:text-indigo-300">
-              {t('Classrooms.classrooms')}
-            </h1>
-            <p className="text-center text-xl">
-              {t('Classrooms.join-or-create')}
-            </p>
+    shouldRender && (
+      <>
+        <Head>
+          <title>
+            {t('Meta.title-classrooms')} - {WEBSITE_TITLE}
+          </title>
+        </Head>
+        <div className="h-full w-full">
+          <NavBar
+            user={user}
+            isLoggedIn={isLoggedIn}
+            logout={() =>
+              dispatch({
+                type: 'auth/logout',
+              })
+            }
+          />
+          <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
+            <div className="space-y-2">
+              <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+                {t('Classrooms.classrooms')}
+              </h1>
+              <p className="text-center text-xl">
+                {t('Classrooms.join-or-create')}
+              </p>
+            </div>
           </div>
+          <div className="container mx-auto px-6">
+            <Classrooms classrooms={classrooms} translations={t} />
+          </div>
+          <Toaster />
+          <Footer />
         </div>
-        <div className="container mx-auto px-6">
-          <Classrooms classrooms={classrooms} translations={t} />
-        </div>
-        <Toaster />
-        <Footer />
-      </div>
-    </>
+      </>
+    )
   );
 }
 

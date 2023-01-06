@@ -7,14 +7,28 @@ import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
 import Button, { ButtonVariant } from '@app/components/Button';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import {
   deleteClassroom,
-  selectClassroomsStatus,
+  fetchClassrooms,
+  selectClassroomsData,
 } from '@app/features/classrooms/classroomsSlice';
 import StyledDialog from '@app/components/StyledDialog';
 import Head from 'next/head';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import {
+  fetchClassroomSessions,
+  selectClassroomSessionsData,
+} from '@app/features/classrooms/sessions/classroomSessionsSlice';
+import router from 'next/router';
+import dynamic from 'next/dynamic';
+
+const Toaster = dynamic(
+  () => import('react-hot-toast').then((c) => c.Toaster),
+  {
+    ssr: false,
+  }
+);
 
 type ClassroomTeacherPageProps = {
   classroomId: string;
@@ -25,18 +39,52 @@ export default function ClassroomsTeacherPage({
 }: ClassroomTeacherPageProps) {
   const [isDeleteClassroomDialogOpen, setIsDeleteClassroomDialogOpen] =
     useState(false);
-  const classroomStatus = useAppSelector(selectClassroomsStatus);
+  const classrooms = useAppSelector(selectClassroomsData);
+  const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
   const codeRef = useRef(null);
   const codeSyncAllowanceRef = useRef(true);
   const [user, isLoggedIn] = useAuthRedirect();
   const translations = useTranslations();
   const dispatch = useDispatch();
-
+  const [shouldRender, setShouldRender] = useState(true);
   const [lastAction, setLastAction] = useState(null);
   const [users, setUsers] = useState([]);
   const [usersSubmitted, setUsersSubmitted] = useState([]);
   const [isCodeSyncAllowed, setIsCodeSyncAllowed] = useState(true);
   const socketRef = useRef(null);
+
+  useEffect(() => {
+    const validate = () => {
+      if (!classrooms?.find((c) => c.id.toString() === classroomId)) {
+        setShouldRender(false);
+        notifyUnauthorized(translations('Classrooms.unauthorized'));
+        setTimeout(() => {
+          toast.dismiss();
+          router.replace('/classrooms');
+        }, 1000);
+      }
+      if (classroomSessionsData?.length > 0) {
+        if (classroomSessionsData[0].is_teacher === false) {
+          setShouldRender(false);
+          notifyUnauthorized(translations('Classrooms.unauthorized'));
+          setTimeout(() => {
+            toast.dismiss();
+            router.replace(
+              `/classrooms/${classroomSessionsData[0].classroom_id}/student`
+            );
+          }, 1000);
+        }
+      } else {
+        setShouldRender(false);
+        notifyUnauthorized(translations('Classrooms.unauthorized'));
+        setTimeout(() => {
+          toast.dismiss();
+          router.replace('/classrooms');
+        }, 1000);
+      }
+    };
+    validate();
+  }, []);
 
   const notifyUserJoined = (i18msg: string) =>
     toast.custom(
@@ -82,7 +130,7 @@ export default function ClassroomsTeacherPage({
       }
     );
 
-  const notifyConnected = (i18msg: string) =>
+  const notifyConnectionFailed = (i18msg: string) =>
     toast.custom(
       (to) => (
         <button
@@ -98,29 +146,7 @@ export default function ClassroomsTeacherPage({
         </button>
       ),
       {
-        id: 'classroom-connected-notification',
-        position: 'top-center',
-        duration: 1000,
-      }
-    );
-
-  const notifyDisconnected = (i18msg: string) =>
-    toast.custom(
-      (to) => (
-        <button
-          type="button"
-          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
-          onClick={() => toast.dismiss(to.id)}>
-          <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6" />
-            <div>
-              <p className="font-bold">{i18msg}</p>
-            </div>
-          </div>
-        </button>
-      ),
-      {
-        id: 'classroom-disconnected-notification',
+        id: 'classroom-connection-failed-notification',
         position: 'top-center',
         duration: 1000,
       }
@@ -148,15 +174,34 @@ export default function ClassroomsTeacherPage({
       }
     );
 
+  const notifyUnauthorized = (i18msg: string) =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{i18msg}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'classroom-unathorized-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
   const onClassroomDeleteSubmit = async () => {
     try {
       await dispatch(deleteClassroom(parseInt(classroomId)))
         .unwrap()
         .then((result) => {
           if (result.data.id.toString() === classroomId) {
-            notifyClassroomDeleted(
-              translations('Classrooms.classroom-deleted')
-            );
             // Send message to all students that the classroom has been deleted
             socketRef.current.send(
               JSON.stringify({
@@ -165,14 +210,16 @@ export default function ClassroomsTeacherPage({
                 value: null,
               })
             );
-
-            socketRef.current.close();
-            window.location.href = '/classrooms';
           }
         });
     } catch (error) {
       console.error(error);
     }
+    notifyClassroomDeleted(translations('Classrooms.classroom-deleted'));
+    setTimeout(() => {
+      toast.dismiss();
+      router.replace('/classrooms');
+    }, 1000);
   };
 
   const closeDeleteClassroomDialog = () => {
@@ -207,6 +254,7 @@ export default function ClassroomsTeacherPage({
       } else if (recv.action === Actions.CODE_CHANGE) {
         codeRef.current = recv.value;
       } else if (recv.action === Actions.LEAVE) {
+        setUsers((users) => users.filter((u) => u !== recv.value));
         notifyUserLeft(
           recv.value + ' ' + translations('Classrooms.student-left')
         );
@@ -223,44 +271,51 @@ export default function ClassroomsTeacherPage({
 
       setLastAction(parseInt(recv.action));
     };
-    codeRef.current = "print('Hello World')";
-    setLastAction(Actions.NONE);
+
     const createSocket = async () => {
+      const connectNotification = toast.loading(
+        translations('Classrooms.connecting')
+      );
       const ws = new WebSocket(`ws://localhost:5000/ws/${classroomId}`);
       ws.onmessage = onMessage;
       ws.onopen = () => {
-        socketRef.current.send(
+        ws.send(
           JSON.stringify({
             action: Actions.TEACHER_JOIN,
             value: user.username,
           })
         );
+
+        toast.success(translations('Classrooms.connected'), {
+          id: connectNotification,
+        });
       };
       ws.onclose = () => {
-        notifyDisconnected(translations('Classrooms.disconnected'));
+        console.error('Connection closed');
       };
       ws.onerror = (error) => {
         console.error(error);
+        notifyConnectionFailed(translations('Classrooms.connection-failed'));
       };
       return ws;
     };
 
     const init = async () => {
-      // TODO: Check if the classroom exists -> if not, redirect to 404
-      // TODO: Check if the user is the teacher of the classroom -> if not, redirect to 404
-
+      codeRef.current = "print('Hello World')";
+      setLastAction(Actions.NONE);
       const ws = await createSocket();
       socketRef.current = ws;
       codeSyncAllowanceRef.current = true;
-      notifyConnected(translations('Classrooms.connected'));
     };
 
-    init();
+    if (shouldRender) {
+      init();
+    }
 
     return () => {
-      socketRef.current.close();
+      if (shouldRender) socketRef.current.close();
     };
-  }, [classroomId, user.name, user.username]);
+  }, [classroomId, user.username, translations, shouldRender]);
 
   return (
     <>
@@ -269,7 +324,7 @@ export default function ClassroomsTeacherPage({
       </div>
       <Head>
         <title>
-          {translations('Meta.title-courses')} - {WEBSITE_TITLE}
+          {translations('Meta.title-classrooms')} - {WEBSITE_TITLE}
         </title>
       </Head>
       <div className="flex h-screen w-full flex-col">
@@ -288,18 +343,19 @@ export default function ClassroomsTeacherPage({
               <h1 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.users')}
               </h1>
-              {users.map((u) => (
-                <Button
-                  key={u}
-                  onClick={() => {
-                    get_user_code(u);
-                  }}
-                  type="button"
-                  variant={ButtonVariant.PRIMARY}
-                  disabled={!usersSubmitted.includes(u)}>
-                  {u}
-                </Button>
-              ))}
+              {users?.length > 0 &&
+                users.map((u) => (
+                  <Button
+                    key={u}
+                    onClick={() => {
+                      get_user_code(u);
+                    }}
+                    type="button"
+                    variant={ButtonVariant.PRIMARY}
+                    disabled={!usersSubmitted.includes(u)}>
+                    {u}
+                  </Button>
+                ))}
             </div>
             <Button
               variant={ButtonVariant.DANGER}
@@ -396,8 +452,11 @@ export default function ClassroomsTeacherPage({
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(
-  () =>
+  (store) =>
     async ({ locale, params }) => {
+      await store.dispatch(fetchClassrooms(false));
+      await store.dispatch(fetchClassroomSessions());
+
       const { classroomId } = params as {
         classroomId: string;
       };

@@ -98,8 +98,11 @@
     "classroom-deleted": "Classroom has been deleted successfully",
     "classroom-deleted-student": "Classroom has been deleted by the teacher",
     "disconnected": "Lost connection with classroom server, please refresh the page",
+    "connection-failed": "Connection with classroom server failed, please check if classroom still exists and refresh the page",
+    "connecting": "Connecting to the classroom server...",
     "student-joined": "has joined the classroom",
-    "student-left": "has left the classroom"
+    "student-left": "has left the classroom",
+    "unauthorized": "You are not authorized to access this page"
   },
   "Playground": {
     "run": "Run",
