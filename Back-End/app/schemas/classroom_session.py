@@ -17,3 +17,15 @@ class ClassroomSessionsAllResponseDataCollection(BaseCollectionModel[ClassroomSe
 
 class ClassroomSessionsAllResponse(BaseJSONResponse):
     data: list[ClassroomSessionsAllResponseData]
+
+
+class ClassroomSessionDeleteResponseData(BaseModel):
+    id: int
+
+
+class ClassroomSessionDeleteResponse(BaseJSONResponse):
+    data: ClassroomSessionDeleteResponseData
+
+
+class ClassroomSessionDeleteData(BaseModel):
+    user_id: int

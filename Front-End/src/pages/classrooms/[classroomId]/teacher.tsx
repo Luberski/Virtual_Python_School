@@ -64,6 +64,7 @@ export default function ClassroomsTeacherPage({
         }, 1000);
       }
       if (classroomSessionsData?.length > 0) {
+        console.log('data:', classroomSessionsData[0].is_teacher);
         if (classroomSessionsData[0].is_teacher === false) {
           setShouldRender(false);
           notifyUnauthorized(translations('Classrooms.unauthorized'));
@@ -211,15 +212,16 @@ export default function ClassroomsTeacherPage({
               })
             );
           }
+          notifyClassroomDeleted(translations('Classrooms.classroom-deleted'));
+          setTimeout(() => {
+            toast.dismiss();
+            router.replace('/classrooms');
+          }, 1000);
         });
     } catch (error) {
       console.error(error);
     }
-    notifyClassroomDeleted(translations('Classrooms.classroom-deleted'));
-    setTimeout(() => {
-      toast.dismiss();
-      router.replace('/classrooms');
-    }, 1000);
+    closeDeleteClassroomDialog();
   };
 
   const closeDeleteClassroomDialog = () => {
@@ -454,7 +456,7 @@ export default function ClassroomsTeacherPage({
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale, params }) => {
-      await store.dispatch(fetchClassrooms(false));
+      await store.dispatch(fetchClassrooms(true));
       await store.dispatch(fetchClassroomSessions());
 
       const { classroomId } = params as {

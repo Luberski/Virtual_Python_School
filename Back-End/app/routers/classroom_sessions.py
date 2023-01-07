@@ -10,6 +10,8 @@ from app import models
 from app.schemas.classroom_session import (
     ClassroomSessionsAllResponse,
     ClassroomSessionsAllResponseDataCollection,
+    ClassroomSessionDeleteResponse,
+    ClassroomSessionDeleteResponseData,
 )
 from app.settings import ADMIN_ID
 
@@ -63,4 +65,43 @@ def get_classrooms_all(
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={"data": response_data.dict(), "error": None},
+        )
+
+
+@router.delete("/sessions", tags=["sessions"], response_model=ClassroomSessionDeleteResponse)
+def get_classrooms_all(
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    user = db.query(models.User).filter_by(username=username).first()
+    if user is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "User not found"},
+        )
+
+    user_session = (
+        db.query(models.ClassroomSessions)
+        .filter(models.ClassroomSessions.user_id == user.id).first()
+    )
+
+    if user_session is None:
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"data": None, "error": "Session not found"},
+        )
+    else:
+        db.delete(user_session)
+        db.commit()
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"data": {"id": user_session.user_id}, "error": None},
         )

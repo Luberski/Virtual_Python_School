@@ -46,6 +46,9 @@ export default function ClassroomsPage() {
   return (
     shouldRender && (
       <>
+        <div>
+          <Toaster position="top-center" reverseOrder={false} />
+        </div>
         <Head>
           <title>
             {t('Meta.title-classrooms')} - {WEBSITE_TITLE}

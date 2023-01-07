@@ -15,12 +15,13 @@ import {
   selectClassroomsData,
 } from '@app/features/classrooms/classroomsSlice';
 import {
+  deleteClassroomSession,
   fetchClassroomSessions,
   selectClassroomSessionsData,
 } from '@app/features/classrooms/sessions/classroomSessionsSlice';
 import router from 'next/router';
 import dynamic from 'next/dynamic';
-import { is } from 'cypress/types/bluebird';
+import StyledDialog from '@app/components/StyledDialog';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -37,6 +38,8 @@ export default function ClassroomsStudentPage(
   props: ClassroomsStudentPageProps
 ) {
   const [shouldRender, setShouldRender] = useState(true);
+  const [isLeaveClassroomDialogOpen, setIsLeaveClassroomDialogOpen] =
+    useState(false);
   const codeRef = useRef(null);
   const codeSyncAllowanceRef = useRef(null);
   const [isCodeSyncAllowed, setIsCodeSyncAllowed] = useState(false);
@@ -100,6 +103,28 @@ export default function ClassroomsStudentPage(
       }
     );
 
+  const notifyClassroomLeave = (i18msg: string) =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{i18msg}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'classroom-leave-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
+
   const notifyConnectionFailed = (i18msg: string) =>
     toast.custom(
       (to) => (
@@ -144,14 +169,40 @@ export default function ClassroomsStudentPage(
       }
     );
 
-  const getUserCode = async (student: string) => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.GET_CODE,
-        value: student,
-        teacher: user.username,
-      })
-    );
+  const onClassroomLeaveSubmit = async () => {
+    try {
+      await dispatch(deleteClassroomSession())
+        .unwrap()
+        .then((result) => {
+          if (result.data.id.toString() === classroomId) {
+            // Send message to all students that the classroom has been deleted
+            socketRef.current.send(
+              JSON.stringify({
+                action: Actions.CLASSROOM_DELETED,
+                classroomId: classroomId,
+                value: null,
+              })
+            );
+          }
+          notifyClassroomLeave(
+            translations('Classrooms.leave-success')
+          );
+          setTimeout(() => {
+            toast.dismiss();
+            router.replace('/classrooms');
+          }, 1000);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+    closeLeaveClassroomDialog();
+  };
+
+  const closeLeaveClassroomDialog = () => {
+    setIsLeaveClassroomDialogOpen(false);
+  };
+  const openLeaveClassroomDialog = () => {
+    setIsLeaveClassroomDialogOpen(true);
   };
 
   const submitCode = async () => {
@@ -259,7 +310,41 @@ export default function ClassroomsStudentPage(
           }
         />
         <div className="flex h-full flex-1 flex-row">
-          <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800"></div>
+          <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
+            <div className="flex flex-col justify-start align-middle">
+              <h1 className="mb-4 text-center text-2xl font-bold">
+                {translations('Classrooms.users')}
+              </h1>
+            </div>
+            <Button
+              variant={ButtonVariant.DANGER}
+              type="button"
+              onClick={openLeaveClassroomDialog}>
+              {translations('Classrooms.leave-classroom')}
+            </Button>
+
+            <StyledDialog
+              title={translations('Classrooms.leave-popup-title')}
+              isOpen={isLeaveClassroomDialogOpen}
+              onClose={closeLeaveClassroomDialog}>
+              <div className="py-6">
+                <div className="mt-6 flex flex-row items-center justify-center">
+                  <Button
+                    onClick={closeLeaveClassroomDialog}
+                    className="mr-2"
+                    variant={ButtonVariant.PRIMARY}>
+                    {translations('Classrooms.cancel')}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={ButtonVariant.DANGER}
+                    onClick={onClassroomLeaveSubmit}>
+                    {translations('Classrooms.leave')}
+                  </Button>
+                </div>
+              </div>
+            </StyledDialog>
+          </div>
 
           <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
@@ -297,7 +382,7 @@ export default function ClassroomsStudentPage(
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) =>
     async ({ locale, params }) => {
-      await store.dispatch(fetchClassrooms(false));
+      await store.dispatch(fetchClassrooms(true));
       await store.dispatch(fetchClassroomSessions());
 
       const { classroomId } = params as {

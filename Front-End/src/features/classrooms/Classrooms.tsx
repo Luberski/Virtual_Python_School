@@ -19,6 +19,7 @@ import Checkbox from '@app/components/Checkbox';
 import Button, { ButtonVariant } from '@app/components/Button';
 import Input from '@app/components/Input';
 import { useAppSelector } from '@app/hooks';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 type ClassroomsProps = {
   classrooms: Classroom[];
@@ -61,6 +62,28 @@ export default function Classrooms({
       setShouldRedirect(true);
     }
   };
+
+  const notifyClassroomCreated = (i18msg: string) =>
+    toast.custom(
+      (to) => (
+        <button
+          type="button"
+          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          onClick={() => toast.dismiss(to.id)}>
+          <div className="flex justify-center space-x-1">
+            <InformationCircleIcon className="h-6 w-6" />
+            <div>
+              <p className="font-bold">{i18msg}</p>
+            </div>
+          </div>
+        </button>
+      ),
+      {
+        id: 'classroom-created-notification',
+        position: 'top-center',
+        duration: 1000,
+      }
+    );
 
   const onClassroomCreateSubmit = async (data: {
     name: string;
