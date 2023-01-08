@@ -3,7 +3,7 @@ import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
 import { python } from '@codemirror/lang-python';
 import { Actions } from '@app/constants';
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import debounce from 'debounce';
 import { useTheme } from 'next-themes';
@@ -17,6 +17,7 @@ type EditorProps = {
   roomId: string;
   onCodeChange: (value: string) => void;
   user: any;
+  isEditable: boolean;
 };
 
 const editorLightTheme = createTheme({
@@ -87,6 +88,7 @@ export default function ClassroomCodeEditor({
   lastAction,
   setLastAction,
   user,
+  isEditable = true,
 }: EditorProps) {
   const { theme } = useTheme();
 
@@ -133,13 +135,14 @@ export default function ClassroomCodeEditor({
     extensions,
     value: codeRef.current,
     onChange: onChange,
+    editable: isEditable,
     theme: theme === 'dark' ? editorDarkTheme : editorLightTheme,
   });
   useEffect(() => {
     if (editor.current) {
       setContainer(editor.current);
     }
-  }, [setContainer]);
+  }, [setContainer, isEditable]);
 
   useEffect(() => {
     if (lastAction === Actions.CODE_CHANGE) {

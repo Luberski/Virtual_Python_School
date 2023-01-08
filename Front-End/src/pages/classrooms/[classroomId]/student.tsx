@@ -363,6 +363,7 @@ export default function ClassroomsStudentPage(
                 socketRef={socketRef}
                 roomId={classroomId}
                 codeSyncAllowanceRef={codeSyncAllowanceRef}
+                isEditable={isCodeSyncAllowed}
                 onCodeChange={(code) => {
                   codeRef.current = code;
                 }}
