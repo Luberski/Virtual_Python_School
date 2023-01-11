@@ -53,6 +53,9 @@ export default function ClassroomsStudentPage(
   const codeSyncAllowanceRef = useRef(null);
   const socketRef = useRef(null);
 
+  const [assignments, setAssignments] = useState([]);
+  const [currentAssignment, setCurrentAssignment] = useState('');
+  const [codeChanged, setCodeChanged] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [validateError, setValidateError] = useState(false);
   const [teacher, setTeacher] = useState(null);
@@ -137,6 +140,14 @@ export default function ClassroomsStudentPage(
   };
 
   useEffect(() => {
+    const setAssignmentCode = (assignmentName: string, code: string) => {
+      const assignment = assignments.find(
+        (assignment) => assignment.name === assignmentName
+      );
+      assignment.code = code;
+      setAssignments([...assignments]);
+    };
+
     const onMessage = (ev: { data: string }) => {
       const recv = JSON.parse(ev.data);
 
@@ -147,7 +158,7 @@ export default function ClassroomsStudentPage(
           setIsEditable(recv.data.is_editable);
           myCodeRef.current = recv.data.personal_whiteboard;
           codeRef.current = recv.data.shared_whiteboard;
-          // TODO: Add support for assignments
+          setAssignments(recv.data.assignments);
           break;
 
         case Actions.JOIN:
@@ -168,8 +179,13 @@ export default function ClassroomsStudentPage(
             recv.data.user_id === teacher
           ) {
             myCodeRef.current = recv.data.code;
+          } else if (
+            recv.data.whiteboard_type === 'assignment' &&
+            recv.data.user_id !== teacher
+          ) {
+            setAssignmentCode(recv.data.assignment_name, recv.data.code);
+            myCodeRef.current = recv.data.code;
           }
-          // TODO: Add support for assignments
           break;
 
         case Actions.GET_DATA:
@@ -183,8 +199,17 @@ export default function ClassroomsStudentPage(
             recv.data.whiteboard_type === 'private'
           ) {
             myCodeRef.current = recv.data.code;
+          } else if (
+            recv.data.target_user === user.username &&
+            recv.data.whiteboard_type === 'assignment'
+          ) {
+            setAssignmentCode(recv.data.assignment_name, recv.data.code);
+            myCodeRef.current = recv.data.code;
           }
-          // TODO: Add support for assignments
+          break;
+
+        case Actions.ASSIGNMENT_CREATE:
+          setAssignments((assignments) => [...assignments, recv.data]);
           break;
 
         case Actions.LOCK_CODE:
@@ -244,7 +269,15 @@ export default function ClassroomsStudentPage(
     return () => {
       if (shouldRender && socketRef.current === null) socketRef.current.close();
     };
-  }, [classroomId, shouldRender, teacher, translations, user.username, users]);
+  }, [
+    assignments,
+    classroomId,
+    shouldRender,
+    teacher,
+    translations,
+    user.username,
+    users,
+  ]);
 
   return (
     <>
@@ -286,13 +319,35 @@ export default function ClassroomsStudentPage(
                 type="button"
                 onClick={() => {
                   setIsPersonalWhiteboardOpen(true);
+                  setCurrentAssignment('');
                   setLastAction(Actions.CODE_CHANGE);
                 }}
-                disabled={isPersonalWhiteboardOpen}
+                disabled={isPersonalWhiteboardOpen && currentAssignment === ''}
                 variant={ButtonVariant.PRIMARY}>
                 {translations('Classrooms.my-whiteboard')}
               </Button>
               {users?.length > 0 && users?.map((u) => <div key={u}>{u}</div>)}
+              <h1 className="mb-4 text-center text-2xl font-bold">
+                {translations('Classrooms.my-assignments')}
+              </h1>
+              {assignments?.length > 0 &&
+                assignments.map((a) => (
+                  <Button
+                    key={a.assignment_name}
+                    type="button"
+                    onClick={() => {
+                      setCurrentAssignment(a.assignment_name);
+                      setIsPersonalWhiteboardOpen(true);
+                      setLastAction(Actions.CODE_CHANGE);
+                    }}
+                    disabled={
+                      isPersonalWhiteboardOpen &&
+                      currentAssignment === a.assignment_name
+                    }
+                    variant={ButtonVariant.PRIMARY}>
+                    {a.assignment_name}
+                  </Button>
+                ))}
             </div>
             <Button
               variant={ButtonVariant.DANGER}
@@ -300,7 +355,6 @@ export default function ClassroomsStudentPage(
               onClick={openLeaveClassroomDialog}>
               {translations('Classrooms.leave-classroom')}
             </Button>
-
             <StyledDialog
               title={translations('Classrooms.leave-popup-title')}
               isOpen={isLeaveClassroomDialogOpen}
@@ -332,34 +386,35 @@ export default function ClassroomsStudentPage(
             </div>
             <div className="w-full">
               {isPersonalWhiteboardOpen ? (
-                  <ClassroomCodeEditor
-                    socketRef={socketRef}
-                    roomId={classroomId}
-                    isEditable={true}
-                    onCodeChange={(code) => {
-                      myCodeRef.current = code;
-                    }}
-                    lastAction={lastAction}
-                    setLastAction={setLastAction}
-                    codeRef={myCodeRef}
-                    user={user}
-                    isTeacher={false}
-                    personalWhiteboard={true}
-                  />
+                <ClassroomCodeEditor
+                  socketRef={socketRef}
+                  roomId={classroomId}
+                  isEditable={true}
+                  onCodeChange={(code) => {
+                    myCodeRef.current = code;
+                  }}
+                  lastAction={lastAction}
+                  setLastAction={setLastAction}
+                  codeRef={myCodeRef}
+                  user={user}
+                  isTeacher={false}
+                  personalWhiteboard={true}
+                  assignmentName={currentAssignment ? currentAssignment : ''}
+                />
               ) : (
-                  <ClassroomCodeEditor
-                    socketRef={socketRef}
-                    roomId={classroomId}
-                    isEditable={isEditable}
-                    onCodeChange={(code) => {
-                      codeRef.current = code;
-                    }}
-                    lastAction={lastAction}
-                    setLastAction={setLastAction}
-                    codeRef={codeRef}
-                    user={user}
-                    isTeacher={false}
-                  />
+                <ClassroomCodeEditor
+                  socketRef={socketRef}
+                  roomId={classroomId}
+                  isEditable={isEditable}
+                  onCodeChange={(code) => {
+                    codeRef.current = code;
+                  }}
+                  lastAction={lastAction}
+                  setLastAction={setLastAction}
+                  codeRef={codeRef}
+                  user={user}
+                  isTeacher={false}
+                />
               )}
             </div>
           </div>

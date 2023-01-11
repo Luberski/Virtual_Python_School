@@ -109,7 +109,13 @@
     "unauthorized": "You are not authorized to access this page",
     "whiteboards": "Whiteboards",
     "shared-whiteboard": "Shared whiteboard",
-    "my-whiteboard": "My whiteboard"
+    "my-whiteboard": "My whiteboard",
+    "assignments": "Assignments",
+    "my-assignments": "My assignments",
+    "assignment-popup-title": "Create new assignment",
+    "assignment-created": "Assignment has been created",
+    "assignment-name": "Assignment name",
+    "assignment-description": "Assignment description"
   },
   "Playground": {
     "run": "Run",

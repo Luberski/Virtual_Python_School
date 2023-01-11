@@ -20,6 +20,7 @@ type EditorProps = {
   targetUser?: any;
   isEditable?: boolean;
   isTeacher: boolean;
+  assignmentName?: string;
 };
 
 const editorLightTheme = createTheme({
@@ -94,6 +95,7 @@ export default function ClassroomCodeEditor({
   personalWhiteboard = false,
   isTeacher,
   targetUser = null,
+  assignmentName = '',
 }: EditorProps) {
   const { theme } = useTheme();
 
@@ -134,6 +136,25 @@ export default function ClassroomCodeEditor({
     100
   );
 
+  const sendPersonalAssignmentData = (value: string) => {
+    socketRef.current.send(
+      JSON.stringify({
+        action: Actions.CODE_CHANGE,
+        user_id: user.username,
+        data: {
+          assignment_name: assignmentName,
+          whiteboard_type: 'assignment',
+          code: value,
+        },
+      })
+    );
+  };
+
+  const debouncedSendPersonalAssignmentData = debounce(
+    (value: string) => sendPersonalAssignmentData(value),
+    100
+  );
+
   const sendDataToUser = (value: string) => {
     socketRef.current.send(
       JSON.stringify({
@@ -153,6 +174,26 @@ export default function ClassroomCodeEditor({
     100
   );
 
+  const sendAssignmentDataToUser = (value: string) => {
+    socketRef.current.send(
+      JSON.stringify({
+        action: Actions.CODE_CHANGE,
+        user_id: user.username,
+        data: {
+          target_user: targetUser,
+          assignment_name: assignmentName,
+          whiteboard_type: 'assignment',
+          code: value,
+        },
+      })
+    );
+  };
+
+  const debouncedSendAssignmentDataToUser = debounce(
+    (value: string) => sendAssignmentDataToUser(value),
+    100
+  );
+
   const onChange = useCallback(
     (value: string) => {
       onCodeChange(value);
@@ -161,18 +202,25 @@ export default function ClassroomCodeEditor({
         lastAction !== Actions.CODE_CHANGE &&
         origin !== 'setValue'
       ) {
-        if (personalWhiteboard && !isTeacher) {
+        if (personalWhiteboard && !isTeacher && assignmentName === '') {
           debouncedSendPersonalData(value);
         } else if (!personalWhiteboard && isTeacher && targetUser !== null) {
           debouncedSendDataToUser(value);
+        } else if (assignmentName !== '' && isTeacher && targetUser !== null) {
+          debouncedSendAssignmentDataToUser(value);
+        } else if (assignmentName !== '' && !isTeacher) {
+          debouncedSendPersonalAssignmentData(value);
         } else {
           debouncedSendData(value);
         }
       }
     },
     [
+      assignmentName,
+      debouncedSendAssignmentDataToUser,
       debouncedSendData,
       debouncedSendDataToUser,
+      debouncedSendPersonalAssignmentData,
       debouncedSendPersonalData,
       isTeacher,
       lastAction,

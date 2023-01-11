@@ -12,3 +12,4 @@ class Actions(Enum):
     UNLOCK_CODE = 7
     TEACHER_JOIN = 8
     CLASSROOM_DELETED = 9
+    ASSIGNMENT_CREATE = 10

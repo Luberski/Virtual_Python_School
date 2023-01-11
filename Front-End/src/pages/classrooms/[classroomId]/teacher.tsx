@@ -8,6 +8,7 @@ import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
 import Button, { ButtonVariant } from '@app/components/Button';
 import toast from 'react-hot-toast';
+import { useForm } from 'react-hook-form';
 import {
   deleteClassroom,
   fetchClassrooms,
@@ -27,7 +28,10 @@ import {
   notifyUserJoined,
   notifyUserLeft,
   notifyConnectionFailed,
+  notifyAssignmentCreated,
 } from '@app/notifications';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import Input from '@app/components/Input';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -43,6 +47,11 @@ type ClassroomTeacherPageProps = {
 export default function ClassroomsTeacherPage({
   classroomId,
 }: ClassroomTeacherPageProps) {
+  const { register, handleSubmit, setValue } =
+    useForm<{
+      assignment_name: string;
+      assignment_description: string;
+    }>();
   const [user, isLoggedIn] = useAuthRedirect();
   const translations = useTranslations();
   const classrooms = useAppSelector(selectClassroomsData);
@@ -50,6 +59,8 @@ export default function ClassroomsTeacherPage({
   const dispatch = useDispatch();
 
   const [isDeleteClassroomDialogOpen, setIsDeleteClassroomDialogOpen] =
+    useState(false);
+  const [isCreateAssignmentDialogOpen, setIsCreateAssignmentDialogOpen] =
     useState(false);
   const socketRef = useRef(null);
   const codeRef = useRef('print("Hello World")');
@@ -59,6 +70,9 @@ export default function ClassroomsTeacherPage({
   const [shouldRender, setShouldRender] = useState(false);
   const [validateError, setValidateError] = useState(false);
   const [users, setUsers] = useState([]);
+  const [assignments, setAssignments] = useState([]);
+  const [currentAssignment, setCurrentAssignment] = useState('');
+  const [currentlyAssignedUser, setCurrentlyAssignedUser] = useState('');
   const [currentlyViewedUser, setCurrentlyViewedUser] = useState('');
   const [isEditable, setIsEditable] = useState(false);
   const [isPersonalWhiteboardOpen, setIsPersonalWhiteboardOpen] =
@@ -142,6 +156,43 @@ export default function ClassroomsTeacherPage({
     setIsDeleteClassroomDialogOpen(true);
   };
 
+  const onCreateAssignmentSubmit = (data: {
+    assignment_name: string;
+    assignment_description: string;
+  }) => {
+    const { assignment_name, assignment_description } = data;
+    setValue('assignment_name', '');
+    setValue('assignment_description', '');
+
+    socketRef.current.send(
+      JSON.stringify({
+        action: Actions.ASSIGNMENT_CREATE,
+        user_id: user.username,
+        data: {
+          assignment_name: assignment_name,
+          assignment_description: assignment_description,
+        },
+      })
+    );
+
+    setAssignments((assignments) => [...assignments, data]);
+
+    notifyAssignmentCreated(translations('Classrooms.assignment-created'));
+    setTimeout(() => {
+      toast.dismiss();
+      router.replace('/classrooms');
+    }, 1000);
+
+    closeCreateAssignmentDialog();
+  };
+
+  const closeCreateAssignmentDialog = () => {
+    setIsCreateAssignmentDialogOpen(false);
+  };
+  const openCreateAssignmentDialog = () => {
+    setIsCreateAssignmentDialogOpen(true);
+  };
+
   const getUserCode = async (student: string) => {
     socketRef.current.send(
       JSON.stringify({
@@ -150,6 +201,23 @@ export default function ClassroomsTeacherPage({
         data: {
           target_user: student,
           whiteboard_type: 'private',
+        },
+      })
+    );
+  };
+
+  const getUserAssignment = async (
+    student: string,
+    assignment_name: string
+  ) => {
+    socketRef.current.send(
+      JSON.stringify({
+        action: Actions.GET_DATA,
+        user_id: user.username,
+        data: {
+          assignment_name: assignment_name,
+          target_user: student,
+          whiteboard_type: 'assignment',
         },
       })
     );
@@ -168,7 +236,7 @@ export default function ClassroomsTeacherPage({
           setUsers(recv.data.users);
           setIsEditable(recv.data.is_editable);
           myCodeRef.current = recv.data.shared_whiteboard;
-          // TODO: Add support for assignments
+          setAssignments(recv.data.assignments);
           break;
 
         case Actions.JOIN:
@@ -196,9 +264,13 @@ export default function ClassroomsTeacherPage({
             !isPersonalWhiteboardOpen
           ) {
             codeRef.current = recv.data.code;
+          } else if (
+            recv.data.whiteboard_type === 'assignment' &&
+            recv.data.user_id === currentlyAssignedUser &&
+            !isPersonalWhiteboardOpen
+          ) {
+            codeRef.current = recv.data.code;
           }
-          // TODO: Add support for assignments
-
           break;
 
         case Actions.GET_DATA:
@@ -209,8 +281,12 @@ export default function ClassroomsTeacherPage({
             recv.data.whiteboard_type === 'private'
           ) {
             codeRef.current = recv.data.code;
+          } else if (
+            recv.data.target_user === currentlyAssignedUser &&
+            recv.data.whiteboard_type === 'assignment'
+          ) {
+            codeRef.current = recv.data.code;
           }
-          // TODO: Add support for assignments
           break;
       }
 
@@ -271,6 +347,7 @@ export default function ClassroomsTeacherPage({
     isPersonalWhiteboardOpen,
     classroomId,
     user.username,
+    currentlyAssignedUser,
   ]);
 
   return (
@@ -304,6 +381,8 @@ export default function ClassroomsTeacherPage({
                 onClick={() => {
                   setIsPersonalWhiteboardOpen(true);
                   setCurrentlyViewedUser('');
+                  setCurrentlyAssignedUser('');
+                  setCurrentAssignment('');
                   setLastAction(Actions.CODE_CHANGE);
                 }}
                 disabled={isPersonalWhiteboardOpen}
@@ -316,6 +395,7 @@ export default function ClassroomsTeacherPage({
                     key={u}
                     onClick={() => {
                       setIsPersonalWhiteboardOpen(false);
+                      setCurrentlyAssignedUser('');
                       setCurrentlyViewedUser(u);
                       getUserCode(u);
                       setLastAction(Actions.CODE_CHANGE);
@@ -326,6 +406,94 @@ export default function ClassroomsTeacherPage({
                     {u}
                   </Button>
                 ))}
+              <h1 className="mb-4 text-center text-2xl font-bold">
+                {translations('Classrooms.assignments')}
+              </h1>
+              {assignments?.length > 0 &&
+                assignments.map((a) => (
+                  <>
+                    <Button
+                      key={a.assignment_name}
+                      type="button"
+                      onClick={() => {
+                        setCurrentAssignment(a.assignment_name);
+                      }}
+                      disabled={a.assignment_name === currentAssignment}
+                      variant={ButtonVariant.PRIMARY}>
+                      {a.assignment_name}
+                    </Button>
+                    {users?.length > 0 &&
+                      users.map((u) => (
+                        <Button
+                          key={u}
+                          onClick={() => {
+                            setIsPersonalWhiteboardOpen(false);
+                            setCurrentlyViewedUser('');
+                            setCurrentlyAssignedUser(u);
+                            getUserAssignment(u, a.assignment_name);
+                            setLastAction(Actions.CODE_CHANGE);
+                          }}
+                          disabled={u === currentlyAssignedUser}
+                          type="button"
+                          variant={ButtonVariant.FLAT_SECONDARY}>
+                          {u}
+                        </Button>
+                      ))}
+                  </>
+                ))}
+              <div className="flex flex-col items-center">
+                <Button
+                  type="button"
+                  variant={ButtonVariant.PRIMARY}
+                  onClick={openCreateAssignmentDialog}
+                  className="m-0 flex h-8 w-8 flex-col items-center justify-center p-0">
+                  <PlusIcon className="h-6 w-6" />
+                </Button>
+                <StyledDialog
+                  title={translations('Classrooms.assignment-popup-title')}
+                  isOpen={isCreateAssignmentDialogOpen}
+                  onClose={closeCreateAssignmentDialog}>
+                  <div className="py-6">
+                    <form
+                      method="dialog"
+                      onSubmit={handleSubmit(onCreateAssignmentSubmit)}>
+                      <div className="flex flex-col gap-y-2">
+                        <Input
+                          label="assignment_name"
+                          name="assignment_name"
+                          type="text"
+                          register={register}
+                          required
+                          maxLength={50}
+                          placeholder={translations(
+                            'Classrooms.assignment-name'
+                          )}></Input>
+                        <Input
+                          label="assignment_description"
+                          name="assignment_description"
+                          type="text"
+                          register={register}
+                          required
+                          maxLength={200}
+                          placeholder={translations(
+                            'Classrooms.assignment-description'
+                          )}></Input>
+                      </div>
+                      <div className="mt-6 flex flex-row items-center justify-end">
+                        <Button
+                          onClick={closeCreateAssignmentDialog}
+                          className="mr-2"
+                          variant={ButtonVariant.DANGER}>
+                          {translations('Classrooms.cancel')}
+                        </Button>
+                        <Button type="submit" variant={ButtonVariant.PRIMARY}>
+                          {translations('Classrooms.submit')}
+                        </Button>
+                      </div>
+                    </form>
+                  </div>
+                </StyledDialog>
+              </div>
             </div>
             <Button
               variant={ButtonVariant.DANGER}
@@ -397,7 +565,8 @@ export default function ClassroomsTeacherPage({
               )}
             </div>
             <div>
-              {!isPersonalWhiteboardOpen && currentlyViewedUser !== '' ? (
+              {!isPersonalWhiteboardOpen &&
+              (currentlyViewedUser !== '' || currentlyAssignedUser !== '') ? (
                 <ClassroomCodeEditor
                   socketRef={socketRef}
                   roomId={classroomId}
@@ -408,22 +577,29 @@ export default function ClassroomsTeacherPage({
                   setLastAction={setLastAction}
                   codeRef={codeRef}
                   user={user}
-                  targetUser={currentlyViewedUser}
+                  targetUser={
+                    currentlyAssignedUser
+                      ? currentlyAssignedUser
+                      : currentlyViewedUser
+                  }
                   isTeacher={true}
+                  assignmentName={
+                    currentlyAssignedUser ? currentAssignment : ''
+                  }
                 />
               ) : (
-                  <ClassroomCodeEditor
-                    socketRef={socketRef}
-                    roomId={classroomId}
-                    onCodeChange={(code) => {
-                      myCodeRef.current = code;
-                    }}
-                    lastAction={lastAction}
-                    setLastAction={setLastAction}
-                    codeRef={myCodeRef}
-                    user={user}
-                    isTeacher={true}
-                  />
+                <ClassroomCodeEditor
+                  socketRef={socketRef}
+                  roomId={classroomId}
+                  onCodeChange={(code) => {
+                    myCodeRef.current = code;
+                  }}
+                  lastAction={lastAction}
+                  setLastAction={setLastAction}
+                  codeRef={myCodeRef}
+                  user={user}
+                  isTeacher={true}
+                />
               )}
             </div>
           </div>
