@@ -106,7 +106,10 @@
     "connecting": "Connecting to the classroom server...",
     "student-joined": "has joined the classroom",
     "student-left": "has left the classroom",
-    "unauthorized": "You are not authorized to access this page"
+    "unauthorized": "You are not authorized to access this page",
+    "whiteboards": "Whiteboards",
+    "shared-whiteboard": "Shared whiteboard",
+    "my-whiteboard": "My whiteboard"
   },
   "Playground": {
     "run": "Run",

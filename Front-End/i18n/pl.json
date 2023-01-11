@@ -106,7 +106,10 @@
     "connecting": "Łączenie z serwerem klasy...",
     "student-joined": "dołączył/a do klasy",
     "student-left": "opuścił/a klasę",
-    "unauthorized": "Nie masz uprawnień aby wyświetlić tę stronę"
+    "unauthorized": "Nie masz uprawnień aby wyświetlić tę stronę",
+    "whiteboards": "Tablice",
+    "shared-whiteboard": "Wspólna tablica",
+    "my-whiteboard": "Moja tablica"
   },
   "Playground": {
     "run": "Uruchom",

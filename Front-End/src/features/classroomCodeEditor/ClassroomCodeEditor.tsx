@@ -3,7 +3,7 @@ import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
 import { python } from '@codemirror/lang-python';
 import { Actions } from '@app/constants';
-import React, { useCallback, useRef, useEffect, useState } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import type { MutableRefObject } from 'react';
 import debounce from 'debounce';
 import { useTheme } from 'next-themes';
@@ -11,13 +11,15 @@ import { useTheme } from 'next-themes';
 type EditorProps = {
   socketRef: MutableRefObject<WebSocket>;
   codeRef: MutableRefObject<string>;
-  codeSyncAllowanceRef: MutableRefObject<boolean>;
+  personalWhiteboard?: boolean;
   lastAction: number;
   setLastAction: (action: number) => void;
   roomId: string;
   onCodeChange: (value: string) => void;
   user: any;
-  isEditable: boolean;
+  targetUser?: any;
+  isEditable?: boolean;
+  isTeacher: boolean;
 };
 
 const editorLightTheme = createTheme({
@@ -83,12 +85,15 @@ const editorDarkTheme = createTheme({
 export default function ClassroomCodeEditor({
   socketRef,
   codeRef,
-  codeSyncAllowanceRef,
   onCodeChange,
   lastAction,
   setLastAction,
   user,
+  roomId,
   isEditable = true,
+  personalWhiteboard = false,
+  isTeacher,
+  targetUser = null,
 }: EditorProps) {
   const { theme } = useTheme();
 
@@ -100,33 +105,81 @@ export default function ClassroomCodeEditor({
     socketRef.current.send(
       JSON.stringify({
         action: Actions.CODE_CHANGE,
-        value: value,
         user_id: user.username,
+        data: {
+          whiteboard_type: 'public',
+          code: value,
+        },
       })
     );
   };
 
   const debouncedSendData = debounce((value: string) => sendData(value), 100);
 
+  const sendPersonalData = (value: string) => {
+    socketRef.current.send(
+      JSON.stringify({
+        action: Actions.CODE_CHANGE,
+        user_id: user.username,
+        data: {
+          whiteboard_type: 'private',
+          code: value,
+        },
+      })
+    );
+  };
+
+  const debouncedSendPersonalData = debounce(
+    (value: string) => sendPersonalData(value),
+    100
+  );
+
+  const sendDataToUser = (value: string) => {
+    socketRef.current.send(
+      JSON.stringify({
+        action: Actions.CODE_CHANGE,
+        user_id: user.username,
+        data: {
+          target_user: targetUser,
+          whiteboard_type: 'private',
+          code: value,
+        },
+      })
+    );
+  };
+
+  const debouncedSendDataToUser = debounce(
+    (value: string) => sendDataToUser(value),
+    100
+  );
+
   const onChange = useCallback(
     (value: string) => {
       onCodeChange(value);
-      if (codeSyncAllowanceRef.current) {
-        if (
-          socketRef.current.readyState === 1 &&
-          lastAction !== Actions.CODE_CHANGE &&
-          origin !== 'setValue'
-        ) {
+      if (
+        socketRef.current.readyState === 1 &&
+        lastAction !== Actions.CODE_CHANGE &&
+        origin !== 'setValue'
+      ) {
+        if (personalWhiteboard && !isTeacher) {
+          debouncedSendPersonalData(value);
+        } else if (!personalWhiteboard && isTeacher && targetUser !== null) {
+          debouncedSendDataToUser(value);
+        } else {
           debouncedSendData(value);
         }
       }
     },
     [
-      codeSyncAllowanceRef,
       debouncedSendData,
+      debouncedSendDataToUser,
+      debouncedSendPersonalData,
+      isTeacher,
       lastAction,
       onCodeChange,
+      personalWhiteboard,
       socketRef,
+      targetUser,
     ]
   );
 
@@ -147,7 +200,7 @@ export default function ClassroomCodeEditor({
   useEffect(() => {
     if (lastAction === Actions.CODE_CHANGE) {
       setContainer(editor.current);
-      setLastAction(Actions.SYNC_CODE);
+      setLastAction(Actions.NONE);
     }
   }, [codeRef, lastAction, setContainer, setLastAction]);
 

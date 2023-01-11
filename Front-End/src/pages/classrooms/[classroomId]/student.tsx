@@ -8,7 +8,6 @@ import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
 import Button, { ButtonVariant } from '@app/components/Button';
 import toast from 'react-hot-toast';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import Head from 'next/head';
 import {
   fetchClassrooms,
@@ -22,6 +21,11 @@ import {
 import router from 'next/router';
 import dynamic from 'next/dynamic';
 import StyledDialog from '@app/components/StyledDialog';
+import {
+  notifyUnauthorized,
+  notifyClassroomLeave,
+  notifyConnectionFailed,
+} from '@app/notifications';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -37,25 +41,33 @@ type ClassroomsStudentPageProps = {
 export default function ClassroomsStudentPage(
   props: ClassroomsStudentPageProps
 ) {
-  const [shouldRender, setShouldRender] = useState(true);
-  const [isLeaveClassroomDialogOpen, setIsLeaveClassroomDialogOpen] =
-    useState(false);
-  const codeRef = useRef(null);
-  const codeSyncAllowanceRef = useRef(null);
-  const [isCodeSyncAllowed, setIsCodeSyncAllowed] = useState(false);
-  const { classroomId } = props;
   const [user, isLoggedIn] = useAuthRedirect();
   const translations = useTranslations();
   const dispatch = useDispatch();
   const classrooms = useAppSelector(selectClassroomsData);
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
-  const [lastAction, setLastAction] = useState(null);
+  const { classroomId } = props;
+
+  const codeRef = useRef(null);
+  const myCodeRef = useRef('print("Hello World")');
+  const codeSyncAllowanceRef = useRef(null);
   const socketRef = useRef(null);
+
+  const [shouldRender, setShouldRender] = useState(false);
+  const [validateError, setValidateError] = useState(false);
+  const [teacher, setTeacher] = useState(null);
+  const [isLeaveClassroomDialogOpen, setIsLeaveClassroomDialogOpen] =
+    useState(false);
+  const [isPersonalWhiteboardOpen, setIsPersonalWhiteboardOpen] =
+    useState(false);
+  const [users, setUsers] = useState([]);
+  const [isEditable, setIsEditable] = useState(false);
+  const [lastAction, setLastAction] = useState(null);
 
   useEffect(() => {
     const validate = () => {
       if (!classrooms?.find((c) => c.id.toString() === classroomId)) {
-        setShouldRender(false);
+        setValidateError(true);
         notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
@@ -64,110 +76,32 @@ export default function ClassroomsStudentPage(
       }
       if (classroomSessionsData?.length > 0) {
         if (classroomSessionsData[0].is_teacher) {
-          setShouldRender(false);
+          setValidateError(true);
           router.replace(
             `/classrooms/${classroomSessionsData[0].classroom_id}/teacher`
           );
         }
       } else {
-        setShouldRender(false);
+        setValidateError(true);
         notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
           router.replace('/classrooms');
         }, 1000);
       }
+
+      if (!validateError) {
+        setShouldRender(true);
+      }
     };
     validate();
-  }, []);
-
-  const notifyClassroomDeleted = (i18msg: string) =>
-    toast.custom(
-      (to) => (
-        <button
-          type="button"
-          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
-          onClick={() => toast.dismiss(to.id)}>
-          <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6" />
-            <div>
-              <p className="font-bold">{i18msg}</p>
-            </div>
-          </div>
-        </button>
-      ),
-      {
-        id: 'classroom-deleted-notification',
-        position: 'top-center',
-        duration: 1000,
-      }
-    );
-
-  const notifyClassroomLeave = (i18msg: string) =>
-    toast.custom(
-      (to) => (
-        <button
-          type="button"
-          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
-          onClick={() => toast.dismiss(to.id)}>
-          <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6" />
-            <div>
-              <p className="font-bold">{i18msg}</p>
-            </div>
-          </div>
-        </button>
-      ),
-      {
-        id: 'classroom-leave-notification',
-        position: 'top-center',
-        duration: 1000,
-      }
-    );
-
-  const notifyConnectionFailed = (i18msg: string) =>
-    toast.custom(
-      (to) => (
-        <button
-          type="button"
-          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
-          onClick={() => toast.dismiss(to.id)}>
-          <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6" />
-            <div>
-              <p className="font-bold">{i18msg}</p>
-            </div>
-          </div>
-        </button>
-      ),
-      {
-        id: 'classroom-connection-failed-notification',
-        position: 'top-center',
-        duration: 1000,
-      }
-    );
-
-  const notifyUnauthorized = (i18msg: string) =>
-    toast.custom(
-      (to) => (
-        <button
-          type="button"
-          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
-          onClick={() => toast.dismiss(to.id)}>
-          <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6" />
-            <div>
-              <p className="font-bold">{i18msg}</p>
-            </div>
-          </div>
-        </button>
-      ),
-      {
-        id: 'classroom-unathorized-notification',
-        position: 'top-center',
-        duration: 1000,
-      }
-    );
+  }, [
+    classroomId,
+    classroomSessionsData,
+    classrooms,
+    translations,
+    validateError,
+  ]);
 
   const onClassroomLeaveSubmit = async () => {
     try {
@@ -175,18 +109,15 @@ export default function ClassroomsStudentPage(
         .unwrap()
         .then((result) => {
           if (result.data.id.toString() === classroomId) {
-            // Send message to all students that the classroom has been deleted
             socketRef.current.send(
               JSON.stringify({
-                action: Actions.CLASSROOM_DELETED,
-                classroomId: classroomId,
-                value: null,
+                action: Actions.LEAVE,
+                user_id: user.username,
+                data: null,
               })
             );
           }
-          notifyClassroomLeave(
-            translations('Classrooms.leave-success')
-          );
+          notifyClassroomLeave(translations('Classrooms.leave-success'));
           setTimeout(() => {
             toast.dismiss();
             router.replace('/classrooms');
@@ -205,45 +136,68 @@ export default function ClassroomsStudentPage(
     setIsLeaveClassroomDialogOpen(true);
   };
 
-  const submitCode = async () => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.CODE_SUBMITTED,
-        value: user.username,
-      })
-    );
-  };
-
   useEffect(() => {
     const onMessage = (ev: { data: string }) => {
       const recv = JSON.parse(ev.data);
-      if (recv.action === Actions.CODE_CHANGE) {
-        codeRef.current = recv.value;
-      } else if (recv.action === Actions.GET_CODE) {
-        socketRef.current.send(
-          JSON.stringify({
-            action: Actions.GET_CODE_RESPONSE,
-            value: codeRef.current,
-          })
-        );
-      } else if (recv.action === Actions.LOCK_CODE) {
-        setIsCodeSyncAllowed(false);
-      } else if (recv.action === Actions.UNLOCK_CODE) {
-        setIsCodeSyncAllowed(true);
-        setLastAction(Actions.CODE_CHANGE);
-      } else if (recv.action === Actions.CLASSROOM_DELETED) {
-        notifyClassroomDeleted(
-          translations('Classrooms.classroom-deleted-student')
-        );
-        setTimeout(() => {
-          toast.dismiss();
-          socketRef.current.close();
-          router.replace('/classrooms');
-        }, 1000);
+
+      switch (recv.action) {
+        case Actions.SYNC_DATA:
+          setUsers(recv.data.users.find((u) => u.user_id !== user.username));
+          setTeacher(recv.data.teacher);
+          setIsEditable(recv.data.is_editable);
+          myCodeRef.current = recv.data.personal_whiteboard;
+          codeRef.current = recv.data.shared_whiteboard;
+          // TODO: Add support for assignments
+          break;
+
+        case Actions.JOIN:
+          setUsers((users) => [...users, recv.data.user_id]);
+          break;
+
+        case Actions.LEAVE:
+          if (recv.data.user_id !== teacher) {
+            setUsers(users.filter((u) => u !== recv.data.user_id));
+          }
+          break;
+
+        case Actions.CODE_CHANGE:
+          if (recv.data.whiteboard_type === 'public') {
+            codeRef.current = recv.data.code;
+          } else if (
+            recv.data.whiteboard_type === 'private' &&
+            recv.data.user_id === teacher
+          ) {
+            myCodeRef.current = recv.data.code;
+          }
+          // TODO: Add support for assignments
+          break;
+
+        case Actions.GET_DATA:
+          if (
+            recv.data.target_user === user.username &&
+            recv.data.whiteboard_type === 'public'
+          ) {
+            codeRef.current = recv.data.code;
+          } else if (
+            recv.data.target_user === user.username &&
+            recv.data.whiteboard_type === 'private'
+          ) {
+            myCodeRef.current = recv.data.code;
+          }
+          // TODO: Add support for assignments
+          break;
+
+        case Actions.LOCK_CODE:
+          setIsEditable(false);
+          break;
+
+        case Actions.UNLOCK_CODE:
+          setIsEditable(true);
+          break;
       }
+
       setLastAction(parseInt(recv.action));
     };
-
     const createSocket = async () => {
       const connectNotification = toast.loading(
         translations('Classrooms.connecting')
@@ -254,7 +208,8 @@ export default function ClassroomsStudentPage(
         ws.send(
           JSON.stringify({
             action: Actions.JOIN,
-            value: user.username,
+            user_id: user.username,
+            data: null,
           })
         );
 
@@ -280,14 +235,16 @@ export default function ClassroomsStudentPage(
       codeSyncAllowanceRef.current = false;
     };
 
-    if (shouldRender) {
+    if (shouldRender && socketRef.current === null) {
       init();
+    } else if (shouldRender && socketRef.current) {
+      socketRef.current.onmessage = onMessage;
     }
 
     return () => {
-      if (shouldRender) socketRef.current.close();
+      if (shouldRender && socketRef.current === null) socketRef.current.close();
     };
-  }, [shouldRender]);
+  }, [classroomId, shouldRender, teacher, translations, user.username, users]);
 
   return (
     <>
@@ -311,10 +268,31 @@ export default function ClassroomsStudentPage(
         />
         <div className="flex h-full flex-1 flex-row">
           <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
-            <div className="flex flex-col justify-start align-middle">
+            <div className="flex flex-col justify-start gap-2 align-middle">
               <h1 className="mb-4 text-center text-2xl font-bold">
-                {translations('Classrooms.users')}
+                {translations('Classrooms.whiteboards')}
               </h1>
+              <Button
+                type="button"
+                onClick={() => {
+                  setIsPersonalWhiteboardOpen(false);
+                  setLastAction(Actions.CODE_CHANGE);
+                }}
+                disabled={!isPersonalWhiteboardOpen}
+                variant={ButtonVariant.PRIMARY}>
+                {translations('Classrooms.shared-whiteboard')} - {teacher}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  setIsPersonalWhiteboardOpen(true);
+                  setLastAction(Actions.CODE_CHANGE);
+                }}
+                disabled={isPersonalWhiteboardOpen}
+                variant={ButtonVariant.PRIMARY}>
+                {translations('Classrooms.my-whiteboard')}
+              </Button>
+              {users?.length > 0 && users?.map((u) => <div key={u}>{u}</div>)}
             </div>
             <Button
               variant={ButtonVariant.DANGER}
@@ -351,27 +329,38 @@ export default function ClassroomsStudentPage(
               <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
                 {translations('Classrooms.run')}
               </Button>
-              <Button
-                variant={ButtonVariant.FLAT_SECONDARY}
-                disabled={!isCodeSyncAllowed}
-                onClick={submitCode}>
-                {translations('Classrooms.submit')}
-              </Button>
             </div>
             <div className="w-full">
-              <ClassroomCodeEditor
-                socketRef={socketRef}
-                roomId={classroomId}
-                codeSyncAllowanceRef={codeSyncAllowanceRef}
-                isEditable={isCodeSyncAllowed}
-                onCodeChange={(code) => {
-                  codeRef.current = code;
-                }}
-                lastAction={lastAction}
-                setLastAction={setLastAction}
-                codeRef={codeRef}
-                user={user}
-              />
+              {isPersonalWhiteboardOpen ? (
+                  <ClassroomCodeEditor
+                    socketRef={socketRef}
+                    roomId={classroomId}
+                    isEditable={true}
+                    onCodeChange={(code) => {
+                      myCodeRef.current = code;
+                    }}
+                    lastAction={lastAction}
+                    setLastAction={setLastAction}
+                    codeRef={myCodeRef}
+                    user={user}
+                    isTeacher={false}
+                    personalWhiteboard={true}
+                  />
+              ) : (
+                  <ClassroomCodeEditor
+                    socketRef={socketRef}
+                    roomId={classroomId}
+                    isEditable={isEditable}
+                    onCodeChange={(code) => {
+                      codeRef.current = code;
+                    }}
+                    lastAction={lastAction}
+                    setLastAction={setLastAction}
+                    codeRef={codeRef}
+                    user={user}
+                    isTeacher={false}
+                  />
+              )}
             </div>
           </div>
         </div>

@@ -104,78 +104,174 @@ def get_application() -> FastAPI:
 app = get_application()
 
 
+class Assignment:
+    def __init__(self,  assignment_name: str, assignment_description: str, assignment_creator_id: str):
+        self.assignment_name = assignment_name
+        self.assignment_creator_id = assignment_creator_id
+        self.assignment_description = assignment_description
+
+
+class UserAssignment:
+    def __init__(self, user_id: str, assignment: Assignment, code: str):
+        self.user_id = user_id
+        self.assignment = assignment
+        self.whiteboard = Whiteboard(code, 'private')
+        self.grade = None
+
+
+class Whiteboard:
+    def __init__(self, code: str, whiteboard_type: str):
+        self.code = code
+        self.whiteboard_type = whiteboard_type
+
+
+class User:
+    def __init__(self, user_id: str, websocket: WebSocket, role: str):
+        self.user_id = user_id
+        self.websocket = websocket
+        self.role = role  # 0 = student, 1 = teacher
+        self.whiteboard: Whiteboard = Whiteboard(
+            'Print("Hello World")', 'private')
+        self.user_assignments: list[UserAssignment] = []
+        self.online = True
+
+    def add_whiteboard(self, whiteboard: Whiteboard):
+        self.whiteboards.append(whiteboard)
+
+    def add_user_assignment(self, user_assignment: UserAssignment):
+        self.user_assignments.append(user_assignment)
+
+    def get_user_assignment(self, assignment_name: str):
+        for user_assignment in self.user_assignments:
+            if user_assignment.assignment.assignment_name == assignment_name:
+                return user_assignment
+
+    def get_whiteboard(self, whiteboard_type: str):
+        for whiteboard in self.whiteboards:
+            if whiteboard.whiteboard_type == whiteboard_type:
+                return whiteboard
+
+    def update_websocket(self, websocket: WebSocket):
+        self.websocket = websocket
+
+
+class Classroom:
+    def __init__(self, classroom_id: str):
+        self.classroom_id = classroom_id
+        self.users: list[User] = []
+        self.shared_whiteboard: Whiteboard = Whiteboard(
+            'Print("Hello World")', 'public')
+        self.editing_locked = False
+
+    def add_user(self, user: User):
+        self.users.append(user)
+
+    def get_user_by_id(self, user_id: str):
+        for user in self.users:
+            if user.user_id == user_id:
+                return user
+
+    def get_user_by_websocket(self, websocket: WebSocket):
+        for user in self.users:
+            if user.websocket == websocket:
+                return user
+
+    def remove_user_by_id(self, user_id: str):
+        for user in self.users:
+            if user.user_id == user_id:
+                user.online = False
+                return user
+
+    def remove_user_by_websocket(self, websocket: WebSocket):
+        for user in self.users:
+            if user.websocket == websocket:
+                user.online = False
+
+    def get_all_users(self):
+        return self.users
+
+    def get_all_students(self):
+        students = []
+        for user in self.users:
+            if user.role == "student":
+                students.append(user)
+        return students
+
+    def get_teacher(self):
+        for user in self.users:
+            if user.role == "teacher":
+                return user
+        return None
+
+
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: Dict[int, List[WebSocket]] = dict()
-        self.existing_classes: List[int] = []
-        self.users: Dict[str, WebSocket] = dict()
-        self.teachers: Dict[int, WebSocket] = dict()
-        self.sync_code: Dict[str, WebSocket] = dict()
-        # TODO: Support for assignments
+        self.existing_classes: Dict[int, Classroom] = dict()
 
     async def connect(self, class_id: int, websocket: WebSocket):
         await websocket.accept()
         if class_id not in self.existing_classes:
-            self.existing_classes.append(class_id)
-            self.active_connections[class_id] = [websocket]
-        else:
-            self.active_connections[class_id].append(websocket)
+            self.existing_classes[class_id] = Classroom(class_id)
 
-    def disconnect(self, class_id: int, websocket: WebSocket):
-        self.active_connections[class_id].remove(websocket)
-        if(websocket in self.users.values()):
-            self.users.pop(self.get_user_id_by_websocket(websocket))
-        if len(self.active_connections[class_id]) == 0:
-            self.active_connections.pop(class_id)
-            self.existing_classes.remove(class_id)
-            if(class_id in self.teachers):
-                self.teachers.pop(class_id)
+    async def disconnect(self, class_id: int, websocket: WebSocket):
+        user = self.existing_classes[class_id].get_user_by_websocket(websocket)
+        self.existing_classes[class_id].remove_user_by_websocket(websocket)
+        payload = json.dumps(
+            {"action": actions.Actions.LEAVE.value, "data": {"user_id": user.user_id}})
+        await manager.broadcast_class_online(class_id=class_id, payload=payload)
+
+    def remove_class(self, class_id: int):
+        self.existing_classes.pop(class_id)
 
     async def send_personal_payload(self, payload: str, websocket: WebSocket):
         await websocket.send_text(payload)
 
-    async def broadcast(self, payload: str):
-        for v_class in self.active_connections:
-            for connection in self.active_connections[v_class]:
-                await connection.send_text(payload)
-
     async def broadcast_class(self, class_id: int, payload: str):
-        for connection in self.active_connections[class_id]:
-            await connection.send_text(payload)
+        for user in self.existing_classes[class_id].get_all_users():
+            await user.websocket.send_text(payload)
 
     async def broadcast_class_except(self, class_id: int, payload: str, websocket: WebSocket):
-        for connection in self.active_connections[class_id]:
-            if connection != websocket:
-                await connection.send_text(payload)
+        for user in self.existing_classes[class_id].get_all_users():
+            if user.websocket != websocket:
+                await user.websocket.send_text(payload)
 
-    def set_user(self, user_id: str, websocket: WebSocket):
-        self.users[user_id] = websocket
+    async def broadcast_class_online(self, class_id: int, payload: str):
+        for user in self.existing_classes[class_id].get_all_users():
+            if user.online:
+                await user.websocket.send_text(payload)
 
-    def get_user(self, user_id: str):
-        return self.users[user_id]
+    async def broadcast_class_students(self, class_id: int, payload: str):
+        for user in self.existing_classes[class_id].get_all_students():
+            await user.websocket.send_text(payload)
 
-    def get_user_id_by_websocket(self, websocket: WebSocket):
-        for user_id, user_websocket in self.users.items():
-            if user_websocket == websocket:
-                return user_id
+    def set_user(self, class_id: str, user_id: str, websocket: WebSocket):
+        self.existing_classes[class_id].add_user(
+            User(user_id=user_id, role="student", websocket=websocket))
 
-    def set_code(self, class_id: int, code: str):
-        self.sync_code[class_id] = code
+    def get_user(self, class_id: str, user_id: str):
+        return self.existing_classes[class_id].get_user_by_id(user_id)
 
-    def get_code(self, class_id: int):
-        if class_id in self.sync_code:
-            return self.sync_code[class_id]
-        else:
-            return None
+    def get_user_by_websocket(self, class_id: str, websocket: WebSocket):
+        return self.existing_classes[class_id].get_user_by_websocket(websocket)
 
-    def set_teacher(self, class_id: int, websocket: WebSocket):
-        self.teachers[class_id] = websocket
+    def set_shared_code(self, class_id: int, code: str):
+        self.existing_classes[class_id].shared_whiteboard.code = code
+
+    def get_shared_code(self, class_id: int):
+        return self.existing_classes[class_id].shared_whiteboard.code
+
+    def set_teacher(self, class_id: int, user_id: str, websocket: WebSocket):
+        self.existing_classes[class_id].add_user(
+            User(user_id=user_id, websocket=websocket, role="teacher"))
 
     def get_teacher(self, class_id: int):
-        return self.teachers[class_id]
+        return self.existing_classes[class_id].get_teacher()
 
-    def get_all_users_in_class(self, class_id: int):
-        return self.active_connections[class_id]
+    def get_users(self, class_id: int):
+        return self.existing_classes[class_id].get_all_users()
+
+    def get_students(self, class_id: int):
+        return self.existing_classes[class_id].get_all_students()
 
 
 manager = ConnectionManager()
@@ -183,76 +279,127 @@ manager = ConnectionManager()
 
 async def payload_handler(payload: dict, class_id: int, websocket: WebSocket):
     clientPayload_action = payload['action']
-    clientPayload_value = payload['value']
+    clientPayload_user_id = payload['user_id']
+    clientPayload_data = payload['data']
 
     if clientPayload_action == actions.Actions.JOIN.value:
-        response_payload = await payload_creator(action=actions.Actions.JOINED.value, value="{}".format(clientPayload_value))
-        manager.set_user(clientPayload_value, websocket)
-        await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=websocket)
+        users = []
+        for user in manager.get_students(class_id):
+            if(user.online and user.user_id != clientPayload_user_id):
+                users.append(user.user_id)
 
-        if manager.get_code(class_id) and len(manager.active_connections[class_id]) > 1:
-            response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
-            await manager.send_personal_payload(payload=response_payload, websocket=websocket)
+        if manager.get_user(class_id, clientPayload_user_id) is not None:
+            # When user reconnects update its websocket and send all remaining data
+            # TODO: Add support for assignments
+            user = manager.get_user(class_id, clientPayload_user_id)
+            user.update_websocket(websocket)
+            user.online = True
+            response_payload = json.dumps(
+                {"action": actions.Actions.SYNC_DATA.value, "data": {"users": users, "is_editable": manager.existing_classes[class_id].editing_locked, "teacher": manager.get_teacher(class_id).user_id, "personal_whiteboard": manager.get_user_by_websocket(class_id, websocket).whiteboard.code, "shared_whiteboard": manager.get_shared_code(class_id), "assignments": None}})
+            await manager.send_personal_payload(response_payload, websocket)
+        else:
+            # Create a new user
+            response_payload = json.dumps(
+                {"action": actions.Actions.SYNC_DATA.value, "data": {"users": users, "is_editable": manager.existing_classes[class_id].editing_locked, "teacher": manager.get_teacher(class_id).user_id, "personal_whiteboard": "Print(\"Hello World\")", "shared_whiteboard": manager.get_shared_code(class_id), "assignments": None}})
+
+            manager.set_user(
+                class_id=class_id, user_id=clientPayload_user_id, websocket=websocket)
+            await manager.send_personal_payload(response_payload, websocket)
+
+        class_payload = json.dumps(
+            {"action": actions.Actions.JOIN.value, "data": {"user_id": clientPayload_user_id}})
+        await manager.broadcast_class_except(class_id=class_id, payload=class_payload, websocket=websocket)
 
     elif clientPayload_action == actions.Actions.TEACHER_JOIN.value:
-        if(class_id in manager.teachers):
-            users = []
-            for connection in manager.get_all_users_in_class(class_id):
-                users.append(manager.get_user_id_by_websocket(connection))
-            response_users = await payload_creator(action=actions.Actions.SYNC_USERS.value, value=users)
-            response_code = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
-            await manager.send_personal_payload(payload=response_users, websocket=websocket)
-            await manager.send_personal_payload(payload=response_code, websocket=websocket)
-        else:
-            manager.set_teacher(class_id, websocket)
+        # TODO: Add support for assignments
+        users = []
+        for user in manager.get_students(class_id):
+            if(user.online):
+                users.append(user.user_id)
 
-    elif clientPayload_action == actions.Actions.SYNC_CODE.value:
-        response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
-        await manager.send_personal_payload(payload=response_payload, websocket=websocket)
+        if manager.get_teacher(class_id) is not None:
+            user = manager.get_user(class_id, clientPayload_user_id)
+            user.update_websocket(websocket)
+            user.online = True
+
+            response_payload = json.dumps(
+                {"action": actions.Actions.SYNC_DATA.value, "data": {"users": users, "is_editable": manager.existing_classes[class_id].editing_locked, "shared_whiteboard": manager.get_shared_code(class_id), "assignments": None}})
+            await manager.send_personal_payload(response_payload, websocket)
+        else:
+            manager.set_teacher(class_id, clientPayload_user_id, websocket)
 
     elif clientPayload_action == actions.Actions.CODE_CHANGE.value:
-        manager.set_code(class_id, clientPayload_value)
-        response_payload = await payload_creator(action=actions.Actions.CODE_CHANGE.value, value=manager.get_code(class_id))
-        await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=websocket)
+        whiteboard_type = clientPayload_data["whiteboard_type"]
+        whiteboard_code = clientPayload_data["code"]
 
-    elif clientPayload_action == actions.Actions.GET_CODE.value:
-        response_payload = await payload_creator(action=actions.Actions.GET_CODE.value, value=manager.get_code(class_id))
-        websocket = manager.get_user(clientPayload_value)
-        await manager.send_personal_payload(payload=response_payload, websocket=websocket)
+        if manager.get_user_by_websocket(class_id, websocket).role == "teacher":
+            if whiteboard_type == "public":
+                manager.set_shared_code(class_id, whiteboard_code)
+                response_payload = json.dumps(
+                    {"action": actions.Actions.CODE_CHANGE.value, "data": {"user_id": clientPayload_user_id, "whiteboard_type": whiteboard_type, "code": whiteboard_code}})
+                await manager.broadcast_class_students(class_id, response_payload)
+            elif whiteboard_type == "private":
+                target_user = manager.get_user(
+                    class_id, clientPayload_data["target_user"])
+                target_user.whiteboard.code = whiteboard_code
+                response_payload = json.dumps(
+                    {"action": actions.Actions.CODE_CHANGE.value, "data": {"user_id": clientPayload_user_id, "whiteboard_type": whiteboard_type, "code": whiteboard_code}})
+                await manager.send_personal_payload(response_payload, target_user.websocket)
+            else:
+                # TODO: Add support for assignments
+                pass
+        else:
+            if whiteboard_type == "private":
+                manager.get_user_by_websocket(
+                    class_id, websocket).whiteboard.code = whiteboard_code
 
-    elif clientPayload_action == actions.Actions.GET_CODE_RESPONSE.value:
-        response_payload = await payload_creator(action=actions.Actions.GET_CODE_RESPONSE.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher(class_id)
-        await manager.send_personal_payload(payload=response_payload, websocket=teacher_websocket)
+                response_payload = json.dumps(
+                    {"action": actions.Actions.CODE_CHANGE.value, "data": {"user_id": clientPayload_user_id, "whiteboard_type": whiteboard_type, "code": whiteboard_code}})
+                await manager.send_personal_payload(response_payload, manager.get_teacher(class_id).websocket)
+            elif whiteboard_type == "public":
+                manager.set_shared_code(class_id, whiteboard_code)
+                response_payload = json.dumps(
+                    {"action": actions.Actions.CODE_CHANGE.value, "data": {"user_id": clientPayload_user_id, "whiteboard_type": whiteboard_type, "code": whiteboard_code}})
+                await manager.broadcast_class(class_id, response_payload)
+            else:
+                # TODO: Add support for assignments
+                assignment_id = clientPayload_data["assignment_id"]
+                pass
 
-    elif clientPayload_action == actions.Actions.CODE_SUBMITTED.value:
-        response_payload = await payload_creator(action=actions.Actions.CODE_SUBMITTED.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher(class_id)
-        await manager.send_personal_payload(payload=response_payload, websocket=teacher_websocket)
+    elif clientPayload_action == actions.Actions.GET_DATA.value:
+        target_user = clientPayload_data["target_user"]
+        whiteboard_type = clientPayload_data["whiteboard_type"]
+        response_payload = None
+
+        if whiteboard_type == "public":
+            response_payload = json.dumps({"action": actions.Actions.GET_DATA.value, "data": {
+                                          "whiteboard_type": whiteboard_type, "code": manager.get_shared_code(class_id)}})
+        elif whiteboard_type == "private":
+            response_payload = json.dumps({"action": actions.Actions.GET_DATA.value, "data": {
+                                          "target_user": target_user, "whiteboard_type": whiteboard_type, "code": manager.get_user(class_id, target_user).whiteboard.code}})
+        else:
+            # TODO: Add support for assignments
+            pass
+
+        await manager.send_personal_payload(response_payload, websocket)
 
     elif clientPayload_action == actions.Actions.LOCK_CODE.value:
-        response_payload = await payload_creator(action=actions.Actions.LOCK_CODE.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher(class_id)
-        await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=teacher_websocket)
+        response_payload = json.dumps(
+            {"action": actions.Actions.LOCK_CODE.value})
+        manager.existing_classes[class_id].editing_locked = True
+        await manager.broadcast_class_students(class_id=class_id, payload=response_payload)
 
     elif clientPayload_action == actions.Actions.UNLOCK_CODE.value:
-        response_payload = await payload_creator(action=actions.Actions.UNLOCK_CODE.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher(class_id)
-        await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=teacher_websocket)
+        response_payload = json.dumps(
+            {"action": actions.Actions.UNLOCK_CODE.value})
+        manager.existing_classes[class_id].editing_locked = False
+        await manager.broadcast_class_students(class_id=class_id, payload=response_payload)
 
     elif clientPayload_action == actions.Actions.CLASSROOM_DELETED.value:
-        response_payload = await payload_creator(action=actions.Actions.CLASSROOM_DELETED.value, value=clientPayload_value)
-        teacher_websocket = manager.get_teacher(class_id)
-        await manager.broadcast_class_except(class_id=class_id, payload=response_payload, websocket=teacher_websocket)
-
-
-async def payload_creator(action: int, value: str):
-    return json.dumps({"action": action, "value": value})
-
-
-@app.exception_handler(AuthJWTException)
-def authjwt_exception_handler(_, exc: AuthJWTException):
-    return JSONResponse(status_code=exc.status_code, content={"error": exc.payload})
+        response_payload = json.dumps(
+            {"action": actions.Actions.CLASSROOM_DELETED.value})
+        await manager.broadcast_class_students(class_id=class_id, payload=response_payload)
+        manager.remove_class(class_id)
 
 
 @app.websocket("/ws/{class_id}")
@@ -266,8 +413,4 @@ async def websocket_endpoint(websocket: WebSocket, class_id: int):
             await payload_handler(payload=json.loads(resp), class_id=class_id, websocket=websocket)
 
     except WebSocketDisconnect:
-        user = manager.get_user_id_by_websocket(websocket)
-        manager.disconnect(websocket=websocket, class_id=class_id)
-        if(class_id in manager.active_connections and user is not None):
-            payload = await payload_creator(action=actions.Actions.LEAVE.value, value="{}".format(user))
-            await manager.broadcast_class(class_id=class_id, payload=payload)
+        await manager.disconnect(websocket=websocket, class_id=class_id)

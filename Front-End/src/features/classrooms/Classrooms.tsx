@@ -1,25 +1,15 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import StyledDialog from '@app/components/StyledDialog';
 import ClassroomDescriptorWrapper from '@app/components/ClassroomDescriptorWrapper';
 import type Classroom from '@app/models/Classroom';
-import {
-  createClassroom,
-  selectClassroomsData,
-  selectClassroomsStatus,
-} from '@app/features/classrooms/classroomsSlice';
-import {
-  fetchClassroomSessions,
-  selectClassroomSessionsData,
-} from '@app/features/classrooms/sessions/classroomSessionsSlice';
+import { createClassroom } from '@app/features/classrooms/classroomsSlice';
 import Checkbox from '@app/components/Checkbox';
 import Button, { ButtonVariant } from '@app/components/Button';
 import Input from '@app/components/Input';
-import { useAppSelector } from '@app/hooks';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 type ClassroomsProps = {
   classrooms: Classroom[];
@@ -35,13 +25,6 @@ export default function Classrooms({
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const classroomData = useAppSelector(selectClassroomsData);
-  const classroomStatus = useAppSelector(selectClassroomsStatus);
-  const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
-
-  const [shouldRedirect, setShouldRedirect] = useState(false);
-  const [redirectId, setRedirectId] = useState(0);
-
   const { register, handleSubmit, setValue } =
     useForm<{
       name: string;
@@ -56,34 +39,6 @@ export default function Classrooms({
   const openCreateClassroomDialog = () => {
     setIsCreateClassroomDialogOpen(true);
   };
-  const redirectToClassroom = (id: number) => {
-    if (id) {
-      setRedirectId(id);
-      setShouldRedirect(true);
-    }
-  };
-
-  const notifyClassroomCreated = (i18msg: string) =>
-    toast.custom(
-      (to) => (
-        <button
-          type="button"
-          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
-          onClick={() => toast.dismiss(to.id)}>
-          <div className="flex justify-center space-x-1">
-            <InformationCircleIcon className="h-6 w-6" />
-            <div>
-              <p className="font-bold">{i18msg}</p>
-            </div>
-          </div>
-        </button>
-      ),
-      {
-        id: 'classroom-created-notification',
-        position: 'top-center',
-        duration: 1000,
-      }
-    );
 
   const onClassroomCreateSubmit = async (data: {
     name: string;
@@ -153,10 +108,10 @@ export default function Classrooms({
                   onClick={closeCreateClassroomDialog}
                   className="mr-2"
                   variant={ButtonVariant.DANGER}>
-                  Cancel
+                  {translations('Classrooms.cancel')}
                 </Button>
                 <Button type="submit" variant={ButtonVariant.PRIMARY}>
-                  Send
+                  {translations('Classrooms.submit')}
                 </Button>
               </div>
             </form>
