@@ -15,7 +15,7 @@ export const useAuthRedirect = (path = '/login'): [User, boolean] => {
 
   useEffect(() => {
     if (!user && !isLoggedIn) {
-      router.replace(path);
+      router.replace(path, undefined, { shallow: true });
     }
   }, [user, isLoggedIn, router, path]);
 
