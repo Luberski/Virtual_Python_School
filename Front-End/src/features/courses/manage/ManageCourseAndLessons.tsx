@@ -49,6 +49,7 @@ import {
 } from '@app/features/dynamic-courses/knowledge-test/knowledgeTestSlice';
 import { useAppSelector } from '@app/hooks';
 import { deleteKnowledgeTestByLessonId } from '@app/features/dynamic-courses/knowledge-test/knowledgeTestsSlice';
+import type AnswerCheckRule from '@app/models/AnswerCheckRule';
 
 type ManageCourseAndLessonsProps = {
   course: Course;
@@ -64,6 +65,11 @@ type SelectOption = {
   disabled: boolean;
 };
 
+type AnswerCheckRuleOption = SelectOption & {
+  value: AnswerCheckRule | string;
+  label: AnswerCheckRule | string;
+};
+
 export default function ManageCourseAndLessons({
   course,
   lessons,
@@ -72,15 +78,20 @@ export default function ManageCourseAndLessons({
 }: ManageCourseAndLessonsProps) {
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, setValue } =
-    useForm<{
-      name: string;
-      description: string;
-      answer: string;
-    }>();
+  const {
+    control: controlLessonCreate,
+    register,
+    handleSubmit,
+    setValue,
+  } = useForm<{
+    name: string;
+    description: string;
+    answer: string;
+    answerCheckRule: AnswerCheckRule | unknown;
+  }>();
 
   const {
-    control,
+    control: controlCourseEdit,
     register: registerCourseEdit,
     handleSubmit: handleCourseEditSubmit,
     setValue: setValueCourseEdit,
@@ -95,7 +106,12 @@ export default function ManageCourseAndLessons({
     register: registerLessonEdit,
     handleSubmit: handleLessonEditSubmit,
     setValue: setValueLessonEdit,
-  } = useForm<{ name: string; description: string; answer: string }>();
+  } = useForm<{
+    name: string;
+    description: string;
+    answer: string;
+    answerCheckRule: AnswerCheckRule | unknown;
+  }>();
 
   const {
     register: registerTagAdd,
@@ -124,6 +140,68 @@ export default function ManageCourseAndLessons({
   const [selectedLang, setSelectedLang] = useState(
     languageOptions.find((option) => option.value === course?.lang)
   );
+
+  const answerCheckRules: AnswerCheckRuleOption[] = [
+    {
+      id: nanoid(),
+      value: 'equal',
+      label: 'equal',
+      disabled: false,
+    },
+    {
+      id: nanoid(),
+      value: 'contain',
+      label: 'contain',
+      disabled: false,
+    },
+    {
+      id: nanoid(),
+      value: 'isString',
+      label: 'isString',
+      disabled: false,
+    },
+    {
+      id: nanoid(),
+      value: 'isInteger',
+      label: 'isInteger',
+      disabled: false,
+    },
+    {
+      id: nanoid(),
+      value: 'isFloat',
+      label: 'isFloat',
+      disabled: false,
+    },
+    {
+      id: nanoid(),
+      value: 'isBoolean',
+      label: 'isBoolean',
+      disabled: false,
+    },
+    {
+      id: nanoid(),
+      value: 'isTrue',
+      label: 'isTrue',
+      disabled: false,
+    },
+    {
+      id: nanoid(),
+      value: 'isFalse',
+      label: 'isFalse',
+      disabled: false,
+    },
+    {
+      id: nanoid(),
+      value: 'regex',
+      label: 'regex',
+      disabled: false,
+    },
+  ];
+
+  const [selectedAnswerCheckRule, setSelectedAnswerCheckRule] = useState(
+    answerCheckRules[0]
+  );
+
   const currentLessonKnowledgeTestData = useAppSelector(
     selectKnowledgeTestData
   );
@@ -151,6 +229,23 @@ export default function ManageCourseAndLessons({
 
   const openLessonEditDialog = (lessonId: number) => () => {
     setCurrentLessonId(lessonId);
+    setValueLessonEdit(
+      'name',
+      lessons.find((lesson) => lesson.id === lessonId).name
+    );
+    setValueLessonEdit(
+      'description',
+      lessons.find((lesson) => lesson.id === lessonId).description
+    );
+    setValueLessonEdit(
+      'answer',
+      lessons.find((lesson) => lesson.id === lessonId).final_answer
+    );
+    setValueLessonEdit(
+      'answerCheckRule',
+      lessons.find((lesson) => lesson.id === lessonId).answer_check_rule
+    );
+
     setIsLessonEditDialogOpen(true);
   };
 
@@ -176,8 +271,9 @@ export default function ManageCourseAndLessons({
     name: string;
     description: string;
     answer: string;
+    answerCheckRule: SelectOption;
   }) => {
-    const { name, description, answer } = data;
+    const { name, description, answer, answerCheckRule } = data;
 
     try {
       dispatch(
@@ -188,6 +284,7 @@ export default function ManageCourseAndLessons({
           type: 1,
           numberOfAnswers: 1,
           answer,
+          answerCheckRule: answerCheckRule.value,
         })
       );
       setValue('name', '');
@@ -205,7 +302,7 @@ export default function ManageCourseAndLessons({
     name: string;
     description: string;
     featured: boolean;
-    lang: { id: number; value: string; label: string; disabled: boolean };
+    lang: SelectOption;
   }) => {
     const { name, description, featured, lang } = data;
     if (
@@ -260,6 +357,7 @@ export default function ManageCourseAndLessons({
         setValueLessonEdit('name', '');
         setValueLessonEdit('description', '');
         setValueLessonEdit('answer', '');
+        setValueLessonEdit('answerCheckRule', '');
         setCurrentLessonId(null);
         closeLessonEditDialog();
         notifyLessonEdited();
@@ -598,6 +696,20 @@ export default function ManageCourseAndLessons({
               maxLength={2000}
               placeholder={translations('Lessons.lesson-description')}
             />
+            <Controller
+              control={controlLessonCreate}
+              name="answerCheckRule"
+              render={({ field: { onChange } }) => (
+                <Select
+                  options={answerCheckRules}
+                  selected={selectedAnswerCheckRule}
+                  setSelected={({ id, value, label, disabled }) => {
+                    onChange({ id, value, label, disabled });
+                    setSelectedAnswerCheckRule({ id, value, label, disabled });
+                  }}
+                />
+              )}
+            />
             <Input
               label="answer"
               name="answer"
@@ -654,7 +766,7 @@ export default function ManageCourseAndLessons({
               placeholder={translations('Courses.course-description')}
             />
             <Controller
-              control={control}
+              control={controlCourseEdit}
               name="lang"
               render={({ field: { onChange } }) => (
                 <Select

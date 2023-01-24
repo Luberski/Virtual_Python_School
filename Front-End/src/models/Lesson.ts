@@ -1,3 +1,5 @@
+import type AnswerCheckRule from './AnswerCheckRule';
+
 type Lesson = {
   id: number;
   course_id?: number;
@@ -6,6 +8,8 @@ type Lesson = {
   type: number;
   start_date: string;
   completed: boolean;
+  final_answer?: string;
+  answer_check_rule?: AnswerCheckRule;
 };
 
 export default Lesson;

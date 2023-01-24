@@ -90,11 +90,20 @@ export const createLesson = createAsyncThunk<
     type: number;
     numberOfAnswers: number;
     answer: string;
+    answerCheckRule: string;
   }
 >(
   'api/lessons/create',
   async (
-    { courseId, name, description, type, numberOfAnswers, answer },
+    {
+      courseId,
+      name,
+      description,
+      type,
+      numberOfAnswers,
+      answer,
+      answerCheckRule,
+    },
     thunkApi
   ) => {
     try {
@@ -109,6 +118,7 @@ export const createLesson = createAsyncThunk<
             type,
             number_of_answers: numberOfAnswers,
             final_answer: answer,
+            answer_check_rule: answerCheckRule,
           },
         },
         headers: {
@@ -136,11 +146,21 @@ export const editLesson = createAsyncThunk<
     type?: number;
     numberOfAnswers?: number;
     answer?: string;
+    answerCheckRule?: string;
   }
 >(
   'api/lessons/edit',
   async (
-    { courseId, lessonId, name, description, type, numberOfAnswers, answer },
+    {
+      courseId,
+      lessonId,
+      name,
+      description,
+      type,
+      numberOfAnswers,
+      answer,
+      answerCheckRule,
+    },
     thunkApi
   ) => {
     try {
@@ -156,6 +176,7 @@ export const editLesson = createAsyncThunk<
             ...(type && { type }),
             ...(numberOfAnswers && { number_of_answers: numberOfAnswers }),
             ...(answer && { final_answer: answer }),
+            ...(answerCheckRule && { answer_check_rule: answerCheckRule }),
           },
         },
         headers: {

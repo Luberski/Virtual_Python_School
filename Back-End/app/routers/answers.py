@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 from fastapi import APIRouter, Depends, Path, status
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
@@ -43,6 +44,7 @@ def create_answer(
     new_answer = models.Answers(
         final_answer=request_data.data.final_answer,
         lesson_id=request_data.data.lesson_id,
+        answer_check_rule=request_data.data.answer_check_rule,
     )
     db.add(new_answer)
     db.commit()
@@ -54,6 +56,7 @@ def create_answer(
                 "id": new_answer.id,
                 "final_answer": new_answer.final_answer,
                 "lesson_id": new_answer.lesson_id,
+                "answer_check_rule": new_answer.answer_check_rule,
             },
             "error": None,
         },
@@ -86,6 +89,7 @@ def check_answer(
     answer_valid = None
     answer_status = False
     length_of_answers = len(answers)
+    # TODO: add answer_check_rule support for multiple answers
     if length_of_answers > 1:
         for answer in answers:
             if answer.final_answer == request_data.data.answer:
@@ -93,9 +97,50 @@ def check_answer(
                 answer_valid = answer
                 break
     elif length_of_answers == 1:
-        if answers[0].final_answer == request_data.data.answer:
-            answer_status = True
-            answer_valid = answers[0]
+        # TODO: fix support for new line characters: if contains print then remove new line character at the end
+        request_data.data.answer = request_data.data.answer.rstrip("\n")
+        answers[0].final_answer = answers[0].final_answer.rstrip("\n")
+        # rules: equal, contain, isString, isInteger, isFloat, isBoolean, isTrue, isFalse, regex
+        if answers[0].answer_check_rule == "equal":
+            if answers[0].final_answer == request_data.data.answer:
+                answer_status = True
+                answer_valid = answers[0]
+        elif answers[0].answer_check_rule == "contain":
+            if answers[0].final_answer in request_data.data.answer:
+                answer_status = True
+                answer_valid = answers[0]
+        elif answers[0].answer_check_rule == "isString":
+            if isinstance(request_data.data.answer, str):
+                answer_status = True
+                answer_valid = answers[0]
+        elif answers[0].answer_check_rule == "isInteger":
+            if int(request_data.data.answer):
+                answer_status = True
+                answer_valid = answers[0]
+        elif answers[0].answer_check_rule == "isFloat":
+            if float(request_data.data.answer):
+                answer_status = True
+                answer_valid = answers[0]
+        elif answers[0].answer_check_rule == "isBoolean":
+            if bool(request_data.data.answer):
+                answer_status = True
+                answer_valid = answers[0]
+        elif answers[0].answer_check_rule == "isTrue":
+            if bool(request_data.data.answer) is True:
+                answer_status = True
+                answer_valid = answers[0]
+        elif answers[0].answer_check_rule == "isFalse":
+            if bool(request_data.data.answer) is False:
+                answer_status = True
+                answer_valid = answers[0]
+        elif answers[0].answer_check_rule == "regex":
+            if re.search(answers[0].final_answer, request_data.data.answer):
+                answer_status = True
+                answer_valid = answers[0]
+        else:
+            answer_status = False
+            answer_valid = None
+
     else:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -216,6 +261,10 @@ def edit_answer(
         answer_edit.lesson_id = request_data.data.lesson_id
         to_commit = True
 
+    if request_data.data.answer_check_rule is not None:
+        answer_edit.answer_check_rule = request_data.data.answer_check_rule
+        to_commit = True
+
     if to_commit:
         db.commit()
 
@@ -226,6 +275,7 @@ def edit_answer(
                 "id": answer_id,
                 "final_answer": answer_edit.final_answer,
                 "lesson_id": answer_edit.lesson_id,
+                "answer_check_rule": answer_edit.answer_check_rule,
             },
             "error": None,
         },
@@ -294,6 +344,7 @@ def get_answers(
                     "id": answer.id,
                     "final_answer": answer.final_answer,
                     "lesson_id": answer.lesson_id,
+                    "answer_check_rule": answer.answer_check_rule,
                 }
                 for answer in answers
             ],

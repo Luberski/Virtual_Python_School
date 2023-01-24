@@ -220,6 +220,8 @@ def get_lessons_by_course_id(
                     "course_id": lesson.course_id,
                     "type": lesson.type,
                     "number_of_answers": lesson.number_of_answers,
+                    "final_answer": lesson.answers[0].final_answer,
+                    "answer_check_rule": lesson.answers[0].answer_check_rule,
                 }
                 for lesson in lessons
             ],

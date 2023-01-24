@@ -63,10 +63,7 @@ export default function EnrolledLesson({
   const router = useRouter();
   const editorRef = useRef(null);
 
-  const { register, handleSubmit, setValue } =
-    useForm<{
-      answer: string;
-    }>();
+  const { handleSubmit } = useForm();
   const [isExploding, setIsExploding] = useState(false);
   const answerStatus = useAppSelector(selectAnswerStatus);
   const answerData = useAppSelector(selectAnswerData);
@@ -172,8 +169,8 @@ export default function EnrolledLesson({
 
   const onSubmit = useMemo(
     () =>
-      debounce((data: { answer: string }) => {
-        const { answer } = data;
+      debounce(() => {
+        const answer = playgroundData?.content || '';
         try {
           dispatch(
             checkAnswer({
@@ -188,7 +185,7 @@ export default function EnrolledLesson({
           console.error(error);
         }
       }, 500),
-    [dispatch, enrolledLessonId, isDynamic, lessonId]
+    [dispatch, enrolledLessonId, isDynamic, lessonId, playgroundData?.content]
   );
 
   const handleValue = useMemo(
@@ -197,12 +194,11 @@ export default function EnrolledLesson({
         const value = editorRef.current.getValue();
         try {
           dispatch(sendCode({ content: value }));
-          setValue('answer', '');
         } catch (error) {
           console.error(error);
         }
       }, 1000),
-    [dispatch, setValue]
+    [dispatch]
   );
 
   function handleEditorDidMount(editor) {
@@ -226,10 +222,7 @@ export default function EnrolledLesson({
             </>
           ) : (
             <>
-              <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
-                {translations('Meta.title-lesson')}:&nbsp;{enrolledLesson.name}
-              </h1>
-              <div className="my-9 self-end">
+              <div className="my-1 self-end">
                 <IconButton
                   onClick={handleValue}
                   variant={IconButtonVariant.PRIMARY}
@@ -264,7 +257,7 @@ export default function EnrolledLesson({
                 <div className="brand-shadow2 m-2 flex flex-col rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700 xl:w-1/2">
                   {parsedLessonDescription && (
                     <div
-                      className="h-[580px] overflow-auto whitespace-pre-line"
+                      className="h-[656px] overflow-auto whitespace-pre-line"
                       dangerouslySetInnerHTML={{
                         __html: parsedLessonDescription,
                       }}
@@ -272,15 +265,7 @@ export default function EnrolledLesson({
                   )}
                   <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex w-full flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-                    <Input
-                      placeholder={translations('Lessons.answer')}
-                      label="answer"
-                      name="answer"
-                      className="w-full"
-                      required
-                      register={register}
-                    />
+                    className="flex w-full justify-end">
                     <IconButton
                       variant={IconButtonVariant.PRIMARY}
                       type="submit"

@@ -88,6 +88,7 @@ class Answers(Base):
     id = Column(Integer, primary_key=True)
     final_answer = Column(String(500))
     lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+    answer_check_rule = Column(String(50), default="equal")
 
 
 class AnswersHistory(Base):

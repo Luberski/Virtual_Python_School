@@ -7,6 +7,7 @@ from app.schemas.base import BaseJSONRequest
 class AnswerCreateData(BaseModel):
     lesson_id: int
     final_answer: str
+    answer_check_rule: Optional[str] = None
 
 
 class AnswerCreateRequest(BaseJSONRequest):
@@ -18,6 +19,7 @@ class AnswerCheckData(BaseModel):
     enrolled_lesson_id: Optional[int] = None
     dynamic_lesson_id: Optional[int] = None
     answer: Union[str, list]
+    answer_check_rule: Optional[str] = None
 
 
 class AnswerCheckRequest(BaseJSONRequest):
@@ -28,6 +30,7 @@ class AnswerEditData(BaseModel):
     answer_id: int
     lesson_id: int
     final_answer: str
+    answer_check_rule: Optional[str] = None
 
 
 class AnswerEditRequest(BaseJSONRequest):
