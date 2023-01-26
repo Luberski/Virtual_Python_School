@@ -115,7 +115,7 @@ export default function Playground() {
                     className="flex h-6 items-center rounded-t border-b border-neutral-500 bg-neutral-200 text-center text-black dark:bg-neutral-800 dark:text-white"
                     id="headerTerminal">
                     <div className="mx-auto" id="terminaltitle">
-                      <p className="text-center">Terminal output</p>
+                      <p className="text-center">Console</p>
                     </div>
                   </div>
                   <div

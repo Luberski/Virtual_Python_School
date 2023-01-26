@@ -82,7 +82,8 @@
   },
   "Playground": {
     "run": "Uruchom",
-    "leading": "Code Playground"
+    "leading": "Code Playground",
+    "console": "Konsola"
   },
   "Manage": {
     "manage": "Zarządzaj",

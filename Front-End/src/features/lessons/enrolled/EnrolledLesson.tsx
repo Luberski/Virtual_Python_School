@@ -1,3 +1,4 @@
+import 'highlight.js/styles/vs2015.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
@@ -15,13 +16,13 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import rehypeRewrite from 'rehype-rewrite';
+import { useTheme } from 'next-themes';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
   selectPlaygroundStatus,
   sendCode,
 } from '@app/features/playground/playgroundSlice';
-import Input from '@app/components/Input';
 import {
   checkAnswer,
   reset,
@@ -34,7 +35,6 @@ import type EnrolledLessonModel from '@app/models/EnrolledLesson';
 import { useAppSelector } from '@app/hooks';
 import type KnowledgeTest from '@app/models/KnowledgeTest';
 import KnowledgeTestForm from '@app/features/dynamic-courses/knowledge-test/KnowledgeTestForm';
-import 'highlight.js/styles/atom-one-dark.css';
 
 const Editor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
@@ -72,6 +72,7 @@ export default function EnrolledLesson({
   const playgroundStatus = useAppSelector(selectPlaygroundStatus);
   const [showKnowledgeTest, setShowKnowledgeTest] = useState(false);
   const [parsedLessonDescription, setParsedLessonDescription] = useState('');
+  const { theme } = useTheme();
 
   useEffect(() => {
     const parsedMarkdown = unified()
@@ -265,7 +266,7 @@ export default function EnrolledLesson({
                   )}
                   <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex w-full justify-end">
+                    className="mt-3 flex w-full justify-end">
                     <IconButton
                       variant={IconButtonVariant.PRIMARY}
                       type="submit"
@@ -305,27 +306,35 @@ export default function EnrolledLesson({
                     )}
                   </form>
                 </div>
-                <div className="brand-shadow2 m-2 flex flex-1 flex-col shadow-black/25">
+                <div className="brand-shadow2 m-2 flex flex-1 flex-col rounded-lg shadow-black/25">
                   <Editor
-                    className="h-96"
+                    className="h-96 p-1"
                     defaultLanguage="python"
                     defaultValue=""
+                    options={{
+                      lineNumbersMinChars: 2,
+                      minimap: {
+                        enabled: false,
+                      },
+                    }}
                     onMount={handleEditorDidMount}
-                    theme="vs-dark"
+                    theme={theme === 'light' ? 'vs' : 'vs-dark'}
                   />
                   <div>
-                    <div className="brand-shadow2 mx-auto h-96 rounded-lg border-black bg-black subpixel-antialiased shadow-black/25">
+                    <div className="mx-auto h-96 rounded-lg bg-white dark:bg-black">
                       <div
-                        className="flex h-6 items-center rounded-t border-b border-neutral-500 bg-neutral-200 text-center text-black dark:bg-neutral-800 dark:text-white"
+                        className="flex h-6 items-center border-b border-neutral-500 bg-neutral-100 text-center text-black dark:bg-neutral-800 dark:text-white"
                         id="headerTerminal">
                         <div className="mx-auto" id="terminaltitle">
-                          <p className="text-center">Terminal output</p>
+                          <p className="text-center">
+                            {translations('Playground.console')}
+                          </p>
                         </div>
                       </div>
                       <div
-                        className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
+                        className="font-mono h-auto pt-1 pl-1 text-sm"
                         id="console">
-                        <pre className="pb-1 text-white">
+                        <pre className="pb-1">
                           {playgroundData?.content || playgroundError}
                         </pre>
                       </div>
