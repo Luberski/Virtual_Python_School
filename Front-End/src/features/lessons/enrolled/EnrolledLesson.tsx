@@ -101,7 +101,7 @@ export default function EnrolledLesson({
       .processSync(enrolledLesson.description)
       .toString();
     setParsedLessonDescription(parsedMarkdown);
-  }, [enrolledLesson.description]);
+  }, [enrolledLesson?.description]);
 
   const notify = useCallback(
     (isSucces: boolean) => {
