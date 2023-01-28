@@ -134,6 +134,11 @@ def edit_lesson(
         answer_edit.final_answer = request_data.data.final_answer
         to_commit = True
 
+    if request_data.data.answer_check_rule:
+        answer_edit = db.query(models.Answers).filter_by(lesson_id=lesson_id).first()
+        answer_edit.answer_check_rule = request_data.data.answer_check_rule
+        to_commit = True
+
     if to_commit:
         db.commit()
 

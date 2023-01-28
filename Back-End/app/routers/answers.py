@@ -98,8 +98,10 @@ def check_answer(
                 break
     elif length_of_answers == 1:
         # TODO: fix support for new line characters: if contains print then remove new line character at the end
-        request_data.data.answer = request_data.data.answer.rstrip("\n")
-        answers[0].final_answer = answers[0].final_answer.rstrip("\n")
+        if request_data.data.answer is not None and answers[0].final_answer is not None:
+            request_data.data.answer = request_data.data.answer.rstrip("\n")
+            answers[0].final_answer = answers[0].final_answer.rstrip("\n")
+
         # rules: equal, contain, isString, isInteger, isFloat, isBoolean, isTrue, isFalse, regex
         if answers[0].answer_check_rule == "equal":
             if answers[0].final_answer == request_data.data.answer:

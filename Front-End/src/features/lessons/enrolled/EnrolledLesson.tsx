@@ -95,6 +95,15 @@ export default function EnrolledLesson({
               // @ts-ignore
               node.children[0].value.slice(firstLineLength);
           }
+          if (node.type === 'element' && node.tagName === 'ol') {
+            node.properties.className = ['markdown-ol'];
+          }
+          if (node.type === 'element' && node.tagName === 'ul') {
+            node.properties.className = ['markdown-ul'];
+          }
+          if (node.type === 'element' && node.tagName === 'li') {
+            node.properties.className = ['markdown-li'];
+          }
         },
       })
       .use(rehypeStringify)
@@ -258,7 +267,7 @@ export default function EnrolledLesson({
                 <div className="brand-shadow2 m-2 flex flex-col rounded-lg bg-white p-6 shadow-black/25 dark:bg-neutral-700 xl:w-1/2">
                   {parsedLessonDescription && (
                     <div
-                      className="h-[656px] overflow-auto whitespace-pre-line"
+                      className="markdown h-[656px] overflow-auto whitespace-pre-line"
                       dangerouslySetInnerHTML={{
                         __html: parsedLessonDescription,
                       }}

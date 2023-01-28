@@ -94,6 +94,39 @@
   [type='checkbox']:disabled {
     @apply opacity-50 cursor-not-allowed;
   }
+
+  .markdown {
+    @apply p-4;
+  }
+
+  .markdown-ol {
+    @apply list-decimal whitespace-normal;
+  }
+
+  .markdown-ul {
+    @apply list-disc whitespace-normal;
+  }
+
+  .markdown-li {
+    @apply list-item ml-4;
+  }
+
+  .markdown-li::marker {
+    @apply font-bold;
+  }
+
+  .markdown p code,
+  .markdown-li code {
+    @apply text-neutral-900 dark:text-neutral-300 bg-neutral-200 dark:bg-neutral-800 p-1 rounded-lg;
+  }
+
+  .markdown code {
+    @apply rounded-lg;
+  }
+
+  .markdown blockquote {
+    @apply brand-shadow2 whitespace-normal p-4 brand-shadow rounded-lg bg-indigo-50 font-medium text-indigo-900 shadow-indigo-900/25 dark:bg-indigo-100 dark:text-indigo-900;
+  }
 }
 
 @layer utilities {
