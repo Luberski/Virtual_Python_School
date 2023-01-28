@@ -70,6 +70,63 @@ type AnswerCheckRuleOption = SelectOption & {
   label: AnswerCheckRule | string;
 };
 
+const answerCheckRules: AnswerCheckRuleOption[] = [
+  {
+    id: nanoid(),
+    value: 'equal',
+    label: 'equal',
+    disabled: false,
+  },
+  {
+    id: nanoid(),
+    value: 'contain',
+    label: 'contain',
+    disabled: false,
+  },
+  {
+    id: nanoid(),
+    value: 'isString',
+    label: 'isString',
+    disabled: false,
+  },
+  {
+    id: nanoid(),
+    value: 'isInteger',
+    label: 'isInteger',
+    disabled: false,
+  },
+  {
+    id: nanoid(),
+    value: 'isFloat',
+    label: 'isFloat',
+    disabled: false,
+  },
+  {
+    id: nanoid(),
+    value: 'isBoolean',
+    label: 'isBoolean',
+    disabled: false,
+  },
+  {
+    id: nanoid(),
+    value: 'isTrue',
+    label: 'isTrue',
+    disabled: false,
+  },
+  {
+    id: nanoid(),
+    value: 'isFalse',
+    label: 'isFalse',
+    disabled: false,
+  },
+  {
+    id: nanoid(),
+    value: 'regex',
+    label: 'regex',
+    disabled: false,
+  },
+];
+
 export default function ManageCourseAndLessons({
   course,
   lessons,
@@ -103,6 +160,7 @@ export default function ManageCourseAndLessons({
   }>();
 
   const {
+    control: controlLessonEdit,
     register: registerLessonEdit,
     handleSubmit: handleLessonEditSubmit,
     setValue: setValueLessonEdit,
@@ -140,63 +198,6 @@ export default function ManageCourseAndLessons({
   const [selectedLang, setSelectedLang] = useState(
     languageOptions.find((option) => option.value === course?.lang)
   );
-
-  const answerCheckRules: AnswerCheckRuleOption[] = [
-    {
-      id: nanoid(),
-      value: 'equal',
-      label: 'equal',
-      disabled: false,
-    },
-    {
-      id: nanoid(),
-      value: 'contain',
-      label: 'contain',
-      disabled: false,
-    },
-    {
-      id: nanoid(),
-      value: 'isString',
-      label: 'isString',
-      disabled: false,
-    },
-    {
-      id: nanoid(),
-      value: 'isInteger',
-      label: 'isInteger',
-      disabled: false,
-    },
-    {
-      id: nanoid(),
-      value: 'isFloat',
-      label: 'isFloat',
-      disabled: false,
-    },
-    {
-      id: nanoid(),
-      value: 'isBoolean',
-      label: 'isBoolean',
-      disabled: false,
-    },
-    {
-      id: nanoid(),
-      value: 'isTrue',
-      label: 'isTrue',
-      disabled: false,
-    },
-    {
-      id: nanoid(),
-      value: 'isFalse',
-      label: 'isFalse',
-      disabled: false,
-    },
-    {
-      id: nanoid(),
-      value: 'regex',
-      label: 'regex',
-      disabled: false,
-    },
-  ];
 
   const [selectedAnswerCheckRule, setSelectedAnswerCheckRule] = useState(
     answerCheckRules[0]
@@ -290,6 +291,7 @@ export default function ManageCourseAndLessons({
       setValue('name', '');
       setValue('description', '');
       setValue('answer', '');
+      setValue('answerCheckRule', answerCheckRules[0]);
 
       closeLessonCreateDialog();
       notify();
@@ -336,11 +338,15 @@ export default function ManageCourseAndLessons({
     name: string;
     description: string;
     answer: string;
+    answerCheckRule: SelectOption;
   }) => {
-    const { name, description, answer } = data;
+    const { name, description, answer, answerCheckRule } = data;
     if (
       currentLessonId &&
-      (name.trim() || description.trim() || answer.trim())
+      (name.trim() ||
+        description.trim() ||
+        answer.trim() ||
+        answerCheckRule.value)
     ) {
       try {
         dispatch(
@@ -352,13 +358,15 @@ export default function ManageCourseAndLessons({
             type: 1,
             numberOfAnswers: 1,
             answer,
+            answerCheckRule: answerCheckRule.value,
           })
         );
         setValueLessonEdit('name', '');
         setValueLessonEdit('description', '');
         setValueLessonEdit('answer', '');
-        setValueLessonEdit('answerCheckRule', '');
+        setValueLessonEdit('answerCheckRule', answerCheckRules[0]);
         setCurrentLessonId(null);
+
         closeLessonEditDialog();
         notifyLessonEdited();
       } catch (error) {
@@ -710,15 +718,18 @@ export default function ManageCourseAndLessons({
                 />
               )}
             />
-            <Input
-              label="answer"
-              name="answer"
-              type="text"
-              register={register}
-              required
-              maxLength={100}
-              placeholder={translations('Lessons.answer')}
-            />
+            {(selectedAnswerCheckRule.value === 'equal' ||
+              selectedAnswerCheckRule.value === 'contain' ||
+              selectedAnswerCheckRule.value === 'regex') && (
+              <Input
+                label="answer"
+                name="answer"
+                type="text"
+                register={register}
+                maxLength={100}
+                placeholder={translations('Lessons.answer')}
+              />
+            )}
             <div className="flex justify-between space-x-4 py-3">
               <IconButton variant={IconButtonVariant.PRIMARY} type="submit">
                 {translations('Lessons.create-lesson')}
@@ -836,14 +847,32 @@ export default function ManageCourseAndLessons({
               maxLength={2000}
               placeholder={translations('Lessons.lesson-description')}
             />
-            <Input
-              label="answer"
-              name="answer"
-              type="text"
-              register={registerLessonEdit}
-              maxLength={100}
-              placeholder={translations('Lessons.answer')}
+            <Controller
+              control={controlLessonEdit}
+              name="answerCheckRule"
+              render={({ field: { onChange } }) => (
+                <Select
+                  options={answerCheckRules}
+                  selected={selectedAnswerCheckRule}
+                  setSelected={({ id, value, label, disabled }) => {
+                    onChange({ id, value, label, disabled });
+                    setSelectedAnswerCheckRule({ id, value, label, disabled });
+                  }}
+                />
+              )}
             />
+            {(selectedAnswerCheckRule.value === 'equal' ||
+              selectedAnswerCheckRule.value === 'contain' ||
+              selectedAnswerCheckRule.value === 'regex') && (
+              <Input
+                label="answer"
+                name="answer"
+                type="text"
+                register={registerLessonEdit}
+                maxLength={100}
+                placeholder={translations('Lessons.answer')}
+              />
+            )}
             {currentLessonKnowledgeTestData ? (
               <IconButton
                 variant={IconButtonVariant.DANGER}

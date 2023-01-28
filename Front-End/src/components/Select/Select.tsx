@@ -52,7 +52,7 @@ export default function Select({
           leaveTo="opacity-0">
           <Listbox.Options
             // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
-            className="brand-shadow absolute z-50 mt-1 max-h-40 w-full overflow-auto rounded-lg bg-neutral-50 py-1 text-base shadow-neutral-900 ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-700 sm:text-sm">
+            className="brand-shadow absolute z-50 mt-1 h-24 w-full overflow-auto rounded-lg bg-neutral-50 py-1 text-base shadow-neutral-900 ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-700 sm:text-sm">
             {options.map((item, key) => (
               <Listbox.Option
                 key={item.id}
