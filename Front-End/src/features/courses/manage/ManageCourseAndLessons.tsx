@@ -701,7 +701,7 @@ export default function ManageCourseAndLessons({
               required
               className="resize-none"
               rows={4}
-              maxLength={2000}
+              maxLength={4096}
               placeholder={translations('Lessons.lesson-description')}
             />
             <Controller
@@ -773,7 +773,7 @@ export default function ManageCourseAndLessons({
               register={registerCourseEdit}
               className="resize-none"
               rows={4}
-              maxLength={2000}
+              maxLength={4096}
               placeholder={translations('Courses.course-description')}
             />
             <Controller
@@ -844,7 +844,7 @@ export default function ManageCourseAndLessons({
               register={registerLessonEdit}
               className="resize-none"
               rows={4}
-              maxLength={2000}
+              maxLength={4096}
               placeholder={translations('Lessons.lesson-description')}
             />
             <Controller

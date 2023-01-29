@@ -43,7 +43,7 @@ class Courses(Base):
     __tablename__ = "courses"
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    description = Column(String(2000))
+    description = Column(String(4096))
     featured = Column(Boolean, default=False, nullable=False)
     lessons = relationship("Lessons", lazy="dynamic", cascade="all, delete")
     # ISO 639-1 Letter Language Codes
@@ -62,7 +62,7 @@ class Lessons(Base):
     __tablename__ = "lessons"
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    description = Column(String(2000))
+    description = Column(String(4096))
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
     type = Column(Integer)
     number_of_answers = Column(Integer)

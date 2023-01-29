@@ -217,7 +217,7 @@ export default function ManageCourses({
               required
               className="resize-none"
               rows={4}
-              maxLength={2000}
+              maxLength={4096}
               placeholder={translations('Courses.course-description')}
             />
             <Controller
