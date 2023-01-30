@@ -95,19 +95,10 @@ export default function EnrolledLesson({
               // @ts-ignore
               node.children[0].value.slice(firstLineLength);
           }
-          if (node.type === 'element' && node.tagName === 'ol') {
-            node.properties.className = ['markdown-ol'];
-          }
-          if (node.type === 'element' && node.tagName === 'ul') {
-            node.properties.className = ['markdown-ul'];
-          }
-          if (node.type === 'element' && node.tagName === 'li') {
-            node.properties.className = ['markdown-li'];
-          }
         },
       })
       .use(rehypeStringify)
-      .processSync(enrolledLesson.description)
+      .processSync(enrolledLesson?.description)
       .toString();
     setParsedLessonDescription(parsedMarkdown);
   }, [enrolledLesson?.description]);

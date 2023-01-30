@@ -242,10 +242,18 @@ export default function ManageCourseAndLessons({
       'answer',
       lessons.find((lesson) => lesson.id === lessonId).final_answer
     );
-    setValueLessonEdit(
-      'answerCheckRule',
-      lessons.find((lesson) => lesson.id === lessonId).answer_check_rule
-    );
+    setValueLessonEdit('answerCheckRule', {
+      id: nanoid(),
+      value: lessons.find((lesson) => lesson.id === lessonId).answer_check_rule,
+      label: lessons.find((lesson) => lesson.id === lessonId).answer_check_rule,
+      disabled: false,
+    } as SelectOption);
+    setSelectedAnswerCheckRule({
+      id: nanoid(),
+      value: lessons.find((lesson) => lesson.id === lessonId).answer_check_rule,
+      label: lessons.find((lesson) => lesson.id === lessonId).answer_check_rule,
+      disabled: false,
+    } as SelectOption);
 
     setIsLessonEditDialogOpen(true);
   };
@@ -365,6 +373,7 @@ export default function ManageCourseAndLessons({
         setValueLessonEdit('description', '');
         setValueLessonEdit('answer', '');
         setValueLessonEdit('answerCheckRule', answerCheckRules[0]);
+        setSelectedAnswerCheckRule(answerCheckRules[0]);
         setCurrentLessonId(null);
 
         closeLessonEditDialog();
@@ -701,7 +710,6 @@ export default function ManageCourseAndLessons({
               required
               className="resize-none"
               rows={4}
-              maxLength={4096}
               placeholder={translations('Lessons.lesson-description')}
             />
             <Controller
@@ -773,7 +781,6 @@ export default function ManageCourseAndLessons({
               register={registerCourseEdit}
               className="resize-none"
               rows={4}
-              maxLength={4096}
               placeholder={translations('Courses.course-description')}
             />
             <Controller
@@ -844,7 +851,6 @@ export default function ManageCourseAndLessons({
               register={registerLessonEdit}
               className="resize-none"
               rows={4}
-              maxLength={4096}
               placeholder={translations('Lessons.lesson-description')}
             />
             <Controller

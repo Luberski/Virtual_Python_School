@@ -99,24 +99,24 @@
     @apply p-4;
   }
 
-  .markdown-ol {
+  .markdown ol {
     @apply list-decimal whitespace-normal;
   }
 
-  .markdown-ul {
+  .markdown ul {
     @apply list-disc whitespace-normal;
   }
 
-  .markdown-li {
+  .markdown li {
     @apply list-item ml-4;
   }
 
-  .markdown-li::marker {
+  .markdown li::marker {
     @apply font-bold;
   }
 
   .markdown p code,
-  .markdown-li code {
+  .markdown li code {
     @apply text-neutral-900 dark:text-neutral-300 bg-neutral-200 dark:bg-neutral-800 p-1 rounded-lg;
   }
 
@@ -125,7 +125,7 @@
   }
 
   .markdown blockquote {
-    @apply brand-shadow2 whitespace-normal p-4 brand-shadow rounded-lg bg-indigo-50 font-medium text-indigo-900 shadow-indigo-900/25 dark:bg-indigo-100 dark:text-indigo-900;
+    @apply brand-shadow2 whitespace-normal p-4 brand-shadow rounded-lg border border-indigo-50 font-medium text-indigo-900 shadow-indigo-900/25 dark:border-indigo-100 dark:text-indigo-50 dark:shadow-indigo-50/25;
   }
 }
 
