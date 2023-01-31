@@ -32,6 +32,13 @@ export enum ReadyState {
   CLOSED = 3,
 }
 
+export enum ViewMode {
+  PersonalWhiteboard = 0,
+  ViewUserWhiteboard = 1,
+  Assignment = 2,
+  SharedWhiteboard = 3,
+}
+
 export const connectionStatus = {
   [ReadyState.CONNECTING]: 'Connecting',
   [ReadyState.OPEN]: 'Open',

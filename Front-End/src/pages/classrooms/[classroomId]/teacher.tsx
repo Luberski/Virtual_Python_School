@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useTranslations } from 'next-intl';
 import { useDispatch } from 'react-redux';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
-import { Actions, WEBSITE_TITLE } from '@app/constants';
+import { Actions, WEBSITE_TITLE, ViewMode } from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
@@ -30,7 +31,11 @@ import {
   notifyConnectionFailed,
   notifyAssignmentCreated,
 } from '@app/notifications';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import {
+  PlusIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from '@heroicons/react/24/outline';
 import Input from '@app/components/Input';
 
 const Toaster = dynamic(
@@ -57,41 +62,75 @@ export default function ClassroomsTeacherPage({
   const classrooms = useAppSelector(selectClassroomsData);
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
   const dispatch = useDispatch();
+  const socketUrl = `ws://localhost:5000/ws/${classroomId}`;
+  const { sendJsonMessage, lastJsonMessage, readyState } =
+    useWebSocket(socketUrl);
 
+  const codeRef = useRef('print("Hello World")');
+  const myCodeRef = useRef('print("Hello World")');
+  const connectNotification = useRef(null);
+
+  const [users, setUsers] = useState([]);
+  const [assignments, setAssignments] = useState([]);
+  const [selectedAssignment, setSelectedAssignment] = useState('');
+  const [selectedUser, setSelectedUser] = useState('');
+  const [isEditable, setIsEditable] = useState(false);
+  const [mode, setMode] = useState(ViewMode.PersonalWhiteboard);
+  const [lastAction, setLastAction] = useState(null);
+  const [messageHandled, setMessageHandled] = useState(true);
+
+  interface UserAssignment {
+    id: string;
+    isOpen: boolean;
+  }
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: 'Connecting',
+    [ReadyState.OPEN]: 'Open',
+    [ReadyState.CLOSING]: 'Closing',
+    [ReadyState.CLOSED]: 'Closed',
+    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  }[readyState];
+
+  const [isAssignmentsMenuOpen, setIsAssignmentsMenuOpen] = useState(false);
+  const [isAssignmentUsersDropdownOpen, setIsAssignmentUsersDropdownOpen] =
+    useState<UserAssignment[] | undefined[]>([]);
   const [isDeleteClassroomDialogOpen, setIsDeleteClassroomDialogOpen] =
     useState(false);
   const [isCreateAssignmentDialogOpen, setIsCreateAssignmentDialogOpen] =
     useState(false);
-  const socketRef = useRef(null);
-  const codeRef = useRef('print("Hello World")');
-  const myCodeRef = useRef('print("Hello World")');
-  const codeSyncAllowanceRef = useRef(true);
 
-  const [shouldRender, setShouldRender] = useState(false);
-  const [validateError, setValidateError] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [assignments, setAssignments] = useState([]);
-  const [currentAssignment, setCurrentAssignment] = useState('');
-  const [currentlyAssignedUser, setCurrentlyAssignedUser] = useState('');
-  const [currentlyViewedUser, setCurrentlyViewedUser] = useState('');
-  const [isEditable, setIsEditable] = useState(false);
-  const [isPersonalWhiteboardOpen, setIsPersonalWhiteboardOpen] =
-    useState(true);
-  const [lastAction, setLastAction] = useState(null);
+  const closeDeleteClassroomDialog = () => {
+    setIsDeleteClassroomDialogOpen(false);
+  };
+
+  const openDeleteClassroomDialog = () => {
+    setIsDeleteClassroomDialogOpen(true);
+  };
+
+  const closeCreateAssignmentDialog = () => {
+    setIsCreateAssignmentDialogOpen(false);
+  };
+
+  const openCreateAssignmentDialog = () => {
+    setIsCreateAssignmentDialogOpen(true);
+  };
+
+  const handleAssignmentsMenu = () => {
+    setIsAssignmentsMenuOpen(!isAssignmentsMenuOpen);
+  };
 
   useEffect(() => {
     const validate = () => {
       if (!classrooms?.find((c) => c.id.toString() === classroomId)) {
-        setValidateError(true);
         notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
-          router.replace('/classrooms');
+          router.replace('/');
         }, 1000);
       }
       if (classroomSessionsData?.length > 0) {
         if (classroomSessionsData[0].is_teacher === false) {
-          setValidateError(true);
           notifyUnauthorized(translations('Classrooms.unauthorized'));
           setTimeout(() => {
             toast.dismiss();
@@ -101,26 +140,105 @@ export default function ClassroomsTeacherPage({
           }, 1000);
         }
       } else {
-        setValidateError(true);
         notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
-          router.replace('/classrooms');
+          router.replace('/');
         }, 1000);
-      }
-
-      if (!validateError) {
-        setShouldRender(true);
       }
     };
     validate();
-  }, [
-    classroomId,
-    classroomSessionsData,
-    classrooms,
-    translations,
-    validateError,
-  ]);
+  }, [classroomId, classroomSessionsData, classrooms, translations]);
+
+  const handleAssignmentUsersDropdown = (id: string) => () => {
+    const newAssignment = isAssignmentUsersDropdownOpen.find(
+      (a) => a.id === id
+    );
+    newAssignment.isOpen = !newAssignment.isOpen;
+
+    setIsAssignmentUsersDropdownOpen(
+      isAssignmentUsersDropdownOpen.map((a) =>
+        a.id === newAssignment.id ? newAssignment : a
+      )
+    );
+  };
+
+  const returnAssignmentUsersDropdownOpen = (id: string) => {
+    const searchedAssignment = isAssignmentUsersDropdownOpen.filter(
+      (a: { id: string; isOpen: boolean }) => a.id === id
+    );
+    return searchedAssignment.length > 0 ? searchedAssignment[0].isOpen : false;
+  };
+
+  useEffect(() => {
+    switch (readyState) {
+      case ReadyState.OPEN:
+        sendJsonMessage({
+          action: Actions.TEACHER_JOIN,
+          user_id: user.username,
+          data: null,
+        });
+        toast.success(translations('Classrooms.connected'), {
+          id: connectNotification.current,
+        });
+        break;
+
+      case ReadyState.CLOSED:
+        console.error('Connection closed');
+        break;
+
+      case ReadyState.CONNECTING:
+        connectNotification.current = toast.loading(
+          translations('Classrooms.connecting')
+        );
+        break;
+    }
+  }, [readyState, sendJsonMessage, translations, user.username]);
+
+  useEffect(() => {
+    const getUserCode = async (student: string) => {
+      sendJsonMessage({
+        action: Actions.GET_DATA,
+        user_id: user.username,
+        data: {
+          target_user: student,
+          whiteboard_type: 'private',
+        },
+      });
+    };
+
+    const getUserAssignment = async (
+      student: string,
+      assignment_name: string
+    ) => {
+      sendJsonMessage({
+        action: Actions.GET_DATA,
+        user_id: user.username,
+        data: {
+          assignment_name: assignment_name,
+          target_user: student,
+          whiteboard_type: 'assignment',
+        },
+      });
+    };
+
+    switch (mode) {
+      case ViewMode.PersonalWhiteboard:
+        setSelectedAssignment('');
+        setSelectedUser('');
+        break;
+      case ViewMode.ViewUserWhiteboard:
+        if (selectedUser !== '') getUserCode(selectedUser);
+        break;
+      case ViewMode.Assignment:
+        if (selectedUser !== '' && selectedAssignment !== '') {
+          getUserAssignment(selectedUser, selectedAssignment);
+        }
+        break;
+      default:
+        break;
+    }
+  }, [mode, selectedAssignment, selectedUser, sendJsonMessage, user.username]);
 
   const onClassroomDeleteSubmit = async () => {
     try {
@@ -129,13 +247,11 @@ export default function ClassroomsTeacherPage({
         .then((result) => {
           if (result.data.id.toString() === classroomId) {
             // Send message to all students that the classroom has been deleted
-            socketRef.current.send(
-              JSON.stringify({
-                action: Actions.CLASSROOM_DELETED,
-                user_id: user.username,
-                data: null,
-              })
-            );
+            sendJsonMessage({
+              action: Actions.CLASSROOM_DELETED,
+              user_id: user.username,
+              data: null,
+            });
           }
           notifyClassroomDeleted(translations('Classrooms.classroom-deleted'));
           setTimeout(() => {
@@ -149,13 +265,6 @@ export default function ClassroomsTeacherPage({
     closeDeleteClassroomDialog();
   };
 
-  const closeDeleteClassroomDialog = () => {
-    setIsDeleteClassroomDialogOpen(false);
-  };
-  const openDeleteClassroomDialog = () => {
-    setIsDeleteClassroomDialogOpen(true);
-  };
-
   const onCreateAssignmentSubmit = (data: {
     assignment_name: string;
     assignment_description: string;
@@ -164,190 +273,137 @@ export default function ClassroomsTeacherPage({
     setValue('assignment_name', '');
     setValue('assignment_description', '');
 
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.ASSIGNMENT_CREATE,
-        user_id: user.username,
-        data: {
-          assignment_name: assignment_name,
-          assignment_description: assignment_description,
-        },
-      })
-    );
-
-    setAssignments((assignments) => [...assignments, data]);
-
-    notifyAssignmentCreated(translations('Classrooms.assignment-created'));
-    setTimeout(() => {
-      toast.dismiss();
-      router.replace('/classrooms');
-    }, 1000);
-
-    closeCreateAssignmentDialog();
-  };
-
-  const closeCreateAssignmentDialog = () => {
-    setIsCreateAssignmentDialogOpen(false);
-  };
-  const openCreateAssignmentDialog = () => {
-    setIsCreateAssignmentDialogOpen(true);
-  };
-
-  const getUserCode = async (student: string) => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.GET_DATA,
-        user_id: user.username,
-        data: {
-          target_user: student,
-          whiteboard_type: 'private',
-        },
-      })
-    );
-  };
-
-  const getUserAssignment = async (
-    student: string,
-    assignment_name: string
-  ) => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.GET_DATA,
-        user_id: user.username,
-        data: {
-          assignment_name: assignment_name,
-          target_user: student,
-          whiteboard_type: 'assignment',
-        },
-      })
-    );
+    sendJsonMessage({
+      action: Actions.ASSIGNMENT_CREATE,
+      user_id: user.username,
+      data: {
+        assignment_name: assignment_name,
+        assignment_description: assignment_description,
+      },
+    });
   };
 
   useEffect(() => {
-    codeSyncAllowanceRef.current = isEditable;
-  }, [isEditable]);
+    if (lastJsonMessage != null) {
+      setMessageHandled(false);
+    }
+  }, [lastJsonMessage]);
 
   useEffect(() => {
-    const onMessage = (ev: { data: string }) => {
-      const recv = JSON.parse(ev.data);
-
-      switch (recv.action) {
+    let usersDropdown = [];
+    if (!messageHandled && lastJsonMessage != null) {
+      switch (lastJsonMessage.action) {
         case Actions.SYNC_DATA:
-          setUsers(recv.data.users);
-          setIsEditable(recv.data.is_editable);
-          myCodeRef.current = recv.data.shared_whiteboard;
-          setAssignments(recv.data.assignments);
+          setUsers(lastJsonMessage.data.users);
+          setIsEditable(lastJsonMessage.data.is_editable);
+          myCodeRef.current = lastJsonMessage.data.shared_whiteboard;
+          setAssignments(lastJsonMessage.data.assignments);
+          lastJsonMessage.data.assignments.map((a: Assignment) => {
+            usersDropdown.push({
+              id: a.assignment_id,
+              isOpen: false,
+            });
+          });
+          setIsAssignmentUsersDropdownOpen(usersDropdown);
           break;
 
         case Actions.JOIN:
-          setUsers((users) => [...users, recv.data.user_id]);
+          setUsers((users) => [...users, lastJsonMessage.data.user_id]);
           notifyUserJoined(
-            recv.data.user_id + ' ' + translations('Classrooms.student-joined')
+            lastJsonMessage.data.user_id +
+              ' ' +
+              translations('Classrooms.student-joined')
           );
           break;
 
         case Actions.LEAVE:
           setUsers((users) =>
-            users.filter((user) => user !== recv.data.user_id)
+            users.filter((user) => user !== lastJsonMessage.data.user_id)
           );
           notifyUserLeft(
-            recv.data.user_id + ' ' + translations('Classrooms.student-left')
+            lastJsonMessage.data.user_id +
+              ' ' +
+              translations('Classrooms.student-left')
           );
           break;
 
         case Actions.CODE_CHANGE:
-          if (recv.data.whiteboard_type === 'public') {
-            myCodeRef.current = recv.data.code;
+          if (lastJsonMessage.data.whiteboard.whiteboard_type === 'public') {
+            myCodeRef.current = lastJsonMessage.data.code;
           } else if (
-            recv.data.whiteboard_type === 'private' &&
-            recv.data.user_id === currentlyViewedUser &&
-            !isPersonalWhiteboardOpen
+            lastJsonMessage.data.whiteboard.whiteboard_type === 'private' &&
+            lastJsonMessage.data.user_id === selectedUser &&
+            mode === ViewMode.ViewUserWhiteboard
           ) {
-            codeRef.current = recv.data.code;
+            codeRef.current = lastJsonMessage.data.code;
           } else if (
-            recv.data.whiteboard_type === 'assignment' &&
-            recv.data.user_id === currentlyAssignedUser &&
-            !isPersonalWhiteboardOpen
+            lastJsonMessage.data.whiteboard.whiteboard_type === 'assignment' &&
+            lastJsonMessage.data.user_id === selectedUser &&
+            mode === ViewMode.Assignment &&
+            lastJsonMessage.data.user_assignment.assignment.assignment_name ===
+              selectedAssignment
           ) {
-            codeRef.current = recv.data.code;
+            codeRef.current = lastJsonMessage.data.code;
           }
           break;
 
         case Actions.GET_DATA:
-          if (recv.data.whiteboard_type === 'public') {
-            myCodeRef.current = recv.data.code;
-          } else if (
-            recv.data.target_user === currentlyViewedUser &&
-            recv.data.whiteboard_type === 'private'
+          if (
+            lastJsonMessage.data.whiteboard_type === 'public' &&
+            mode === ViewMode.PersonalWhiteboard
           ) {
-            codeRef.current = recv.data.code;
+            myCodeRef.current = lastJsonMessage.data.code;
           } else if (
-            recv.data.target_user === currentlyAssignedUser &&
-            recv.data.whiteboard_type === 'assignment'
+            lastJsonMessage.data.target_user === selectedUser &&
+            lastJsonMessage.data.whiteboard_type === 'private' &&
+            mode === ViewMode.ViewUserWhiteboard
           ) {
-            codeRef.current = recv.data.code;
+            codeRef.current = lastJsonMessage.data.code;
+          } else if (
+            lastJsonMessage.data.target_user === selectedUser &&
+            lastJsonMessage.data.whiteboard_type === 'assignment' &&
+            lastJsonMessage.data.user_assignment.assignment.assignment_name ===
+              selectedAssignment &&
+            mode === ViewMode.Assignment
+          ) {
+            codeRef.current =
+              lastJsonMessage.data.user_assignment.whiteboard.code;
           }
           break;
+
+        case Actions.ASSIGNMENT_CREATE:
+          setAssignments((assignments) => [
+            ...assignments,
+            lastJsonMessage.data,
+          ]);
+
+          setIsAssignmentUsersDropdownOpen((isAssignmentUsersDropdownOpen) => [
+            ...isAssignmentUsersDropdownOpen,
+            {
+              id: lastJsonMessage.data.assignment_id,
+              isOpen: false,
+            },
+          ]);
+
+          notifyAssignmentCreated(
+            translations('Classrooms.assignment-created')
+          );
+          setTimeout(() => {
+            toast.dismiss();
+          }, 1000);
+          closeCreateAssignmentDialog();
+          break;
       }
-
-      setLastAction(parseInt(recv.action));
-    };
-
-    const createSocket = async () => {
-      const connectNotification = toast.loading(
-        translations('Classrooms.connecting')
-      );
-      const ws = new WebSocket(`ws://localhost:5000/ws/${classroomId}`);
-      ws.onmessage = onMessage;
-      ws.onopen = () => {
-        ws.send(
-          JSON.stringify({
-            action: Actions.TEACHER_JOIN,
-            user_id: user.username,
-            data: null,
-          })
-        );
-
-        toast.success(translations('Classrooms.connected'), {
-          id: connectNotification,
-        });
-      };
-      ws.onclose = () => {
-        console.error('Connection closed');
-      };
-      ws.onerror = (error) => {
-        console.error(error);
-        notifyConnectionFailed(translations('Classrooms.connection-failed'));
-      };
-      return ws;
-    };
-
-    const init = async () => {
-      codeRef.current = "print('Hello World')";
-      setLastAction(Actions.NONE);
-      const ws = await createSocket();
-      socketRef.current = ws;
-      codeSyncAllowanceRef.current = true;
-    };
-
-    if (shouldRender && socketRef.current === null) {
-      init();
-    } else if (shouldRender && socketRef.current !== null) {
-      socketRef.current.onmessage = onMessage;
+      setLastAction(parseInt(lastJsonMessage.action));
+      setMessageHandled(true);
     }
-
-    return () => {
-      if (shouldRender && socketRef.current === null) socketRef.current.close();
-    };
   }, [
-    shouldRender,
-    currentlyViewedUser,
-    users,
+    selectedUser,
+    lastJsonMessage,
     translations,
-    isPersonalWhiteboardOpen,
-    classroomId,
-    user.username,
-    currentlyAssignedUser,
+    messageHandled,
+    mode,
+    selectedAssignment,
   ]);
 
   return (
@@ -379,13 +435,9 @@ export default function ClassroomsTeacherPage({
               <Button
                 type="button"
                 onClick={() => {
-                  setIsPersonalWhiteboardOpen(true);
-                  setCurrentlyViewedUser('');
-                  setCurrentlyAssignedUser('');
-                  setCurrentAssignment('');
-                  setLastAction(Actions.CODE_CHANGE);
+                  setMode(ViewMode.PersonalWhiteboard);
                 }}
-                disabled={isPersonalWhiteboardOpen}
+                disabled={mode === ViewMode.PersonalWhiteboard}
                 variant={ButtonVariant.PRIMARY}>
                 {translations('Classrooms.shared-whiteboard')}
               </Button>
@@ -394,106 +446,133 @@ export default function ClassroomsTeacherPage({
                   <Button
                     key={u}
                     onClick={() => {
-                      setIsPersonalWhiteboardOpen(false);
-                      setCurrentlyAssignedUser('');
-                      setCurrentlyViewedUser(u);
-                      getUserCode(u);
-                      setLastAction(Actions.CODE_CHANGE);
+                      setSelectedUser(u);
+                      setMode(ViewMode.ViewUserWhiteboard);
                     }}
-                    disabled={u === currentlyViewedUser}
+                    disabled={
+                      u === selectedUser && mode === ViewMode.ViewUserWhiteboard
+                    }
                     type="button"
                     variant={ButtonVariant.PRIMARY}>
                     {u}
                   </Button>
                 ))}
-              <h1 className="mb-4 text-center text-2xl font-bold">
-                {translations('Classrooms.assignments')}
-              </h1>
+              <Button
+                type="button"
+                variant={ButtonVariant.FLAT_SECONDARY}
+                onClick={handleAssignmentsMenu}>
+                <div className="flex flex-row items-center justify-center gap-2">
+                  {isAssignmentsMenuOpen ? (
+                    <ChevronDownIcon className="h-4 w-4" />
+                  ) : (
+                    <ChevronRightIcon className="h-4 w-4" />
+                  )}
+                  {translations('Classrooms.assignments')}
+                </div>
+              </Button>
               {assignments?.length > 0 &&
+                isAssignmentsMenuOpen &&
                 assignments.map((a) => (
-                  <>
+                  <div className="flex flex-col" key={a.assignment_id}>
                     <Button
-                      key={a.assignment_name}
                       type="button"
-                      onClick={() => {
-                        setCurrentAssignment(a.assignment_name);
-                      }}
-                      disabled={a.assignment_name === currentAssignment}
+                      onClick={handleAssignmentUsersDropdown(a.assignment_id)}
                       variant={ButtonVariant.PRIMARY}>
-                      {a.assignment_name}
+                      <div className="flex flex-row items-center justify-center gap-2">
+                        {returnAssignmentUsersDropdownOpen(a.assignment_id) ? (
+                          <ChevronDownIcon className="h-4 w-4" />
+                        ) : (
+                          <ChevronRightIcon className="h-4 w-4" />
+                        )}
+                        {a.assignment_name}
+                      </div>
                     </Button>
+
                     {users?.length > 0 &&
+                      returnAssignmentUsersDropdownOpen(a.assignment_id) &&
                       users.map((u) => (
                         <Button
                           key={u}
                           onClick={() => {
-                            setIsPersonalWhiteboardOpen(false);
-                            setCurrentlyViewedUser('');
-                            setCurrentlyAssignedUser(u);
-                            getUserAssignment(u, a.assignment_name);
-                            setLastAction(Actions.CODE_CHANGE);
+                            setSelectedAssignment(a.assignment_name);
+                            setSelectedUser(u);
+                            setMode(ViewMode.Assignment);
                           }}
-                          disabled={u === currentlyAssignedUser}
+                          disabled={
+                            u === selectedUser &&
+                            mode === ViewMode.Assignment &&
+                            a.assignment_name === selectedAssignment
+                          }
                           type="button"
                           variant={ButtonVariant.FLAT_SECONDARY}>
                           {u}
                         </Button>
                       ))}
-                  </>
-                ))}
-              <div className="flex flex-col items-center">
-                <Button
-                  type="button"
-                  variant={ButtonVariant.PRIMARY}
-                  onClick={openCreateAssignmentDialog}
-                  className="m-0 flex h-8 w-8 flex-col items-center justify-center p-0">
-                  <PlusIcon className="h-6 w-6" />
-                </Button>
-                <StyledDialog
-                  title={translations('Classrooms.assignment-popup-title')}
-                  isOpen={isCreateAssignmentDialogOpen}
-                  onClose={closeCreateAssignmentDialog}>
-                  <div className="py-6">
-                    <form
-                      method="dialog"
-                      onSubmit={handleSubmit(onCreateAssignmentSubmit)}>
-                      <div className="flex flex-col gap-y-2">
-                        <Input
-                          label="assignment_name"
-                          name="assignment_name"
-                          type="text"
-                          register={register}
-                          required
-                          maxLength={50}
-                          placeholder={translations(
-                            'Classrooms.assignment-name'
-                          )}></Input>
-                        <Input
-                          label="assignment_description"
-                          name="assignment_description"
-                          type="text"
-                          register={register}
-                          required
-                          maxLength={200}
-                          placeholder={translations(
-                            'Classrooms.assignment-description'
-                          )}></Input>
-                      </div>
-                      <div className="mt-6 flex flex-row items-center justify-end">
-                        <Button
-                          onClick={closeCreateAssignmentDialog}
-                          className="mr-2"
-                          variant={ButtonVariant.DANGER}>
-                          {translations('Classrooms.cancel')}
-                        </Button>
-                        <Button type="submit" variant={ButtonVariant.PRIMARY}>
-                          {translations('Classrooms.submit')}
-                        </Button>
-                      </div>
-                    </form>
+
+                    {users?.length === 0 &&
+                      returnAssignmentUsersDropdownOpen(a.assignment_id) &&
+                      translations('Classrooms.no-users')}
                   </div>
-                </StyledDialog>
-              </div>
+                ))}
+
+              {assignments?.length === 0 &&
+                isAssignmentsMenuOpen &&
+                translations('Classrooms.no-assignments-created')}
+              {isAssignmentsMenuOpen && (
+                <div className="flex flex-col items-center">
+                  <Button
+                    type="button"
+                    variant={ButtonVariant.PRIMARY}
+                    onClick={openCreateAssignmentDialog}
+                    className="m-0 flex h-8 w-8 flex-col items-center justify-center p-0">
+                    <PlusIcon className="h-6 w-6" />
+                  </Button>
+                  <StyledDialog
+                    title={translations('Classrooms.assignment-popup-title')}
+                    isOpen={isCreateAssignmentDialogOpen}
+                    onClose={closeCreateAssignmentDialog}>
+                    <div className="py-6">
+                      <form
+                        method="dialog"
+                        onSubmit={handleSubmit(onCreateAssignmentSubmit)}>
+                        <div className="flex flex-col gap-y-2">
+                          <Input
+                            label="assignment_name"
+                            name="assignment_name"
+                            type="text"
+                            register={register}
+                            required
+                            maxLength={50}
+                            placeholder={translations(
+                              'Classrooms.assignment-name'
+                            )}></Input>
+                          <Input
+                            label="assignment_description"
+                            name="assignment_description"
+                            type="text"
+                            register={register}
+                            required
+                            maxLength={200}
+                            placeholder={translations(
+                              'Classrooms.assignment-description'
+                            )}></Input>
+                        </div>
+                        <div className="mt-6 flex flex-row items-center justify-end">
+                          <Button
+                            onClick={closeCreateAssignmentDialog}
+                            className="mr-2"
+                            variant={ButtonVariant.DANGER}>
+                            {translations('Classrooms.cancel')}
+                          </Button>
+                          <Button type="submit" variant={ButtonVariant.PRIMARY}>
+                            {translations('Classrooms.submit')}
+                          </Button>
+                        </div>
+                      </form>
+                    </div>
+                  </StyledDialog>
+                </div>
+              )}
             </div>
             <Button
               variant={ButtonVariant.DANGER}
@@ -530,66 +609,45 @@ export default function ClassroomsTeacherPage({
               <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
                 {translations('Classrooms.run')}
               </Button>
-              {!isEditable ? (
-                <Button
-                  variant={ButtonVariant.FLAT_SECONDARY}
-                  disabled={!isPersonalWhiteboardOpen}
-                  onClick={() => {
-                    setIsEditable(true);
-                    socketRef.current.send(
-                      JSON.stringify({
-                        action: Actions.UNLOCK_CODE,
-                        user_id: user.username,
-                        data: null,
-                      })
-                    );
-                  }}>
-                  {translations('Classrooms.allow-editing')}
-                </Button>
-              ) : (
-                <Button
-                  variant={ButtonVariant.FLAT_SECONDARY}
-                  disabled={!isPersonalWhiteboardOpen}
-                  onClick={() => {
-                    setIsEditable(false);
-                    socketRef.current.send(
-                      JSON.stringify({
-                        action: Actions.LOCK_CODE,
-                        user_id: user.username,
-                        data: null,
-                      })
-                    );
-                  }}>
-                  {translations('Classrooms.lock-editing')}
-                </Button>
+
+              {mode === ViewMode.PersonalWhiteboard && (
+                <div>
+                  {!isEditable ? (
+                    <Button
+                      variant={ButtonVariant.FLAT_SECONDARY}
+                      disabled={mode !== ViewMode.PersonalWhiteboard}
+                      onClick={() => {
+                        setIsEditable(true);
+                        sendJsonMessage({
+                          action: Actions.UNLOCK_CODE,
+                          user_id: user.username,
+                          data: null,
+                        });
+                      }}>
+                      {translations('Classrooms.allow-editing')}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant={ButtonVariant.FLAT_SECONDARY}
+                      onClick={() => {
+                        setIsEditable(false);
+                        sendJsonMessage({
+                          action: Actions.LOCK_CODE,
+                          user_id: user.username,
+                          data: null,
+                        });
+                      }}>
+                      {translations('Classrooms.lock-editing')}
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
             <div>
-              {!isPersonalWhiteboardOpen &&
-              (currentlyViewedUser !== '' || currentlyAssignedUser !== '') ? (
+              {mode === ViewMode.PersonalWhiteboard ? (
                 <ClassroomCodeEditor
-                  socketRef={socketRef}
-                  roomId={classroomId}
-                  onCodeChange={(code) => {
-                    codeRef.current = code;
-                  }}
-                  lastAction={lastAction}
-                  setLastAction={setLastAction}
-                  codeRef={codeRef}
-                  user={user}
-                  targetUser={
-                    currentlyAssignedUser
-                      ? currentlyAssignedUser
-                      : currentlyViewedUser
-                  }
-                  isTeacher={true}
-                  assignmentName={
-                    currentlyAssignedUser ? currentAssignment : ''
-                  }
-                />
-              ) : (
-                <ClassroomCodeEditor
-                  socketRef={socketRef}
+                  connState={readyState}
+                  sendMsg={sendJsonMessage}
                   roomId={classroomId}
                   onCodeChange={(code) => {
                     myCodeRef.current = code;
@@ -599,6 +657,24 @@ export default function ClassroomsTeacherPage({
                   codeRef={myCodeRef}
                   user={user}
                   isTeacher={true}
+                  mode={mode}
+                />
+              ) : (
+                <ClassroomCodeEditor
+                  connState={readyState}
+                  sendMsg={sendJsonMessage}
+                  roomId={classroomId}
+                  onCodeChange={(code) => {
+                    codeRef.current = code;
+                  }}
+                  lastAction={lastAction}
+                  setLastAction={setLastAction}
+                  codeRef={codeRef}
+                  user={user}
+                  targetUser={selectedUser}
+                  isTeacher={true}
+                  assignmentName={selectedAssignment}
+                  mode={mode}
                 />
               )}
             </div>

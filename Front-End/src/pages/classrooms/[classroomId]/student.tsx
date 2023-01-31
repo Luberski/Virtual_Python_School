@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useTranslations } from 'next-intl';
 import { useDispatch } from 'react-redux';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
-import { Actions, WEBSITE_TITLE } from '@app/constants';
+import { Actions, ViewMode, WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
@@ -24,8 +25,9 @@ import StyledDialog from '@app/components/StyledDialog';
 import {
   notifyUnauthorized,
   notifyClassroomLeave,
-  notifyConnectionFailed,
+  notifyUserLeft,
 } from '@app/notifications';
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -47,64 +49,62 @@ export default function ClassroomsStudentPage(
   const classrooms = useAppSelector(selectClassroomsData);
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
   const { classroomId } = props;
+  const socketUrl = `ws://localhost:5000/ws/${classroomId}`;
+  const { sendJsonMessage, lastJsonMessage, readyState } =
+    useWebSocket(socketUrl);
 
   const codeRef = useRef(null);
   const myCodeRef = useRef('print("Hello World")');
-  const codeSyncAllowanceRef = useRef(null);
-  const socketRef = useRef(null);
+  const connectNotification = useRef(null);
 
-  const [assignments, setAssignments] = useState([]);
-  const [currentAssignment, setCurrentAssignment] = useState('');
-  const [codeChanged, setCodeChanged] = useState(false);
-  const [shouldRender, setShouldRender] = useState(false);
-  const [validateError, setValidateError] = useState(false);
-  const [teacher, setTeacher] = useState(null);
-  const [isLeaveClassroomDialogOpen, setIsLeaveClassroomDialogOpen] =
-    useState(false);
-  const [isPersonalWhiteboardOpen, setIsPersonalWhiteboardOpen] =
-    useState(false);
   const [users, setUsers] = useState([]);
+  const [assignments, setAssignments] = useState([]);
+  const [selectedAssignment, setSelectedAssignment] = useState('');
+  const [teacher, setTeacher] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const [lastAction, setLastAction] = useState(null);
+  const [mode, setMode] = useState(null);
+  const [messageHandled, setMessageHandled] = useState(true);
+
+  const [isLeaveClassroomDialogOpen, setIsLeaveClassroomDialogOpen] =
+    useState(false);
+  const [isAssignmentsMenuOpen, setIsAssignmentsMenuOpen] = useState(false);
+
+  const closeLeaveClassroomDialog = () => {
+    setIsLeaveClassroomDialogOpen(false);
+  };
+  const openLeaveClassroomDialog = () => {
+    setIsLeaveClassroomDialogOpen(true);
+  };
+  const handleAssignmentsMenu = () => {
+    setIsAssignmentsMenuOpen(!isAssignmentsMenuOpen);
+  };
 
   useEffect(() => {
     const validate = () => {
       if (!classrooms?.find((c) => c.id.toString() === classroomId)) {
-        setValidateError(true);
         notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
-          router.replace('/classrooms');
+          router.replace('/');
         }, 1000);
       }
       if (classroomSessionsData?.length > 0) {
         if (classroomSessionsData[0].is_teacher) {
-          setValidateError(true);
           router.replace(
             `/classrooms/${classroomSessionsData[0].classroom_id}/teacher`
           );
         }
       } else {
-        setValidateError(true);
         notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
-          router.replace('/classrooms');
+          router.replace('/');
         }, 1000);
-      }
-
-      if (!validateError) {
-        setShouldRender(true);
       }
     };
     validate();
-  }, [
-    classroomId,
-    classroomSessionsData,
-    classrooms,
-    translations,
-    validateError,
-  ]);
+  }, [classroomId, classroomSessionsData, classrooms, translations]);
 
   const onClassroomLeaveSubmit = async () => {
     try {
@@ -112,13 +112,11 @@ export default function ClassroomsStudentPage(
         .unwrap()
         .then((result) => {
           if (result.data.id.toString() === classroomId) {
-            socketRef.current.send(
-              JSON.stringify({
-                action: Actions.LEAVE,
-                user_id: user.username,
-                data: null,
-              })
-            );
+            sendJsonMessage({
+              action: Actions.LEAVE,
+              user_id: user.username,
+              data: null,
+            });
           }
           notifyClassroomLeave(translations('Classrooms.leave-success'));
           setTimeout(() => {
@@ -132,84 +130,176 @@ export default function ClassroomsStudentPage(
     closeLeaveClassroomDialog();
   };
 
-  const closeLeaveClassroomDialog = () => {
-    setIsLeaveClassroomDialogOpen(false);
-  };
-  const openLeaveClassroomDialog = () => {
-    setIsLeaveClassroomDialogOpen(true);
-  };
+  useEffect(() => {
+    switch (readyState) {
+      case ReadyState.OPEN:
+        sendJsonMessage({
+          action: Actions.JOIN,
+          user_id: user.username,
+          data: null,
+        });
+        toast.success(translations('Classrooms.connected'), {
+          id: connectNotification.current,
+        });
+        setMode(ViewMode.PersonalWhiteboard);
+        break;
+
+      case ReadyState.CLOSED:
+        console.error('Connection closed');
+        break;
+
+      case ReadyState.CONNECTING:
+        connectNotification.current = toast.loading(
+          translations('Classrooms.connecting')
+        );
+        break;
+    }
+  }, [readyState, sendJsonMessage, translations, user.username]);
 
   useEffect(() => {
-    const setAssignmentCode = (assignmentName: string, code: string) => {
-      const assignment = assignments.find(
-        (assignment) => assignment.name === assignmentName
-      );
-      assignment.code = code;
-      setAssignments([...assignments]);
+    const getSharedWhiteboardCode = async () => {
+      sendJsonMessage({
+        action: Actions.GET_DATA,
+        user_id: user.username,
+        data: {
+          whiteboard_type: 'public',
+        },
+      });
     };
 
-    const onMessage = (ev: { data: string }) => {
-      const recv = JSON.parse(ev.data);
+    const getPersonalAssignment = async (assignment_name: string) => {
+      sendJsonMessage({
+        action: Actions.GET_DATA,
+        user_id: user.username,
+        data: {
+          assignment_name: assignment_name,
+          whiteboard_type: 'assignment',
+        },
+      });
+    };
 
-      switch (recv.action) {
+    const getPersonalWhiteboard = async () => {
+      sendJsonMessage({
+        action: Actions.GET_DATA,
+        user_id: user.username,
+        data: {
+          whiteboard_type: 'private',
+        },
+      });
+    };
+
+    if (mode !== null) {
+      switch (mode) {
+        case ViewMode.SharedWhiteboard:
+          if (selectedAssignment !== '') {
+            setSelectedAssignment('');
+          } else {
+            getSharedWhiteboardCode();
+          }
+          break;
+        case ViewMode.PersonalWhiteboard:
+          if (selectedAssignment !== '') {
+            setSelectedAssignment('');
+          } else {
+            getPersonalWhiteboard();
+          }
+          break;
+        case ViewMode.Assignment:
+          if (selectedAssignment !== '') {
+            getPersonalAssignment(selectedAssignment);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  }, [mode, selectedAssignment, sendJsonMessage, user.username]);
+
+  useEffect(() => {
+    if (lastJsonMessage) {
+      setMessageHandled(false);
+    }
+  }, [lastJsonMessage]);
+
+  useEffect(() => {
+    if (!messageHandled && lastJsonMessage != null) {
+      switch (lastJsonMessage.action) {
         case Actions.SYNC_DATA:
-          setUsers(recv.data.users.find((u) => u.user_id !== user.username));
-          setTeacher(recv.data.teacher);
-          setIsEditable(recv.data.is_editable);
-          myCodeRef.current = recv.data.personal_whiteboard;
-          codeRef.current = recv.data.shared_whiteboard;
-          setAssignments(recv.data.assignments);
+          setUsers(
+            lastJsonMessage.data.users.find((u) => u.user_id !== user.username)
+          );
+          setTeacher(lastJsonMessage.data.teacher);
+          setIsEditable(lastJsonMessage.data.is_editable);
+          myCodeRef.current = lastJsonMessage.data.personal_whiteboard;
+          codeRef.current = lastJsonMessage.data.shared_whiteboard;
+          setAssignments(lastJsonMessage.data.assignments);
           break;
 
         case Actions.JOIN:
-          setUsers((users) => [...users, recv.data.user_id]);
+          setUsers((users) => [...users, lastJsonMessage.data.user_id]);
           break;
 
         case Actions.LEAVE:
-          if (recv.data.user_id !== teacher) {
-            setUsers(users.filter((u) => u !== recv.data.user_id));
+          if (lastJsonMessage.data.user_id !== teacher) {
+            setUsers(
+              users.filter((user) => user !== lastJsonMessage.data.user_id)
+            );
+
+            notifyUserLeft(
+              lastJsonMessage.data.user_id +
+                ' ' +
+                translations('Classrooms.student-left')
+            );
           }
           break;
 
         case Actions.CODE_CHANGE:
-          if (recv.data.whiteboard_type === 'public') {
-            codeRef.current = recv.data.code;
+          if (lastJsonMessage.data.whiteboard.whiteboard_type === 'public') {
+            codeRef.current = lastJsonMessage.data.code;
           } else if (
-            recv.data.whiteboard_type === 'private' &&
-            recv.data.user_id === teacher
+            lastJsonMessage.data.whiteboard.whiteboard_type === 'private' &&
+            lastJsonMessage.data.user_id === teacher &&
+            mode === ViewMode.PersonalWhiteboard
           ) {
-            myCodeRef.current = recv.data.code;
+            myCodeRef.current = lastJsonMessage.data.code;
           } else if (
-            recv.data.whiteboard_type === 'assignment' &&
-            recv.data.user_id !== teacher
+            lastJsonMessage.data.whiteboard.whiteboard_type === 'assignment'
           ) {
-            setAssignmentCode(recv.data.assignment_name, recv.data.code);
-            myCodeRef.current = recv.data.code;
+            if (
+              selectedAssignment ===
+                lastJsonMessage.data.assignment.assignment_name &&
+              mode === ViewMode.Assignment
+            ) {
+              myCodeRef.current = lastJsonMessage.data.whiteboard.code;
+            }
           }
           break;
 
         case Actions.GET_DATA:
           if (
-            recv.data.target_user === user.username &&
-            recv.data.whiteboard_type === 'public'
+            lastJsonMessage.data.whiteboard_type === 'public' &&
+            mode === ViewMode.SharedWhiteboard
           ) {
-            codeRef.current = recv.data.code;
+            codeRef.current = lastJsonMessage.data.code;
           } else if (
-            recv.data.target_user === user.username &&
-            recv.data.whiteboard_type === 'private'
+            lastJsonMessage.data.whiteboard_type === 'private' &&
+            mode === ViewMode.PersonalWhiteboard
           ) {
-            myCodeRef.current = recv.data.code;
+            myCodeRef.current = lastJsonMessage.data.code;
           } else if (
-            recv.data.target_user === user.username &&
-            recv.data.whiteboard_type === 'assignment'
+            lastJsonMessage.data.whiteboard_type === 'assignment' &&
+            mode === ViewMode.Assignment
           ) {
-            setAssignmentCode(recv.data.assignment_name, recv.data.code);
-            myCodeRef.current = recv.data.code;
+            myCodeRef.current =
+              lastJsonMessage.data.user_assignment.whiteboard.code;
           }
           break;
 
         case Actions.ASSIGNMENT_CREATE:
-          setAssignments((assignments) => [...assignments, recv.data]);
+          setAssignments((assignments) => [
+            ...assignments,
+            lastJsonMessage.data,
+          ]);
           break;
 
         case Actions.LOCK_CODE:
@@ -221,58 +311,15 @@ export default function ClassroomsStudentPage(
           break;
       }
 
-      setLastAction(parseInt(recv.action));
-    };
-    const createSocket = async () => {
-      const connectNotification = toast.loading(
-        translations('Classrooms.connecting')
-      );
-      const ws = new WebSocket(`ws://localhost:5000/ws/${classroomId}`);
-      ws.onmessage = onMessage;
-      ws.onopen = () => {
-        ws.send(
-          JSON.stringify({
-            action: Actions.JOIN,
-            user_id: user.username,
-            data: null,
-          })
-        );
-
-        toast.success(translations('Classrooms.connected'), {
-          id: connectNotification,
-        });
-      };
-      ws.onclose = () => {
-        console.error('Connection closed');
-      };
-      ws.onerror = (error) => {
-        console.error(error);
-        notifyConnectionFailed(translations('Classrooms.connection-failed'));
-      };
-      return ws;
-    };
-
-    const init = async () => {
-      codeRef.current = "print('Hello World')";
-      setLastAction(Actions.NONE);
-      const ws = await createSocket();
-      socketRef.current = ws;
-      codeSyncAllowanceRef.current = false;
-    };
-
-    if (shouldRender && socketRef.current === null) {
-      init();
-    } else if (shouldRender && socketRef.current) {
-      socketRef.current.onmessage = onMessage;
+      setLastAction(parseInt(lastJsonMessage.action));
+      setMessageHandled(true);
     }
-
-    return () => {
-      if (shouldRender && socketRef.current === null) socketRef.current.close();
-    };
   }, [
     assignments,
-    classroomId,
-    shouldRender,
+    lastJsonMessage,
+    messageHandled,
+    mode,
+    selectedAssignment,
     teacher,
     translations,
     user.username,
@@ -308,21 +355,18 @@ export default function ClassroomsStudentPage(
               <Button
                 type="button"
                 onClick={() => {
-                  setIsPersonalWhiteboardOpen(false);
-                  setLastAction(Actions.CODE_CHANGE);
+                  setMode(ViewMode.SharedWhiteboard);
                 }}
-                disabled={!isPersonalWhiteboardOpen}
+                disabled={mode === ViewMode.SharedWhiteboard}
                 variant={ButtonVariant.PRIMARY}>
                 {translations('Classrooms.shared-whiteboard')} - {teacher}
               </Button>
               <Button
                 type="button"
                 onClick={() => {
-                  setIsPersonalWhiteboardOpen(true);
-                  setCurrentAssignment('');
-                  setLastAction(Actions.CODE_CHANGE);
+                  setMode(ViewMode.PersonalWhiteboard);
                 }}
-                disabled={isPersonalWhiteboardOpen && currentAssignment === ''}
+                disabled={mode === ViewMode.PersonalWhiteboard}
                 variant={ButtonVariant.PRIMARY}>
                 {translations('Classrooms.my-whiteboard')}
               </Button>
@@ -330,22 +374,35 @@ export default function ClassroomsStudentPage(
               <h1 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.my-assignments')}
               </h1>
+              <Button
+                type="button"
+                variant={ButtonVariant.FLAT_SECONDARY}
+                onClick={handleAssignmentsMenu}>
+                <div className="flex flex-row items-center justify-center gap-2">
+                  {isAssignmentsMenuOpen ? (
+                    <ChevronDownIcon className="h-4 w-4" />
+                  ) : (
+                    <ChevronRightIcon className="h-4 w-4" />
+                  )}
+                  {translations('Classrooms.assignments')}
+                </div>
+              </Button>
               {assignments?.length > 0 &&
+                isAssignmentsMenuOpen &&
                 assignments.map((a) => (
                   <Button
-                    key={a.assignment_name}
+                    key={a.assignment.assignment_name}
                     type="button"
                     onClick={() => {
-                      setCurrentAssignment(a.assignment_name);
-                      setIsPersonalWhiteboardOpen(true);
-                      setLastAction(Actions.CODE_CHANGE);
+                      setSelectedAssignment(a.assignment.assignment_name);
+                      setMode(ViewMode.Assignment);
                     }}
                     disabled={
-                      isPersonalWhiteboardOpen &&
-                      currentAssignment === a.assignment_name
+                      selectedAssignment === a.assignment.assignment_name &&
+                      mode === ViewMode.Assignment
                     }
                     variant={ButtonVariant.PRIMARY}>
-                    {a.assignment_name}
+                    {a.assignment.assignment_name}
                   </Button>
                 ))}
             </div>
@@ -383,11 +440,18 @@ export default function ClassroomsStudentPage(
               <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
                 {translations('Classrooms.run')}
               </Button>
+              {mode === ViewMode.Assignment && (
+                <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
+                  {translations('Classrooms.send-to-review')}
+                </Button>
+              )}
             </div>
             <div className="w-full">
-              {isPersonalWhiteboardOpen ? (
+              {mode === ViewMode.PersonalWhiteboard ||
+              mode === ViewMode.Assignment ? (
                 <ClassroomCodeEditor
-                  socketRef={socketRef}
+                  connState={readyState}
+                  sendMsg={sendJsonMessage}
                   roomId={classroomId}
                   isEditable={true}
                   onCodeChange={(code) => {
@@ -398,12 +462,13 @@ export default function ClassroomsStudentPage(
                   codeRef={myCodeRef}
                   user={user}
                   isTeacher={false}
-                  personalWhiteboard={true}
-                  assignmentName={currentAssignment ? currentAssignment : ''}
+                  assignmentName={selectedAssignment ? selectedAssignment : ''}
+                  mode={mode}
                 />
               ) : (
                 <ClassroomCodeEditor
-                  socketRef={socketRef}
+                  connState={readyState}
+                  sendMsg={sendJsonMessage}
                   roomId={classroomId}
                   isEditable={isEditable}
                   onCodeChange={(code) => {
@@ -414,6 +479,7 @@ export default function ClassroomsStudentPage(
                   codeRef={codeRef}
                   user={user}
                   isTeacher={false}
+                  mode={mode}
                 />
               )}
             </div>

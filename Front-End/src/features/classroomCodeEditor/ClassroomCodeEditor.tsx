@@ -2,20 +2,23 @@ import { useCodeMirror } from '@uiw/react-codemirror';
 import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
 import { python } from '@codemirror/lang-python';
-import { Actions } from '@app/constants';
+import { Actions, ViewMode } from '@app/constants';
 import React, { useCallback, useRef, useEffect } from 'react';
 import type { MutableRefObject } from 'react';
 import debounce from 'debounce';
 import { useTheme } from 'next-themes';
+import type { JsonValue } from 'react-use-websocket/dist/lib/types';
+import { ReadyState } from 'react-use-websocket/dist/lib/constants';
 
 type EditorProps = {
-  socketRef: MutableRefObject<WebSocket>;
+  connState: ReadyState;
+  sendMsg: (jsonMessage: JsonValue) => void;
   codeRef: MutableRefObject<string>;
-  personalWhiteboard?: boolean;
   lastAction: number;
   setLastAction: (action: number) => void;
   roomId: string;
   onCodeChange: (value: string) => void;
+  mode: ViewMode;
   user: any;
   targetUser?: any;
   isEditable?: boolean;
@@ -84,15 +87,16 @@ const editorDarkTheme = createTheme({
 });
 
 export default function ClassroomCodeEditor({
-  socketRef,
+  connState,
+  sendMsg,
   codeRef,
   onCodeChange,
   lastAction,
   setLastAction,
   user,
   roomId,
+  mode,
   isEditable = true,
-  personalWhiteboard = false,
   isTeacher,
   targetUser = null,
   assignmentName = '',
@@ -104,31 +108,27 @@ export default function ClassroomCodeEditor({
   const editor = useRef();
 
   const sendData = (value: string) => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.CODE_CHANGE,
-        user_id: user.username,
-        data: {
-          whiteboard_type: 'public',
-          code: value,
-        },
-      })
-    );
+    sendMsg({
+      action: Actions.CODE_CHANGE,
+      user_id: user.username,
+      data: {
+        whiteboard_type: 'public',
+        code: value,
+      },
+    });
   };
 
   const debouncedSendData = debounce((value: string) => sendData(value), 100);
 
   const sendPersonalData = (value: string) => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.CODE_CHANGE,
-        user_id: user.username,
-        data: {
-          whiteboard_type: 'private',
-          code: value,
-        },
-      })
-    );
+    sendMsg({
+      action: Actions.CODE_CHANGE,
+      user_id: user.username,
+      data: {
+        whiteboard_type: 'private',
+        code: value,
+      },
+    });
   };
 
   const debouncedSendPersonalData = debounce(
@@ -137,17 +137,15 @@ export default function ClassroomCodeEditor({
   );
 
   const sendPersonalAssignmentData = (value: string) => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.CODE_CHANGE,
-        user_id: user.username,
-        data: {
-          assignment_name: assignmentName,
-          whiteboard_type: 'assignment',
-          code: value,
-        },
-      })
-    );
+    sendMsg({
+      action: Actions.CODE_CHANGE,
+      user_id: user.username,
+      data: {
+        assignment_name: assignmentName,
+        whiteboard_type: 'assignment',
+        code: value,
+      },
+    });
   };
 
   const debouncedSendPersonalAssignmentData = debounce(
@@ -156,17 +154,15 @@ export default function ClassroomCodeEditor({
   );
 
   const sendDataToUser = (value: string) => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.CODE_CHANGE,
-        user_id: user.username,
-        data: {
-          target_user: targetUser,
-          whiteboard_type: 'private',
-          code: value,
-        },
-      })
-    );
+    sendMsg({
+      action: Actions.CODE_CHANGE,
+      user_id: user.username,
+      data: {
+        target_user: targetUser,
+        whiteboard_type: 'private',
+        code: value,
+      },
+    });
   };
 
   const debouncedSendDataToUser = debounce(
@@ -175,18 +171,16 @@ export default function ClassroomCodeEditor({
   );
 
   const sendAssignmentDataToUser = (value: string) => {
-    socketRef.current.send(
-      JSON.stringify({
-        action: Actions.CODE_CHANGE,
-        user_id: user.username,
-        data: {
-          target_user: targetUser,
-          assignment_name: assignmentName,
-          whiteboard_type: 'assignment',
-          code: value,
-        },
-      })
-    );
+    sendMsg({
+      action: Actions.CODE_CHANGE,
+      user_id: user.username,
+      data: {
+        target_user: targetUser,
+        assignment_name: assignmentName,
+        whiteboard_type: 'assignment',
+        code: value,
+      },
+    });
   };
 
   const debouncedSendAssignmentDataToUser = debounce(
@@ -198,17 +192,33 @@ export default function ClassroomCodeEditor({
     (value: string) => {
       onCodeChange(value);
       if (
-        socketRef.current.readyState === 1 &&
+        connState === ReadyState.OPEN &&
         lastAction !== Actions.CODE_CHANGE &&
         origin !== 'setValue'
       ) {
-        if (personalWhiteboard && !isTeacher && assignmentName === '') {
+        if (
+          mode === ViewMode.PersonalWhiteboard &&
+          !isTeacher &&
+          assignmentName === ''
+        ) {
           debouncedSendPersonalData(value);
-        } else if (!personalWhiteboard && isTeacher && targetUser !== null) {
+        } else if (
+          mode === ViewMode.ViewUserWhiteboard &&
+          isTeacher &&
+          targetUser !== null
+        ) {
           debouncedSendDataToUser(value);
-        } else if (assignmentName !== '' && isTeacher && targetUser !== null) {
+        } else if (
+          (mode === ViewMode.Assignment && assignmentName) !== '' &&
+          isTeacher &&
+          targetUser !== null
+        ) {
           debouncedSendAssignmentDataToUser(value);
-        } else if (assignmentName !== '' && !isTeacher) {
+        } else if (
+          mode === ViewMode.Assignment &&
+          assignmentName !== '' &&
+          !isTeacher
+        ) {
           debouncedSendPersonalAssignmentData(value);
         } else {
           debouncedSendData(value);
@@ -217,6 +227,7 @@ export default function ClassroomCodeEditor({
     },
     [
       assignmentName,
+      connState,
       debouncedSendAssignmentDataToUser,
       debouncedSendData,
       debouncedSendDataToUser,
@@ -224,9 +235,8 @@ export default function ClassroomCodeEditor({
       debouncedSendPersonalData,
       isTeacher,
       lastAction,
+      mode,
       onCodeChange,
-      personalWhiteboard,
-      socketRef,
       targetUser,
     ]
   );
