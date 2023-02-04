@@ -119,7 +119,15 @@ export default function Dashboard({
                   <FancyCard
                     key={recommendedLesson.id}
                     title={recommendedLesson.name}
-                    description={recommendedLesson.description}
+                    description={
+                      recommendedLesson.description.includes(
+                        recommendedLesson.name
+                      )
+                        ? recommendedLesson.description
+                            .replace(recommendedLesson.name, '')
+                            .slice(2, 50)
+                        : recommendedLesson.description
+                    }
                     cardColor={'bg-white'}
                     shadowColor={'shadow-black/25'}
                     hoverShadowColor="hover:shadow-black/25"
