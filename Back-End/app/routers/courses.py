@@ -530,6 +530,7 @@ def get_course_by_id(
                             "description": lesson.description,
                             "type": lesson.type,
                             "number_of_answers": lesson.number_of_answers,
+                            "order": lesson.order,
                         }
                         for lesson in course.lessons.limit(limit_lessons)
                     ],

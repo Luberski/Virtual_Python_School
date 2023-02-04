@@ -961,10 +961,10 @@ export default function ManageCourseAndLessons({
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200">
-              {lessons.map((lesson, key) => (
+              {lessons.map((lesson) => (
                 <Fragment key={lesson.id}>
                   <tr>
-                    <td className="p-4">{(key += 1)}</td>
+                    <td className="p-4">{lesson.order}</td>
                     <td className="break-words p-4">{lesson.name}</td>
                     <td className="break-words p-4">{lesson.description}</td>
                     <td className="flex space-x-4 py-4 pr-4">

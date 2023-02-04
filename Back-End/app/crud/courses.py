@@ -89,6 +89,7 @@ def get_all_enrolled_courses(
                                     "description": lesson.description,
                                     "type": lesson.type,
                                     "number_of_answers": lesson.number_of_answers,
+                                    "order": lesson.order,
                                 }
                                 for lesson in enrolled_course.course.lessons.limit(
                                     limit_lessons
@@ -214,6 +215,7 @@ def get_enrolled_course_by_id(
                                 "description": lesson.description,
                                 "type": lesson.type,
                                 "number_of_answers": lesson.number_of_answers,
+                                "order": lesson.order,
                                 "completed": lesson.id
                                 in [
                                     lesson_enrolled.lesson_id
@@ -221,7 +223,9 @@ def get_enrolled_course_by_id(
                                     if lesson_enrolled.lesson_id == lesson.id
                                 ],
                             }
-                            for lesson in enrolled_course_with_lessons.course.lessons
+                            for lesson in enrolled_course_with_lessons.course.lessons.order_by(
+                                models.Lessons.order
+                            )
                         ],
                     },
                 )

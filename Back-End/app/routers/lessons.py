@@ -46,6 +46,10 @@ def create_lesson(
         course_id=request_data.data.course_id,
         type=request_data.data.type,
         number_of_answers=request_data.data.number_of_answers,
+        order=db.query(models.Lessons)
+        .filter_by(course_id=request_data.data.course_id)
+        .count()
+        + 1,
     )
 
     db.add(new_lesson)
@@ -67,6 +71,7 @@ def create_lesson(
                 "course_id": new_lesson.course_id,
                 "type": new_lesson.type,
                 "number_of_answers": new_lesson.number_of_answers,
+                "order": new_lesson.order,
                 "answers": [
                     {
                         "id": new_answer.id,
@@ -152,6 +157,7 @@ def edit_lesson(
                 "course_id": lesson_edit.course_id,
                 "type": lesson_edit.type,
                 "number_of_answers": lesson_edit.number_of_answers,
+                "order": lesson_edit.order,
             },
             "error": None,
         },
@@ -207,7 +213,12 @@ def get_lessons_by_course_id(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    lessons = db.query(models.Lessons).filter_by(course_id=course_id).all()
+    lessons = (
+        db.query(models.Lessons)
+        .filter_by(course_id=course_id)
+        .order_by(models.Lessons.order)
+        .all()
+    )
     if lessons is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -227,6 +238,7 @@ def get_lessons_by_course_id(
                     "number_of_answers": lesson.number_of_answers,
                     "final_answer": lesson.answers[0].final_answer,
                     "answer_check_rule": lesson.answers[0].answer_check_rule,
+                    "order": lesson.order,
                 }
                 for lesson in lessons
             ],
@@ -247,7 +259,7 @@ def get_lessons_all(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    lessons = db.query(models.Lessons).all()
+    lessons = db.query(models.Lessons).order_by(models.Lessons.order).all()
     if lessons is None:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -265,6 +277,7 @@ def get_lessons_all(
                     "course_id": lesson.course_id,
                     "type": lesson.type,
                     "number_of_answers": lesson.number_of_answers,
+                    "order": lesson.order,
                 }
                 for lesson in lessons
             ],
@@ -306,6 +319,7 @@ def get_lesson_by_course_id(
                 "course_id": lesson.course_id,
                 "type": lesson.type,
                 "number_of_answers": lesson.number_of_answers,
+                "order": lesson.order,
             },
             "error": None,
         },
@@ -342,6 +356,7 @@ def get_lesson_by_lesson_id(
                 "course_id": lesson.course_id,
                 "type": lesson.type,
                 "number_of_answers": lesson.number_of_answers,
+                "order": lesson.order,
             },
             "error": None,
         },

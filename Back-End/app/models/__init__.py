@@ -67,6 +67,7 @@ class Lessons(Base):
     type = Column(Integer)
     number_of_answers = Column(Integer)
     answers = relationship("Answers", cascade="all, delete")
+    order = Column(Integer, default=0)
 
 
 class EnrolledLessons(Base):

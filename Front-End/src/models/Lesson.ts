@@ -10,6 +10,7 @@ type Lesson = {
   completed: boolean;
   final_answer?: string;
   answer_check_rule?: AnswerCheckRule;
+  order?: number;
 };
 
 export default Lesson;
