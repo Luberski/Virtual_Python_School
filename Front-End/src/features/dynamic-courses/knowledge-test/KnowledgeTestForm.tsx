@@ -1,3 +1,4 @@
+import 'highlight.js/styles/vs2015.css';
 import { useState } from 'react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import KnowledgeTestFormStep from './KnowledgeTestFormStep';

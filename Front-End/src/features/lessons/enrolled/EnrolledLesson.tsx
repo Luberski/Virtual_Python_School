@@ -8,14 +8,6 @@ import ConfettiExplosion from 'react-confetti-explosion';
 import debounce from 'debounce';
 import { useDispatch } from 'react-redux';
 import { PlayIcon, CheckIcon } from '@heroicons/react/20/solid';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkRehype from 'remark-rehype';
-import rehypeStringify from 'rehype-stringify';
-import rehypeHighlight from 'rehype-highlight';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
-import rehypeRewrite from 'rehype-rewrite';
 import { useTheme } from 'next-themes';
 import {
   selectPlaygroundData,
@@ -32,7 +24,7 @@ import {
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import FancyToast, { FancyToastVariant } from '@app/components/FancyToast';
 import type EnrolledLessonModel from '@app/models/EnrolledLesson';
-import { useAppSelector } from '@app/hooks';
+import { useAppSelector, useMarkdown } from '@app/hooks';
 import type KnowledgeTest from '@app/models/KnowledgeTest';
 import KnowledgeTestForm from '@app/features/dynamic-courses/knowledge-test/KnowledgeTestForm';
 
@@ -71,37 +63,8 @@ export default function EnrolledLesson({
   const playgroundError = useAppSelector(selectPlaygroundError);
   const playgroundStatus = useAppSelector(selectPlaygroundStatus);
   const [showKnowledgeTest, setShowKnowledgeTest] = useState(false);
-  const [parsedLessonDescription, setParsedLessonDescription] = useState('');
+  const parsedLessonDescription = useMarkdown(enrolledLesson?.description);
   const { theme } = useTheme();
-
-  useEffect(() => {
-    const parsedMarkdown = unified()
-      .use(remarkParse)
-      .use(remarkGfm)
-      .use(remarkRehype, { allowDangerousHtml: true })
-      .use(rehypeRaw)
-      .use(rehypeHighlight)
-      .use(rehypeRewrite, {
-        rewrite: (node) => {
-          if (node.type === 'element' && node.tagName === 'details') {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            const firstLine = node.children[0].value.split('  ')[0];
-            const firstLineLength = firstLine.length;
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            node.children[0].value =
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              node.children[0].value.slice(firstLineLength);
-          }
-        },
-      })
-      .use(rehypeStringify)
-      .processSync(enrolledLesson?.description)
-      .toString();
-    setParsedLessonDescription(parsedMarkdown);
-  }, [enrolledLesson?.description]);
 
   const notify = useCallback(
     (isSucces: boolean) => {

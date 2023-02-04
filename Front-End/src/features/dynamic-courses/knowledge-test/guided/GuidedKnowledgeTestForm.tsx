@@ -1,9 +1,11 @@
+import 'highlight.js/styles/vs2015.css';
 import { useRef, useState } from 'react';
 import { BoltIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { PlusCircleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { nanoid } from '@reduxjs/toolkit';
+import clsx from 'clsx';
 import {
   addKnowledgeTestQuestion,
   removeKnowledgeTestQuestion,
@@ -20,6 +22,8 @@ import StyledDialog from '@app/components/StyledDialog';
 import Input from '@app/components/Input';
 import Button, { ButtonVariant } from '@app/components/Button';
 import { useAppSelector } from '@app/hooks';
+import TextArea from '@app/components/TextArea';
+import { parseMarkdown } from '@app/utils';
 
 type GuidedKnowledgeTestFormProps = {
   lessonId: number;
@@ -193,7 +197,12 @@ export default function GuidedKnowledgeTestForm({
                       <div
                         className="flex items-center justify-between space-x-4"
                         key={question?._id}>
-                        <div>{question?.question}</div>
+                        <div
+                          className="markdown overflow-auto whitespace-pre-line"
+                          dangerouslySetInnerHTML={{
+                            __html: parseMarkdown(question?.question),
+                          }}
+                        />
                         <IconButton
                           variant={IconButtonVariant.FLAT_DANGER}
                           onClick={handleRemoveQuestion(question?._id)}
@@ -271,19 +280,21 @@ export default function GuidedKnowledgeTestForm({
               className="text-2xl font-bold text-indigo-900 dark:text-indigo-300">
               {translations('Survey.question')}
             </label>
-            <Input
+            <TextArea
               label="question"
               name="question"
               type="text"
               register={register}
               required
-              maxLength={100}
+              maxLength={500}
+              rows={4}
               placeholder={translations('Survey.question')}
-              className={
+              className={clsx(
+                'resize-none',
                 errors.question &&
-                errors.question.type === 'required' &&
-                'border-red-600 dark:border-red-400'
-              }
+                  errors.question.type === 'required' &&
+                  'border-red-600 dark:border-red-400'
+              )}
             />
             <div>
               <h4 className="text-indigo-900 dark:text-indigo-300">

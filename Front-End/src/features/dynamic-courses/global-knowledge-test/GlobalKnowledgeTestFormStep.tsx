@@ -14,6 +14,7 @@ import IconButton, {
 import type GlobalKnowledgeTestQuestion from '@app/models/GlobalKnowledgeTestQuestion';
 import type GlobalKnowledgeTestResults from '@app/models/GlobalKnowledgeTestResults';
 import Input from '@app/components/Input';
+import { parseMarkdown } from '@app/utils';
 
 type GlobalKnowledgeTestFormStepProps = {
   currentStep: number;
@@ -76,7 +77,12 @@ export default function GlobalKnowledgeTestFormStep({
         <div className="flex flex-col space-y-6">
           {questions.map((question, index) => (
             <div key={question.question_id} className="flex flex-col">
-              <div className="text-lg font-bold">{question.question}</div>
+              <div
+                className="markdown overflow-auto whitespace-pre-line"
+                dangerouslySetInnerHTML={{
+                  __html: parseMarkdown(question.question),
+                }}
+              />
               <input
                 type="hidden"
                 value={question.question_id}

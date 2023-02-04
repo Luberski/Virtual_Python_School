@@ -1,3 +1,4 @@
+import 'highlight.js/styles/vs2015.css';
 import { useEffect, useRef, useState } from 'react';
 import { BoltIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { PlusCircleIcon, TrashIcon } from '@heroicons/react/20/solid';
@@ -24,6 +25,7 @@ import StyledDialog from '@app/components/StyledDialog';
 import Button, { ButtonVariant } from '@app/components/Button';
 import { useAppSelector } from '@app/hooks';
 import Select from '@app/components/Select';
+import { parseMarkdown } from '@app/utils';
 
 type GuidedGlobalKnowledgeTestFormProps = {
   translations: (key: string, ...params: unknown[]) => string;
@@ -220,7 +222,12 @@ export default function GuidedGlobalKnowledgeTestForm({
                       <div
                         className="flex items-center justify-between space-x-4"
                         key={question?._id}>
-                        <div>{question?.question}</div>
+                        <div
+                          className="markdown overflow-auto whitespace-pre-line"
+                          dangerouslySetInnerHTML={{
+                            __html: parseMarkdown(question?.question),
+                          }}
+                        />
                         <IconButton
                           variant={IconButtonVariant.FLAT_DANGER}
                           onClick={handleRemoveQuestion(question?._id)}

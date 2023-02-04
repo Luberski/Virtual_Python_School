@@ -14,6 +14,7 @@ import IconButton, {
 import type KnowledgeTestQuestion from '@app/models/KnowledgeTestQuestion';
 import type KnowledgeTestResults from '@app/models/KnowledgeTestResults';
 import Input from '@app/components/Input';
+import { parseMarkdown } from '@app/utils';
 
 type KnowledgeTestFormStepProps = {
   currentStep: number;
@@ -76,7 +77,12 @@ export default function KnowledgeTestFormStep({
         <div className="flex flex-col space-y-6">
           {questions.map((question, index) => (
             <div key={question.question_id} className="flex flex-col">
-              <div className="text-lg font-bold">{question.question}</div>
+              <div
+                className="markdown overflow-auto whitespace-pre-line"
+                dangerouslySetInnerHTML={{
+                  __html: parseMarkdown(question?.question),
+                }}
+              />
               <input
                 type="hidden"
                 value={question.question_id}

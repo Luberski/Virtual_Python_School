@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { selectAuthUser, selectIsLogged } from '@app/features/auth/authSlice';
-import type User from '@app/models/User';
 import type { RootState } from '@app/store';
+import type User from '@app/models/User';
+import { selectAuthUser, selectIsLogged } from '@app/features/auth/authSlice';
+import { parseMarkdown } from '@app/utils';
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
@@ -20,4 +21,15 @@ export const useAuthRedirect = (path = '/login'): [User, boolean] => {
   }, [user, isLoggedIn, router, path]);
 
   return [user, isLoggedIn];
+};
+
+export const useMarkdown = (markdown: string): string => {
+  const [parsedMarkdown, setParsedMarkdown] = useState('');
+
+  useEffect(() => {
+    const parsedMarkdown = parseMarkdown(markdown);
+    setParsedMarkdown(parsedMarkdown);
+  }, [markdown]);
+
+  return parsedMarkdown;
 };

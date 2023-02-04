@@ -1,5 +1,6 @@
 import Input from '@app/components/Input';
 import type KnowledgeTestQuestion from '@app/models/KnowledgeTestQuestion';
+import { parseMarkdown } from '@app/utils';
 
 type GlobalKnowledgeTestPreviewProps = {
   questions: KnowledgeTestQuestion[];
@@ -14,7 +15,12 @@ export default function GlobalKnowledgeTestPreview({
     <div className="flex flex-col space-y-6">
       {questions.map((question) => (
         <div key={question.question} className="flex flex-col">
-          <div className="my-2 text-xl font-bold">{question.question}</div>
+          <div
+            className="markdown overflow-auto whitespace-pre-line"
+            dangerouslySetInnerHTML={{
+              __html: parseMarkdown(question?.question),
+            }}
+          />
           <div>
             <Input
               label="answer-preview"
