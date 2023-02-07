@@ -324,7 +324,7 @@ export default function GuidedGlobalKnowledgeTestForm({
                             answer: question?.answer,
                             lessonId: knowledgeTest.lesson_id,
                           }),
-                          label: question?.question,
+                          label: question?.question.slice(6),
                           disabled: false,
                         }))
                       )

@@ -1,6 +1,9 @@
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon } from '@heroicons/react/20/solid';
+import { useRouter } from 'next/router';
 import { selectKnowledgeTestResultsStatsData } from './knowledgeTestResultsStatsSlice';
 import { useAppSelector } from '@app/hooks';
+import IconButton from '@app/components/IconButton';
 
 type KnowledgeTestFormCompletedProps = {
   translations: (key: string, ...params: unknown[]) => string;
@@ -9,6 +12,8 @@ type KnowledgeTestFormCompletedProps = {
 export default function KnowledgeTestFormCompleted({
   translations,
 }: KnowledgeTestFormCompletedProps) {
+  const router = useRouter();
+
   const knowledgeTestResultsStatsData = useAppSelector(
     selectKnowledgeTestResultsStatsData
   );
@@ -19,6 +24,10 @@ export default function KnowledgeTestFormCompleted({
         knowledgeTestResultsStatsData?.total_answers) *
         100
     ) || 0;
+
+  const handleBack = () => {
+    router.back();
+  };
 
   return (
     knowledgeTestResultsStatsData && (
@@ -46,6 +55,14 @@ export default function KnowledgeTestFormCompleted({
             {knowledgeTestResultsStatsData.total_correct_answers}/
             {knowledgeTestResultsStatsData.total_answers}
           </span>
+          <div className="mt-6 flex flex-col items-center justify-center">
+            <IconButton
+              onClick={handleBack}
+              type="button"
+              icon={<ArrowLeftIcon className="h-5 w-5" />}>
+              {translations('Form.back')}
+            </IconButton>
+          </div>
         </div>
       </div>
     )

@@ -67,8 +67,8 @@ export default function GlobalKnowledgeTestFormStep({
       } catch (error) {
         console.error(error);
       }
+      nextFormStep();
     }
-    nextFormStep();
   };
 
   if (formStep === currentStep) {

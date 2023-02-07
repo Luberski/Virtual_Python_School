@@ -1,6 +1,8 @@
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/router';
+import { ArrowLeftIcon } from '@heroicons/react/20/solid';
 import {
   selectEnrollDynamicCourseData,
   selectEnrollDynamicCourseStatus,
@@ -24,6 +26,7 @@ export default function GlobalKnowledgeTestFormCompleted({
   globalKnowledgeTest,
   translations,
 }: GlobalKnowledgeTestFormCompletedProps) {
+  const router = useRouter();
   const dispatch = useDispatch();
   const enrollDynamicCourseData = useAppSelector(selectEnrollDynamicCourseData);
   const enrollDynamicCourseStatus = useAppSelector(
@@ -56,6 +59,10 @@ export default function GlobalKnowledgeTestFormCompleted({
         100
     ) || 0;
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <div>
       {globalKnowledgeTestResultsStatsData && (
@@ -83,6 +90,14 @@ export default function GlobalKnowledgeTestFormCompleted({
               {globalKnowledgeTestResultsStatsData.total_correct_answers}/
               {globalKnowledgeTestResultsStatsData.total_answers}
             </span>
+            <div className="mt-6 flex flex-col items-center justify-center">
+              <IconButton
+                onClick={handleBack}
+                type="button"
+                icon={<ArrowLeftIcon className="h-5 w-5" />}>
+                {translations('Form.back')}
+              </IconButton>
+            </div>
           </div>
         </div>
       )}
