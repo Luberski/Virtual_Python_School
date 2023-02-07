@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
@@ -25,6 +26,16 @@ from .routers.dynamic_course import dynamic_course
 from .routers.dynamic_course import survey
 from .routers.dynamic_course import knowledge_test
 from .routers.dynamic_course import global_knowledge_test
+
+origins = [
+    "http://virtualschool.wi.zut.edu.pl",
+    "https://virtualschool.wi.zut.edu.pl",
+    "http://virtualschool.wi.zut.edu.pl:3000",
+    "https://virtualschool.wi.zut.edu.pl:3000",
+    "http://localhost",
+    "http://localhost:3000",
+]
+
 
 token_expires = datetime.timedelta(days=30)
 
@@ -46,6 +57,13 @@ Base.metadata.create_all(bind=engine)
 def get_application() -> FastAPI:
     application = FastAPI(
         title=settings.PROJECT_NAME, debug=settings.DEBUG, version=settings.VERSION
+    )
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
     application.include_router(
         login.router,
