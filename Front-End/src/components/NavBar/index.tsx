@@ -41,7 +41,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             {!open && (
               <div className="sm:mr-10">
                 <Link href="/" passHref={true}>
-                  <a className="ml-3 text-base font-bold leading-tight tracking-normal text-indigo-900 no-underline hover:no-underline dark:text-indigo-300">
+                  <a className="ml-3 text-base font-bold leading-tight tracking-normal text-sky-900 no-underline hover:no-underline dark:text-sky-300">
                     Virtual Python School
                   </a>
                 </Link>

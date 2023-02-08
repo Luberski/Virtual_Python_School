@@ -228,7 +228,7 @@ export default function GuidedDynamicCourseForm({
             steps={STEPS}
             translations={translations}>
             <>
-              <h3 className="text-center text-indigo-900 dark:text-indigo-300">
+              <h3 className="text-center text-sky-900 dark:text-sky-300">
                 {translations('DynamicCourse.introduction')}
               </h3>
               <Alert>
@@ -253,7 +253,7 @@ export default function GuidedDynamicCourseForm({
             steps={STEPS}
             translations={translations}>
             <>
-              <h3 className="text-center text-indigo-900 dark:text-indigo-300">
+              <h3 className="text-center text-sky-900 dark:text-sky-300">
                 {translations('DynamicCourse.introduction')}
               </h3>
               <Alert>
@@ -278,7 +278,7 @@ export default function GuidedDynamicCourseForm({
             steps={STEPS}
             translations={translations}>
             <>
-              <h3 className="text-center text-indigo-900 dark:text-indigo-300">
+              <h3 className="text-center text-sky-900 dark:text-sky-300">
                 {translations('Survey.questions')}
               </h3>
               <Alert>
@@ -330,7 +330,7 @@ export default function GuidedDynamicCourseForm({
             steps={STEPS}
             translations={translations}>
             <div className="flex flex-col space-y-4">
-              <h3 className="text-center text-indigo-900 dark:text-indigo-300">
+              <h3 className="text-center text-sky-900 dark:text-sky-300">
                 {translations('Survey.survey-preview')}
               </h3>
               {questions?.length > 0 ? (
@@ -373,8 +373,8 @@ export default function GuidedDynamicCourseForm({
         title={translations('Survey.add-question-to-survey')}
         isOpen={isAddQuestionDialogOpen}
         icon={
-          <div className="h-fit rounded-lg bg-indigo-100 p-2">
-            <BoltIcon className="h-6 w-6 text-indigo-600" />
+          <div className="h-fit rounded-lg bg-sky-100 p-2">
+            <BoltIcon className="h-6 w-6 text-sky-600" />
           </div>
         }
         onClose={() => setIsAddQuestionDialogOpen(!isAddQuestionDialogOpen)}>
@@ -394,7 +394,7 @@ export default function GuidedDynamicCourseForm({
             onSubmit={handleSubmit(onAddQuestionSubmit)}>
             <label
               htmlFor="question"
-              className="text-2xl font-bold text-indigo-900 dark:text-indigo-300">
+              className="text-2xl font-bold text-sky-900 dark:text-sky-300">
               {translations('Survey.question')}
             </label>
             <Input
@@ -412,7 +412,7 @@ export default function GuidedDynamicCourseForm({
               }
             />
             <div>
-              <h4 className="text-indigo-900 dark:text-indigo-300">
+              <h4 className="text-sky-900 dark:text-sky-300">
                 {translations('Survey.rules')}
               </h4>
               <div className="mb-4 text-lg">

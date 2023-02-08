@@ -82,7 +82,7 @@ export default function EnrolledCourse({
     <>
       {enrolledCourse ? (
         <div>
-          <h1 className="text-indigo-900 dark:text-indigo-300">
+          <h1 className="text-sky-900 dark:text-sky-300">
             {enrolledCourse.is_dynamic ? (
               <>
                 <BoltIcon className="mr-1 mb-1 inline h-9 w-9" />
@@ -108,7 +108,7 @@ export default function EnrolledCourse({
                 <div className="mt-[2px] flex w-full items-center space-x-2">
                   <div className="w-full rounded-lg bg-neutral-200 dark:bg-neutral-600">
                     <div
-                      className="h-2 rounded-lg bg-indigo-600"
+                      className="h-2 rounded-lg bg-sky-600"
                       style={{
                         width: `${lessonsCompletedPercentage}%`,
                       }}
@@ -175,7 +175,7 @@ export default function EnrolledCourse({
                           <td className="sm:p-4">{lesson.name}</td>
                           <td className="text-center sm:p-4">
                             {lesson.completed?.toString() === 'true' ? (
-                              <div className="text-indigo-600 dark:text-indigo-300">
+                              <div className="text-sky-600 dark:text-sky-300">
                                 {translations('Manage.completed')}
                               </div>
                             ) : (

@@ -114,7 +114,7 @@ export default function GlobalKnowledgeTestFormCompleted({
                   <FancyCard
                     key={enrollDynamicCourseData.id}
                     title={
-                      <div className="text-indigo-600">
+                      <div className="text-sky-600">
                         {enrollDynamicCourseData.name}
                       </div>
                     }
@@ -127,7 +127,7 @@ export default function GlobalKnowledgeTestFormCompleted({
                           {enrollDynamicCourseData.lessons?.length > 0 &&
                             enrollDynamicCourseData.lessons?.map((lesson) => (
                               <div key={lesson.id}>
-                                <div className="text-indigo-900 dark:text-indigo-300">
+                                <div className="text-sky-900 dark:text-sky-300">
                                   {lesson.name}
                                 </div>
                               </div>

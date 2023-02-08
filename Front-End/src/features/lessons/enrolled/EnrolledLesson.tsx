@@ -176,7 +176,7 @@ export default function EnrolledLesson({
         <>
           {showKnowledgeTest ? (
             <>
-              <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
+              <h1 className="pb-6 text-center text-sky-900 dark:text-sky-300">
                 {translations('KnowledgeTest.leading')}
               </h1>
               <KnowledgeTestForm

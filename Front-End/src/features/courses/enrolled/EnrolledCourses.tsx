@@ -39,7 +39,7 @@ export default function EnrolledCourses({
                 key={enrolledCourse.id}
                 title={
                   enrolledCourse.is_dynamic ? (
-                    <div className="text-indigo-900 dark:text-indigo-300">
+                    <div className="text-sky-900 dark:text-sky-300">
                       <BoltIcon className="mr-1 mb-1 inline h-5 w-5" />
                       {translations('DynamicCourse.course-name')}
                     </div>
@@ -52,7 +52,7 @@ export default function EnrolledCourses({
                     <div className="flex space-x-2">
                       <div className="my-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
                         <div
-                          className="h-2 rounded-lg bg-indigo-600"
+                          className="h-2 rounded-lg bg-sky-600"
                           style={{
                             width: `${lessonsCompletedPercentage}%`,
                           }}
@@ -92,7 +92,7 @@ export default function EnrolledCourses({
                         {enrolledCourse.lessons?.length > 0 &&
                           enrolledCourse.lessons?.map((lesson) => (
                             <div key={lesson.id}>
-                              <div className="text-sm text-indigo-900 dark:text-indigo-300">
+                              <div className="text-sm text-sky-900 dark:text-sky-300">
                                 {lesson.name}
                               </div>
                             </div>
@@ -109,12 +109,12 @@ export default function EnrolledCourses({
                 }
                 cardColor={
                   enrolledCourse.is_dynamic
-                    ? 'bg-indigo-50 dark:bg-indigo-400/25'
+                    ? 'bg-sky-50 dark:bg-sky-400/25'
                     : 'bg-white'
                 }
                 shadowColor={
                   enrolledCourse.is_dynamic
-                    ? 'shadow-indigo-900/25'
+                    ? 'shadow-sky-900/25'
                     : 'shadow-black/25'
                 }
                 hoverShadowColor="hover:shadow-black/25"

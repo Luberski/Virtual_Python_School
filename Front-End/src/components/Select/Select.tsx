@@ -34,7 +34,7 @@ export default function Select({
           data-testid={dataTestId}
           // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
           className={clsx(
-            'relative w-72 cursor-pointer rounded-lg border border-neutral-300 bg-neutral-50 py-2 pl-4 pr-10 text-left text-neutral-900 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white sm:w-96 sm:text-sm',
+            'relative w-72 cursor-pointer rounded-lg border border-neutral-300 bg-neutral-50 py-2 pl-4 pr-10 text-left text-neutral-900 focus:outline-none focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-sky-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-600 dark:bg-neutral-700 dark:text-white sm:w-96 sm:text-sm',
             className
           )}>
           <span className="block truncate py-2">{selected.label}</span>
@@ -59,7 +59,7 @@ export default function Select({
                 className={({ active }) =>
                   `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
                     active
-                      ? 'bg-indigo-100 text-indigo-900'
+                      ? 'bg-sky-100 text-sky-900'
                       : 'text-neutral-900 dark:text-neutral-400'
                   }`
                 }
@@ -75,7 +75,7 @@ export default function Select({
                       {item.label}
                     </span>
                     {selected ? (
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-900 dark:text-indigo-300">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-sky-900 dark:text-sky-300">
                         <CheckIcon className="h-4 w-4" aria-hidden="true" />
                       </span>
                     ) : null}

@@ -97,7 +97,7 @@ export default function ManageDynamicCoursesPage() {
         />
         <div className="container mx-auto px-4">
           <div className="brand-shadow2 container flex flex-col rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
-            <h1 className="pb-6 text-indigo-900 dark:text-indigo-300">
+            <h1 className="pb-6 text-sky-900 dark:text-sky-300">
               {t('Manage.manage-dynamic-courses')}
             </h1>
             <div className="flex items-center justify-between">

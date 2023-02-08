@@ -3,7 +3,7 @@ export const LESSONS_LIMIT = 3;
 export const COURSES_LIMIT = 3;
 
 export const TAG_COLORS = [
-  'bg-indigo-200 text-indigo-900',
+  'bg-sky-200 text-sky-900',
   'bg-green-200 text-green-900',
   'bg-yellow-200 text-yellow-900',
   'bg-red-200 text-red-900',

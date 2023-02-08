@@ -470,7 +470,7 @@ export default function ManageCourseAndLessons({
       (to) => (
         <button
           type="button"
-          className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          className="brand-shadow rounded-lg bg-sky-100 py-3 px-4 text-sky-900 shadow-sky-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
             <InformationCircleIcon className="h-6 w-6" />
@@ -494,7 +494,7 @@ export default function ManageCourseAndLessons({
       (to) => (
         <button
           type="button"
-          className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          className="brand-shadow rounded-lg bg-sky-100 py-3 px-4 text-sky-900 shadow-sky-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
             <InformationCircleIcon className="h-6 w-6" />
@@ -518,7 +518,7 @@ export default function ManageCourseAndLessons({
       (to) => (
         <button
           type="button"
-          className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          className="brand-shadow rounded-lg bg-sky-100 py-3 px-4 text-sky-900 shadow-sky-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
             <InformationCircleIcon className="h-6 w-6" />
@@ -566,7 +566,7 @@ export default function ManageCourseAndLessons({
       (to) => (
         <button
           type="button"
-          className="brand-shadow rounded-lg bg-indigo-100 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          className="brand-shadow rounded-lg bg-sky-100 py-3 px-4 text-sky-900 shadow-sky-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
             <InformationCircleIcon className="h-6 w-6" />
@@ -658,9 +658,7 @@ export default function ManageCourseAndLessons({
   return (
     <>
       <div className="flex items-center space-x-2">
-        <h1 className="pb-6 text-indigo-900 dark:text-indigo-300">
-          {course?.name}
-        </h1>
+        <h1 className="pb-6 text-sky-900 dark:text-sky-300">{course?.name}</h1>
         <Button
           className="h-fit"
           variant={ButtonVariant.FLAT_PRIMARY}
@@ -703,7 +701,7 @@ export default function ManageCourseAndLessons({
             name="name"
             required
             placeholder={translations('Tags.add-tag')}
-            className="mr-1 h-6 w-fit rounded-lg border border-dashed border-indigo-900 bg-transparent px-3 py-1 text-center text-xs font-semibold text-indigo-900 hover:bg-indigo-100 focus:ring-0 dark:border-indigo-300 dark:text-indigo-200 dark:placeholder:text-indigo-300 dark:hover:bg-indigo-200 dark:hover:text-indigo-900 dark:hover:placeholder:text-indigo-900"
+            className="mr-1 h-6 w-fit rounded-lg border border-dashed border-sky-900 bg-transparent px-3 py-1 text-center text-xs font-semibold text-sky-900 hover:bg-sky-100 focus:ring-0 dark:border-sky-300 dark:text-sky-200 dark:placeholder:text-sky-300 dark:hover:bg-sky-200 dark:hover:text-sky-900 dark:hover:placeholder:text-sky-900"
             {...registerTagAdd('name')}
           />
           <input type="submit" hidden />
@@ -730,8 +728,8 @@ export default function ManageCourseAndLessons({
         title={translations('Lessons.create-new-lesson')}
         isOpen={isLessonCreateDialogOpen}
         icon={
-          <div className="h-fit rounded-lg bg-indigo-100 p-2">
-            <AcademicCapIcon className="h-6 w-6 text-indigo-900" />
+          <div className="h-fit rounded-lg bg-sky-100 p-2">
+            <AcademicCapIcon className="h-6 w-6 text-sky-900" />
           </div>
         }
         onClose={() => setIsLessonCreateDialogOpen(!isLessonCreateDialogOpen)}>
@@ -803,8 +801,8 @@ export default function ManageCourseAndLessons({
         title={translations('Courses.edit-course')}
         isOpen={isCourseEditDialogOpen}
         icon={
-          <div className="h-fit rounded-lg bg-indigo-100 p-2">
-            <PencilIconOutline className="h-6 w-6 text-indigo-900" />
+          <div className="h-fit rounded-lg bg-sky-100 p-2">
+            <PencilIconOutline className="h-6 w-6 text-sky-900" />
           </div>
         }
         onClose={() => setIsCourseEditDialogOpen(!isCourseEditDialogOpen)}>
@@ -873,8 +871,8 @@ export default function ManageCourseAndLessons({
         title={translations('Lessons.edit-lesson')}
         isOpen={isLessonEditDialogOpen}
         icon={
-          <div className="h-fit rounded-lg bg-indigo-100 p-2">
-            <PencilIconOutline className="h-6 w-6 text-indigo-900" />
+          <div className="h-fit rounded-lg bg-sky-100 p-2">
+            <PencilIconOutline className="h-6 w-6 text-sky-900" />
           </div>
         }
         onClose={() => setIsLessonEditDialogOpen(!isLessonEditDialogOpen)}>

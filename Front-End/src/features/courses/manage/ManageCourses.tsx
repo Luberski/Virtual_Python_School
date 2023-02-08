@@ -128,7 +128,7 @@ export default function ManageCourses({
       (to) => (
         <button
           type="button"
-          className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+          className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
           onClick={() => toast.dismiss(to.id)}>
           <div className="flex justify-center space-x-1">
             <InformationCircleIcon className="h-6 w-6" />
@@ -173,7 +173,7 @@ export default function ManageCourses({
 
   return (
     <>
-      <h1 className="pb-6 text-indigo-900 dark:text-indigo-300">
+      <h1 className="pb-6 text-sky-900 dark:text-sky-300">
         {translations('Manage.manage-courses')}
       </h1>
       <div className="flex items-center justify-between">
@@ -191,8 +191,8 @@ export default function ManageCourses({
         title={translations('Courses.create-new-course')}
         isOpen={isCourseCreateDialogOpen}
         icon={
-          <div className="h-fit rounded-lg bg-indigo-100 p-2">
-            <AcademicCapIcon className="h-6 w-6 text-indigo-900" />
+          <div className="h-fit rounded-lg bg-sky-100 p-2">
+            <AcademicCapIcon className="h-6 w-6 text-sky-900" />
           </div>
         }
         onClose={() => setIsCourseCreateDialogOpen(!isCourseCreateDialogOpen)}>

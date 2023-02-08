@@ -71,9 +71,7 @@ export default function ManageGlobalKnowledgeTestsPage() {
             <InformationCircleIcon className="h-6 w-6" />
             <div>
               <p className="font-bold">
-                {t(
-                  'KnowledgeTest.knowledgeTest-deleted'
-                )}
+                {t('KnowledgeTest.knowledgeTest-deleted')}
               </p>
             </div>
           </div>
@@ -109,14 +107,12 @@ export default function ManageGlobalKnowledgeTestsPage() {
         />
         <div className="container mx-auto px-4">
           <div className="brand-shadow2 container flex flex-col rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
-            <h1 className="pb-6 text-indigo-900 dark:text-indigo-300">
+            <h1 className="pb-6 text-sky-900 dark:text-sky-300">
               {t('Manage.manage-global-knowledge-tests')}
             </h1>
             <div className="flex items-center justify-between">
               <p className="text-xl font-medium">
-                {t(
-                  'KnowledgeTest.list-of-knowledge-tests'
-                )}
+                {t('KnowledgeTest.list-of-knowledge-tests')}
               </p>
               <Link
                 href="/manage/dynamic-courses/global-knowledge-tests/guidedGlobalKnowledgeTest"
@@ -129,9 +125,7 @@ export default function ManageGlobalKnowledgeTestsPage() {
               </Link>
             </div>
             <StyledDialog
-              title={t(
-                'KnowledgeTest.delete-knowledge-test'
-              )}
+              title={t('KnowledgeTest.delete-knowledge-test')}
               isOpen={isGlobaldeleteGlobalKnowledgeTestDeleteDialogOpen}
               icon={
                 <div className="h-fit rounded-lg bg-red-100 p-2">
@@ -145,9 +139,7 @@ export default function ManageGlobalKnowledgeTestsPage() {
               }>
               <div className="my-2">
                 <p className="my-2 font-bold text-red-400">
-                  {t(
-                    'KnowledgeTest.delete-knowledge-test-confirmation'
-                  )}
+                  {t('KnowledgeTest.delete-knowledge-test-confirmation')}
                 </p>
                 <div className="flex space-x-4 py-3">
                   <Button
@@ -208,9 +200,7 @@ export default function ManageGlobalKnowledgeTestsPage() {
             ) : (
               <div className="flex flex-col justify-center">
                 <p className="pb-8 text-lg font-medium">
-                  {t(
-                    'KnowledgeTest.no-knowledge-tests-found'
-                  )}
+                  {t('KnowledgeTest.no-knowledge-tests-found')}
                 </p>
                 <Image
                   src="/undraw_no_data_re_kwbl.svg"

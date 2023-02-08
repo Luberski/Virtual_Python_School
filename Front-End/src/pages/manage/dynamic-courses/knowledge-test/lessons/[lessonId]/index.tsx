@@ -42,7 +42,7 @@ export default function GuidedKnowledgeTestPage({
           }
         />
         <div className="brand-shadow2 container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
-          <h1 className="pb-6 text-center text-indigo-900 dark:text-indigo-300">
+          <h1 className="pb-6 text-center text-sky-900 dark:text-sky-300">
             {t('KnowledgeTest.leading')}
           </h1>
           <GuidedKnowledgeTestForm translations={t} lessonId={lessonId} />

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import ISO6391 from 'iso-639-1';
 import FancyCard from '@app/components/FancyCard';
-import DynamicCourseCard from '@app/components/DynamicCourseCard';
 import ButtonLink, { ButtonLinkVariant } from '@app/components/ButtonLink';
 import type Course from '@app/models/Course';
 import { TAG_COLORS } from '@app/constants';
@@ -69,9 +68,6 @@ export default function FeaturedCourses({
               }
             />
           ))}
-          <DynamicCourseCard>
-            {translations('DynamicCourse.try-dynamic-course')}
-          </DynamicCourseCard>
         </div>
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center">

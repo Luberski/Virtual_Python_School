@@ -32,7 +32,7 @@ export default function LoginPage() {
       <div className="h-full w-full">
         <NavBar />
         <div className="brand-shadow2 container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
-          <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+          <h1 className="text-center text-sky-900 dark:text-sky-300">
             {t('Auth.welcome-back')}
           </h1>
           <div className="container mx-auto px-6 pt-6">

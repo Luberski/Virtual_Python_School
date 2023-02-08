@@ -12,6 +12,7 @@ import {
 import { LESSONS_LIMIT, WEBSITE_TITLE } from '@app/constants';
 import { wrapper } from '@app/store';
 import Courses from '@app/features/courses/Courses';
+import DynamicCourseCard from '@app/components/DynamicCourseCard';
 
 export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
@@ -42,7 +43,7 @@ export default function CoursesPage() {
         />
         <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
           <div className="space-y-2">
-            <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+            <h1 className="text-center text-sky-900 dark:text-sky-300">
               {t('Home.courses')}
             </h1>
             <p className="text-center text-xl">
@@ -50,7 +51,10 @@ export default function CoursesPage() {
             </p>
           </div>
         </div>
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto flex flex-col items-center space-y-8 px-6">
+          <DynamicCourseCard>
+            {t('DynamicCourse.try-dynamic-course')}
+          </DynamicCourseCard>
           <Courses courses={courses} translations={t} />
         </div>
         <Toaster />

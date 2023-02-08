@@ -13,6 +13,7 @@ import {
   selectFeaturedCoursesData,
 } from '@app/features/courses/featured/featuredCoursesSlice';
 import { wrapper } from '@app/store';
+import DynamicCourseCard from '@app/components/DynamicCourseCard';
 
 export default function IndexPage() {
   const t = useTranslations();
@@ -40,7 +41,7 @@ export default function IndexPage() {
         />
         <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
           <div className="space-y-2">
-            <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+            <h1 className="text-center text-sky-900 dark:text-sky-300">
               {t('Home.leading')}
             </h1>
             <p className="text-center text-xl">
@@ -48,9 +49,17 @@ export default function IndexPage() {
             </p>
           </div>
         </div>
-        <div className="container mx-auto px-6">
-          <FeaturedCourses featuredCourses={featuredCourses} translations={t} />
-        </div>
+        {featuredCourses?.length > 0 && (
+          <div className="container mx-auto flex flex-col items-center space-y-8 px-6">
+            <DynamicCourseCard>
+              {t('DynamicCourse.try-dynamic-course')}
+            </DynamicCourseCard>
+            <FeaturedCourses
+              featuredCourses={featuredCourses}
+              translations={t}
+            />
+          </div>
+        )}
         <div className="my-16 flex items-center justify-center">
           <Image
             src={'/undraw_online_learning_re_qw08.svg'}

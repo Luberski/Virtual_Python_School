@@ -3,12 +3,12 @@ import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
-import { CheckBadgeIcon, CheckCircleIcon } from '@heroicons/react/20/solid';
+import { CheckBadgeIcon } from '@heroicons/react/20/solid';
+import { CheckBadgeIcon as CheckBadgeIconOutline } from '@heroicons/react/24/outline';
 import ISO6391 from 'iso-639-1';
 import FancyCard from '@app/components/FancyCard';
 import { enrollCourse } from '@app/features/courses/enrollCourseSlice';
 import FancyToast from '@app/components/FancyToast';
-import DynamicCourseCard from '@app/components/DynamicCourseCard';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
 import IconButtonLink, {
   IconButtonLinkVariant,
@@ -42,7 +42,7 @@ export default function Courses({ courses, translations }: CoursesProps) {
           <FancyToast
             message={translations('Courses.course-enrolled')}
             toastObject={to}
-            className="border-indigo-500 bg-indigo-200 text-indigo-900"
+            className="border-sky-500 bg-sky-200 text-sky-900"
           />
         ),
       {
@@ -95,7 +95,7 @@ export default function Courses({ courses, translations }: CoursesProps) {
                       {course.lessons?.length > 0 &&
                         course.lessons?.map((lesson) => (
                           <div key={lesson.id}>
-                            <div className="text-sm text-indigo-900 dark:text-indigo-300">
+                            <div className="text-sm text-sky-900 dark:text-sky-300">
                               {lesson.name}
                             </div>
                           </div>
@@ -125,7 +125,7 @@ export default function Courses({ courses, translations }: CoursesProps) {
                   ) : (
                     <IconButton
                       variant={IconButtonVariant.PRIMARY}
-                      icon={<CheckCircleIcon className="h-5 w-5" />}
+                      icon={<CheckBadgeIconOutline className="h-5 w-5" />}
                       onClick={handleEnrollCourse(course.id)}>
                       {translations('Courses.enroll')}
                     </IconButton>
@@ -134,9 +134,6 @@ export default function Courses({ courses, translations }: CoursesProps) {
               />
             );
           })}
-          <DynamicCourseCard>
-            {translations('DynamicCourse.try-dynamic-course')}
-          </DynamicCourseCard>
         </div>
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center">

@@ -46,7 +46,7 @@ export default function Dashboard({
     <div className="flex flex-col">
       {dashboardData && (
         <div className="flex flex-col">
-          <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
+          <h3 className="pb-6 text-sky-900 dark:text-sky-300">
             {translations('Dashboard.my-stats')}
           </h3>
           <div className="flex flex-col space-y-6 sm:flex-row sm:space-x-6 sm:space-y-0">
@@ -57,7 +57,7 @@ export default function Dashboard({
                   <div className="text-2xl font-bold">{total_my_courses}</div>
                   <div>{translations('Meta.title-enrolled-courses')}</div>
                 </div>
-                <div className="flex flex-col items-center justify-center text-indigo-500">
+                <div className="flex flex-col items-center justify-center text-sky-500">
                   <CheckBadgeIcon className="h-9 w-9" />
                   <div className="text-2xl font-bold">
                     {dashboardData.total_enrolled_lessions_count}
@@ -104,7 +104,7 @@ export default function Dashboard({
       {recommendedLessonsData && recommendedLessonsData.length > 0 && (
         <div className="my-6">
           <div className="flex flex-col">
-            <h3 className="text-indigo-900 dark:text-indigo-300">
+            <h3 className="text-sky-900 dark:text-sky-300">
               {translations('Meta.reminders')}
             </h3>
             <Alert className="my-6">
@@ -152,7 +152,7 @@ export default function Dashboard({
       {enrolledCourses && enrolledCourses.length > 0 && (
         <div className="my-6">
           <div className="flex flex-col">
-            <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
+            <h3 className="pb-6 text-sky-900 dark:text-sky-300">
               {translations('Meta.title-enrolled-courses')}
             </h3>
             <div className="flex max-w-sm flex-col items-center space-y-6 py-1 sm:max-w-fit sm:flex-row sm:space-y-0 sm:space-x-4 sm:overflow-x-auto">
@@ -171,7 +171,7 @@ export default function Dashboard({
                     key={enrolledCourse.id}
                     title={
                       enrolledCourse.is_dynamic ? (
-                        <div className="text-indigo-900 dark:text-indigo-300">
+                        <div className="text-sky-900 dark:text-sky-300">
                           <BoltIcon className="mr-1 mb-1 inline h-5 w-5" />
                           {translations('DynamicCourse.course-name')}
                         </div>
@@ -184,7 +184,7 @@ export default function Dashboard({
                         <div className="flex space-x-2">
                           <div className="my-2 w-full rounded-lg bg-neutral-200 dark:bg-neutral-700">
                             <div
-                              className="h-2 rounded-lg bg-indigo-600"
+                              className="h-2 rounded-lg bg-sky-600"
                               style={{
                                 width: `${lessonsCompletedPercentage}%`,
                               }}
@@ -222,12 +222,12 @@ export default function Dashboard({
                     }
                     cardColor={
                       enrolledCourse.is_dynamic
-                        ? 'bg-indigo-50 dark:bg-indigo-400/25'
+                        ? 'bg-sky-50 dark:bg-sky-400/25'
                         : 'bg-white'
                     }
                     shadowColor={
                       enrolledCourse.is_dynamic
-                        ? 'shadow-indigo-900/25'
+                        ? 'shadow-sky-900/25'
                         : 'shadow-black/25'
                     }
                     hoverShadowColor="hover:shadow-black/25"
@@ -266,7 +266,7 @@ export default function Dashboard({
       {recommendedCoursesData && recommendedCoursesData.length > 0 && (
         <div className="my-6">
           <div className="flex flex-col">
-            <h3 className="pb-6 text-indigo-900 dark:text-indigo-300">
+            <h3 className="pb-6 text-sky-900 dark:text-sky-300">
               {translations('Courses.recommended-courses')}
             </h3>
             <div className="flex max-w-sm flex-col items-center space-y-6 py-1 sm:max-w-fit sm:flex-row sm:space-y-0 sm:space-x-4 sm:overflow-x-auto">

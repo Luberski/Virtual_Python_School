@@ -40,7 +40,7 @@ export default function EnrolledCoursesPage() {
           }
         />
         <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
-          <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+          <h1 className="text-center text-sky-900 dark:text-sky-300">
             {t('Meta.title-enrolled-courses')}
           </h1>
         </div>

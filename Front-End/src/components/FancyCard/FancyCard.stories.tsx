@@ -61,7 +61,7 @@ export const Default: ComponentStory<typeof FancyCard> = (args) => (
             {course.lessons?.length > 0 &&
               course.lessons?.map((lesson) => (
                 <div key={lesson.id}>
-                  <div className="text-indigo-900 dark:text-indigo-300">
+                  <div className="text-sky-900 dark:text-sky-300">
                     {lesson.name}
                   </div>
                 </div>

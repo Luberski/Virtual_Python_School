@@ -97,8 +97,8 @@ export default function SurveyFormStep({
                                 <div className="text-blue-900 dark:text-blue-50">
                                   {answer.name}
                                 </div>
-                                <div className="brand-shadow mt-2 rounded-lg bg-indigo-50 p-4 text-indigo-900 shadow-indigo-900/25">
-                                  <div className="h-3 w-3 rounded-lg bg-indigo-900" />
+                                <div className="brand-shadow mt-2 rounded-lg bg-sky-50 p-4 text-sky-900 shadow-sky-900/25">
+                                  <div className="h-3 w-3 rounded-lg bg-sky-900" />
                                 </div>
                               </div>
                             </RadioGroup.Label>
