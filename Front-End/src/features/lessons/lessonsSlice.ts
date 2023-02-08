@@ -1,3 +1,4 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import apiClient from '@app/apiClient';
@@ -147,6 +148,7 @@ export const editLesson = createAsyncThunk<
     numberOfAnswers?: number;
     answer?: string;
     answerCheckRule?: string;
+    order?: number;
   }
 >(
   'api/lessons/edit',
@@ -160,6 +162,7 @@ export const editLesson = createAsyncThunk<
       numberOfAnswers,
       answer,
       answerCheckRule,
+      order,
     },
     thunkApi
   ) => {
@@ -177,6 +180,7 @@ export const editLesson = createAsyncThunk<
             ...(numberOfAnswers && { number_of_answers: numberOfAnswers }),
             ...(answer && { final_answer: answer }),
             ...(answerCheckRule && { answer_check_rule: answerCheckRule }),
+            ...(order && { order }),
           },
         },
         headers: {
@@ -196,7 +200,46 @@ export const editLesson = createAsyncThunk<
 export const lessonsSlice = createSlice({
   name: 'lessons',
   initialState,
-  reducers: {},
+  reducers: {
+    changeLessonOrderUp: (
+      state,
+      action: PayloadAction<{
+        lessonId: number;
+        currentOrder: number;
+      }>
+    ) => {
+      const { lessonId, currentOrder } = action.payload;
+      const lesson = state.data.find((lesson) => lesson.id === lessonId);
+      if (lesson) {
+        const index = state.data.findIndex((lesson) => lesson.id === lessonId);
+        const prevLesson = state.data[index - 1];
+        if (prevLesson) {
+          lesson.order = prevLesson.order;
+          prevLesson.order = currentOrder;
+        }
+        state.data = state.data.sort((a, b) => a.order - b.order);
+      }
+    },
+    changeLessonOrderDown: (
+      state,
+      action: PayloadAction<{
+        lessonId: number;
+        currentOrder: number;
+      }>
+    ) => {
+      const { lessonId, currentOrder } = action.payload;
+      const lesson = state.data.find((lesson) => lesson.id === lessonId);
+      if (lesson) {
+        const index = state.data.findIndex((lesson) => lesson.id === lessonId);
+        const nextLesson = state.data[index + 1];
+        if (nextLesson) {
+          lesson.order = nextLesson.order;
+          nextLesson.order = currentOrder;
+        }
+        state.data = state.data.sort((a, b) => a.order - b.order);
+      }
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
@@ -260,14 +303,13 @@ export const lessonsSlice = createSlice({
       .addCase(
         editLesson.fulfilled,
         (state, { payload }: { payload: ApiPayload<Lesson> }) => {
-          state.data = state.data
-            .map((lesson) => {
-              if (lesson.id === payload.data.id) {
-                return payload.data;
-              }
-              return lesson;
-            })
-            .filter((lesson) => lesson);
+          if (payload.error) {
+            state.error = payload.error;
+          } else {
+            state.data = state.data.map((lesson) =>
+              lesson.id === payload.data.id ? payload.data : lesson
+            );
+          }
         }
       )
       .addCase(editLesson.rejected, (state, action) => {
@@ -303,5 +345,8 @@ export const lessonsSlice = createSlice({
 export const selectLessonsData = (state: RootState) => state.lessons.data;
 export const selectLessonsError = (state: RootState) => state.lessons.error;
 export const selectLessonsStatus = (state: RootState) => state.lessons.status;
+
+export const { changeLessonOrderUp, changeLessonOrderDown } =
+  lessonsSlice.actions;
 
 export default lessonsSlice.reducer;

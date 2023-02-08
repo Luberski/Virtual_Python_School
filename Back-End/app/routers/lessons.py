@@ -144,6 +144,22 @@ def edit_lesson(
         answer_edit.answer_check_rule = request_data.data.answer_check_rule
         to_commit = True
 
+    if request_data.data.order:
+        current_order = lesson_edit.order
+        lesson_to_swap = (
+            db.query(models.Lessons)
+            .filter_by(course_id=lesson_edit.course_id, order=request_data.data.order)
+            .first()
+        )
+        if lesson_to_swap is None:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={"error": "Lesson not found"},
+            )
+        lesson_to_swap.order = current_order
+        lesson_edit.order = request_data.data.order
+        to_commit = True
+
     if to_commit:
         db.commit()
 

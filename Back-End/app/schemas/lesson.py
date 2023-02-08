@@ -25,6 +25,7 @@ class LessonEditData(BaseModel):
     number_of_answers: Optional[int]
     final_answer: Optional[str]
     answer_check_rule: Optional[str]
+    order: Optional[int]
 
 
 class LessonEditRequest(BaseJSONRequest):

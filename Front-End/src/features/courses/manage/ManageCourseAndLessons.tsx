@@ -7,6 +7,8 @@ import {
   InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import {
+  ArrowDownIcon,
+  ArrowUpIcon,
   PencilIcon,
   PlusCircleIcon,
   TrashIcon,
@@ -20,6 +22,8 @@ import { nanoid } from '@reduxjs/toolkit';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import {
+  changeLessonOrderDown,
+  changeLessonOrderUp,
   createLesson,
   deleteLesson,
   editLesson,
@@ -418,6 +422,48 @@ export default function ManageCourseAndLessons({
     closeLessonEditDialog();
     notifyKnowledgeTestDeleted();
   };
+
+  const handleMoveLessonOrderUp =
+    (lessonId: number, currentOrder: number) => async () => {
+      try {
+        await dispatch(
+          editLesson({
+            courseId: course.id,
+            lessonId: lessonId,
+            order: currentOrder - 1,
+          })
+        ).unwrap();
+        await dispatch(
+          changeLessonOrderUp({
+            lessonId: lessonId,
+            currentOrder: currentOrder,
+          })
+        ).unwrap();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+  const handleMoveLessonOrderDown =
+    (lessonId: number, currentOrder: number) => async () => {
+      try {
+        await dispatch(
+          editLesson({
+            courseId: course.id,
+            lessonId: lessonId,
+            order: currentOrder + 1,
+          })
+        ).unwrap();
+        await dispatch(
+          changeLessonOrderDown({
+            lessonId: lessonId,
+            currentOrder: currentOrder,
+          })
+        ).unwrap();
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   const notify = () =>
     toast.custom(
@@ -961,30 +1007,59 @@ export default function ManageCourseAndLessons({
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200">
-              {lessons.map((lesson) => (
-                <Fragment key={lesson.id}>
-                  <tr>
-                    <td className="p-4">{lesson.order}</td>
-                    <td className="break-words p-4">{lesson.name}</td>
-                    <td className="break-words p-4">{lesson.description}</td>
-                    <td className="flex space-x-4 py-4 pr-4">
-                      <IconButton
-                        variant={IconButtonVariant.PRIMARY}
-                        onClick={openLessonEditDialog(lesson.id)}
-                        icon={<PencilIcon className="h-5 w-5" />}>
-                        {translations('Manage.edit')}
-                      </IconButton>
+              {lessons
+                .slice()
+                .sort((a, b) => a.order - b.order)
+                .map((lesson) => {
+                  return (
+                    <Fragment key={lesson.id}>
+                      <tr>
+                        <td className="p-4">
+                          <div className="flex flex-col items-center justify-center space-y-2">
+                            <IconButton
+                              variant={IconButtonVariant.FLAT_PRIMARY}
+                              disabled={lesson.order === 1}
+                              onClick={handleMoveLessonOrderUp(
+                                lesson.id,
+                                lesson.order
+                              )}
+                              icon={<ArrowUpIcon className="ml-2 h-5 w-5" />}
+                            />
+                            <div>{lesson.order}</div>
+                            <IconButton
+                              variant={IconButtonVariant.FLAT_PRIMARY}
+                              disabled={lesson.order === lessons.length}
+                              onClick={handleMoveLessonOrderDown(
+                                lesson.id,
+                                lesson.order
+                              )}
+                              icon={<ArrowDownIcon className="ml-1 h-5 w-5" />}
+                            />
+                          </div>
+                        </td>
+                        <td className="break-words p-4">{lesson.name}</td>
+                        <td className="break-words p-4">
+                          {lesson.description}
+                        </td>
+                        <td className="flex space-x-4 py-4 pr-4">
+                          <IconButton
+                            variant={IconButtonVariant.PRIMARY}
+                            onClick={openLessonEditDialog(lesson.id)}
+                            icon={<PencilIcon className="h-5 w-5" />}>
+                            {translations('Manage.edit')}
+                          </IconButton>
 
-                      <IconButton
-                        variant={IconButtonVariant.DANGER}
-                        icon={<TrashIcon className="h-5 w-5" />}
-                        onClick={openLessonDeleteDialog(lesson.id)}>
-                        {translations('Manage.delete')}
-                      </IconButton>
-                    </td>
-                  </tr>
-                </Fragment>
-              ))}
+                          <IconButton
+                            variant={IconButtonVariant.DANGER}
+                            icon={<TrashIcon className="h-5 w-5" />}
+                            onClick={openLessonDeleteDialog(lesson.id)}>
+                            {translations('Manage.delete')}
+                          </IconButton>
+                        </td>
+                      </tr>
+                    </Fragment>
+                  );
+                })}
             </tbody>
           </table>
         </div>
