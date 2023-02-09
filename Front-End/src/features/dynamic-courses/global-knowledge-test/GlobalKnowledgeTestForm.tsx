@@ -28,14 +28,14 @@ export default function GlobalKnowledgeTestForm({
         <Alert>
           <InformationCircleIcon className="mr-2 h-6 w-6" />
           <p className="w-fit max-w-xs">
-            {translations('KnowledgeTest.alert-last-step')}
+            {translations('KnowledgeTest.alert-last-step-global')}
           </p>
         </Alert>
       ) : (
         <Alert>
           <InformationCircleIcon className="mr-2 h-6 w-6 self-start" />
           <ul className="w-fit max-w-xs list-disc px-6">
-            {translations('KnowledgeTest.alert-first-step')
+            {translations('KnowledgeTest.alert-first-step-global')
               .split('\n')
               .map((line) => (
                 <li key={line}>{line}</li>

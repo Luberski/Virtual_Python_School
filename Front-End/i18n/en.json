@@ -196,6 +196,8 @@
     "add-question-to-knowledge-test": "Add question to the knowledge test",
     "alert-first-step": "Knowledge test is a set of questions after lesson.\nIt is used to check the knowledge of the user after the lesson.",
     "alert-last-step": "Your knowledge test results",
+    "alert-first-step-global": "Global knowledge test is a set of questions from all lessons.\nIt is used to check the knowledge of the user and prepare a dynamic course for the user.",
+    "alert-last-step-global": "Your global knowledge test results",
     "knowledge-test-failed": "Knowledge test failed!",
     "knowledge-test-passed": "Knowledge test passed!",
     "knowledge-test-completed": "You completed the knowledge test with score:",

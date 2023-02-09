@@ -197,6 +197,8 @@
     "add-question-to-knowledge-test": "Dodaj pytanie do testu wiedzy",
     "alert-first-step": "Test wiedzy to zestaw pytań po lekcji.\nSłuży do sprawdzenia wiedzy użytkownika po lekcji.",
     "alert-last-step": "Twoje wyniki testu wiedzy",
+    "alert-first-step-global": "Globalny test wiedzy to zestaw pytań z wszystkich lekcji.\nSłuży do sprawdzenia wiedzy użytkownika i przygotowania dynamicznego kursu dla użytkownika.",
+    "alert-last-step-global": "Twoje wyniki globalnego testu wiedzy",
     "knowledge-test-failed": "Test wiedzy oblany!",
     "knowledge-test-passed": "Test wiedzy zaliczony!",
     "knowledge-test-completed": "Ukończono test wiedzy z wynikiem:",
