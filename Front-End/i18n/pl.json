@@ -204,7 +204,8 @@
     "alert-missing-knowledge": "Na podstawie Twoich wyników, brakuje Ci pewnej wiedzy. Utworzyliśmy dla Ciebie kurs, abyś mógł się nauczyć brakującej wiedzy.",
     "list-of-knowledge-tests": "Lista testów wiedzy",
     "no-knowledge-tests-found": "Nie znaleziono testów wiedzy",
-    "no-questions-found": "Nie znaleziono pytań"
+    "no-questions-found": "Nie znaleziono pytań",
+    "delete-knowledge-test-confirmation": "Czy na pewno chcesz USUNĄĆ ten test wiedzy?"
   },
   "Meta": {
     "title-home": "Strona główna",

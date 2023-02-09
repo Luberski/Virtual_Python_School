@@ -203,7 +203,8 @@
     "alert-missing-knowledge": "Based on your results, you are missing some knowledge.\nWe created a course for you to learn the missing knowledge.",
     "list-of-knowledge-tests": "List of knowledge tests",
     "no-knowledge-tests-found": "No knowledge tests found",
-    "no-questions-found": "No questions found"
+    "no-questions-found": "No questions found",
+    "delete-knowledge-test-confirmation": "Are you sure you want to DELETE this knowledge test?"
   },
   "Meta": {
     "title-home": "Home",
