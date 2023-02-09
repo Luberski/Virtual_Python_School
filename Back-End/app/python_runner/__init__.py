@@ -34,4 +34,4 @@ class RemotePythonRunner:
             del err[0:11]
 
         ssh.close()
-        return (text,)
+        return text, err
