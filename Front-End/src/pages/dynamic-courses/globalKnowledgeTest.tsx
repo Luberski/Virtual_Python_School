@@ -43,7 +43,7 @@ export default function GlobalKnowledgeTestPage() {
           {globalKnowledgeTest ? (
             <>
               <h1 className="pb-6 text-center text-sky-900 dark:text-sky-300">
-                {t('KnowledgeTest.leading')}
+                {t('KnowledgeTest.leading-global')}
               </h1>
               <GlobalKnowledgeTestForm
                 globalKnowledgeTest={globalKnowledgeTest}
