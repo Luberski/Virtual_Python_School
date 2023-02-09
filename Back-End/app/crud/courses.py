@@ -140,7 +140,7 @@ def get_all_enrolled_courses(
 
 
 def get_enrolled_course_by_id(
-    db: Session, user: models.User, course_id: int, include_lessons: bool
+    db: Session, user: models.User, enrolled_course_id: int, include_lessons: bool
 ) -> Union[dict, Exception]:
     try:
         if include_lessons:
@@ -166,7 +166,7 @@ def get_enrolled_course_by_id(
                 db.query(
                     models.EnrolledCourses,
                 )
-                .filter_by(user_id=user.id, course_id=course_id)
+                .filter_by(user_id=user.id, id=enrolled_course_id)
                 .first()
             )
             if enrolled_course_with_lessons:
@@ -237,7 +237,7 @@ def get_enrolled_course_by_id(
                 db.query(
                     models.EnrolledCourses,
                 )
-                .filter_by(user_id=user.id, course_id=course_id)
+                .filter_by(user_id=user.id, id=enrolled_course_id)
                 .join(
                     models.Courses,
                     models.Courses.id == models.EnrolledCourses.course_id,
