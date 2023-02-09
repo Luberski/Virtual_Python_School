@@ -65,6 +65,9 @@
   .btn-outline-primary {
     @apply text-sky-900 dark:text-sky-200 dark:hover:text-sky-900 bg-transparent border border-sky-900 dark:border-sky-300 hover:bg-sky-100 dark:hover:bg-sky-200 brand-shadow shadow-sky-900/25;
   }
+  .btn-outline-danger {
+    @apply text-red-900 dark:text-red-200 dark:hover:text-red-900 bg-transparent border border-red-900 dark:border-red-300 hover:bg-red-100 dark:hover:bg-red-200 brand-shadow shadow-red-900/25;
+  }
   .btn-dashed-primary {
     @apply text-sky-900 dark:text-sky-200 dark:hover:text-sky-900 bg-transparent border border-dashed border-sky-900 dark:border-sky-300 hover:bg-sky-100 dark:hover:bg-sky-200 brand-shadow shadow-sky-900/25;
   }

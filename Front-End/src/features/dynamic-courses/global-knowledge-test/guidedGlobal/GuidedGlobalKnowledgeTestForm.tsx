@@ -1,17 +1,24 @@
 import 'highlight.js/styles/vs2015.css';
-import { useEffect, useRef, useState } from 'react';
-import { BoltIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import { PlusCircleIcon, TrashIcon } from '@heroicons/react/20/solid';
-import { Controller, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import {
+  FolderMinusIcon,
+  FolderPlusIcon,
+  PlusCircleIcon,
+  TrashIcon,
+} from '@heroicons/react/20/solid';
 import { useDispatch } from 'react-redux';
 import { nanoid } from '@reduxjs/toolkit';
-import { removeKnowledgeTestQuestion } from '../../knowledge-test/knowledgeTestQuestionSlice';
+import Image from 'next/image';
+import clsx from 'clsx';
 import {
   fetchKnowledgeTests,
   selectKnowledgeTestsData,
 } from '../../knowledge-test/knowledgeTestsSlice';
+import type { QuestionData } from '../globalKnowledgeTestQuestionSlice';
 import {
   addGlobalKnowledgeTestQuestion,
+  removeGlobalKnowledgeTestQuestion,
   selectGlobalKnowledgeTestQuestions,
 } from '../globalKnowledgeTestQuestionSlice';
 import { selectGlobalKnowledgeTestData } from '../globalKnowledgeTestSlice';
@@ -21,26 +28,12 @@ import GuidedGlobalKnowledgeTestFormCompleted from './GuidedGlobalKnowledgeTestF
 import GlobalKnowledgeTestPreview from './GlobalKnowledgeTestPreview';
 import Alert from '@app/components/Alert';
 import IconButton, { IconButtonVariant } from '@app/components/IconButton';
-import StyledDialog from '@app/components/StyledDialog';
-import Button, { ButtonVariant } from '@app/components/Button';
 import { useAppSelector } from '@app/hooks';
-import Select from '@app/components/Select';
 import { parseMarkdown } from '@app/utils';
+import type KnowledgeTestQuestion from '@app/models/KnowledgeTestQuestion';
 
 type GuidedGlobalKnowledgeTestFormProps = {
   translations: (key: string, ...params: unknown[]) => string;
-};
-
-type SelectOption = {
-  id: number | string;
-  name: string;
-  disabled: boolean;
-};
-
-const SELECT_DEFAULT_VALUE: SelectOption = {
-  id: 0,
-  name: 'Select question',
-  disabled: true,
 };
 
 export default function GuidedGlobalKnowledgeTestForm({
@@ -54,24 +47,6 @@ export default function GuidedGlobalKnowledgeTestForm({
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
   const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
 
-  const { control, handleSubmit } =
-    useForm<{
-      selectedQuestion: string | unknown;
-    }>();
-
-  const [isAddQuestionDialogOpen, setIsAddQuestionDialogOpen] = useState(false);
-  const [selected1, setSelected1] = useState(SELECT_DEFAULT_VALUE);
-
-  const cancelButtonRef = useRef(null);
-
-  const closeAddQuestionDialog = () => {
-    setIsAddQuestionDialogOpen(false);
-  };
-
-  const openAddQuestionDialog = () => {
-    setIsAddQuestionDialogOpen(true);
-  };
-
   const knowledgeTestsData = useAppSelector(selectKnowledgeTestsData);
 
   const globalKnowledgeTestData = useAppSelector(selectGlobalKnowledgeTestData);
@@ -84,49 +59,82 @@ export default function GuidedGlobalKnowledgeTestForm({
     fetchData();
   }, [dispatch]);
 
-  const onAddQuestionSubmit = async (data: {
-    selectedQuestion: {
-      id: number;
-      value: string;
-      label: string;
-      disabled: boolean;
-    };
-  }) => {
-    const { selectedQuestion } = data;
-    const selectedQuestionValueData: {
-      knowledgeTestId: number;
-      questionId: number;
+  const handleRemoveQuestion = (_id: string) => async () => {
+    await dispatch(
+      removeGlobalKnowledgeTestQuestion({
+        _id,
+      })
+    );
+  };
+
+  const handleAddQuestion =
+    (selectedQuestion: {
       question: string;
       answer: string;
       lessonId: number;
-    } = JSON.parse(selectedQuestion.value);
+    }) =>
+    async () => {
+      try {
+        await dispatch(
+          addGlobalKnowledgeTestQuestion({
+            _id: nanoid(),
+            global_knowledge_test_id: globalKnowledgeTestData?.id,
+            question: selectedQuestion.question,
+            answer: selectedQuestion.answer,
+            lesson_id: selectedQuestion.lessonId,
+          })
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
+  const handleAddAllQuestions = async () => {
     try {
-      await dispatch(
-        addGlobalKnowledgeTestQuestion({
-          _id: nanoid(),
-          global_knowledge_test_id: globalKnowledgeTestData?.id,
-          question: selectedQuestionValueData.question,
-          answer: selectedQuestionValueData.answer,
-          lesson_id: selectedQuestionValueData.lessonId,
-        })
+      await Promise.all(
+        knowledgeTestsData.map((knowledgeTest) =>
+          knowledgeTest.questions.map((question) =>
+            dispatch(
+              addGlobalKnowledgeTestQuestion({
+                _id: nanoid(),
+                global_knowledge_test_id: globalKnowledgeTestData?.id,
+                question: question.question,
+                answer: question.answer,
+                lesson_id: knowledgeTest.lesson_id,
+              })
+            )
+          )
+        )
       );
-
-      setSelected1(SELECT_DEFAULT_VALUE);
-
-      closeAddQuestionDialog();
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleRemoveQuestion = (_id: string) => async () => {
-    await dispatch(
-      removeKnowledgeTestQuestion({
-        _id,
-      })
-    );
+  const handleRemoveAllQuestions = async () => {
+    try {
+      await Promise.all(
+        questions.map((question) =>
+          dispatch(
+            removeGlobalKnowledgeTestQuestion({
+              _id: question._id,
+            })
+          )
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  function findTemporarilyAddedQuestion(
+    questions: QuestionData[],
+    question: KnowledgeTestQuestion
+  ) {
+    return questions.find(
+      (q) => q.question === question.question && q.answer === question.answer
+    );
+  }
 
   return (
     <div className="my-6 flex flex-col items-center justify-center space-y-6">
@@ -149,7 +157,7 @@ export default function GuidedGlobalKnowledgeTestForm({
               <Alert>
                 <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
                 <ul className="w-fit max-w-xs list-disc px-6">
-                  {translations('KnowledgeTest.guide-alert-1-step')
+                  {translations('KnowledgeTest.global-guide-alert-1-step')
                     .split('\n')
                     .map((line) => (
                       <li key={line}>{line}</li>
@@ -174,7 +182,7 @@ export default function GuidedGlobalKnowledgeTestForm({
               <Alert>
                 <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
                 <ul className="w-fit max-w-xs list-disc px-6">
-                  {translations('KnowledgeTest.guide-alert-2-step')
+                  {translations('KnowledgeTest.global-guide-alert-2-step')
                     .split('\n')
                     .map((line) => (
                       <li key={line}>{line}</li>
@@ -196,47 +204,171 @@ export default function GuidedGlobalKnowledgeTestForm({
               <h3 className="text-center text-sky-900 dark:text-sky-300">
                 {translations('KnowledgeTest.questions')}
               </h3>
-              <Alert>
-                <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
-                <ul className="w-fit max-w-xs list-disc px-6">
-                  {translations('KnowledgeTest.guide-alert-3-step')
-                    .split('\n')
-                    .map((line) => (
-                      <li key={line}>{line}</li>
-                    ))}
-                </ul>
-              </Alert>
-              <div className="flex flex-col items-center justify-center">
-                <IconButton
-                  variant={IconButtonVariant.PRIMARY}
-                  icon={<PlusCircleIcon className="h-5 w-5" />}
-                  onClick={openAddQuestionDialog}>
-                  {translations('KnowledgeTest.add-question')}
-                </IconButton>
-                {questions?.length > 0 && (
-                  <div className="my-6">
-                    <div className="text-xl font-bold">
-                      {translations('KnowledgeTest.added-questions')}
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <Alert>
+                  <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
+                  <ul className="w-fit max-w-xs list-disc px-6">
+                    {translations('KnowledgeTest.global-guide-alert-3-step')
+                      .split('\n')
+                      .map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                  </ul>
+                </Alert>
+                <div className="flex flex-col items-center justify-center">
+                  {questions?.length > 0 && (
+                    <div className="my-6">
+                      <div className="text-xl font-bold">
+                        {translations('KnowledgeTest.added-questions')}
+                      </div>
                     </div>
-                    {questions?.map((question) => (
-                      <div
-                        className="flex items-center justify-between space-x-4"
-                        key={question?._id}>
-                        <div
-                          className="markdown overflow-auto whitespace-pre-line"
-                          dangerouslySetInnerHTML={{
-                            __html: parseMarkdown(question?.question),
-                          }}
-                        />
-                        <IconButton
-                          variant={IconButtonVariant.FLAT_DANGER}
-                          onClick={handleRemoveQuestion(question?._id)}
-                          icon={<TrashIcon className="h-5 w-5" />}
+                  )}
+                  <div>
+                    {knowledgeTestsData && knowledgeTestsData.length > 0 ? (
+                      <div className="my-6 overflow-auto rounded-lg border border-neutral-300 dark:border-neutral-600">
+                        <div className="m-3 flex justify-end">
+                          <IconButton
+                            variant={
+                              questions?.length > 0
+                                ? IconButtonVariant.OUTLINE_DANGER
+                                : IconButtonVariant.OUTLINE_PRIMARY
+                            }
+                            onClick={
+                              questions?.length > 0
+                                ? handleRemoveAllQuestions
+                                : handleAddAllQuestions
+                            }
+                            icon={
+                              questions?.length > 0 ? (
+                                <FolderMinusIcon className="h-5 w-5" />
+                              ) : (
+                                <FolderPlusIcon className="h-5 w-5" />
+                              )
+                            }>
+                            {questions?.length > 0
+                              ? translations('Manage.delete-all')
+                              : translations('Manage.add-all')}
+                          </IconButton>
+                        </div>
+                        <table className="w-full table-auto divide-y divide-neutral-200">
+                          <thead className="text-left font-medium uppercase text-neutral-500">
+                            <tr>
+                              <th scope="col" className="py-3 px-4">
+                                {translations('Manage.no-short')}
+                              </th>
+                              <th scope="col" className="py-3 px-4">
+                                {translations('Manage.name')}
+                              </th>
+                              <th scope="col" className="py-3 px-4">
+                                {translations('Survey.questions')}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-neutral-200">
+                            {knowledgeTestsData.map((knowledgeTest, key) => {
+                              return (
+                                <tr key={knowledgeTest.id}>
+                                  <td className="p-4">{(key += 1)}</td>
+                                  <td className="p-4">{knowledgeTest.name}</td>
+                                  <td className="max-w-5xl p-4">
+                                    {knowledgeTest.questions.map(
+                                      (question, key) => {
+                                        return (
+                                          <div key={key}>
+                                            <div className="my-3 flex items-center space-x-4">
+                                              <div
+                                                className={clsx(
+                                                  'markdown w-full overflow-auto whitespace-pre-line',
+                                                  findTemporarilyAddedQuestion(
+                                                    questions,
+                                                    question
+                                                  ) &&
+                                                    'brand-shadow rounded-lg border border-sky-900 shadow-sky-900/25 dark:border-sky-300'
+                                                )}
+                                                dangerouslySetInnerHTML={{
+                                                  __html: parseMarkdown(
+                                                    question.question
+                                                  ),
+                                                }}
+                                              />
+                                              <IconButton
+                                                variant={
+                                                  findTemporarilyAddedQuestion(
+                                                    questions,
+                                                    question
+                                                  )
+                                                    ? IconButtonVariant.OUTLINE_DANGER
+                                                    : IconButtonVariant.OUTLINE_PRIMARY
+                                                }
+                                                icon={
+                                                  findTemporarilyAddedQuestion(
+                                                    questions,
+                                                    question
+                                                  ) ? (
+                                                    <TrashIcon className="h-5 w-5" />
+                                                  ) : (
+                                                    <PlusCircleIcon className="h-5 w-5" />
+                                                  )
+                                                }
+                                                onClick={() => {
+                                                  if (
+                                                    findTemporarilyAddedQuestion(
+                                                      questions,
+                                                      question
+                                                    )
+                                                  ) {
+                                                    handleRemoveQuestion(
+                                                      findTemporarilyAddedQuestion(
+                                                        questions,
+                                                        question
+                                                      )._id
+                                                    )();
+                                                  } else {
+                                                    handleAddQuestion({
+                                                      question:
+                                                        question.question,
+                                                      answer: question.answer,
+                                                      lessonId:
+                                                        knowledgeTest.lesson_id,
+                                                    })();
+                                                  }
+                                                }}>
+                                                {findTemporarilyAddedQuestion(
+                                                  questions,
+                                                  question
+                                                )
+                                                  ? translations(
+                                                      'Manage.delete'
+                                                    )
+                                                  : translations('Manage.add')}
+                                              </IconButton>
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col justify-center">
+                        <p className="pb-8 text-lg font-medium">
+                          {translations('KnowledgeTest.no-questions-found')}
+                        </p>
+                        <Image
+                          src="/undraw_no_data_re_kwbl.svg"
+                          alt="No data"
+                          width={200}
+                          height={200}
                         />
                       </div>
-                    ))}
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </>
           </GuidedGlobalKnowledgeTestFormStep>
@@ -251,7 +383,7 @@ export default function GuidedGlobalKnowledgeTestForm({
             translations={translations}>
             <div className="flex flex-col space-y-4">
               <h3 className="text-center text-sky-900 dark:text-sky-300">
-                {translations('KnowledgeTest.knowledge-test-preview')}
+                {translations('KnowledgeTest.global-knowledge-test-preview')}
               </h3>
               {questions?.length > 0 ? (
                 <div>
@@ -276,92 +408,6 @@ export default function GuidedGlobalKnowledgeTestForm({
           <GuidedGlobalKnowledgeTestFormCompleted translations={translations} />
         )}
       </GuidedGlobalKnowledgeTestFormCard>
-      <StyledDialog
-        title={translations('KnowledgeTest.add-question-to-knowledge-test')}
-        isOpen={isAddQuestionDialogOpen}
-        icon={
-          <div className="h-fit rounded-lg bg-sky-100 p-2">
-            <BoltIcon className="h-6 w-6 text-sky-600" />
-          </div>
-        }
-        onClose={() => setIsAddQuestionDialogOpen(!isAddQuestionDialogOpen)}>
-        <div className="mt-6 max-h-[768px] overflow-y-auto overflow-x-hidden">
-          <Alert>
-            <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
-            <ul className="w-fit max-w-xs list-disc px-6">
-              {translations('KnowledgeTest.guide-alert-question')
-                .split('\n')
-                .map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-            </ul>
-          </Alert>
-          <form
-            className="mt-6 flex flex-col items-start justify-center space-y-4"
-            onSubmit={handleSubmit(onAddQuestionSubmit)}>
-            <label
-              htmlFor="question"
-              className="text-2xl font-bold text-sky-900 dark:text-sky-300">
-              {translations('Survey.question')}
-            </label>
-            <Controller
-              control={control}
-              name="selectedQuestion"
-              render={({ field: { onChange } }) => (
-                <Select
-                  dataTestId="select-question"
-                  options={
-                    knowledgeTestsData?.length > 0 &&
-                    knowledgeTestsData
-                      ?.map((knowledgeTest) => knowledgeTest)
-                      .flatMap((knowledgeTest) =>
-                        knowledgeTest?.questions?.map((question) => ({
-                          id: question?.question_id,
-                          value: JSON.stringify({
-                            knowledgeTestId: knowledgeTest?.id,
-                            questionId: question?.question_id,
-                            question: question?.question,
-                            answer: question?.answer,
-                            lessonId: knowledgeTest.lesson_id,
-                          }),
-                          label: question?.question.slice(6),
-                          disabled: false,
-                        }))
-                      )
-                  }
-                  selected={{
-                    id: selected1?.id,
-                    value: selected1?.name,
-                    label: selected1?.name,
-                    disabled: false,
-                  }}
-                  setSelected={({ id, value, label, disabled }) => {
-                    onChange({ id, value, label, disabled });
-                    setSelected1({
-                      id,
-                      name: label,
-                      disabled: disabled,
-                    });
-                  }}
-                />
-              )}
-            />
-
-            <div className="flex justify-between space-x-4 py-3">
-              <IconButton variant={IconButtonVariant.PRIMARY} type="submit">
-                {translations('Manage.add')}
-              </IconButton>
-              <Button
-                variant={ButtonVariant.FLAT_SECONDARY}
-                type="button"
-                onClick={closeAddQuestionDialog}
-                ref={cancelButtonRef}>
-                {translations('Manage.cancel')}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </StyledDialog>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import type { RootState } from '@app/store';
 import type ApiPayload from '@app/models/ApiPayload';
 import type ApiStatus from '@app/models/ApiStatus';
 
-type QuestionData = {
+export type QuestionData = {
   _id?: string;
   id?: number;
   global_knowledge_test_id: number;

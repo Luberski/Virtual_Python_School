@@ -5,5 +5,5 @@ type GuidedGlobalKnowledgeTestFormCompletedProps = {
 export default function GuidedGlobalKnowledgeTestFormCompleted({
   translations,
 }: GuidedGlobalKnowledgeTestFormCompletedProps) {
-  return <h3>{translations('KnowledgeTest.knowledge-test-created')}</h3>;
+  return <h3>{translations('KnowledgeTest.global-knowledge-test-created')}</h3>;
 }
