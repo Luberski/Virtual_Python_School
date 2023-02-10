@@ -133,6 +133,10 @@ def get_application() -> FastAPI:
 app = get_application()
 
 
+@app.exception_handler(AuthJWTException)
+def authjwt_exception_handler(_, exc: AuthJWTException):
+    return JSONResponse(status_code=exc.status_code, content={"error": exc.message})
+
 @app.websocket("/ws/{classroom_id}")
 async def websocket_endpoint(websocket: WebSocket, classroom_id: int):
     await conn_manager.connect(websocket=websocket, classroom_id=classroom_id)

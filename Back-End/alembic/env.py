@@ -22,7 +22,8 @@ from app.models import (
     DynamicCourses,
     DynamicLessons,
     CourseTags,
-    Classrooms
+    Classrooms,
+    ClassroomSessions,
     KnowledgeTest,
     KnowledgeTestQuestions,
     KnowledgeTestUserResults,
