@@ -78,6 +78,7 @@ export default function ClassroomsStudentPage(
   const myCodeRef = useRef('print("Hello World")');
   const connectNotification = useRef(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [users, setUsers] = useState([]);
   const [assignments, setAssignments] = useState([]);
   const [selectedAssignment, setSelectedAssignment] = useState('');
