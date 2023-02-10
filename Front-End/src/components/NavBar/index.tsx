@@ -7,7 +7,6 @@ import {
   LanguageIcon,
 } from '@heroicons/react/20/solid';
 import { Fragment } from 'react';
-import IconButtonLink, { IconButtonLinkVariant } from '../IconButtonLink';
 import IconButton, {
   IconButtonSize,
   IconButtonVariant,
@@ -18,6 +17,7 @@ import ButtonLink, {
 } from '@app/components/ButtonLink';
 import { ThemeButton } from '@app/components/ThemeButton';
 import type User from '@app/models/User';
+import IconButtonLink, { IconButtonLinkVariant } from '../IconButtonLink';
 
 type NavBarProps = {
   isLoggedIn?: boolean;
@@ -81,6 +81,19 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                         : ButtonLinkVariant.FLAT_SECONDARY
                     }>
                     {t('Meta.title-enrolled-courses')}
+                  </ButtonLink>
+                </Link>
+              </li>
+              <li>
+                <Link href="/classrooms" passHref={true}>
+                  <ButtonLink
+                    variant={
+                      router.pathname === '/classrooms' ||
+                      router.pathname === '/classrooms/[classroomId]'
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
+                    {t('Meta.title-classrooms')}
                   </ButtonLink>
                 </Link>
               </li>
@@ -271,6 +284,16 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                         : ButtonLinkVariant.FLAT_SECONDARY
                     }>
                     {t('Meta.title-enrolled-courses')}
+                  </ButtonLink>
+                </Link>
+                <Link href="/classrooms" passHref={true}>
+                  <ButtonLink
+                    variant={
+                      router.pathname === '/classrooms'
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
+                    {t('Meta.title-classrooms')}
                   </ButtonLink>
                 </Link>
                 <Link href="/playground" passHref={true}>

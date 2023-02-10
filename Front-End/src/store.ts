@@ -30,6 +30,8 @@ import surveyAnswerReducer from '@app/features/dynamic-courses/survey/surveyAnsw
 import surveysReducer from '@app/features/dynamic-courses/survey/surveysSlice';
 import dynamicLessonReducer from '@app/features/dynamic-courses/dynamicLessonSlice';
 import dashboardReducer from '@app/features/dashboard/dashboardSlice';
+import classroomsReducer from '@app/features/classrooms/classroomsSlice';
+import classroomSessionsReducer from '@app/features/classrooms/sessions/classroomSessionsSlice';
 import courseTagsReducer from '@app/features/tags/courseTagsSlice';
 import recommendedCoursesReducer from '@app/features/recommender/recommendedCoursesSlice';
 import recommendedLessonsReducer from '@app/features/recommender/recommendedLessonsSlice';
@@ -64,6 +66,8 @@ const combinedReducers = combineReducers({
   surveyResults: surveyResultsReducer,
   enrollDynamicCourse: enrollDynamicCourseReducer,
   dynamicCourse: dynamicCourseReducer,
+  classrooms: classroomsReducer,
+  classroomSessions: classroomSessionsReducer,
   dynamicCourses: dynamicCoursesReducer,
   dynamicLesson: dynamicLessonReducer,
   surveyQuestion: surveyQuestionReducer,
@@ -126,6 +130,8 @@ export type RootState = {
   surveyResults: ReturnType<typeof surveyResultsReducer>;
   enrollDynamicCourse: ReturnType<typeof enrollDynamicCourseReducer>;
   dynamicCourse: ReturnType<typeof dynamicCourseReducer>;
+  classrooms: ReturnType<typeof classroomsReducer>;
+  classroomSessions: ReturnType<typeof classroomSessionsReducer>;
   dynamicCourses: ReturnType<typeof dynamicCoursesReducer>;
   dynamicLesson: ReturnType<typeof dynamicLessonReducer>;
   surveyQuestion: ReturnType<typeof surveyQuestionReducer>;

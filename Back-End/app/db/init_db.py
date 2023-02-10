@@ -23,6 +23,8 @@ from app.models import (
     GlobalKnowledgeTest,
     GlobalKnowledgeTestQuestions,
     GlobalKnowledgeTestUserResults,
+    Classrooms,
+    ClassroomSessions,
 )
 
 

@@ -1,31 +1,34 @@
 # pylint: disable=C0413,E0611
-import datetime
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi_jwt_auth import AuthJWT
-from fastapi_jwt_auth.exceptions import AuthJWTException
-from pydantic import BaseSettings
-from app import settings
-from app.db.session import Base, engine
-from .routers import users
-from .routers import login
-from .routers import courses
-from .routers import answers
-from .routers import lessons
-from .routers import playground
-from .routers import dashboard
-from .routers import course_tags
-from .routers import recommender
-from .routers.dynamic_course import dynamic_course
 from .routers.dynamic_course import survey
+from .routers.dynamic_course import dynamic_course
+from .routers import course_tags
+from .routers import dashboard
+from .routers import classroom_sessions
+from .routers import classrooms
+from .routers import playground
+from .routers import lessons
+from .routers import answers
+from .routers import courses
+from .routers import login
+from .routers import users
+from .routers import recommender
 from .routers.dynamic_course import knowledge_test
 from .routers.dynamic_course import global_knowledge_test
+from app.db.session import Base, engine
+from app import settings
+from pydantic import BaseSettings
+from fastapi_jwt_auth.exceptions import AuthJWTException
+from fastapi_jwt_auth import AuthJWT
+from fastapi.responses import JSONResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+import datetime as dt
+from dotenv import load_dotenv
+import json
+from app.websockets.managers.payload_handler import payload_handler
+from app.websockets.managers.connection_manager import conn_manager
+from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv()
 
 origins = [
     "http://virtualschool.wi.zut.edu.pl",
@@ -36,8 +39,7 @@ origins = [
     "http://localhost:3000",
 ]
 
-
-token_expires = datetime.timedelta(days=30)
+token_expires = dt.timedelta(days=30)
 
 
 class JWTSettings(BaseSettings):
@@ -98,6 +100,14 @@ def get_application() -> FastAPI:
         prefix=settings.API_PREFIX,
     )
     application.include_router(
+        classrooms.router,
+        prefix=settings.API_PREFIX,
+    )
+    application.include_router(
+        classroom_sessions.router,
+        prefix=settings.API_PREFIX,
+    )
+    application.include_router(
         dashboard.router,
         prefix=settings.API_PREFIX,
     )
@@ -123,6 +133,13 @@ def get_application() -> FastAPI:
 app = get_application()
 
 
-@app.exception_handler(AuthJWTException)
-def authjwt_exception_handler(_, exc: AuthJWTException):
-    return JSONResponse(status_code=exc.status_code, content={"error": exc.message})
+@app.websocket("/ws/{classroom_id}")
+async def websocket_endpoint(websocket: WebSocket, classroom_id: int):
+    await conn_manager.connect(websocket=websocket, classroom_id=classroom_id)
+    try:
+        while True:
+            resp = await websocket.receive_text()
+            await payload_handler.process_message(payload=json.loads(resp), classroom_id=classroom_id, websocket=websocket)
+
+    except WebSocketDisconnect:
+        await conn_manager.disconnect(websocket=websocket, classroom_id=classroom_id)

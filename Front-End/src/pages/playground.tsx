@@ -119,7 +119,7 @@ export default function Playground() {
                     </div>
                   </div>
                   <div
-                    className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
+                    className="h-auto bg-black pt-1 pl-1 font-mono text-xs"
                     id="console">
                     <pre className="pb-1 text-white">
                       {playgroundData?.content || playgroundError}

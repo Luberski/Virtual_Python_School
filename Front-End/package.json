@@ -20,11 +20,15 @@
     "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless"
   },
   "dependencies": {
+    "@codemirror/lang-python": "^6.1.0",
     "@headlessui/react": "^1.7.0",
     "@heroicons/react": "^2.0.10",
     "@monaco-editor/react": "^4.4.5",
     "@reduxjs/toolkit": "^1.9.1",
+    "@uiw/codemirror-themes": "^4.19.4",
+    "@uiw/react-codemirror": "^4.15.1",
     "clsx": "^1.2.1",
+    "codemirror": "^6.0.1",
     "cookies-next": "^2.1.1",
     "debounce": "^1.2.1",
     "dotenv": "^16.0.3",
@@ -53,7 +57,11 @@
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.1.0",
     "ts-node": "^10.9.1",
-    "unified": "^10.1.2"
+    "unified": "^10.1.2",
+    "react-redux": "^8.0.2",
+    "react-use-websocket": "^4.2.0",
+    "recharts": "^2.1.16",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",
