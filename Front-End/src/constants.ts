@@ -39,6 +39,28 @@ export enum ViewMode {
   SharedWhiteboard = 3,
 }
 
+export enum ClassroomUserRole {
+  STUDENT = 0,
+  TEACHER = 1,
+}
+
+export enum AssignmentStatus {
+  NOT_STARTED = 0,
+  IN_PROGRESS = 1,
+  COMPLETED = 2,
+}
+
+export enum UserStatus {
+  OFFLINE = 0,
+  ONLINE = 1,
+}
+
+export enum WhiteboardType {
+  PUBLIC = 0,
+  PRIVATE = 1,
+  ASSIGNMENT = 2,
+}
+
 export const connectionStatus = {
   [ReadyState.CONNECTING]: 'Connecting',
   [ReadyState.OPEN]: 'Open',

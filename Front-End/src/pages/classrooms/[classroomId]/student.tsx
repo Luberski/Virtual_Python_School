@@ -1,9 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useTranslations } from 'next-intl';
 import { useDispatch } from 'react-redux';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
-import { Actions, ViewMode, WEBSITE_TITLE } from '@app/constants';
+import {
+  Actions,
+  ViewMode,
+  WEBSITE_TITLE,
+  WhiteboardType,
+} from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
@@ -28,6 +33,20 @@ import {
   notifyUserLeft,
 } from '@app/notifications';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import {
+  selectPlaygroundData,
+  selectPlaygroundError,
+  sendCode,
+} from '@app/features/playground/playgroundSlice';
+import debounce from 'debounce';
+import type JoinUserRes from '@app/models/classroom/JsonDataModels/response/JoinUser';
+import type CodeChangeRes from '@app/models/classroom/JsonDataModels/response/CodeChange';
+import type ClassroomUser from '@app/models/classroom/ClassroomUser';
+import type GetDataRes from '@app/models/classroom/JsonDataModels/response/GetData';
+import type ClassroomAssignment from '@app/models/classroom/ClassroomAssignment';
+import type JsonRequest from '@app/models/classroom/JsonDataModels/request/JsonRequest';
+import type ClassroomUserAssignment from '@app/models/classroom/ClassroomUserAssignment';
+import type GetDataReq from '@app/models/classroom/JsonDataModels/request/GetData';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -46,6 +65,8 @@ export default function ClassroomsStudentPage(
   const [user, isLoggedIn] = useAuthRedirect();
   const translations = useTranslations();
   const dispatch = useDispatch();
+  const playgroundData = useAppSelector(selectPlaygroundData);
+  const playgroundError = useAppSelector(selectPlaygroundError);
   const classrooms = useAppSelector(selectClassroomsData);
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
   const { classroomId } = props;
@@ -112,11 +133,12 @@ export default function ClassroomsStudentPage(
         .unwrap()
         .then((result) => {
           if (result.data.id.toString() === classroomId) {
-            sendJsonMessage({
+            const leaveMsg: JsonRequest<null> = {
               action: Actions.LEAVE,
               user_id: user.username,
               data: null,
-            });
+            };
+            sendJsonMessage(leaveMsg);
           }
           notifyClassroomLeave(translations('Classrooms.leave-success'));
           setTimeout(() => {
@@ -131,13 +153,14 @@ export default function ClassroomsStudentPage(
   };
 
   useEffect(() => {
+    const joinRequestMsg: JsonRequest<null> = {
+      action: Actions.JOIN,
+      user_id: user.username,
+      data: null,
+    };
     switch (readyState) {
       case ReadyState.OPEN:
-        sendJsonMessage({
-          action: Actions.JOIN,
-          user_id: user.username,
-          data: null,
-        });
+        sendJsonMessage(joinRequestMsg);
         toast.success(translations('Classrooms.connected'), {
           id: connectNotification.current,
         });
@@ -157,35 +180,23 @@ export default function ClassroomsStudentPage(
   }, [readyState, sendJsonMessage, translations, user.username]);
 
   useEffect(() => {
-    const getSharedWhiteboardCode = async () => {
-      sendJsonMessage({
+    const getDataRequest = async (
+      whiteboardType:
+        | WhiteboardType.PRIVATE
+        | WhiteboardType.ASSIGNMENT
+        | WhiteboardType.PUBLIC,
+      assignmentName: string | null
+    ) => {
+      const requestMsg: JsonRequest<GetDataReq> = {
         action: Actions.GET_DATA,
         user_id: user.username,
         data: {
-          whiteboard_type: 'public',
+          whiteboard_type: whiteboardType,
+          target_user: user.username,
+          assignment_name: assignmentName,
         },
-      });
-    };
-
-    const getPersonalAssignment = async (assignment_name: string) => {
-      sendJsonMessage({
-        action: Actions.GET_DATA,
-        user_id: user.username,
-        data: {
-          assignment_name: assignment_name,
-          whiteboard_type: 'assignment',
-        },
-      });
-    };
-
-    const getPersonalWhiteboard = async () => {
-      sendJsonMessage({
-        action: Actions.GET_DATA,
-        user_id: user.username,
-        data: {
-          whiteboard_type: 'private',
-        },
-      });
+      };
+      sendJsonMessage(requestMsg);
     };
 
     if (mode !== null) {
@@ -194,19 +205,19 @@ export default function ClassroomsStudentPage(
           if (selectedAssignment !== '') {
             setSelectedAssignment('');
           } else {
-            getSharedWhiteboardCode();
+            getDataRequest(WhiteboardType.PUBLIC, null);
           }
           break;
         case ViewMode.PersonalWhiteboard:
           if (selectedAssignment !== '') {
             setSelectedAssignment('');
           } else {
-            getPersonalWhiteboard();
+            getDataRequest(WhiteboardType.PRIVATE, null);
           }
           break;
         case ViewMode.Assignment:
           if (selectedAssignment !== '') {
-            getPersonalAssignment(selectedAssignment);
+            getDataRequest(WhiteboardType.ASSIGNMENT, selectedAssignment);
           }
           break;
         default:
@@ -222,109 +233,114 @@ export default function ClassroomsStudentPage(
   }, [lastJsonMessage]);
 
   useEffect(() => {
+    const responseMsg = lastJsonMessage as JsonRequest<unknown>;
+
     if (!messageHandled && lastJsonMessage != null) {
-      switch (lastJsonMessage.action) {
-        case Actions.SYNC_DATA:
-          setUsers(
-            lastJsonMessage.data.users.find((u) => u.user_id !== user.username)
+      if (responseMsg.action === Actions.SYNC_DATA) {
+        const data = responseMsg.data as JoinUserRes;
+        setUsers(data.users);
+        setTeacher(data.teacher);
+        setIsEditable(data.classroomData.editable);
+        myCodeRef.current = data.personalData.whiteboard.code;
+        codeRef.current = data.classroomData.sharedWhiteboard.code;
+        setAssignments(data.personalData.userAssignments);
+      } else if (responseMsg.action === Actions.JOIN) {
+        const newUser = responseMsg.data as ClassroomUser;
+
+        setUsers((users) => [...users, newUser]);
+      } else if (responseMsg.action === Actions.LEAVE) {
+        const removedUser = responseMsg.data as ClassroomUser;
+
+        if (removedUser.userId !== teacher) {
+          setUsers((students) =>
+            students.filter((user) => user !== removedUser.userId)
           );
-          setTeacher(lastJsonMessage.data.teacher);
-          setIsEditable(lastJsonMessage.data.is_editable);
-          myCodeRef.current = lastJsonMessage.data.personal_whiteboard;
-          codeRef.current = lastJsonMessage.data.shared_whiteboard;
-          setAssignments(lastJsonMessage.data.assignments);
-          break;
 
-        case Actions.JOIN:
-          setUsers((users) => [...users, lastJsonMessage.data.user_id]);
-          break;
+          notifyUserLeft(
+            removedUser.userId + ' ' + translations('Classrooms.student-left')
+          );
+        }
+      } else if (responseMsg.action === Actions.CODE_CHANGE) {
+        const data = responseMsg.data as CodeChangeRes;
 
-        case Actions.LEAVE:
-          if (lastJsonMessage.data.user_id !== teacher) {
-            setUsers(
-              users.filter((user) => user !== lastJsonMessage.data.user_id)
-            );
+        if (data.whiteboard.whiteboardType === WhiteboardType.PUBLIC) {
+          codeRef.current = data.whiteboard.code;
+        } else if (
+          data.whiteboard.whiteboardType === WhiteboardType.PRIVATE &&
+          data.source.userId === teacher.userId &&
+          mode === ViewMode.PersonalWhiteboard
+        ) {
+          myCodeRef.current = data.whiteboard.code;
+        } else if (
+          data.whiteboard.whiteboardType === WhiteboardType.ASSIGNMENT &&
+          selectedAssignment === data.userAssignment?.assignment.title &&
+          mode === ViewMode.Assignment
+        ) {
+          myCodeRef.current = data.whiteboard.code;
+        }
+      } else if (responseMsg.action === Actions.GET_DATA) {
+        const data = responseMsg.data as GetDataRes;
 
-            notifyUserLeft(
-              lastJsonMessage.data.user_id +
-                ' ' +
-                translations('Classrooms.student-left')
-            );
-          }
-          break;
-
-        case Actions.CODE_CHANGE:
-          if (lastJsonMessage.data.whiteboard.whiteboard_type === 'public') {
-            codeRef.current = lastJsonMessage.data.code;
-          } else if (
-            lastJsonMessage.data.whiteboard.whiteboard_type === 'private' &&
-            lastJsonMessage.data.user_id === teacher &&
-            mode === ViewMode.PersonalWhiteboard
-          ) {
-            myCodeRef.current = lastJsonMessage.data.code;
-          } else if (
-            lastJsonMessage.data.whiteboard.whiteboard_type === 'assignment'
-          ) {
-            if (
-              selectedAssignment ===
-                lastJsonMessage.data.assignment.assignment_name &&
-              mode === ViewMode.Assignment
-            ) {
-              myCodeRef.current = lastJsonMessage.data.whiteboard.code;
-            }
-          }
-          break;
-
-        case Actions.GET_DATA:
-          if (
-            lastJsonMessage.data.whiteboard_type === 'public' &&
-            mode === ViewMode.SharedWhiteboard
-          ) {
-            codeRef.current = lastJsonMessage.data.code;
-          } else if (
-            lastJsonMessage.data.whiteboard_type === 'private' &&
-            mode === ViewMode.PersonalWhiteboard
-          ) {
-            myCodeRef.current = lastJsonMessage.data.code;
-          } else if (
-            lastJsonMessage.data.whiteboard_type === 'assignment' &&
-            mode === ViewMode.Assignment
-          ) {
-            myCodeRef.current =
-              lastJsonMessage.data.user_assignment.whiteboard.code;
-          }
-          break;
-
-        case Actions.ASSIGNMENT_CREATE:
-          setAssignments((assignments) => [
-            ...assignments,
-            lastJsonMessage.data,
-          ]);
-          break;
-
-        case Actions.LOCK_CODE:
-          setIsEditable(false);
-          break;
-
-        case Actions.UNLOCK_CODE:
-          setIsEditable(true);
-          break;
+        if (
+          data.whiteboard?.whiteboardType === WhiteboardType.PUBLIC &&
+          mode === ViewMode.SharedWhiteboard
+        ) {
+          codeRef.current = data.whiteboard.code;
+        } else if (
+          data.targetUser?.whiteboard.whiteboardType ===
+            WhiteboardType.PRIVATE &&
+          mode === ViewMode.PersonalWhiteboard
+        ) {
+          myCodeRef.current = data.targetUser.whiteboard.code;
+        } else if (
+          mode === ViewMode.Assignment &&
+          selectedAssignment === data.userAssignment?.assignment.title
+        ) {
+          myCodeRef.current = data.userAssignment.whiteboard.code;
+        }
+      } else if (responseMsg.action === Actions.ASSIGNMENT_CREATE) {
+        const newAssignment = responseMsg.data as ClassroomAssignment;
+        setAssignments((assignments) => [...assignments, newAssignment]);
+      } else if (responseMsg.action === Actions.LOCK_CODE) {
+        setIsEditable(false);
+      } else if (responseMsg.action === Actions.UNLOCK_CODE) {
+        setIsEditable(true);
+      } else if (responseMsg.action === Actions.CLASSROOM_DELETED) {
+        toast.dismiss();
+        router.replace('/');
       }
 
-      setLastAction(parseInt(lastJsonMessage.action));
+      setLastAction(responseMsg.action);
       setMessageHandled(true);
     }
   }, [
-    assignments,
     lastJsonMessage,
     messageHandled,
     mode,
     selectedAssignment,
     teacher,
     translations,
-    user.username,
-    users,
   ]);
+
+  const runCode = useMemo(
+    () =>
+      debounce(() => {
+        let code: string = null;
+
+        if (mode === ViewMode.PersonalWhiteboard) {
+          code = myCodeRef.current;
+        } else {
+          code = codeRef.current;
+        }
+
+        try {
+          dispatch(sendCode({ content: code }));
+        } catch (error) {
+          console.error(error);
+        }
+      }, 1000),
+    [dispatch, mode]
+  );
 
   return (
     <>
@@ -359,7 +375,8 @@ export default function ClassroomsStudentPage(
                 }}
                 disabled={mode === ViewMode.SharedWhiteboard}
                 variant={ButtonVariant.PRIMARY}>
-                {translations('Classrooms.shared-whiteboard')} - {teacher}
+                {translations('Classrooms.shared-whiteboard')} -{' '}
+                {teacher?.userId}
               </Button>
               <Button
                 type="button"
@@ -370,7 +387,6 @@ export default function ClassroomsStudentPage(
                 variant={ButtonVariant.PRIMARY}>
                 {translations('Classrooms.my-whiteboard')}
               </Button>
-              {users?.length > 0 && users?.map((u) => <div key={u}>{u}</div>)}
               <h1 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.my-assignments')}
               </h1>
@@ -389,20 +405,20 @@ export default function ClassroomsStudentPage(
               </Button>
               {assignments?.length > 0 &&
                 isAssignmentsMenuOpen &&
-                assignments.map((a) => (
+                assignments.map((assignment: ClassroomUserAssignment) => (
                   <Button
-                    key={a.assignment.assignment_name}
+                    key={assignment.assignment.id}
                     type="button"
                     onClick={() => {
-                      setSelectedAssignment(a.assignment.assignment_name);
+                      setSelectedAssignment(assignment.assignment.title);
                       setMode(ViewMode.Assignment);
                     }}
                     disabled={
-                      selectedAssignment === a.assignment.assignment_name &&
+                      selectedAssignment === assignment.assignment.title &&
                       mode === ViewMode.Assignment
                     }
                     variant={ButtonVariant.PRIMARY}>
-                    {a.assignment.assignment_name}
+                    {assignment.assignment.title}
                   </Button>
                 ))}
             </div>
@@ -437,7 +453,10 @@ export default function ClassroomsStudentPage(
 
           <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
-              <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
+              <Button
+                variant={ButtonVariant.FLAT_SECONDARY}
+                onClick={runCode}
+                disabled>
                 {translations('Classrooms.run')}
               </Button>
               {mode === ViewMode.Assignment && (
@@ -446,42 +465,54 @@ export default function ClassroomsStudentPage(
                 </Button>
               )}
             </div>
-            <div className="w-full">
-              {mode === ViewMode.PersonalWhiteboard ||
-              mode === ViewMode.Assignment ? (
-                <ClassroomCodeEditor
-                  connState={readyState}
-                  sendMsg={sendJsonMessage}
-                  roomId={classroomId}
-                  isEditable={true}
-                  onCodeChange={(code) => {
-                    myCodeRef.current = code;
-                  }}
-                  lastAction={lastAction}
-                  setLastAction={setLastAction}
-                  codeRef={myCodeRef}
-                  user={user}
-                  isTeacher={false}
-                  assignmentName={selectedAssignment ? selectedAssignment : ''}
-                  mode={mode}
-                />
-              ) : (
-                <ClassroomCodeEditor
-                  connState={readyState}
-                  sendMsg={sendJsonMessage}
-                  roomId={classroomId}
-                  isEditable={isEditable}
-                  onCodeChange={(code) => {
-                    codeRef.current = code;
-                  }}
-                  lastAction={lastAction}
-                  setLastAction={setLastAction}
-                  codeRef={codeRef}
-                  user={user}
-                  isTeacher={false}
-                  mode={mode}
-                />
-              )}
+            <div className="flex h-full flex-col justify-between overflow-hidden">
+              <div className="h-auto max-h-96 overflow-scroll">
+                {mode === ViewMode.PersonalWhiteboard ||
+                mode === ViewMode.Assignment ? (
+                  <ClassroomCodeEditor
+                    connState={readyState}
+                    sendMsg={sendJsonMessage}
+                    roomId={classroomId}
+                    isEditable={true}
+                    onCodeChange={(code) => {
+                      myCodeRef.current = code;
+                    }}
+                    lastAction={lastAction}
+                    setLastAction={setLastAction}
+                    codeRef={myCodeRef}
+                    user={user}
+                    isTeacher={false}
+                    assignmentName={
+                      selectedAssignment ? selectedAssignment : ''
+                    }
+                    mode={mode}
+                  />
+                ) : (
+                  <ClassroomCodeEditor
+                    connState={readyState}
+                    sendMsg={sendJsonMessage}
+                    roomId={classroomId}
+                    isEditable={isEditable}
+                    onCodeChange={(code) => {
+                      codeRef.current = code;
+                    }}
+                    lastAction={lastAction}
+                    setLastAction={setLastAction}
+                    codeRef={codeRef}
+                    user={user}
+                    isTeacher={false}
+                    mode={mode}
+                  />
+                )}
+              </div>
+              <div
+                className="min-h-60 h-auto max-h-60 border-t-2 border-neutral-50 pt-1 pl-1 font-mono text-xs dark:border-neutral-900"
+                id="console">
+                <pre className="pb-1">
+                  <span>{'Console >'}</span>
+                  {playgroundData?.content || playgroundError}
+                </pre>
+              </div>
             </div>
           </div>
         </div>

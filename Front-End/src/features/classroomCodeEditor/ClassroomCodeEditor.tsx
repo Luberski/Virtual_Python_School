@@ -2,7 +2,7 @@ import { useCodeMirror } from '@uiw/react-codemirror';
 import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
 import { python } from '@codemirror/lang-python';
-import { Actions, ViewMode } from '@app/constants';
+import { Actions, ViewMode, WhiteboardType } from '@app/constants';
 import React, { useCallback, useRef, useEffect } from 'react';
 import type { MutableRefObject } from 'react';
 import debounce from 'debounce';
@@ -112,7 +112,7 @@ export default function ClassroomCodeEditor({
       action: Actions.CODE_CHANGE,
       user_id: user.username,
       data: {
-        whiteboard_type: 'public',
+        whiteboard_type: WhiteboardType.PUBLIC,
         code: value,
       },
     });
@@ -125,7 +125,7 @@ export default function ClassroomCodeEditor({
       action: Actions.CODE_CHANGE,
       user_id: user.username,
       data: {
-        whiteboard_type: 'private',
+        whiteboard_type: WhiteboardType.PRIVATE,
         code: value,
       },
     });
@@ -142,7 +142,7 @@ export default function ClassroomCodeEditor({
       user_id: user.username,
       data: {
         assignment_name: assignmentName,
-        whiteboard_type: 'assignment',
+        whiteboard_type: WhiteboardType.ASSIGNMENT,
         code: value,
       },
     });
@@ -159,7 +159,7 @@ export default function ClassroomCodeEditor({
       user_id: user.username,
       data: {
         target_user: targetUser,
-        whiteboard_type: 'private',
+        whiteboard_type: WhiteboardType.PRIVATE,
         code: value,
       },
     });
@@ -177,7 +177,7 @@ export default function ClassroomCodeEditor({
       data: {
         target_user: targetUser,
         assignment_name: assignmentName,
-        whiteboard_type: 'assignment',
+        whiteboard_type: WhiteboardType.ASSIGNMENT,
         code: value,
       },
     });
