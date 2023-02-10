@@ -18,3 +18,4 @@ pydantic[email]
 pydantic-collections
 uvicorn[standard]
 python-multipart
+websocket-client
