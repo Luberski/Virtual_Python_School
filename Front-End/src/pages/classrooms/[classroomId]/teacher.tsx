@@ -82,7 +82,7 @@ export default function ClassroomsTeacherPage({
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
   const playgroundData = useAppSelector(selectPlaygroundData);
   const playgroundError = useAppSelector(selectPlaygroundError);
-  const socketUrl = `ws://localhost:5000/ws/${classroomId}`;
+  const socketUrl = `${process.env.NEXT_PUBLIC_WS_BASE_URL}/${classroomId}`;
   const { sendJsonMessage, lastJsonMessage, readyState } =
     useWebSocket(socketUrl);
 
@@ -632,10 +632,7 @@ export default function ClassroomsTeacherPage({
 
           <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
-              <Button
-                variant={ButtonVariant.FLAT_SECONDARY}
-                onClick={runCode}
-                disabled>
+              <Button variant={ButtonVariant.FLAT_SECONDARY} onClick={runCode}>
                 {translations('Classrooms.run')}
               </Button>
 

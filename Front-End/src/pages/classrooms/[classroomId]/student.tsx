@@ -70,7 +70,7 @@ export default function ClassroomsStudentPage(
   const classrooms = useAppSelector(selectClassroomsData);
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
   const { classroomId } = props;
-  const socketUrl = `ws://localhost:5000/ws/${classroomId}`;
+  const socketUrl = `${process.env.NEXT_PUBLIC_WS_BASE_URL}/${classroomId}`;
   const { sendJsonMessage, lastJsonMessage, readyState } =
     useWebSocket(socketUrl);
 
@@ -456,8 +456,7 @@ export default function ClassroomsStudentPage(
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
               <Button
                 variant={ButtonVariant.FLAT_SECONDARY}
-                onClick={runCode}
-                disabled>
+                onClick={runCode}>
                 {translations('Classrooms.run')}
               </Button>
               {mode === ViewMode.Assignment && (
