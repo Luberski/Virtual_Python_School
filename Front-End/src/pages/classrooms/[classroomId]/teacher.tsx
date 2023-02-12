@@ -195,6 +195,9 @@ export default function ClassroomsTeacherPage({
         toast.success(translations('Classrooms.connected'), {
           id: connectNotification.current,
         });
+        setTimeout(() => {
+          toast.dismiss();
+        }, 1000);
         break;
 
       case ReadyState.CLOSED:

@@ -31,6 +31,7 @@ import {
   notifyUnauthorized,
   notifyClassroomLeave,
   notifyUserLeft,
+  notifyClassroomDeleted,
 } from '@app/notifications';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import {
@@ -107,7 +108,6 @@ export default function ClassroomsStudentPage(
       if (!classrooms?.find((c) => c.id.toString() === classroomId)) {
         notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
-          toast.dismiss();
           router.replace('/');
         }, 1000);
       }
@@ -165,6 +165,9 @@ export default function ClassroomsStudentPage(
         toast.success(translations('Classrooms.connected'), {
           id: connectNotification.current,
         });
+        setTimeout(() => {
+          toast.dismiss();
+        }, 1000);
         setMode(ViewMode.PersonalWhiteboard);
         break;
 
@@ -307,8 +310,11 @@ export default function ClassroomsStudentPage(
       } else if (responseMsg.action === Actions.UNLOCK_CODE) {
         setIsEditable(true);
       } else if (responseMsg.action === Actions.CLASSROOM_DELETED) {
-        toast.dismiss();
-        router.replace('/');
+        notifyClassroomDeleted(translations('Classrooms.classroom-deleted'));
+        setTimeout(() => {
+          toast.dismiss();
+          router.replace('/');
+        }, 1000);
       }
 
       setLastAction(responseMsg.action);
