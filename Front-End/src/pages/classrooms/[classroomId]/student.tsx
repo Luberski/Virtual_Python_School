@@ -454,9 +454,7 @@ export default function ClassroomsStudentPage(
 
           <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
-              <Button
-                variant={ButtonVariant.FLAT_SECONDARY}
-                onClick={runCode}>
+              <Button variant={ButtonVariant.FLAT_SECONDARY} onClick={runCode}>
                 {translations('Classrooms.run')}
               </Button>
               {mode === ViewMode.Assignment && (
@@ -508,8 +506,8 @@ export default function ClassroomsStudentPage(
               <div
                 className="min-h-60 h-auto max-h-60 border-t-2 border-neutral-50 pt-1 pl-1 font-mono text-xs dark:border-neutral-900"
                 id="console">
+                <p>{'Console >'}</p>
                 <pre className="pb-1">
-                  <span>{'Console >'}</span>
                   {playgroundData?.content || playgroundError}
                 </pre>
               </div>
