@@ -174,6 +174,8 @@ def edit_lesson(
                 "type": lesson_edit.type,
                 "number_of_answers": lesson_edit.number_of_answers,
                 "order": lesson_edit.order,
+                "answer_check_rule": answer_edit.answer_check_rule,
+                "final_answer": answer_edit.final_answer,
             },
             "error": None,
         },
