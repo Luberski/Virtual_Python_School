@@ -17,7 +17,7 @@ class Classroom:
         self._classroom_id = classroom_id
         self._users: list[User] = []
         self._shared_whiteboard: Whiteboard = Whiteboard(
-            'Print("Hello World")', WhiteboardType.PUBLIC)
+            'print("Hello World")', WhiteboardType.PUBLIC)
         self._assignments: list[Assignment] = []
         self._editable = False
 
