@@ -336,10 +336,10 @@ export default function ClassroomsStudentPage(
       debounce(() => {
         let code: string = null;
 
-        if (mode === ViewMode.PersonalWhiteboard) {
-          code = myCodeRef.current;
-        } else {
+        if (mode === ViewMode.SharedWhiteboard) {
           code = codeRef.current;
+        } else {
+          code = myCodeRef.current;
         }
 
         try {
