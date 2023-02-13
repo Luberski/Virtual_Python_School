@@ -465,10 +465,14 @@ export default function ClassroomsStudentPage(
               <Button variant={ButtonVariant.FLAT_SECONDARY} onClick={runCode}>
                 {translations('Classrooms.run')}
               </Button>
+
               {mode === ViewMode.Assignment && (
-                <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
-                  {translations('Classrooms.send-to-review')}
-                </Button>
+                <>
+                  <h4>{selectedAssignment}</h4>
+                  <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
+                    {translations('Classrooms.send-to-review')}
+                  </Button>
+                </>
               )}
             </div>
             <div className="flex h-full flex-col justify-between overflow-hidden">
