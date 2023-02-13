@@ -240,7 +240,6 @@ export default function ClassroomsStudentPage(
 
   useEffect(() => {
     const responseMsg = lastJsonMessage as JsonRequest<unknown>;
-
     if (!messageHandled && lastJsonMessage != null) {
       if (responseMsg.action === Actions.SYNC_DATA) {
         const data = responseMsg.data as JoinUserRes;

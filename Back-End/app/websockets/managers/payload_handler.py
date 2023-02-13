@@ -377,7 +377,7 @@ class PayloadHandler:
     async def classroom_deleted(self):
         response_payload = json.dumps(
             {"action": Actions.CLASSROOM_DELETED.value})
-        await class_manager.broadcast_class_students(classroom_id=self.source_classroom_id, payload=response_payload)
+        await conn_manager.broadcast_class_students(classroom_id=self.source_classroom_id, payload=response_payload)
         class_manager.remove_classroom(self.source_classroom_id)
 
 

@@ -26,6 +26,7 @@ from dotenv import load_dotenv
 import json
 from app.websockets.managers.payload_handler import payload_handler
 from app.websockets.managers.connection_manager import conn_manager
+from app.websockets.managers.classroom_manager import class_manager
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
@@ -137,6 +138,7 @@ app = get_application()
 def authjwt_exception_handler(_, exc: AuthJWTException):
     return JSONResponse(status_code=exc.status_code, content={"error": exc.message})
 
+
 @app.websocket("/ws/{classroom_id}")
 async def websocket_endpoint(websocket: WebSocket, classroom_id: int):
     await conn_manager.connect(websocket=websocket, classroom_id=classroom_id)
@@ -146,4 +148,5 @@ async def websocket_endpoint(websocket: WebSocket, classroom_id: int):
             await payload_handler.process_message(payload=json.loads(resp), classroom_id=classroom_id, websocket=websocket)
 
     except WebSocketDisconnect:
-        await conn_manager.disconnect(websocket=websocket, classroom_id=classroom_id)
+        if class_manager.get_classroom(classroom_id=classroom_id):
+            await conn_manager.disconnect(websocket=websocket, classroom_id=classroom_id)
