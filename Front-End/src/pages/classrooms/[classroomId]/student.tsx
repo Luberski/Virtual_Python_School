@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import toast from 'react-hot-toast';
+import Head from 'next/head';
+import debounce from 'debounce';
 import { useTranslations } from 'next-intl';
+import router from 'next/router';
+import dynamic from 'next/dynamic';
+
 import { useDispatch } from 'react-redux';
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   Actions,
@@ -13,8 +20,6 @@ import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
 import ClassroomCodeEditor from '@app/features/classroomCodeEditor/ClassroomCodeEditor';
 import Button, { ButtonVariant } from '@app/components/Button';
-import toast from 'react-hot-toast';
-import Head from 'next/head';
 import {
   fetchClassrooms,
   selectClassroomsData,
@@ -24,8 +29,6 @@ import {
   fetchClassroomSessions,
   selectClassroomSessionsData,
 } from '@app/features/classrooms/sessions/classroomSessionsSlice';
-import router from 'next/router';
-import dynamic from 'next/dynamic';
 import StyledDialog from '@app/components/StyledDialog';
 import {
   notifyUnauthorized,
@@ -33,13 +36,12 @@ import {
   notifyUserLeft,
   notifyClassroomDeleted,
 } from '@app/notifications';
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
   sendCode,
 } from '@app/features/playground/playgroundSlice';
-import debounce from 'debounce';
+
 import type JoinUserRes from '@app/models/classroom/JsonDataModels/response/JoinUser';
 import type CodeChangeRes from '@app/models/classroom/JsonDataModels/response/CodeChange';
 import type ClassroomUser from '@app/models/classroom/ClassroomUser';

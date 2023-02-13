@@ -121,6 +121,7 @@
     "assignment-created": "Zadanie zostało utworzone",
     "assignment-name": "Nazwa zadania",
     "assignment-description": "Opis zadania",
+    "assignment-code": "Kod początkowy zadania",
     "no-assignments-created": "Nie utworzyłeś żadnych zadań",
     "no-users": "Brak użytkowników w klasie",
     "no-assignments-user": "Nie zostało ci przypisane żadne zadanie",

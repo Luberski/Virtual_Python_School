@@ -2,11 +2,11 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import Button, { ButtonVariant } from '@app/components/Button';
-import type Classroom from '@app/models/Classroom';
+import type ClassroomModel from '@app/models/Classroom';
 import { joinClassroom } from '@app/features/classrooms/classroomsSlice';
 
 type ClassroomDescriptorProps = {
-  classroom: Classroom;
+  classroom: ClassroomModel;
 };
 
 export default function ClassroomDescriptor({

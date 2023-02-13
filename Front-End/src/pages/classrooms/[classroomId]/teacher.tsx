@@ -55,6 +55,7 @@ import {
   selectPlaygroundError,
   sendCode,
 } from '@app/features/playground/playgroundSlice';
+import TextArea from '@app/components/TextArea';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -72,8 +73,9 @@ export default function ClassroomsTeacherPage({
 }: ClassroomTeacherPageProps) {
   const { register, handleSubmit, setValue } =
     useForm<{
-      assignment_name: string;
-      assignment_description: string;
+      assignmentName: string;
+      assignmentDescription: string;
+      assignmentCode: string;
     }>();
   const [user, isLoggedIn] = useAuthRedirect();
   const translations = useTranslations();
@@ -280,19 +282,21 @@ export default function ClassroomsTeacherPage({
   };
 
   const onCreateAssignmentSubmit = (data: {
-    assignment_name: string;
-    assignment_description: string;
+    assignmentName: string;
+    assignmentDescription: string;
+    assignmentCode: string;
   }) => {
-    const { assignment_name, assignment_description } = data;
-    setValue('assignment_name', '');
-    setValue('assignment_description', '');
+    const { assignmentName, assignmentDescription, assignmentCode } = data;
+    setValue('assignmentName', '');
+    setValue('assignmentDescription', '');
+    setValue('assignmentCode', '');
     const requestMsg: JsonRequest<AssignmentCreateReq> = {
       action: Actions.ASSIGNMENT_CREATE,
       user_id: user.username,
       data: {
-        assignment_name: assignment_name,
-        assignment_description: assignment_description,
-        assignment_code: '',
+        assignment_name: assignmentName,
+        assignment_description: assignmentDescription,
+        assignment_code: assignmentCode,
       },
     };
 
@@ -566,18 +570,18 @@ export default function ClassroomsTeacherPage({
                         onSubmit={handleSubmit(onCreateAssignmentSubmit)}>
                         <div className="flex flex-col gap-y-2">
                           <Input
-                            label="assignment_name"
-                            name="assignment_name"
+                            label="assignmentName"
+                            name="assignmentName"
                             type="text"
                             register={register}
                             required
-                            maxLength={50}
+                            maxLength={20}
                             placeholder={translations(
                               'Classrooms.assignment-name'
                             )}></Input>
                           <Input
-                            label="assignment_description"
-                            name="assignment_description"
+                            label="assignmentDescription"
+                            name="assignmentDescription"
                             type="text"
                             register={register}
                             required
@@ -585,6 +589,18 @@ export default function ClassroomsTeacherPage({
                             placeholder={translations(
                               'Classrooms.assignment-description'
                             )}></Input>
+                          <TextArea
+                            label="assignmentCode"
+                            name="assignmentCode"
+                            type="text"
+                            register={register}
+                            required
+                            className="resize-none"
+                            rows={4}
+                            placeholder={translations(
+                              'Classrooms.assignment-code'
+                            )}
+                          />
                         </div>
                         <div className="mt-6 flex flex-row items-center justify-end">
                           <Button

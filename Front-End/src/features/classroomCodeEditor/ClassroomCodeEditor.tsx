@@ -2,13 +2,13 @@ import { useCodeMirror } from '@uiw/react-codemirror';
 import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
 import { python } from '@codemirror/lang-python';
-import { Actions, ViewMode, WhiteboardType } from '@app/constants';
 import React, { useCallback, useRef, useEffect } from 'react';
 import type { MutableRefObject } from 'react';
 import debounce from 'debounce';
 import { useTheme } from 'next-themes';
 import type { JsonValue } from 'react-use-websocket/dist/lib/types';
 import { ReadyState } from 'react-use-websocket/dist/lib/constants';
+import { Actions, ViewMode, WhiteboardType } from '@app/constants';
 
 type EditorProps = {
   connState: ReadyState;
