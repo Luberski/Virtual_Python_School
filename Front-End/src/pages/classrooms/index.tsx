@@ -66,7 +66,7 @@ export default function ClassroomsPage() {
           />
           <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
             <div className="space-y-2">
-              <h1 className="text-center text-indigo-900 dark:text-indigo-300">
+              <h1 className="text-center text-sky-900 dark:text-sky-300">
                 {t('Classrooms.classrooms')}
               </h1>
               <p className="text-center text-xl">

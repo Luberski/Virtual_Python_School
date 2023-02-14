@@ -6,7 +6,7 @@ export const notifyUserJoined = (i18msg: string) =>
     (to) => (
       <button
         type="button"
-        className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+        className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
         onClick={() => toast.dismiss(to.id)}>
         <div className="flex justify-center space-x-1">
           <InformationCircleIcon className="h-6 w-6" />
@@ -28,7 +28,7 @@ export const notifyUserLeft = (i18msg: string) =>
     (to) => (
       <button
         type="button"
-        className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+        className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
         onClick={() => toast.dismiss(to.id)}>
         <div className="flex justify-center space-x-1">
           <InformationCircleIcon className="h-6 w-6" />
@@ -50,7 +50,7 @@ export const notifyConnectionFailed = (i18msg: string) =>
     (to) => (
       <button
         type="button"
-        className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+        className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
         onClick={() => toast.dismiss(to.id)}>
         <div className="flex justify-center space-x-1">
           <InformationCircleIcon className="h-6 w-6" />
@@ -72,7 +72,7 @@ export const notifyClassroomDeleted = (i18msg: string) =>
     (to) => (
       <button
         type="button"
-        className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+        className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
         onClick={() => toast.dismiss(to.id)}>
         <div className="flex justify-center space-x-1">
           <InformationCircleIcon className="h-6 w-6" />
@@ -94,7 +94,7 @@ export const notifyUnauthorized = (i18msg: string) =>
     (to) => (
       <button
         type="button"
-        className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+        className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
         onClick={() => toast.dismiss(to.id)}>
         <div className="flex justify-center space-x-1">
           <InformationCircleIcon className="h-6 w-6" />
@@ -116,7 +116,7 @@ export const notifyClassroomLeave = (i18msg: string) =>
     (to) => (
       <button
         type="button"
-        className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+        className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
         onClick={() => toast.dismiss(to.id)}>
         <div className="flex justify-center space-x-1">
           <InformationCircleIcon className="h-6 w-6" />
@@ -138,7 +138,7 @@ export const notifyAssignmentCreated = (i18msg: string) =>
     (to) => (
       <button
         type="button"
-        className="brand-shadow rounded-lg border-indigo-500 bg-indigo-200 py-3 px-4 text-indigo-900 shadow-indigo-900/25"
+        className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
         onClick={() => toast.dismiss(to.id)}>
         <div className="flex justify-center space-x-1">
           <InformationCircleIcon className="h-6 w-6" />
