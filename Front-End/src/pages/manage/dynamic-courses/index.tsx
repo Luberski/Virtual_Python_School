@@ -28,6 +28,7 @@ export default function ManageDynamicCoursesPage() {
   const dispatch = useDispatch();
 
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-manage')} - ${WEBSITE_TITLE}`;
   const dynamicCourses = useAppSelector(selectDynamicCoursesData);
   const [isDynamicCourseDeleteDialogOpen, setIsDynamicCourseDeleteDialogOpen] =
     useState(false);
@@ -81,9 +82,7 @@ export default function ManageDynamicCoursesPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-manage')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

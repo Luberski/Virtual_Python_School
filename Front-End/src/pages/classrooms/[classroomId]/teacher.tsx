@@ -79,6 +79,9 @@ export default function ClassroomsTeacherPage({
     }>();
   const [user, isLoggedIn] = useAuthRedirect();
   const translations = useTranslations();
+  const pageTitle = `${translations(
+    'Meta.title-classrooms'
+  )} - ${WEBSITE_TITLE}`;
   const dispatch = useDispatch();
   const classrooms = useAppSelector(selectClassroomsData);
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
@@ -444,9 +447,7 @@ export default function ClassroomsTeacherPage({
         <Toaster position="top-center" reverseOrder={false} />
       </div>
       <Head>
-        <title>
-          {translations('Meta.title-classrooms')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="flex h-screen w-full flex-col">
         <NavBar

@@ -67,6 +67,9 @@ export default function ClassroomsStudentPage(
 ) {
   const [user, isLoggedIn] = useAuthRedirect();
   const translations = useTranslations();
+  const pageTitle = `${translations(
+    'Meta.title-classrooms'
+  )} - ${WEBSITE_TITLE}`;
   const dispatch = useDispatch();
   const playgroundData = useAppSelector(selectPlaygroundData);
   const playgroundError = useAppSelector(selectPlaygroundError);
@@ -356,9 +359,7 @@ export default function ClassroomsStudentPage(
         <Toaster position="top-center" reverseOrder={false} />
       </div>
       <Head>
-        <title>
-          {translations('Meta.title-classrooms')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="flex h-screen w-full flex-col">
         <NavBar

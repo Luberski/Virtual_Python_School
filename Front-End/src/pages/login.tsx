@@ -12,6 +12,7 @@ import LoginForm from '@app/features/auth/LoginForm';
 
 export default function LoginPage() {
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-login')} - ${WEBSITE_TITLE}`;
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const router = useRouter();
@@ -25,9 +26,7 @@ export default function LoginPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-login')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar />

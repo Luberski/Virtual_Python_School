@@ -31,6 +31,7 @@ export default function ManageGlobalKnowledgeTestsPage() {
   const dispatch = useDispatch();
 
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-manage')} - ${WEBSITE_TITLE}`;
   const globalKnowledgeTests = useAppSelector(selectGlobalKnowledgeTestsData);
   const [
     isGlobaldeleteGlobalKnowledgeTestDeleteDialogOpen,
@@ -91,9 +92,7 @@ export default function ManageGlobalKnowledgeTestsPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-manage')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

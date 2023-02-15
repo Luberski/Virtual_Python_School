@@ -13,7 +13,7 @@ export default function GuidedGlobalKnowledgeTestPage() {
   const dispatch = useDispatch();
 
   const t = useTranslations();
-
+  const pageTitle = `${t('Meta.title-manage')} - ${WEBSITE_TITLE}`;
   if (!user && !isLoggedIn) {
     return null;
   }
@@ -21,9 +21,7 @@ export default function GuidedGlobalKnowledgeTestPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-manage')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

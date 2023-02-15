@@ -25,6 +25,7 @@ const Editor = dynamic(() => import('@monaco-editor/react'), {
 export default function Playground() {
   const dispatch = useDispatch();
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-playground')} - ${WEBSITE_TITLE}`;
   const editorRef = useRef(null);
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
@@ -52,9 +53,7 @@ export default function Playground() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-playground')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

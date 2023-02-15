@@ -22,6 +22,7 @@ import router from 'next/router';
 export default function ClassroomsPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-classrooms')} - ${WEBSITE_TITLE}`;
   const dispatch = useDispatch();
   const classrooms = useAppSelector(selectClassroomsData);
   const classroomSessionsData = useAppSelector(selectClassroomSessionsData);
@@ -50,9 +51,7 @@ export default function ClassroomsPage() {
           <Toaster position="top-center" reverseOrder={false} />
         </div>
         <Head>
-          <title>
-            {t('Meta.title-classrooms')} - {WEBSITE_TITLE}
-          </title>
+          <title>{pageTitle}</title>
         </Head>
         <div className="h-full w-full">
           <NavBar
