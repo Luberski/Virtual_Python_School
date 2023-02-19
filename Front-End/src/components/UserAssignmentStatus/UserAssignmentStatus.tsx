@@ -9,7 +9,7 @@ export default function ClassroomDescriptor({
   status,
 }: ClassroomDescriptorProps) {
   return (
-    <div className="flex flex-row justify-between align-middle">
+    <div className="flex flex-row items-center justify-between gap-1">
       {status === AssignmentStatus.COMPLETED ? (
         <div className="h-2 w-2 rounded-full bg-green-500"></div>
       ) : (
