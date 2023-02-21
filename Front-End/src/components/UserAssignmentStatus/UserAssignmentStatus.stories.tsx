@@ -1,6 +1,6 @@
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import { AssignmentStatus } from '@app/constants';
 import UserAssignmentStatus from '.';
+import { AssignmentStatus } from '@app/constants';
 
 export default {
   title: 'UserAssignmentStatus',

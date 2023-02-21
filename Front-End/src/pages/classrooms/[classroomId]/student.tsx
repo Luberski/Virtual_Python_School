@@ -508,12 +508,6 @@ export default function ClassroomsStudentPage(
               onClick={openLeaveClassroomDialog}>
               {translations('Classrooms.leave-classroom')}
             </Button>
-            <Button
-              variant={ButtonVariant.DANGER}
-              type="button"
-              onClick={showData}>
-              console all data
-            </Button>
             <StyledDialog
               title={translations('Classrooms.leave-popup-title')}
               isOpen={isLeaveClassroomDialogOpen}

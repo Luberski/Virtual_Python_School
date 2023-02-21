@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import Button, { ButtonVariant } from '@app/components/Button';
 import UserAssignmentStatus from '@app/components/UserAssignmentStatus';
 import type ClassroomUserAssignment from '@app/models/classroom/ClassroomUserAssignment';
