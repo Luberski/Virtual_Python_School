@@ -83,7 +83,7 @@ export default function ClassroomsStudentPage(
     useWebSocket(socketUrl);
 
   const codeRef = useRef(null);
-  const myCodeRef = useRef('print("Hello World")');
+  const myCodeRef = useRef('print("Hello World")\n\n\n\n\n\n\n\n\n\n');
   const connectNotification = useRef(null);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

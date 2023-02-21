@@ -11,11 +11,12 @@ from app.constants import WhiteboardType
 
 
 class Assignment:
-    def __init__(self,  assignment_name: str, assignment_description: str, assignment_code: str = 'print("Hello World")'):
+    def __init__(self,  assignment_name: str, assignment_description: str, assignment_code: str = '\n\n\n\n\n\n\n\n\n\nprint("Hello World")'):
         self._id = str(uuid.uuid4())
         self._title = assignment_name
         self._desc = assignment_description
-        self._initial_code = assignment_code
+        self._initial_code = "# " + assignment_description + \
+            "\n\n" + assignment_code + "\n\n\n\n\n\n\n\n\n\n"
 
     @property
     def id(self):

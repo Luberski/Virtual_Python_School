@@ -107,8 +107,8 @@ export default function ClassroomsTeacherPage({
   const { sendJsonMessage, lastJsonMessage, readyState } =
     useWebSocket(socketUrl);
 
-  const codeRef = useRef('print("Hello World")');
-  const myCodeRef = useRef('print("Hello World")');
+  const codeRef = useRef('print("Hello World")\n\n\n\n\n\n\n\n\n\n');
+  const myCodeRef = useRef('print("Hello World")\n\n\n\n\n\n\n\n\n\n');
   const connectNotification = useRef(null);
 
   const [users, setUsers] = useState([]);
@@ -729,7 +729,6 @@ export default function ClassroomsTeacherPage({
                               name="assignmentCode"
                               type="text"
                               register={registerAssignment}
-                              required
                               className="resize-none"
                               rows={4}
                               placeholder={translations(

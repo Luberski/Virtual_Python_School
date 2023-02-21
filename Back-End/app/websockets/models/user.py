@@ -17,7 +17,7 @@ class User:
         self._websocket = websocket
         self._role: ClassroomUserRole = role
         self._whiteboard: Whiteboard = Whiteboard(
-            'print("Hello World")', WhiteboardType.PRIVATE)
+            'print("Hello World")\n\n\n\n\n\n\n\n\n\n', WhiteboardType.PRIVATE)
         self._user_assignments: list[UserAssignment] = []
         self._status: UserStatus = UserStatus.ONLINE
 
