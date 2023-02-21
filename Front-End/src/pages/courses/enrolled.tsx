@@ -16,6 +16,7 @@ export default function EnrolledCoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useDispatch();
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-enrolled-courses')} - ${WEBSITE_TITLE}`;
   const enrolledCourses = useAppSelector(selectEnrolledCoursesData);
 
   if (!user && !isLoggedIn) {
@@ -25,9 +26,7 @@ export default function EnrolledCoursesPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-enrolled-courses')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

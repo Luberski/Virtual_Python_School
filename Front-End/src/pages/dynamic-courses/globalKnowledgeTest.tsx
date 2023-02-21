@@ -14,7 +14,7 @@ import {
 export default function GlobalKnowledgeTestPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const t = useTranslations();
-
+  const pageTitle = `${t('Meta.title-dynamic-course')} - ${WEBSITE_TITLE}`;
   const dispatch = useDispatch();
   const globalKnowledgeTest = useAppSelector(selectGlobalKnowledgeTestData);
 
@@ -25,9 +25,7 @@ export default function GlobalKnowledgeTestPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-dynamic-course')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

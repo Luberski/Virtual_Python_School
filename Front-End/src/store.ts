@@ -106,7 +106,7 @@ export const store = wrapMakeStore(() =>
   })
 );
 
-export const wrapper = createWrapper(store);
+export type AppStore = ReturnType<typeof store>;
 
 export type RootState = {
   auth: ReturnType<typeof authReducer>;
@@ -160,3 +160,5 @@ export type RootState = {
     typeof globalKnowledgeTestResultsStatsReducer
   >;
 };
+
+export const wrapper = createWrapper<AppStore>(store);

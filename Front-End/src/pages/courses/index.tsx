@@ -18,6 +18,7 @@ export default function CoursesPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useDispatch();
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-courses')} - ${WEBSITE_TITLE}`;
   const courses = useAppSelector(selectCoursesData);
 
   if (!user && !isLoggedIn) {
@@ -27,9 +28,7 @@ export default function CoursesPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-courses')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

@@ -16,14 +16,17 @@ import {
 } from '@app/features/courses/courseSlice';
 import Footer from '@app/components/Footer';
 import ManageCourseAndLessons from '@app/features/courses/manage/ManageCourseAndLessons';
-import { fetchCourseTagsByCourseId, selectCourseTagsData } from '@app/features/tags/courseTagsSlice';
+import {
+  fetchCourseTagsByCourseId,
+  selectCourseTagsData,
+} from '@app/features/tags/courseTagsSlice';
 
 export default function ManageCourseAndLessonsPage() {
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useDispatch();
 
   const t = useTranslations();
-
+  const pageTitle = `${t('Meta.title-manage')} - ${WEBSITE_TITLE}`;
   const lessons = useAppSelector(selectLessonsData);
   const tags = useAppSelector(selectCourseTagsData);
   // TODO: use one selector for course and lessons and state
@@ -36,9 +39,7 @@ export default function ManageCourseAndLessonsPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-manage')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

@@ -17,6 +17,7 @@ import DynamicCourseCard from '@app/components/DynamicCourseCard';
 
 export default function IndexPage() {
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-home')} - ${WEBSITE_TITLE}`;
   const dispatch = useDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
@@ -25,9 +26,7 @@ export default function IndexPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-home')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

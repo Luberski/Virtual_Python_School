@@ -32,6 +32,7 @@ export default function ManageSurveysPage() {
   const dispatch = useDispatch();
 
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-manage')} - ${WEBSITE_TITLE}`;
   const surveys = useAppSelector(selectSurveysData);
   const [isSurveyDeleteDialogOpen, setIsSurveyDeleteDialogOpen] =
     useState(false);
@@ -82,9 +83,7 @@ export default function ManageSurveysPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-manage')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar

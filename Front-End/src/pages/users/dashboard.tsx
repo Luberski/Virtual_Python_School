@@ -26,6 +26,7 @@ import Dashboard from '@app/features/dashboard/Dashboard';
 
 export default function UserDashboardPage() {
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-dashboard')} - ${WEBSITE_TITLE}`;
   const [user, isLoggedIn] = useAuthRedirect();
   const dispatch = useDispatch();
   const dashboardData = useAppSelector(selectDashboardData);
@@ -40,9 +41,7 @@ export default function UserDashboardPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-dashboard')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
       <div className="h-full w-full">
         <NavBar
