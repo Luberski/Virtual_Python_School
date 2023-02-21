@@ -125,7 +125,14 @@
     "no-assignments-created": "There are no assignments in this classroom",
     "no-users": "There are no users in this classroom",
     "no-assignments-user": "There are no assignments for you",
-    "send-to-review": "Send to review"
+    "send-to-review": "Send to review",
+    "grade-assignment-form-title": "Grade assignment",
+    "grade": "Grade",
+    "assignment-grade-label": "Grade",
+    "assignment-feedback-label": "Feedback",
+    "feedback-dialog-title": "Assignment details",
+    "close-dialog": "Close",
+    "awaiting-review": "Awaiting review from teacher"
   },
   "Playground": {
     "run": "Run",

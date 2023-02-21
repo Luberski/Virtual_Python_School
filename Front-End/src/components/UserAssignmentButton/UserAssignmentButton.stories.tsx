@@ -14,10 +14,10 @@ const userAssignmentObj: ClassroomUserAssignment = {
     id: '1234',
     title: 'Assignment 1',
     description: 'This is the first assignment',
-    initialCode: 'console.log("Hello World")',
+    initialCode: 'print("Hello World")',
   },
   whiteboard: {
-    code: 'console.log("Hello World")',
+    code: 'print("Hello World")',
     whiteboardType: WhiteboardType.ASSIGNMENT,
   },
   status: AssignmentStatus.NOT_STARTED,
@@ -26,5 +26,11 @@ const userAssignmentObj: ClassroomUserAssignment = {
 };
 
 export const Default: ComponentStory<typeof UserAssignmentButton> = (args) => (
-  <UserAssignmentButton userAssignment={userAssignmentObj} switchToAssignmentView={()=>{return 0}} {...args} />
+  <UserAssignmentButton
+    userAssignment={userAssignmentObj}
+    switchToAssignmentView={() => {
+      return 0;
+    }}
+    {...args}
+  />
 );

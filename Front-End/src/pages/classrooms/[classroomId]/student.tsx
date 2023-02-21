@@ -12,6 +12,7 @@ import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import {
   Actions,
+  AssignmentStatus,
   ViewMode,
   WEBSITE_TITLE,
   WhiteboardType,
@@ -50,6 +51,7 @@ import type ClassroomAssignment from '@app/models/classroom/ClassroomAssignment'
 import type JsonRequest from '@app/models/classroom/JsonDataModels/request/JsonRequest';
 import type ClassroomUserAssignment from '@app/models/classroom/ClassroomUserAssignment';
 import type GetDataReq from '@app/models/classroom/JsonDataModels/request/GetData';
+import ConfettiExplosion from 'react-confetti-explosion';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -94,12 +96,19 @@ export default function ClassroomsStudentPage(
   const [isLeaveClassroomDialogOpen, setIsLeaveClassroomDialogOpen] =
     useState(false);
   const [isAssignmentsMenuOpen, setIsAssignmentsMenuOpen] = useState(false);
+  const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = useState(false);
 
   const closeLeaveClassroomDialog = () => {
     setIsLeaveClassroomDialogOpen(false);
   };
   const openLeaveClassroomDialog = () => {
     setIsLeaveClassroomDialogOpen(true);
+  };
+  const closeFeedbackDialog = () => {
+    setIsFeedbackDialogOpen(false);
+  };
+  const openFeedbackDialog = () => {
+    setIsFeedbackDialogOpen(true);
   };
   const handleAssignmentsMenu = () => {
     setIsAssignmentsMenuOpen(!isAssignmentsMenuOpen);
@@ -302,6 +311,30 @@ export default function ClassroomsStudentPage(
           selectedAssignment === data.userAssignment?.assignment.title
         ) {
           myCodeRef.current = data.userAssignment.whiteboard.code;
+          if (
+            !assignments.some(
+              (assignment: ClassroomUserAssignment) =>
+                assignment.assignment.title ===
+                data.userAssignment.assignment.title
+            )
+          ) {
+            setAssignments((assignments) => [
+              ...assignments,
+              data.userAssignment,
+            ]);
+          } else {
+            setAssignments((assignments) =>
+              assignments.map((assignment: ClassroomUserAssignment) => {
+                if (
+                  assignment.assignment.title ===
+                  data.userAssignment.assignment.title
+                ) {
+                  return data.userAssignment;
+                }
+                return assignment;
+              })
+            );
+          }
         }
       } else if (responseMsg.action === Actions.ASSIGNMENT_CREATE) {
         const newAssignment = responseMsg.data as ClassroomAssignment;
@@ -316,12 +349,23 @@ export default function ClassroomsStudentPage(
           toast.dismiss();
           router.replace('/');
         }, 1000);
+      } else if (responseMsg.action === Actions.GRADE_ASSIGNMENT) {
+        const data = responseMsg.data as ClassroomUserAssignment;
+        setAssignments((userAssignments) =>
+          userAssignments.map((userAssignment: ClassroomUserAssignment) => {
+            if (userAssignment.assignment.title === data.assignment.title) {
+              return data;
+            }
+            return userAssignment;
+          })
+        );
       }
 
       setLastAction(responseMsg.action);
       setMessageHandled(true);
     }
   }, [
+    assignments,
     lastJsonMessage,
     messageHandled,
     mode,
@@ -349,6 +393,32 @@ export default function ClassroomsStudentPage(
       }, 1000),
     [dispatch, mode]
   );
+
+  const sendAssignment = (assignment: string) => () => {
+    const requestMsg: JsonRequest<string> = {
+      action: Actions.SUBMIT_ASSIGNMENT,
+      user_id: user.username,
+      data: assignment,
+    };
+    sendJsonMessage(requestMsg);
+
+    setAssignments((assignments) =>
+      assignments.map((assignment) => {
+        if (assignment.assignment.title === assignment) {
+          return { ...assignment, status: AssignmentStatus.SUBMITTED };
+        }
+        return assignment;
+      })
+    );
+  };
+
+  const returnAssignmentByName = (
+    assignmentName: string
+  ): ClassroomUserAssignment => {
+    return assignments.find(
+      (assignment) => assignment.assignment.title === assignmentName
+    );
+  };
 
   return (
     <>
@@ -398,43 +468,51 @@ export default function ClassroomsStudentPage(
               <h1 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.my-assignments')}
               </h1>
-              <Button
-                type="button"
-                variant={ButtonVariant.FLAT_SECONDARY}
-                onClick={handleAssignmentsMenu}>
-                <div className="flex flex-row items-center justify-center gap-2">
-                  {isAssignmentsMenuOpen ? (
-                    <ChevronDownIcon className="h-4 w-4" />
-                  ) : (
-                    <ChevronRightIcon className="h-4 w-4" />
-                  )}
-                  {translations('Classrooms.assignments')}
-                </div>
-              </Button>
-              {assignments?.length > 0 &&
-                isAssignmentsMenuOpen &&
-                assignments.map((assignment: ClassroomUserAssignment) => (
-                  <Button
-                    key={assignment.assignment.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedAssignment(assignment.assignment.title);
-                      setMode(ViewMode.Assignment);
-                    }}
-                    disabled={
-                      selectedAssignment === assignment.assignment.title &&
-                      mode === ViewMode.Assignment
-                    }
-                    variant={ButtonVariant.PRIMARY}>
-                    {assignment.assignment.title}
-                  </Button>
-                ))}
+              <div className="flex flex-col space-y-2 rounded-lg border-2 border-neutral-200 p-2 dark:border-neutral-600">
+                <Button
+                  type="button"
+                  variant={ButtonVariant.FLAT_SECONDARY}
+                  onClick={handleAssignmentsMenu}>
+                  <div className="flex flex-row items-center justify-center gap-2">
+                    {isAssignmentsMenuOpen ? (
+                      <ChevronDownIcon className="h-4 w-4" />
+                    ) : (
+                      <ChevronRightIcon className="h-4 w-4" />
+                    )}
+                    {translations('Classrooms.assignments')}
+                  </div>
+                </Button>
+                {assignments?.length > 0 &&
+                  isAssignmentsMenuOpen &&
+                  assignments.map((assignment: ClassroomUserAssignment) => (
+                    <Button
+                      key={assignment.assignment.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedAssignment(assignment.assignment.title);
+                        setMode(ViewMode.Assignment);
+                      }}
+                      disabled={
+                        selectedAssignment === assignment.assignment.title &&
+                        mode === ViewMode.Assignment
+                      }
+                      variant={ButtonVariant.PRIMARY}>
+                      {assignment.assignment.title}
+                    </Button>
+                  ))}
+              </div>
             </div>
             <Button
               variant={ButtonVariant.DANGER}
               type="button"
               onClick={openLeaveClassroomDialog}>
               {translations('Classrooms.leave-classroom')}
+            </Button>
+            <Button
+              variant={ButtonVariant.DANGER}
+              type="button"
+              onClick={showData}>
+              console all data
             </Button>
             <StyledDialog
               title={translations('Classrooms.leave-popup-title')}
@@ -468,9 +546,79 @@ export default function ClassroomsStudentPage(
               {mode === ViewMode.Assignment && (
                 <>
                   <h4>{selectedAssignment}</h4>
-                  <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
-                    {translations('Classrooms.send-to-review')}
-                  </Button>
+                  {returnAssignmentByName(selectedAssignment)?.status ===
+                    AssignmentStatus.SUBMITTED ||
+                  returnAssignmentByName(selectedAssignment)?.status ===
+                    AssignmentStatus.COMPLETED ? (
+                    <>
+                      <Button
+                        variant={ButtonVariant.PRIMARY}
+                        onClick={openFeedbackDialog}>
+                        {translations('Classrooms.assignment-feedback-label')}
+                      </Button>
+                      <StyledDialog
+                        title={translations('Classrooms.feedback-dialog-title')}
+                        isOpen={isFeedbackDialogOpen}
+                        onClose={closeFeedbackDialog}>
+                        <div className="py-6">
+                          <div className="flex flex-col gap-y-2">
+                            <h4>
+                              {translations(
+                                'Classrooms.assignment-grade-label'
+                              )}
+                            </h4>
+                            {returnAssignmentByName(selectedAssignment)
+                              ?.status === AssignmentStatus.COMPLETED ? (
+                              <>
+                                <ConfettiExplosion
+                                  duration={1500}
+                                  floorHeight={600}
+                                  floorWidth={600}
+                                  force={0.4}
+                                  particleCount={100}
+                                />
+                                <div className="text-bold flex h-16 w-full items-center justify-center rounded-lg border-2 bg-neutral-100 text-3xl text-neutral-900 dark:border-neutral-500 dark:bg-neutral-600 dark:text-white">
+                                  {
+                                    returnAssignmentByName(selectedAssignment)
+                                      .grade
+                                  }
+                                </div>
+                                <h4>
+                                  {translations(
+                                    'Classrooms.assignment-feedback-label'
+                                  )}
+                                </h4>
+                                <div className="flex h-16 w-full items-center justify-center rounded-lg border-2 bg-neutral-100 text-neutral-900 dark:border-neutral-500 dark:bg-neutral-600 dark:text-white ">
+                                  {
+                                    returnAssignmentByName(selectedAssignment)
+                                      .feedback
+                                  }
+                                </div>
+                              </>
+                            ) : (
+                              <p>
+                                {translations('Classrooms.awaiting-review')}
+                              </p>
+                            )}
+                          </div>
+                          <div className="mt-6 flex flex-row items-center justify-center">
+                            <Button
+                              onClick={closeFeedbackDialog}
+                              className="mr-2"
+                              variant={ButtonVariant.PRIMARY}>
+                              {translations('Classrooms.close-dialog')}
+                            </Button>
+                          </div>
+                        </div>
+                      </StyledDialog>
+                    </>
+                  ) : (
+                    <Button
+                      variant={ButtonVariant.FLAT_SECONDARY}
+                      onClick={sendAssignment(selectedAssignment)}>
+                      {translations('Classrooms.send-to-review')}
+                    </Button>
+                  )}
                 </>
               )}
             </div>

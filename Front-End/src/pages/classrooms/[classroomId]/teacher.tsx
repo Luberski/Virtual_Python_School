@@ -8,6 +8,7 @@ import {
   WEBSITE_TITLE,
   ViewMode,
   WhiteboardType,
+  AssignmentStatus,
 } from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
@@ -32,7 +33,6 @@ import {
   notifyUnauthorized,
   notifyClassroomDeleted,
   notifyUserJoined,
-  notifyUserLeft,
   notifyAssignmentCreated,
 } from '@app/notifications';
 import {
@@ -49,6 +49,9 @@ import type GetDataRes from '@app/models/classroom/JsonDataModels/response/GetDa
 import type GetDataReq from '@app/models/classroom/JsonDataModels/request/GetData';
 import type ClassroomAssignment from '@app/models/classroom/ClassroomAssignment';
 import type ClassroomUser from '@app/models/classroom/ClassroomUser';
+import type AssignmentSendReviewRes from '@app/models/classroom/JsonDataModels/response/AssignmentSendReview';
+import type ClassroomUserAssignment from '@app/models/classroom/ClassroomUserAssignment';
+import type AssignmentCreateRes from '@app/models/classroom/JsonDataModels/response/AssignmentCreate';
 import debounce from 'debounce';
 import {
   selectPlaygroundData,
@@ -56,6 +59,8 @@ import {
   sendCode,
 } from '@app/features/playground/playgroundSlice';
 import TextArea from '@app/components/TextArea';
+import UserAssignmentButton from '@app/components/UserAssignmentButton';
+import UserStatus from '@app/components/UserStatus';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -71,12 +76,23 @@ type ClassroomTeacherPageProps = {
 export default function ClassroomsTeacherPage({
   classroomId,
 }: ClassroomTeacherPageProps) {
-  const { register, handleSubmit, setValue } =
-    useForm<{
-      assignmentName: string;
-      assignmentDescription: string;
-      assignmentCode: string;
-    }>();
+  const {
+    register: registerAssignment,
+    handleSubmit: handleAssignmentSubmit,
+    setValue: setAssignmentValue,
+  } = useForm<{
+    assignmentName: string;
+    assignmentDescription: string;
+    assignmentCode: string;
+  }>();
+  const {
+    register: registerGrade,
+    handleSubmit: handleGradeSubmit,
+    setValue: setGradeValue,
+  } = useForm<{
+    grade: number;
+    feedback: string;
+  }>();
   const [user, isLoggedIn] = useAuthRedirect();
   const translations = useTranslations();
   const dispatch = useDispatch();
@@ -113,6 +129,16 @@ export default function ClassroomsTeacherPage({
     useState(false);
   const [isCreateAssignmentDialogOpen, setIsCreateAssignmentDialogOpen] =
     useState(false);
+  const [isGradeAssignmentDialogOpen, setIsGradeAssignmentDialogOpen] =
+    useState(false);
+
+  const closeGradeAssignmentDialog = () => {
+    setIsGradeAssignmentDialogOpen(false);
+  };
+
+  const openGradeAssignmentDialog = () => {
+    setIsGradeAssignmentDialogOpen(true);
+  };
 
   const closeDeleteClassroomDialog = () => {
     setIsDeleteClassroomDialogOpen(false);
@@ -287,9 +313,9 @@ export default function ClassroomsTeacherPage({
     assignmentCode: string;
   }) => {
     const { assignmentName, assignmentDescription, assignmentCode } = data;
-    setValue('assignmentName', '');
-    setValue('assignmentDescription', '');
-    setValue('assignmentCode', '');
+    setAssignmentValue('assignmentName', '');
+    setAssignmentValue('assignmentDescription', '');
+    setAssignmentValue('assignmentCode', '');
     const requestMsg: JsonRequest<AssignmentCreateReq> = {
       action: Actions.ASSIGNMENT_CREATE,
       user_id: user.username,
@@ -298,6 +324,55 @@ export default function ClassroomsTeacherPage({
         assignment_description: assignmentDescription,
         assignment_code: assignmentCode,
       },
+    };
+
+    sendJsonMessage(requestMsg);
+  };
+
+  const onGradeAssignmentSubmit = (data: {
+    grade: number;
+    feedback: string;
+  }) => {
+    const { grade, feedback } = data;
+    setGradeValue('grade', null);
+    setGradeValue('feedback', '');
+
+    // Update userAssignment from the selected user in users
+    const updatedUsers: ClassroomUser[] = users;
+    const selectedUserIndex = updatedUsers.findIndex(
+      (user: ClassroomUser) => user.userId === selectedUser
+    );
+    const selectedUserAssignmentIndex = updatedUsers[
+      selectedUserIndex
+    ].userAssignments.findIndex(
+      (userAssignment: ClassroomUserAssignment) =>
+        userAssignment.assignment.title === selectedAssignment
+    );
+    updatedUsers[selectedUserIndex].userAssignments[
+      selectedUserAssignmentIndex
+    ].grade = grade;
+    updatedUsers[selectedUserIndex].userAssignments[
+      selectedUserAssignmentIndex
+    ].feedback = feedback;
+    updatedUsers[selectedUserIndex].userAssignments[
+      selectedUserAssignmentIndex
+    ].status = AssignmentStatus.COMPLETED;
+    setUsers(updatedUsers);
+    //
+
+    // get userAssignment from the selected user in users
+    const selectedUserAssignment: ClassroomUserAssignment = updatedUsers[
+      selectedUserIndex
+    ].userAssignments.find(
+      (userAssignment: ClassroomUserAssignment) =>
+        userAssignment.assignment.title === selectedAssignment
+    );
+    //
+
+    const requestMsg: JsonRequest<ClassroomUserAssignment> = {
+      action: Actions.GRADE_ASSIGNMENT,
+      user_id: user.username,
+      data: selectedUserAssignment,
     };
 
     sendJsonMessage(requestMsg);
@@ -337,15 +412,22 @@ export default function ClassroomsTeacherPage({
           notifyUserJoined(
             newUser.userId + ' ' + translations('Classrooms.student-joined')
           );
+        } else {
+          const updatedUsers: ClassroomUser[] = users;
+          const existingUserIndex = updatedUsers.findIndex(
+            (user: ClassroomUser) => user.userId === newUser.userId
+          );
+          updatedUsers[existingUserIndex].online = true;
+          setUsers(updatedUsers);
         }
       } else if (responseMsg.action === Actions.LEAVE) {
         const removedUser = responseMsg.data as ClassroomUser;
-        setUsers((students) =>
-          students.filter((user) => user !== removedUser.userId)
+        const updatedUsers: ClassroomUser[] = users;
+        const removedUserIndex = updatedUsers.findIndex(
+          (user: ClassroomUser) => user.userId === removedUser.userId
         );
-        notifyUserLeft(
-          removedUser.userId + ' ' + translations('Classrooms.student-left')
-        );
+        updatedUsers[removedUserIndex].online = false;
+        setUsers(updatedUsers);
       } else if (responseMsg.action === Actions.CODE_CHANGE) {
         const data = responseMsg.data as CodeChangeRes;
 
@@ -386,24 +468,52 @@ export default function ClassroomsTeacherPage({
           codeRef.current = data.userAssignment.whiteboard.code;
         }
       } else if (responseMsg.action === Actions.ASSIGNMENT_CREATE) {
-        const newAssignment = responseMsg.data as ClassroomAssignment;
-        setAssignments((assignments) => [...assignments, newAssignment]);
+        const data = responseMsg.data as AssignmentCreateRes;
+        setAssignments((assignments) => [...assignments, data.assignment]);
 
         setIsAssignmentUsersDropdownOpen((isAssignmentUsersDropdownOpen) => [
           ...isAssignmentUsersDropdownOpen,
           {
-            id: newAssignment.id,
+            id: data.assignment.id,
             isOpen: false,
           },
         ]);
+
+        setUsers(data.students);
 
         notifyAssignmentCreated(translations('Classrooms.assignment-created'));
         setTimeout(() => {
           toast.dismiss();
         }, 1000);
         closeCreateAssignmentDialog();
+      } else if (responseMsg.action === Actions.SUBMIT_ASSIGNMENT) {
+        const data = responseMsg.data as AssignmentSendReviewRes;
+        // Access users userAssignment array and update the assignment with new status
+        const updatedUsers = users.map((user) => {
+          if (user.userId === data.source.userId) {
+            const updatedUserAssignments = user.userAssignments.map(
+              (userAssignment: ClassroomUserAssignment) => {
+                if (
+                  userAssignment.assignment.id ===
+                  data.userAssignment.assignment.id
+                ) {
+                  return {
+                    ...userAssignment,
+                    status: data.userAssignment.status,
+                  };
+                }
+                return userAssignment;
+              }
+            );
+            return {
+              ...user,
+              userAssignments: updatedUserAssignments,
+            };
+          }
+          return user;
+        });
+        setUsers(updatedUsers);
       }
-
       setLastAction(responseMsg.action);
       setMessageHandled(true);
     }
@@ -438,6 +548,29 @@ export default function ClassroomsTeacherPage({
     [dispatch, mode]
   );
 
+  const returnUserAssignment = (
+    user: ClassroomUser,
+    assignment: ClassroomAssignment
+  ) => {
+    return user.userAssignments.find(
+      (userAssignment) => userAssignment.assignment.id === assignment.id
+    );
+  };
+
+  const returnUserAssignmentByName = (
+    user: string,
+    assignment: string
+  ): ClassroomUserAssignment => {
+    const userObj = users.find(
+      (userObj: ClassroomUser) => userObj.userId === user
+    );
+    const userAssignmentObj = userObj.userAssignments.find(
+      (userAssignmentObj: ClassroomUserAssignment) =>
+        userAssignmentObj.assignment.title === assignment
+    );
+    return userAssignmentObj;
+  };
+
   return (
     <>
       <div>
@@ -460,10 +593,10 @@ export default function ClassroomsTeacherPage({
         />
         <div className="flex h-full flex-1 flex-row">
           <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
-            <div className="flex flex-col justify-start gap-2 align-middle">
-              <h1 className="mb-4 text-center text-2xl font-bold">
+            <div className="flex flex-col justify-start space-y-2 align-middle">
+              <h2 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.whiteboards')}
-              </h1>
+              </h2>
               <Button
                 type="button"
                 onClick={() => {
@@ -475,8 +608,9 @@ export default function ClassroomsTeacherPage({
               </Button>
               {users?.length > 0 &&
                 users.map((user: ClassroomUser) => (
-                  <Button
+                  <UserStatus
                     key={user.userId}
+                    user={user}
                     onClick={() => {
                       setSelectedUser(user.userId);
                       setMode(ViewMode.ViewUserWhiteboard);
@@ -485,139 +619,142 @@ export default function ClassroomsTeacherPage({
                       user.userId === selectedUser &&
                       mode === ViewMode.ViewUserWhiteboard
                     }
-                    type="button"
-                    variant={ButtonVariant.PRIMARY}>
-                    {user.userId}
-                  </Button>
+                  />
                 ))}
-              <Button
-                type="button"
-                variant={ButtonVariant.FLAT_SECONDARY}
-                onClick={handleAssignmentsMenu}>
-                <div className="flex flex-row items-center justify-center gap-2">
-                  {isAssignmentsMenuOpen ? (
-                    <ChevronDownIcon className="h-4 w-4" />
-                  ) : (
-                    <ChevronRightIcon className="h-4 w-4" />
-                  )}
-                  {translations('Classrooms.assignments')}
-                </div>
-              </Button>
-              {assignments?.length > 0 &&
-                isAssignmentsMenuOpen &&
-                assignments.map((assignment: ClassroomAssignment) => (
-                  <div className="flex flex-col" key={assignment.id}>
+              <div className="flex flex-col space-y-2 rounded-lg border-2 border-neutral-200 p-2 dark:border-neutral-600">
+                <Button
+                  type="button"
+                  variant={ButtonVariant.FLAT_SECONDARY}
+                  onClick={handleAssignmentsMenu}>
+                  <div className="flex flex-row items-center justify-center">
+                    {isAssignmentsMenuOpen ? (
+                      <ChevronDownIcon className="mr-2 h-4 w-4" />
+                    ) : (
+                      <ChevronRightIcon className="mr-2 h-4 w-4" />
+                    )}
+                    {translations('Classrooms.assignments')}
+                  </div>
+                </Button>
+                {assignments?.length > 0 &&
+                  isAssignmentsMenuOpen &&
+                  assignments.map((assignment: ClassroomAssignment) => (
+                    <div
+                      className="flex flex-col space-y-2 rounded-lg border-2 border-neutral-200 p-1 dark:border-neutral-600"
+                      key={assignment.id}>
+                      <Button
+                        type="button"
+                        onClick={handleAssignmentUsersDropdown(assignment.id)}
+                        variant={ButtonVariant.FLAT_SECONDARY}>
+                        <div className="flex flex-row items-center justify-center space-y-2">
+                          {returnAssignmentUsersDropdownOpen(assignment.id) ? (
+                            <ChevronDownIcon className="mr-2 h-4 w-4" />
+                          ) : (
+                            <ChevronRightIcon className="mr-2 h-4 w-4" />
+                          )}
+                          {assignment.title}
+                        </div>
+                      </Button>
+
+                      {users?.length > 0 &&
+                        returnAssignmentUsersDropdownOpen(assignment.id) &&
+                        users.map((user: ClassroomUser) => (
+                          <UserAssignmentButton
+                            key={user.userId}
+                            disabled={
+                              user.userId === selectedUser &&
+                              mode === ViewMode.Assignment &&
+                              assignment.title === selectedAssignment
+                            }
+                            userAssignment={returnUserAssignment(
+                              user,
+                              assignment
+                            )}
+                            switchToAssignmentView={() => {
+                              setSelectedAssignment(assignment.title);
+                              setSelectedUser(user.userId);
+                              setMode(ViewMode.Assignment);
+                            }}></UserAssignmentButton>
+                        ))}
+                      {users?.length === 0 &&
+                        returnAssignmentUsersDropdownOpen(assignment.id) &&
+                        translations('Classrooms.no-users')}
+                    </div>
+                  ))}
+                {assignments?.length === 0 &&
+                  isAssignmentsMenuOpen &&
+                  translations('Classrooms.no-assignments-created')}
+                {isAssignmentsMenuOpen && (
+                  <div className="flex flex-row items-center justify-center">
                     <Button
                       type="button"
-                      onClick={handleAssignmentUsersDropdown(assignment.id)}
-                      variant={ButtonVariant.PRIMARY}>
-                      <div className="flex flex-row items-center justify-center gap-2">
-                        {returnAssignmentUsersDropdownOpen(assignment.id) ? (
-                          <ChevronDownIcon className="h-4 w-4" />
-                        ) : (
-                          <ChevronRightIcon className="h-4 w-4" />
-                        )}
-                        {assignment.title}
-                      </div>
+                      variant={ButtonVariant.OUTLINE}
+                      onClick={openCreateAssignmentDialog}
+                      className="m-0 ml-2 flex h-6 w-6 flex-col items-center justify-center p-0">
+                      <PlusIcon className="h-4 w-4" />
                     </Button>
-
-                    {users?.length > 0 &&
-                      returnAssignmentUsersDropdownOpen(assignment.id) &&
-                      users.map((user: ClassroomUser) => (
-                        <Button
-                          key={user.userId}
-                          onClick={() => {
-                            setSelectedAssignment(assignment.title);
-                            setSelectedUser(user.userId);
-                            setMode(ViewMode.Assignment);
-                          }}
-                          disabled={
-                            user.userId === selectedUser &&
-                            mode === ViewMode.Assignment &&
-                            assignment.title === selectedAssignment
-                          }
-                          type="button"
-                          variant={ButtonVariant.FLAT_SECONDARY}>
-                          {user.userId}
-                        </Button>
-                      ))}
-
-                    {users?.length === 0 &&
-                      returnAssignmentUsersDropdownOpen(assignment.id) &&
-                      translations('Classrooms.no-users')}
+                    <StyledDialog
+                      title={translations('Classrooms.assignment-popup-title')}
+                      isOpen={isCreateAssignmentDialogOpen}
+                      onClose={closeCreateAssignmentDialog}>
+                      <div className="py-6">
+                        <form
+                          method="dialog"
+                          onSubmit={handleAssignmentSubmit(
+                            onCreateAssignmentSubmit
+                          )}>
+                          <div className="flex flex-col gap-y-2">
+                            <Input
+                              label="assignmentName"
+                              name="assignmentName"
+                              type="text"
+                              register={registerAssignment}
+                              required
+                              maxLength={20}
+                              placeholder={translations(
+                                'Classrooms.assignment-name'
+                              )}></Input>
+                            <Input
+                              label="assignmentDescription"
+                              name="assignmentDescription"
+                              type="text"
+                              register={registerAssignment}
+                              required
+                              maxLength={200}
+                              placeholder={translations(
+                                'Classrooms.assignment-description'
+                              )}></Input>
+                            <TextArea
+                              label="assignmentCode"
+                              name="assignmentCode"
+                              type="text"
+                              register={registerAssignment}
+                              required
+                              className="resize-none"
+                              rows={4}
+                              placeholder={translations(
+                                'Classrooms.assignment-code'
+                              )}
+                            />
+                          </div>
+                          <div className="mt-6 flex flex-row items-center justify-end">
+                            <Button
+                              onClick={closeCreateAssignmentDialog}
+                              className="mr-2"
+                              variant={ButtonVariant.DANGER}>
+                              {translations('Classrooms.cancel')}
+                            </Button>
+                            <Button
+                              type="submit"
+                              variant={ButtonVariant.PRIMARY}>
+                              {translations('Classrooms.submit')}
+                            </Button>
+                          </div>
+                        </form>
+                      </div>
+                    </StyledDialog>
                   </div>
-                ))}
-
-              {assignments?.length === 0 &&
-                isAssignmentsMenuOpen &&
-                translations('Classrooms.no-assignments-created')}
-              {isAssignmentsMenuOpen && (
-                <div className="flex flex-col items-center">
-                  <Button
-                    type="button"
-                    variant={ButtonVariant.PRIMARY}
-                    onClick={openCreateAssignmentDialog}
-                    className="m-0 flex h-8 w-8 flex-col items-center justify-center p-0">
-                    <PlusIcon className="h-6 w-6" />
-                  </Button>
-                  <StyledDialog
-                    title={translations('Classrooms.assignment-popup-title')}
-                    isOpen={isCreateAssignmentDialogOpen}
-                    onClose={closeCreateAssignmentDialog}>
-                    <div className="py-6">
-                      <form
-                        method="dialog"
-                        onSubmit={handleSubmit(onCreateAssignmentSubmit)}>
-                        <div className="flex flex-col gap-y-2">
-                          <Input
-                            label="assignmentName"
-                            name="assignmentName"
-                            type="text"
-                            register={register}
-                            required
-                            maxLength={20}
-                            placeholder={translations(
-                              'Classrooms.assignment-name'
-                            )}></Input>
-                          <Input
-                            label="assignmentDescription"
-                            name="assignmentDescription"
-                            type="text"
-                            register={register}
-                            required
-                            maxLength={200}
-                            placeholder={translations(
-                              'Classrooms.assignment-description'
-                            )}></Input>
-                          <TextArea
-                            label="assignmentCode"
-                            name="assignmentCode"
-                            type="text"
-                            register={register}
-                            required
-                            className="resize-none"
-                            rows={4}
-                            placeholder={translations(
-                              'Classrooms.assignment-code'
-                            )}
-                          />
-                        </div>
-                        <div className="mt-6 flex flex-row items-center justify-end">
-                          <Button
-                            onClick={closeCreateAssignmentDialog}
-                            className="mr-2"
-                            variant={ButtonVariant.DANGER}>
-                            {translations('Classrooms.cancel')}
-                          </Button>
-                          <Button type="submit" variant={ButtonVariant.PRIMARY}>
-                            {translations('Classrooms.submit')}
-                          </Button>
-                        </div>
-                      </form>
-                    </div>
-                  </StyledDialog>
-                </div>
-              )}
+                )}
+              </div>
             </div>
             <Button
               variant={ButtonVariant.DANGER}
@@ -625,7 +762,6 @@ export default function ClassroomsTeacherPage({
               onClick={openDeleteClassroomDialog}>
               {translations('Classrooms.delete-classroom')}
             </Button>
-
             <StyledDialog
               title={translations('Classrooms.delete-popup-title')}
               isOpen={isDeleteClassroomDialogOpen}
@@ -686,6 +822,80 @@ export default function ClassroomsTeacherPage({
                     </Button>
                   )}
                 </div>
+              )}
+              {mode === ViewMode.Assignment && (
+                <>
+                  <h4>{selectedAssignment}</h4>
+                  {returnUserAssignmentByName(selectedUser, selectedAssignment)
+                    .status === AssignmentStatus.SUBMITTED ? (
+                    <>
+                      <Button
+                        variant={ButtonVariant.FLAT_SECONDARY}
+                        onClick={openGradeAssignmentDialog}>
+                        {translations('Classrooms.grade')}
+                      </Button>
+                      <StyledDialog
+                        title={translations(
+                          'Classrooms.grade-assignment-form-title'
+                        )}
+                        isOpen={isGradeAssignmentDialogOpen}
+                        onClose={closeGradeAssignmentDialog}>
+                        <div className="py-6">
+                          <form
+                            method="dialog"
+                            onSubmit={handleGradeSubmit(
+                              onGradeAssignmentSubmit
+                            )}>
+                            <div className="flex flex-col gap-y-2">
+                              <Input
+                                label="grade"
+                                name="grade"
+                                type="number"
+                                min={1}
+                                max={5}
+                                step={1}
+                                register={registerGrade}
+                                required
+                                maxLength={200}
+                                placeholder={translations(
+                                  'Classrooms.assignment-grade-label'
+                                )}></Input>
+                              <TextArea
+                                label="feedback"
+                                name="feedback"
+                                type="text"
+                                register={registerGrade}
+                                required
+                                className="resize-none"
+                                rows={4}
+                                placeholder={translations(
+                                  'Classrooms.assignment-feedback-label'
+                                )}
+                              />
+                            </div>
+                            <div className="mt-6 flex flex-row items-center justify-end">
+                              <Button
+                                onClick={closeGradeAssignmentDialog}
+                                className="mr-2"
+                                variant={ButtonVariant.DANGER}>
+                                {translations('Classrooms.cancel')}
+                              </Button>
+                              <Button
+                                type="submit"
+                                variant={ButtonVariant.PRIMARY}>
+                                {translations('Classrooms.submit')}
+                              </Button>
+                            </div>
+                          </form>
+                        </div>
+                      </StyledDialog>
+                    </>
+                  ) : (
+                    <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
+                      {translations('Classrooms.grade')}
+                    </Button>
+                  )}
+                </>
               )}
             </div>
             <div className="flex h-full flex-col justify-between overflow-hidden">

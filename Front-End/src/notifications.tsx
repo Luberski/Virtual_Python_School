@@ -111,6 +111,28 @@ export const notifyUnauthorized = (i18msg: string) =>
     }
   );
 
+export const notifyAssignmentAwaitingReview = (i18msg: string) =>
+  toast.custom(
+    (to) => (
+      <button
+        type="button"
+        className="brand-shadow rounded-lg border-sky-500 bg-sky-200 py-3 px-4 text-sky-900 shadow-sky-900/25"
+        onClick={() => toast.dismiss(to.id)}>
+        <div className="flex justify-center space-x-1">
+          <InformationCircleIcon className="h-6 w-6" />
+          <div>
+            <p className="font-bold">{i18msg}</p>
+          </div>
+        </div>
+      </button>
+    ),
+    {
+      id: 'classroom-assignment-awaiting-review-notification',
+      position: 'top-center',
+      duration: 1000,
+    }
+  );
+
 export const notifyClassroomLeave = (i18msg: string) =>
   toast.custom(
     (to) => (

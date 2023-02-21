@@ -13,6 +13,7 @@ from app.constants import UserStatus
 from app.constants import WhiteboardType
 from app.constants import ClassroomUserRole
 from app.constants import Actions
+from app.constants import AssignmentStatus
 
 # MANAGERS
 from app.websockets.managers.user_manager import user_manager
@@ -113,6 +114,12 @@ class PayloadHandler:
 
         elif self.payload_action == Actions.CLASSROOM_DELETED.value:
             await self.classroom_deleted()
+
+        elif self.payload_action == Actions.SUBMIT_ASSIGNMENT.value:
+            await self.submit_assignment()
+
+        elif self.payload_action == Actions.GRADE_ASSIGNMENT.value:
+            await self.grade_assignment()
 
     async def join(self):
         # check if user is already in classroom and is reconnecting
@@ -359,7 +366,10 @@ class PayloadHandler:
 
         response_teacher = json.dumps({
             "action": Actions.ASSIGNMENT_CREATE.value,
-            "data": added_assignment.to_json()
+            "data": {
+                "assignment": added_assignment.to_json(),
+                "students": [student.to_json() for student in self.selected_classroom.get_all_students()]
+            }
         })
 
         await conn_manager.send_personal_payload(payload=response_teacher, websocket=self.selected_classroom.get_teacher().websocket)
@@ -379,6 +389,43 @@ class PayloadHandler:
             {"action": Actions.CLASSROOM_DELETED.value})
         await conn_manager.broadcast_class_students(classroom_id=self.source_classroom_id, payload=response_payload)
         class_manager.remove_classroom(self.source_classroom_id)
+
+    async def submit_assignment(self):
+        user_assignment = self.payload_data
+        source_user = self.selected_classroom.get_user(
+            websocket=self.source_websocket)
+        assignment = source_user.get_user_assignment(
+            assignment_name=user_assignment)
+
+        assignment.status = AssignmentStatus.SUBMITTED
+
+        response_payload = json.dumps({
+            "action": Actions.SUBMIT_ASSIGNMENT.value,
+            "data": {
+                "source": source_user.to_json(),
+                "userAssignment": assignment.to_json()
+            }
+        })
+
+        await conn_manager.send_personal_payload(payload=response_payload, websocket=self.selected_classroom.get_teacher().websocket)
+
+    async def grade_assignment(self):
+        user_assignment = self.payload_data
+        target_user = self.selected_classroom.get_user_by_id(
+            user_id=user_assignment["userId"])
+        updated_user_assignment = target_user.get_user_assignment(
+            assignment_name=user_assignment["assignment"]["title"])
+
+        updated_user_assignment.grade = user_assignment["grade"]
+        updated_user_assignment.status = AssignmentStatus.COMPLETED
+        updated_user_assignment.feedback = user_assignment["feedback"]
+
+        response_payload = json.dumps({
+            "action": Actions.GRADE_ASSIGNMENT.value,
+            "data":  updated_user_assignment.to_json()
+        })
+
+        await conn_manager.send_personal_payload(payload=response_payload, websocket=target_user.websocket)
 
 
 payload_handler = PayloadHandler()

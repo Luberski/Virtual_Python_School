@@ -125,7 +125,14 @@
     "no-assignments-created": "Nie utworzyłeś żadnych zadań",
     "no-users": "Brak użytkowników w klasie",
     "no-assignments-user": "Nie zostało ci przypisane żadne zadanie",
-    "send-to-review": "Wyślij do oceny"
+    "send-to-review": "Wyślij do oceny",
+    "grade-assignment-form-title": "Oceń zadanie",
+    "grade": "Oceń",
+    "assignment-grade-label": "Ocena",
+    "assignment-feedback-label": "Informacja zwrotna",
+    "feedback-dialog-title": "Ocena zadania",
+    "close-dialog": "Zamknij",
+    "awaiting-review": "Praca nie została jeszcze sprawdzona przez nauczyciela"
   },
   "Playground": {
     "run": "Uruchom",

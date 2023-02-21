@@ -92,7 +92,7 @@ class User:
         return {
             'userId': self.user_id,
             'role': self.role.value,
-            'status': self.status.value,
+            'online': self.status.value,
             'whiteboard': self.whiteboard.to_json(),
             'userAssignments': [user_assignment.to_json() for user_assignment in self.user_assignments]
         }

@@ -19,3 +19,4 @@ pydantic-collections
 uvicorn[standard]
 python-multipart
 websocket-client
+text-diff

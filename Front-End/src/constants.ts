@@ -24,6 +24,8 @@ export enum Actions {
   TEACHER_JOIN = 8,
   CLASSROOM_DELETED = 9,
   ASSIGNMENT_CREATE = 10,
+  SUBMIT_ASSIGNMENT = 11,
+  GRADE_ASSIGNMENT = 12,
 }
 
 export enum ReadyState {
@@ -48,7 +50,8 @@ export enum ClassroomUserRole {
 export enum AssignmentStatus {
   NOT_STARTED = 0,
   IN_PROGRESS = 1,
-  COMPLETED = 2,
+  SUBMITTED = 2,
+  COMPLETED = 3,
 }
 
 export enum UserStatus {
