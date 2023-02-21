@@ -132,7 +132,9 @@
     "assignment-feedback-label": "Feedback",
     "feedback-dialog-title": "Assignment details",
     "close-dialog": "Close",
-    "awaiting-review": "Awaiting review from teacher"
+    "awaiting-review": "Awaiting review from teacher",
+    "assignment-graded": "Assignment has been graded",
+    "assignment-submitted": "Assignment has been submitted"
   },
   "Playground": {
     "run": "Run",

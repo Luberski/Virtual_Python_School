@@ -34,6 +34,7 @@ import {
   notifyClassroomDeleted,
   notifyUserJoined,
   notifyAssignmentCreated,
+  notifyAssignmentGraded,
 } from '@app/notifications';
 import {
   PlusIcon,
@@ -330,6 +331,7 @@ export default function ClassroomsTeacherPage({
     };
 
     sendJsonMessage(requestMsg);
+    closeCreateAssignmentDialog();
   };
 
   const onGradeAssignmentSubmit = (data: {
@@ -379,6 +381,12 @@ export default function ClassroomsTeacherPage({
     };
 
     sendJsonMessage(requestMsg);
+    closeGradeAssignmentDialog();
+
+    notifyAssignmentGraded(translations('Classrooms.assignment-graded'));
+    setTimeout(() => {
+      toast.dismiss();
+    }, 1000);
   };
 
   useEffect(() => {
@@ -488,7 +496,6 @@ export default function ClassroomsTeacherPage({
         setTimeout(() => {
           toast.dismiss();
         }, 1000);
-        closeCreateAssignmentDialog();
       } else if (responseMsg.action === Actions.SUBMIT_ASSIGNMENT) {
         const data = responseMsg.data as AssignmentSendReviewRes;
         // Access users userAssignment array and update the assignment with new status
@@ -935,7 +942,7 @@ export default function ClassroomsTeacherPage({
                 )}
               </div>
               <div
-                className="min-h-60 h-auto max-h-60 border-t-2 border-neutral-50 pt-1 pl-1 font-mono text-xs dark:border-neutral-900"
+                className="h-64 overflow-y-auto border-t-2 border-neutral-50 pt-1 pl-1 font-mono text-xs dark:border-neutral-900"
                 id="console">
                 <p>{'Console >'}</p>
                 <pre className="pb-1">

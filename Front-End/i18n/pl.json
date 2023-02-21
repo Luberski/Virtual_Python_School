@@ -132,7 +132,9 @@
     "assignment-feedback-label": "Informacja zwrotna",
     "feedback-dialog-title": "Ocena zadania",
     "close-dialog": "Zamknij",
-    "awaiting-review": "Praca nie została jeszcze sprawdzona przez nauczyciela"
+    "awaiting-review": "Praca nie została jeszcze sprawdzona przez nauczyciela",
+    "assignment-graded": "Praca została oceniona",
+    "assignment-submitted": "Praca została wysłana do sprawdzenia"
   },
   "Playground": {
     "run": "Uruchom",

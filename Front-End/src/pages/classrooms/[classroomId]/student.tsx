@@ -36,6 +36,8 @@ import {
   notifyClassroomLeave,
   notifyUserLeft,
   notifyClassroomDeleted,
+  notifyAssignmentGraded,
+  notifyAssignmentSubmitted,
 } from '@app/notifications';
 import {
   selectPlaygroundData,
@@ -362,6 +364,15 @@ export default function ClassroomsStudentPage(
             return userAssignment;
           })
         );
+
+        notifyAssignmentGraded(
+          translations('Classrooms.assignment-graded') +
+            ': ' +
+            data.assignment.title
+        );
+        setTimeout(() => {
+          toast.dismiss();
+        }, 1000);
       }
 
       setLastAction(responseMsg.action);
@@ -413,6 +424,13 @@ export default function ClassroomsStudentPage(
         return assignment;
       })
     );
+
+    notifyAssignmentSubmitted(translations('Classrooms.assignment-submitted'));
+    setTimeout(() => {
+      toast.dismiss();
+    }, 1000);
+
+    setMode(ViewMode.SharedWhiteboard);
   };
 
   const returnAssignmentByName = (
