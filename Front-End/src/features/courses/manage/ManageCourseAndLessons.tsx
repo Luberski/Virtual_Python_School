@@ -212,6 +212,19 @@ export default function ManageCourseAndLessons({
   );
 
   const closeLessonCreateDialog = () => {
+    setValue('answerCheckRule', {
+      id: nanoid(),
+      value: 'equal',
+      label: 'equal',
+      disabled: false,
+    } as SelectOption);
+    setSelectedAnswerCheckRule({
+      id: nanoid(),
+      value: 'equal',
+      label: 'equal',
+      disabled: false,
+    } as SelectOption);
+
     setIsLessonCreateDialogOpen(false);
   };
 
@@ -297,7 +310,8 @@ export default function ManageCourseAndLessons({
           type: 1,
           numberOfAnswers: 1,
           answer,
-          answerCheckRule: answerCheckRule.value,
+          answerCheckRule:
+            answerCheckRule?.value || selectedAnswerCheckRule?.value,
         })
       );
       setValue('name', '');

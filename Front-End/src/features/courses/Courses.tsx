@@ -26,13 +26,17 @@ export default function Courses({ courses, translations }: CoursesProps) {
   const dispatch = useDispatch();
 
   const handleEnrollCourse = (courseId: number) => async () => {
-    await dispatch(enrollCourse(courseId));
-    notify();
-    // wait 1 second to show the toast
-    setTimeout(() => {
-      toast.remove('course-enrolled-notification');
-      router.push(`/courses/${courseId}`);
-    }, 1000);
+    try {
+      const { payload } = await dispatch(enrollCourse(courseId));
+      notify();
+      // wait 1 second to show the toast
+      setTimeout(() => {
+        toast.remove('course-enrolled-notification');
+        router.push(`/courses/${payload.data.id}`);
+      }, 1000);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const notify = () =>

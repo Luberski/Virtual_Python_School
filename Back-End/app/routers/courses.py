@@ -652,7 +652,8 @@ def enroll_course_me(
             "data": {
                 "username": username,
                 "user_id": enrolled_course.user_id,
-                "id": enrolled_course.course_id,
+                "id": enrolled_course.id,
+                "course_id": enrolled_course.course_id,
                 "start_date": str(enrolled_course.start_date),
                 "end_date": str(enrolled_course.end_date),
                 "completed": enrolled_course.completed,
