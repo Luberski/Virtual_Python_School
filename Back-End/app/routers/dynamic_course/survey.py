@@ -38,8 +38,8 @@ def create_dynamic_course_survey(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
@@ -90,8 +90,8 @@ def create_dynamic_course_survey_question(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
@@ -359,8 +359,8 @@ def create_dynamic_course_survey_answer(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
@@ -490,8 +490,8 @@ def create_dynamic_course_survey_question_with_answers(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
@@ -568,11 +568,6 @@ def create_dynamic_course_survey_user_results(
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
     if username is None:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
-        )
-    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
@@ -664,11 +659,6 @@ def get_dynamic_course_survey_user_results(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
-        )
     survey_results = (
         db.query(models.DynamicCourseSurveyUserResults)
         .filter_by(survey_id=survey_id, user_id=user.id)
@@ -719,8 +709,8 @@ def delete_dynamic_course_survey(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
 
     db.query(models.DynamicCourseSurveyUserResults).filter_by(

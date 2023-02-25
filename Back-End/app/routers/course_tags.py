@@ -7,6 +7,7 @@ from app import models, crud
 from app.schemas.course_tag import (
     CourseTagCreateRequest,
 )
+from app.settings import ADMIN_ID
 
 router = APIRouter()
 
@@ -24,7 +25,11 @@ def create_course_tag(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-
+    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
+        )
     user = db.query(models.User).filter_by(username=username).first()
 
     if user is None:
@@ -121,7 +126,11 @@ def delete_course_tag(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-
+    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
+        )
     user = db.query(models.User).filter_by(username=username).first()
 
     if user is None:

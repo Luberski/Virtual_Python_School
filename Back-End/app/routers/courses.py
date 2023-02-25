@@ -38,8 +38,8 @@ def create_course(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     new_course = models.Courses(
         name=request_data.data.name,
@@ -83,8 +83,8 @@ def edit_course(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     course_id = request_data.data.course_id
     course_edit = db.query(models.Courses).filter_by(id=course_id).first()
@@ -152,8 +152,8 @@ def delete_course(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
 
     db.query(models.EnrolledCourses).filter_by(course_id=course_id).delete()
@@ -678,8 +678,8 @@ def enroll_course_id(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     id = request_data.data.id
     user = db.query(models.User).filter_by(username=id).first()
@@ -816,8 +816,8 @@ def close_course_id(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     id = request_data.data.id
     user = db.query(models.User).filter_by(username=id).first()

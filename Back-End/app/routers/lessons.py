@@ -31,8 +31,8 @@ def create_lesson(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     course = db.query(models.Courses).filter_by(id=request_data.data.course_id).first()
     if course is None:
@@ -99,8 +99,8 @@ def edit_lesson(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
 
     lesson_id = request_data.data.lesson_id
@@ -197,8 +197,8 @@ def delete_lesson(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
 
     if db.query(models.EnrolledLessons).filter_by(lesson_id=lesson_id).first():

@@ -33,8 +33,8 @@ def create_knowledgetest(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
@@ -80,8 +80,8 @@ def create_knowledgetest_question(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
@@ -308,11 +308,6 @@ def create_knowledgetest_user_results(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
-        )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
         return JSONResponse(
@@ -404,11 +399,6 @@ def get_knowledgetest_user_results(
             status_code=status.HTTP_404_NOT_FOUND,
             content={"error": "User not found"},
         )
-    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
-        )
     knowledgetest_results = (
         db.query(models.KnowledgeTestUserResults)
         .filter_by(knowledge_test_id=knowledge_test_id, user_id=user.id)
@@ -459,8 +449,8 @@ def delete_knowledgetest(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
 
     db.query(models.KnowledgeTestUserResults).filter_by(
@@ -505,8 +495,8 @@ def delete_knowledgetest_by_lesson_id(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
 
     knowledgetest = (

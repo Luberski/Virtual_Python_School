@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.routers import deps
 from app import models
 from app.schemas.user import RoleCreate, UserByUsername
+from app.settings import ADMIN_ID
 
 router = APIRouter()
 
@@ -81,9 +82,7 @@ def create_role(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    # TODO: Change this later
-    admin_id = 1
-    if db.query(models.User).filter_by(username=username).first().role_id != admin_id:
+    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
             content={"error": "Forbidden"},

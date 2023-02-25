@@ -27,11 +27,6 @@ def create_dynamic_course_from_survey_user_results(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
-        )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
         return JSONResponse(
@@ -282,11 +277,6 @@ def get_all_dynamic_courses(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
         )
-    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
-        )
     user = db.query(models.User).filter_by(username=username).first()
     if user is None:
         return JSONResponse(
@@ -322,11 +312,6 @@ def get_dynamic_course_by_id(
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
     if username is None:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
-        )
-    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},
@@ -375,8 +360,8 @@ def delete_dynamic_course(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
 
     db.query(models.DynamicLessons).filter_by(
@@ -409,11 +394,6 @@ def get_dynamic_lesson_by_id(
     Authorize.jwt_required()
     username = Authorize.get_jwt_subject()
     if username is None:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
-        )
-    if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"error": "Unauthorized"},

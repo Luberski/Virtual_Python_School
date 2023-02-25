@@ -31,8 +31,8 @@ def create_answer(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     lesson = db.query(models.Lessons).filter_by(id=request_data.data.lesson_id).first()
     if lesson is None:
@@ -241,8 +241,8 @@ def edit_answer(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
     answer_id = request_data.data.answer_id
     answer_edit = models.Answers().query.filter_by(id=answer_id).first()
@@ -299,8 +299,8 @@ def delete_answer(
         )
     if db.query(models.User).filter_by(username=username).first().role_id != ADMIN_ID:
         return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"error": "Unauthorized"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"error": "Forbidden"},
         )
 
     # TODO: change this after add sections + find better option to save completed courses

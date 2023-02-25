@@ -36,9 +36,13 @@ def login(
         )
 
         if user is None:
-
-            basic_role = db.query(models.Roles).filter_by(id=1).first()
-            if (basic_role) is None:
+            admin_role = db.query(models.Roles).filter_by(id=1).first()
+            basic_role = db.query(models.Roles).filter_by(id=2).first()
+            if admin_role is None:
+                admin_role = models.Roles(role_name="admin")
+                db.add(admin_role)
+                db.commit()
+            if basic_role is None:
                 basic_role = models.Roles(role_name="user")
                 db.add(basic_role)
                 db.commit()
