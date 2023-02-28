@@ -259,6 +259,7 @@
     "knowledge-test-passed": "Test wiedzy zaliczony!",
     "knowledge-test-completed": "Ukończono test wiedzy z wynikiem:",
     "total-correct-answers": "Liczba poprawnych odpowiedzi:",
+    "incorrect-answers": "Niepoprawne odpowiedzi:",
     "alert-missing-knowledge": "Na podstawie Twoich wyników, brakuje Ci pewnej wiedzy. Utworzyliśmy dla Ciebie kurs, abyś mógł się nauczyć brakującej wiedzy.",
     "list-of-knowledge-tests": "Lista testów wiedzy",
     "no-knowledge-tests-found": "Nie znaleziono testów wiedzy",

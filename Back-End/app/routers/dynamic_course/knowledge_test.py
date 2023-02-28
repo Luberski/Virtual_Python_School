@@ -575,6 +575,17 @@ def get_check_knowledgetest_user_results(
         [result for result in knowledgetest_results if result.is_correct is True]
     )
 
+    incorrect_answers_ids = [
+        result.question_id
+        for result in knowledgetest_results
+        if result.is_correct is False
+    ]
+    incorrect_answers = (
+        db.query(models.KnowledgeTestQuestions)
+        .filter(models.KnowledgeTestQuestions.id.in_(incorrect_answers_ids))
+        .all()
+    )
+
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
@@ -584,6 +595,10 @@ def get_check_knowledgetest_user_results(
                 "test_passed": test_passed,
                 "total_answers": total_answers,
                 "total_correct_answers": total_user_correct_answers,
+                "incorrect_answers": [
+                    {"id": incorrect_answer.id, "question": incorrect_answer.question}
+                    for incorrect_answer in incorrect_answers
+                ],
             }
         },
     )

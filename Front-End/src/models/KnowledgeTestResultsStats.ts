@@ -4,6 +4,10 @@ type KnowledgeTestResultsStats = {
   test_passed: boolean;
   total_answers: number;
   total_correct_answers: number;
+  incorrect_answers?: {
+    id: number;
+    question: string;
+  }[];
 };
 
 export default KnowledgeTestResultsStats;

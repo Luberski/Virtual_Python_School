@@ -135,6 +135,12 @@ export default function EnrolledLesson({
     () =>
       debounce(() => {
         const answer = playgroundData?.content || '';
+        if (!answer) {
+          editorRef.current.focus();
+          editorRef.current.getDomNode().scrollIntoView();
+          return;
+        }
+
         try {
           dispatch(
             checkAnswer({
