@@ -9,14 +9,14 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     zut_id = Column(String(255), unique=True)
     username = Column(String(100), unique=True)
-    password = Column(String(100))
     name = Column(String(100))
     last_name = Column(String(100))
     email = Column(String(100), unique=True)
     course_id = relationship("EnrolledCourses")
     role_id = Column(Integer, ForeignKey("roles.id"))
     classroom_sessions = relationship(
-        "ClassroomSessions", back_populates="user", uselist=False)
+        "ClassroomSessions", back_populates="user", uselist=False
+    )
 
     @staticmethod
     def generate_hash(password):
@@ -120,12 +120,10 @@ class DynamicCourseSurveyUserResults(Base):
     )
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
     question_id = Column(
-        Integer, ForeignKey(
-            "dynamic_course_survey_questions.id", ondelete="CASCADE")
+        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
     )
     answer_id = Column(
-        Integer, ForeignKey(
-            "dynamic_course_survey_answers.id", ondelete="CASCADE")
+        Integer, ForeignKey("dynamic_course_survey_answers.id", ondelete="CASCADE")
     )
     survey = relationship("DynamicCourseSurvey")
 
@@ -135,8 +133,7 @@ class DynamicCourseSurveyAnswers(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     question_id = Column(
-        Integer, ForeignKey(
-            "dynamic_course_survey_questions.id", ondelete="CASCADE")
+        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
     )
     rule_type = Column(Integer)
     rule_value = Column(Integer)
@@ -259,7 +256,8 @@ class GlobalKnowledgeTestUserResults(Base):
     )
     answer = Column(String(500))
     is_correct = Column(Boolean, default=False, nullable=False)
-    
+
+
 class Classrooms(Base):
     __tablename__ = "classrooms"
     id = Column(Integer, primary_key=True)

@@ -74,8 +74,8 @@ def login(
                             "refresh_token": refresh_token,
                         },
                         "role": {
-                            "role_id": basic_role.id,
-                            "role_name": basic_role.role_name,
+                            "role_id": new_user.role_id,
+                            "role_name": new_user.role_name,
                         },
                     },
                     "error": None,

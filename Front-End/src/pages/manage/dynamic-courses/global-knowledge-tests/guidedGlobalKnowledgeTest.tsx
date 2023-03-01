@@ -14,35 +14,34 @@ export default function GuidedGlobalKnowledgeTestPage() {
 
   const t = useTranslations();
   const pageTitle = `${t('Meta.title-manage')} - ${WEBSITE_TITLE}`;
-  if (!user && !isLoggedIn) {
-    return null;
-  }
 
-  return (
-    <>
-      <Head>
-        <title>{pageTitle}</title>
-      </Head>
-      <div className="h-full w-full">
-        <NavBar
-          user={user}
-          isLoggedIn={isLoggedIn}
-          logout={() =>
-            dispatch({
-              type: 'auth/logout',
-            })
-          }
-        />
-        <div className="brand-shadow2 container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
-          <h1 className="pb-6 text-center text-sky-900 dark:text-sky-300">
-            {t('KnowledgeTest.leading-global')}
-          </h1>
-          <GuidedGlobalKnowledgeTestForm translations={t} />
+  if (user && isLoggedIn && user?.role?.role_name === 'admin') {
+    return (
+      <>
+        <Head>
+          <title>{pageTitle}</title>
+        </Head>
+        <div className="h-full w-full">
+          <NavBar
+            user={user}
+            isLoggedIn={isLoggedIn}
+            logout={() =>
+              dispatch({
+                type: 'auth/logout',
+              })
+            }
+          />
+          <div className="brand-shadow2 container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
+            <h1 className="pb-6 text-center text-sky-900 dark:text-sky-300">
+              {t('KnowledgeTest.leading-global')}
+            </h1>
+            <GuidedGlobalKnowledgeTestForm translations={t} />
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(

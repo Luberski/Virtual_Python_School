@@ -5,7 +5,10 @@ type User = {
   name: string;
   lastName: string;
   email: string;
-  roleId: string;
+  role?: {
+    role_id: string;
+    role_name: string;
+  };
 };
 
 export default User;

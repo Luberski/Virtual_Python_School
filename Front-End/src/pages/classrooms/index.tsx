@@ -3,6 +3,7 @@ import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import { useDispatch } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
+import router from 'next/router';
 import { useAppSelector, useAuthRedirect } from '@app/hooks';
 import { WEBSITE_TITLE } from '@app/constants';
 import Footer from '@app/components/Footer';
@@ -17,7 +18,6 @@ import {
   fetchClassroomSessions,
   selectClassroomSessionsData,
 } from '@app/features/classrooms/sessions/classroomSessionsSlice';
-import router from 'next/router';
 
 export default function ClassroomsPage() {
   const [user, isLoggedIn] = useAuthRedirect();

@@ -92,7 +92,7 @@ export const authSlice = createSlice({
             name: data.name,
             lastName: data.lastName,
             email: data.email,
-            roleId: data.roleId,
+            role: data.role,
           };
           state.token = {
             accessToken: data.token['access_token'],

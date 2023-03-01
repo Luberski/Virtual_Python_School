@@ -153,37 +153,51 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
                                   </ButtonLink>
                                 </Link>
                               </Menu.Item>
-                              <Menu.Item>
-                                <Link href="/manage/courses" passHref={true}>
-                                  <ButtonLink
-                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
-                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
-                                    {t('Manage.manage-courses')}
-                                  </ButtonLink>
-                                </Link>
-                              </Menu.Item>
-                              <Menu.Item>
-                                <Link
-                                  href="/manage/dynamic-courses"
-                                  passHref={true}>
-                                  <ButtonLink
-                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
-                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
-                                    {t('Manage.manage-dynamic-courses')}
-                                  </ButtonLink>
-                                </Link>
-                              </Menu.Item>
-                              <Menu.Item>
-                                <Link
-                                  href="/manage/dynamic-courses/global-knowledge-tests"
-                                  passHref={true}>
-                                  <ButtonLink
-                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
-                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
-                                    {t('Manage.manage-global-knowledge-tests')}
-                                  </ButtonLink>
-                                </Link>
-                              </Menu.Item>
+                              {user?.role.role_name === 'admin' && (
+                                <>
+                                  <Menu.Item>
+                                    <Link
+                                      href="/manage/courses"
+                                      passHref={true}>
+                                      <ButtonLink
+                                        sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                        variant={
+                                          ButtonLinkVariant.FLAT_PRIMARY
+                                        }>
+                                        {t('Manage.manage-courses')}
+                                      </ButtonLink>
+                                    </Link>
+                                  </Menu.Item>
+                                  <Menu.Item>
+                                    <Link
+                                      href="/manage/dynamic-courses"
+                                      passHref={true}>
+                                      <ButtonLink
+                                        sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                        variant={
+                                          ButtonLinkVariant.FLAT_PRIMARY
+                                        }>
+                                        {t('Manage.manage-dynamic-courses')}
+                                      </ButtonLink>
+                                    </Link>
+                                  </Menu.Item>
+                                  <Menu.Item>
+                                    <Link
+                                      href="/manage/dynamic-courses/global-knowledge-tests"
+                                      passHref={true}>
+                                      <ButtonLink
+                                        sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                        variant={
+                                          ButtonLinkVariant.FLAT_PRIMARY
+                                        }>
+                                        {t(
+                                          'Manage.manage-global-knowledge-tests'
+                                        )}
+                                      </ButtonLink>
+                                    </Link>
+                                  </Menu.Item>
+                                </>
+                              )}
                               <Menu.Item>
                                 <IconButton
                                   type="button"
