@@ -52,6 +52,7 @@ export enum AssignmentStatus {
   IN_PROGRESS = 1,
   SUBMITTED = 2,
   COMPLETED = 3,
+  CORRECTABLE = 4,
 }
 
 export enum UserStatus {

@@ -130,11 +130,20 @@
     "grade": "Oceń",
     "assignment-grade-label": "Ocena",
     "assignment-feedback-label": "Informacja zwrotna",
+    "assignment-date-label": "Data oceny",
     "feedback-dialog-title": "Ocena zadania",
     "close-dialog": "Zamknij",
     "awaiting-review": "Praca nie została jeszcze sprawdzona przez nauczyciela",
     "assignment-graded": "Praca została oceniona",
-    "assignment-submitted": "Praca została wysłana do sprawdzenia"
+    "assignment-submitted": "Praca została wysłana do sprawdzenia",
+    "user-online": "Aktywny/a",
+    "user-offline": "Nieaktywny/a",
+    "work-correctable-label": "Możliwość poprawy",
+    "grade-history-title": "Historia ocen",
+    "assignment-reviewed-tooltip": "Praca oceniona",
+    "assignment-submitted-tooltip": "Praca wysłana do sprawdzenia",
+    "assignment-ongoing-tooltip": "Praca w trakcie",
+    "grade-history-btn": "Historia ocen"
   },
   "Playground": {
     "run": "Uruchom",

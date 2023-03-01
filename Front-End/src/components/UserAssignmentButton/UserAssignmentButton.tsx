@@ -9,12 +9,14 @@ type UserAssignmentButtonProps = {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   disabled?: boolean;
+  translations: (key: string, ...params: unknown[]) => string;
 };
 
 export default function UserAssignmentButton({
   switchToAssignmentView,
   userAssignment,
   disabled = false,
+  translations,
 }: UserAssignmentButtonProps) {
   return (
     <Button
@@ -25,6 +27,7 @@ export default function UserAssignmentButton({
       <div className="flex flex-row items-center justify-between gap-x-2">
         <div>{userAssignment?.userId}</div>
         <UserAssignmentStatus
+          translations={translations}
           status={userAssignment.status}></UserAssignmentStatus>
       </div>
     </Button>

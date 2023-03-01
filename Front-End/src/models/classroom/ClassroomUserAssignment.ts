@@ -8,6 +8,11 @@ type ClassroomUserAssignment = {
   whiteboard: ClassroomWhiteboard;
   grade: number | null;
   feedback: string | null;
+  gradeHistory: Array<{
+    grade: number;
+    feedback: string;
+    timestamp: string;
+  }>;
   status: AssignmentStatus;
 };
 

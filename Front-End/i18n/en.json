@@ -130,11 +130,20 @@
     "grade": "Grade",
     "assignment-grade-label": "Grade",
     "assignment-feedback-label": "Feedback",
+    "assignment-date-label": "Grade date",
     "feedback-dialog-title": "Assignment details",
     "close-dialog": "Close",
     "awaiting-review": "Awaiting review from teacher",
     "assignment-graded": "Assignment has been graded",
-    "assignment-submitted": "Assignment has been submitted"
+    "assignment-submitted": "Assignment has been submitted",
+    "user-online": "Online",
+    "user-offline": "Offline",
+    "work-correctable-label": "Correctable",
+    "grade-history-title": "Grade history",
+    "assignment-reviewed-tooltip": "Assignment reviewed",
+    "assignment-submitted-tooltip": "Assignment submitted",
+    "assignment-ongoing-tooltip": "Assignment ongoing",
+    "grade-history-btn": "Historia ocen"
   },
   "Playground": {
     "run": "Run",

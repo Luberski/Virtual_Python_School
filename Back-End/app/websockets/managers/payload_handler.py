@@ -1,4 +1,5 @@
 # IMPORTS
+import datetime
 import json
 from fastapi import WebSocket
 
@@ -412,18 +413,25 @@ class PayloadHandler:
 
     async def grade_assignment(self):
         user_assignment = self.payload_data
+        assignment_status = user_assignment["status"]
         target_user = self.selected_classroom.get_user_by_id(
             user_id=user_assignment["userId"])
         updated_user_assignment = target_user.get_user_assignment(
             assignment_name=user_assignment["assignment"]["title"])
 
         updated_user_assignment.grade = user_assignment["grade"]
-        updated_user_assignment.status = AssignmentStatus.COMPLETED
+        updated_user_assignment.status = AssignmentStatus(
+            assignment_status)
+        print(updated_user_assignment.status.value)
         updated_user_assignment.feedback = user_assignment["feedback"]
+
+        updated_user_assignment.grade_history.append(
+            {"grade": updated_user_assignment.grade, "feedback": updated_user_assignment.feedback})
 
         response_payload = json.dumps({
             "action": Actions.GRADE_ASSIGNMENT.value,
-            "data":  updated_user_assignment.to_json()
+            "data": updated_user_assignment.to_json(),
+            "timestamp": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         })
 
         await conn_manager.send_personal_payload(payload=response_payload, websocket=target_user.websocket)

@@ -487,7 +487,7 @@ export default function ClassroomsStudentPage(
               <h1 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.my-assignments')}
               </h1>
-              <div className="flex flex-col space-y-2 rounded-lg border-2 border-neutral-200 p-2 dark:border-neutral-600">
+              <div className="flex max-h-96 flex-col space-y-2 overflow-auto rounded-lg border-2 border-neutral-200 p-2 dark:border-neutral-600">
                 <Button
                   type="button"
                   variant={ButtonVariant.FLAT_SECONDARY}
@@ -552,7 +552,7 @@ export default function ClassroomsStudentPage(
 
           <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
-              <Button variant={ButtonVariant.FLAT_SECONDARY} onClick={runCode}>
+              <Button variant={ButtonVariant.PRIMARY} onClick={runCode}>
                 {translations('Classrooms.run')}
               </Button>
 
@@ -562,8 +562,10 @@ export default function ClassroomsStudentPage(
                   {returnAssignmentByName(selectedAssignment)?.status ===
                     AssignmentStatus.SUBMITTED ||
                   returnAssignmentByName(selectedAssignment)?.status ===
-                    AssignmentStatus.COMPLETED ? (
-                    <>
+                    AssignmentStatus.COMPLETED ||
+                  returnAssignmentByName(selectedAssignment)?.status ===
+                    AssignmentStatus.CORRECTABLE ? (
+                    <div className="flex flex-row space-x-2">
                       <Button
                         variant={ButtonVariant.PRIMARY}
                         onClick={openFeedbackDialog}>
@@ -581,7 +583,9 @@ export default function ClassroomsStudentPage(
                               )}
                             </h4>
                             {returnAssignmentByName(selectedAssignment)
-                              ?.status === AssignmentStatus.COMPLETED ? (
+                              ?.status === AssignmentStatus.COMPLETED ||
+                            returnAssignmentByName(selectedAssignment)
+                              ?.status === AssignmentStatus.CORRECTABLE ? (
                               <>
                                 <ConfettiExplosion
                                   duration={1500}
@@ -624,10 +628,18 @@ export default function ClassroomsStudentPage(
                           </div>
                         </div>
                       </StyledDialog>
-                    </>
+                      {returnAssignmentByName(selectedAssignment)?.status ===
+                        AssignmentStatus.CORRECTABLE && (
+                        <Button
+                          variant={ButtonVariant.PRIMARY}
+                          onClick={sendAssignment(selectedAssignment)}>
+                          {translations('Classrooms.send-to-review')}
+                        </Button>
+                      )}
+                    </div>
                   ) : (
                     <Button
-                      variant={ButtonVariant.FLAT_SECONDARY}
+                      variant={ButtonVariant.PRIMARY}
                       onClick={sendAssignment(selectedAssignment)}>
                       {translations('Classrooms.send-to-review')}
                     </Button>

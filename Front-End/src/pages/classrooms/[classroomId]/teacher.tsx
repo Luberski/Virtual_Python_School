@@ -62,6 +62,7 @@ import {
 import TextArea from '@app/components/TextArea';
 import UserAssignmentButton from '@app/components/UserAssignmentButton';
 import UserStatus from '@app/components/UserStatus';
+import Checkbox from '@app/components/Checkbox';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -92,6 +93,7 @@ export default function ClassroomsTeacherPage({
     setValue: setGradeValue,
   } = useForm<{
     grade: number;
+    correctable: boolean;
     feedback: string;
   }>();
   const [user, isLoggedIn] = useAuthRedirect();
@@ -135,6 +137,8 @@ export default function ClassroomsTeacherPage({
     useState(false);
   const [isGradeAssignmentDialogOpen, setIsGradeAssignmentDialogOpen] =
     useState(false);
+  const [isGradeHistoryDialogOpen, setIsGradeHistoryDialogOpen] =
+    useState(false);
 
   const closeGradeAssignmentDialog = () => {
     setIsGradeAssignmentDialogOpen(false);
@@ -142,6 +146,14 @@ export default function ClassroomsTeacherPage({
 
   const openGradeAssignmentDialog = () => {
     setIsGradeAssignmentDialogOpen(true);
+  };
+
+  const closeGradeHistoryDialog = () => {
+    setIsGradeHistoryDialogOpen(false);
+  };
+
+  const openGradeHistoryDialog = () => {
+    setIsGradeHistoryDialogOpen(true);
   };
 
   const closeDeleteClassroomDialog = () => {
@@ -336,11 +348,19 @@ export default function ClassroomsTeacherPage({
 
   const onGradeAssignmentSubmit = (data: {
     grade: number;
+    correctable: boolean;
     feedback: string;
   }) => {
-    const { grade, feedback } = data;
+    const { grade, correctable, feedback } = data;
     setGradeValue('grade', null);
+    setGradeValue('correctable', false);
     setGradeValue('feedback', '');
+
+    const d = new Date();
+    const date =
+      [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('/') +
+      ' ' +
+      [d.getHours(), d.getMinutes(), d.getSeconds()].join(':');
 
     // Update userAssignment from the selected user in users
     const updatedUsers: ClassroomUser[] = users;
@@ -361,7 +381,16 @@ export default function ClassroomsTeacherPage({
     ].feedback = feedback;
     updatedUsers[selectedUserIndex].userAssignments[
       selectedUserAssignmentIndex
-    ].status = AssignmentStatus.COMPLETED;
+    ].status = correctable
+      ? AssignmentStatus.CORRECTABLE
+      : AssignmentStatus.COMPLETED;
+    updatedUsers[selectedUserIndex].userAssignments[
+      selectedUserAssignmentIndex
+    ].gradeHistory.push({
+      grade,
+      feedback,
+      timestamp: date,
+    });
     setUsers(updatedUsers);
     //
 
@@ -605,36 +634,42 @@ export default function ClassroomsTeacherPage({
               <h2 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.whiteboards')}
               </h2>
-              <Button
-                type="button"
-                onClick={() => {
-                  setMode(ViewMode.PersonalWhiteboard);
-                }}
-                disabled={mode === ViewMode.PersonalWhiteboard}
-                variant={ButtonVariant.PRIMARY}>
-                {translations('Classrooms.shared-whiteboard')}
-              </Button>
-              {users?.length > 0 &&
-                users.map((user: ClassroomUser) => (
-                  <UserStatus
-                    key={user.userId}
-                    user={user}
-                    onClick={() => {
-                      setSelectedUser(user.userId);
-                      setMode(ViewMode.ViewUserWhiteboard);
-                    }}
-                    disabled={
-                      user.userId === selectedUser &&
-                      mode === ViewMode.ViewUserWhiteboard
-                    }
-                  />
-                ))}
-              <div className="flex flex-col space-y-2 rounded-lg border-2 border-neutral-200 p-2 dark:border-neutral-600">
+              <div className="flex max-h-64 flex-col justify-start space-y-2 overflow-auto align-middle">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setMode(ViewMode.PersonalWhiteboard);
+                  }}
+                  disabled={mode === ViewMode.PersonalWhiteboard}
+                  variant={ButtonVariant.PRIMARY}>
+                  {translations('Classrooms.shared-whiteboard')}
+                </Button>
+                {users?.length > 0 &&
+                  users.map((user: ClassroomUser) => (
+                    <UserStatus
+                      translations={translations}
+                      key={user.userId}
+                      user={user}
+                      onClick={() => {
+                        setSelectedUser(user.userId);
+                        setMode(ViewMode.ViewUserWhiteboard);
+                      }}
+                      disabled={
+                        user.userId === selectedUser &&
+                        mode === ViewMode.ViewUserWhiteboard
+                      }
+                    />
+                  ))}
+              </div>
+              <h2 className="mb-4 text-center text-2xl font-bold">
+                {translations('Classrooms.assignments')}
+              </h2>
+              <div className="flex max-h-64 flex-col space-y-2 overflow-auto rounded-lg border-2 border-neutral-200 p-2 dark:border-neutral-600">
                 <Button
                   type="button"
                   variant={ButtonVariant.FLAT_SECONDARY}
                   onClick={handleAssignmentsMenu}>
-                  <div className="flex flex-row items-center justify-center">
+                  <div className="flex flex-row items-center justify-center ">
                     {isAssignmentsMenuOpen ? (
                       <ChevronDownIcon className="mr-2 h-4 w-4" />
                     ) : (
@@ -668,6 +703,7 @@ export default function ClassroomsTeacherPage({
                         users.map((user: ClassroomUser) => (
                           <UserAssignmentButton
                             key={user.userId}
+                            translations={translations}
                             disabled={
                               user.userId === selectedUser &&
                               mode === ViewMode.Assignment &&
@@ -794,7 +830,7 @@ export default function ClassroomsTeacherPage({
 
           <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
-              <Button variant={ButtonVariant.FLAT_SECONDARY} onClick={runCode}>
+              <Button variant={ButtonVariant.PRIMARY} onClick={runCode}>
                 {translations('Classrooms.run')}
               </Button>
 
@@ -802,7 +838,7 @@ export default function ClassroomsTeacherPage({
                 <div>
                   {!isEditable ? (
                     <Button
-                      variant={ButtonVariant.FLAT_SECONDARY}
+                      variant={ButtonVariant.PRIMARY}
                       disabled={mode !== ViewMode.PersonalWhiteboard}
                       onClick={() => {
                         setIsEditable(true);
@@ -816,7 +852,7 @@ export default function ClassroomsTeacherPage({
                     </Button>
                   ) : (
                     <Button
-                      variant={ButtonVariant.FLAT_SECONDARY}
+                      variant={ButtonVariant.PRIMARY}
                       onClick={() => {
                         setIsEditable(false);
                         sendJsonMessage({
@@ -835,9 +871,9 @@ export default function ClassroomsTeacherPage({
                   <h4>{selectedAssignment}</h4>
                   {returnUserAssignmentByName(selectedUser, selectedAssignment)
                     .status === AssignmentStatus.SUBMITTED ? (
-                    <>
+                    <div className="flex flex-row space-x-2">
                       <Button
-                        variant={ButtonVariant.FLAT_SECONDARY}
+                        variant={ButtonVariant.PRIMARY}
                         onClick={openGradeAssignmentDialog}>
                         {translations('Classrooms.grade')}
                       </Button>
@@ -858,15 +894,27 @@ export default function ClassroomsTeacherPage({
                                 label="grade"
                                 name="grade"
                                 type="number"
-                                min={1}
+                                min={2}
                                 max={5}
-                                step={1}
+                                step={0.5}
                                 register={registerGrade}
                                 required
                                 maxLength={200}
                                 placeholder={translations(
                                   'Classrooms.assignment-grade-label'
                                 )}></Input>
+                              <div className="flex items-center">
+                                <Checkbox
+                                  id="correctable"
+                                  label="correctable"
+                                  name="correctable"
+                                  register={registerGrade}></Checkbox>
+                                <label htmlFor="correctable" className="ml-2">
+                                  {translations(
+                                    'Classrooms.work-correctable-label'
+                                  )}
+                                </label>
+                              </div>
                               <TextArea
                                 label="feedback"
                                 name="feedback"
@@ -896,11 +944,119 @@ export default function ClassroomsTeacherPage({
                           </form>
                         </div>
                       </StyledDialog>
-                    </>
+                      <Button
+                        variant={ButtonVariant.PRIMARY}
+                        onClick={openGradeHistoryDialog}>
+                        {translations('Classrooms.grade-history-btn')}
+                      </Button>
+                      <StyledDialog
+                        title={translations('Classrooms.grade-history-title')}
+                        isOpen={isGradeHistoryDialogOpen}
+                        onClose={closeGradeHistoryDialog}>
+                        <div className=" w-64  py-6">
+                          <div className="flex max-h-96 flex-col gap-y-2 overflow-auto">
+                            {returnUserAssignmentByName(
+                              selectedUser,
+                              selectedAssignment
+                            ).gradeHistory.map((grade, index) => {
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex flex-row items-center justify-between">
+                                  <div className="my-4 flex flex-col gap-y-2">
+                                    <span>
+                                      {translations(
+                                        'Classrooms.assignment-grade-label'
+                                      )}
+                                      : {grade.grade}
+                                    </span>
+                                    <span>
+                                      {translations(
+                                        'Classrooms.assignment-feedback-label'
+                                      )}
+                                      : {grade.feedback}
+                                    </span>
+                                    <span>
+                                      {translations(
+                                        'Classrooms.assignment-date-label'
+                                      )}
+                                      : {grade.timestamp}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="mt-6 flex flex-row items-center justify-end">
+                            <Button
+                              onClick={closeGradeHistoryDialog}
+                              className="mr-2"
+                              variant={ButtonVariant.DANGER}>
+                              {translations('Classrooms.close-dialog')}
+                            </Button>
+                          </div>
+                        </div>
+                      </StyledDialog>
+                    </div>
                   ) : (
-                    <Button variant={ButtonVariant.FLAT_SECONDARY} disabled>
-                      {translations('Classrooms.grade')}
-                    </Button>
+                    <div className="flex flex-row space-x-2">
+                      <Button variant={ButtonVariant.PRIMARY} disabled>
+                        {translations('Classrooms.grade')}
+                      </Button>
+                      <Button
+                        variant={ButtonVariant.PRIMARY}
+                        onClick={openGradeHistoryDialog}>
+                        {translations('Classrooms.grade-history-btn')}
+                      </Button>
+                      <StyledDialog
+                        title={translations('Classrooms.grade-history-title')}
+                        isOpen={isGradeHistoryDialogOpen}
+                        onClose={closeGradeHistoryDialog}>
+                        <div className=" w-64  py-6">
+                          <div className="flex max-h-96 flex-col gap-y-2 overflow-auto">
+                            {returnUserAssignmentByName(
+                              selectedUser,
+                              selectedAssignment
+                            ).gradeHistory.map((grade, index) => {
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex flex-row items-center justify-between">
+                                  <div className="my-4 flex flex-col gap-y-2">
+                                    <span>
+                                      {translations(
+                                        'Classrooms.assignment-grade-label'
+                                      )}
+                                      : {grade.grade}
+                                    </span>
+                                    <span>
+                                      {translations(
+                                        'Classrooms.assignment-feedback-label'
+                                      )}
+                                      : {grade.feedback}
+                                    </span>
+                                    <span>
+                                      {translations(
+                                        'Classrooms.assignment-date-label'
+                                      )}
+                                      : {grade.timestamp}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="mt-6 flex flex-row items-center justify-end">
+                            <Button
+                              onClick={closeGradeHistoryDialog}
+                              className="mr-2"
+                              variant={ButtonVariant.DANGER}>
+                              {translations('Classrooms.close-dialog')}
+                            </Button>
+                          </div>
+                        </div>
+                      </StyledDialog>
+                    </div>
                   )}
                 </>
               )}

@@ -22,6 +22,8 @@ export default function Classrooms({
   const [isCreateClassroomDialogOpen, setIsCreateClassroomDialogOpen] =
     useState(false);
 
+  const [checked, setChecked] = useState(true);
+
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -46,7 +48,7 @@ export default function Classrooms({
   }) => {
     const { name, is_public } = data;
     setValue('name', '');
-    setValue('is_public', false);
+    setValue('is_public', true);
 
     try {
       await dispatch(createClassroom({ name, is_public }))
@@ -97,8 +99,10 @@ export default function Classrooms({
                     id="is_public"
                     label="is_public"
                     name="is_public"
+                    checked={checked}
+                    onChange={() => setChecked(!checked)}
                     register={register}></Checkbox>
-                  <label htmlFor="featured" className="ml-2">
+                  <label htmlFor="is_public" className="ml-2">
                     {translations('Classrooms.is-public-checkbox')}
                   </label>
                 </div>

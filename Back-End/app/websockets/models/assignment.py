@@ -61,6 +61,7 @@ class UserAssignment:
             assignment.initial_code, WhiteboardType.ASSIGNMENT)
         self._grade = None
         self._feedback = None
+        self._grade_history = []
         self._status: AssignmentStatus = AssignmentStatus.NOT_STARTED
 
     @property
@@ -104,6 +105,14 @@ class UserAssignment:
         self._feedback = feedback
 
     @property
+    def grade_history(self):
+        return self._grade_history
+
+    @grade_history.setter
+    def grade_history(self, grade_history: list):
+        self._grade_history = grade_history
+
+    @property
     def status(self):
         return self._status
 
@@ -112,4 +121,4 @@ class UserAssignment:
         self._status = status
 
     def to_json(self):
-        return {'userId': self.user_id, 'grade': self.grade, 'assignment': self.assignment.to_json(), 'whiteboard': self.whiteboard.to_json(), 'feedback': self.feedback, 'status': self.status.value}
+        return {'userId': self.user_id, 'grade': self.grade, 'assignment': self.assignment.to_json(), 'whiteboard': self.whiteboard.to_json(), 'feedback': self.feedback, 'gradeHistory': self.grade_history, 'status': self.status.value}
