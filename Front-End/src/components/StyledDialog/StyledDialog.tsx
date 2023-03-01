@@ -44,7 +44,7 @@ export default function StyledDialog({
               leave="ease-in duration-200"
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95">
-              <Dialog.Panel className="brand-shadow2 flex w-auto justify-center overflow-hidden rounded-lg bg-white p-6 text-left shadow-neutral-900/25 transition-all dark:bg-neutral-800">
+              <Dialog.Panel className="brand-shadow2 flex justify-center overflow-hidden rounded-lg bg-white p-6 text-left shadow-neutral-900/25 transition-all dark:bg-neutral-800">
                 <div className="mt-4 mr-2">{icon}</div>
                 <div className="mt-4">
                   <Dialog.Title as="h3" className="text-2xl font-bold">

@@ -747,7 +747,7 @@ export default function ManageCourseAndLessons({
           </div>
         }
         onClose={() => setIsLessonCreateDialogOpen(!isLessonCreateDialogOpen)}>
-        <div className="mt-6">
+        <div className="mt-6 md:w-[1024px]">
           <form
             className="flex flex-col items-start justify-center space-y-6"
             onSubmit={handleSubmit(onLessonCreateSubmit)}>
@@ -756,6 +756,7 @@ export default function ManageCourseAndLessons({
               name="name"
               type="text"
               register={register}
+              className="w-full"
               required
               maxLength={100}
               placeholder={translations('Lessons.lesson-name')}
@@ -766,7 +767,7 @@ export default function ManageCourseAndLessons({
               type="text"
               register={register}
               required
-              className="resize-none"
+              className="w-full resize-none"
               rows={4}
               placeholder={translations('Lessons.lesson-description')}
             />
@@ -775,6 +776,7 @@ export default function ManageCourseAndLessons({
               name="answerCheckRule"
               render={({ field: { onChange } }) => (
                 <Select
+                  className="w-full"
                   options={answerCheckRules}
                   selected={selectedAnswerCheckRule}
                   setSelected={({ id, value, label, disabled }) => {
@@ -820,7 +822,7 @@ export default function ManageCourseAndLessons({
           </div>
         }
         onClose={() => setIsCourseEditDialogOpen(!isCourseEditDialogOpen)}>
-        <div className="mt-6">
+        <div className="mt-6 md:w-[1024px]">
           <form
             className="flex flex-col items-start justify-center space-y-6"
             onSubmit={handleCourseEditSubmit(onCourseEditSubmit)}>
@@ -829,6 +831,7 @@ export default function ManageCourseAndLessons({
               name="name"
               type="text"
               register={registerCourseEdit}
+              className="w-full"
               maxLength={100}
               placeholder={translations('Courses.course-name')}
             />
@@ -837,7 +840,7 @@ export default function ManageCourseAndLessons({
               name="description"
               type="text"
               register={registerCourseEdit}
-              className="resize-none"
+              className="w-full resize-none"
               rows={4}
               placeholder={translations('Courses.course-description')}
             />
@@ -846,6 +849,7 @@ export default function ManageCourseAndLessons({
               name="lang"
               render={({ field: { onChange } }) => (
                 <Select
+                  className="w-full"
                   options={languageOptions}
                   selected={selectedLang}
                   setSelected={({ id, value, label, disabled }) => {
@@ -890,7 +894,7 @@ export default function ManageCourseAndLessons({
           </div>
         }
         onClose={() => setIsLessonEditDialogOpen(!isLessonEditDialogOpen)}>
-        <div className="mt-6">
+        <div className="mt-6 md:w-[1024px]">
           <form
             className="flex flex-col items-start justify-center space-y-6"
             onSubmit={handleLessonEditSubmit(onLessonEditSubmit)}>
@@ -899,6 +903,7 @@ export default function ManageCourseAndLessons({
               name="name"
               type="text"
               register={registerLessonEdit}
+              className="w-full"
               maxLength={100}
               placeholder={translations('Lessons.lesson-name')}
             />
@@ -907,8 +912,8 @@ export default function ManageCourseAndLessons({
               name="description"
               type="text"
               register={registerLessonEdit}
-              className="resize-none"
-              rows={4}
+              className="w-full resize-none"
+              rows={10}
               placeholder={translations('Lessons.lesson-description')}
             />
             <Controller
@@ -916,6 +921,7 @@ export default function ManageCourseAndLessons({
               name="answerCheckRule"
               render={({ field: { onChange } }) => (
                 <Select
+                  className="w-full"
                   options={answerCheckRules}
                   selected={selectedAnswerCheckRule}
                   setSelected={({ id, value, label, disabled }) => {

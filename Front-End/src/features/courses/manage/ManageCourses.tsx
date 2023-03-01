@@ -196,7 +196,7 @@ export default function ManageCourses({
           </div>
         }
         onClose={() => setIsCourseCreateDialogOpen(!isCourseCreateDialogOpen)}>
-        <div className="mt-6">
+        <div className="mt-6 md:w-[1024px]">
           <form
             className="flex flex-col items-start justify-center space-y-6"
             onSubmit={handleSubmit(onCourseCreateSubmit)}>
@@ -205,6 +205,7 @@ export default function ManageCourses({
               name="name"
               type="text"
               register={register}
+              className="w-full"
               required
               maxLength={100}
               placeholder={translations('Courses.course-name')}
@@ -215,7 +216,7 @@ export default function ManageCourses({
               type="text"
               register={register}
               required
-              className="resize-none"
+              className="w-full resize-none"
               rows={4}
               placeholder={translations('Courses.course-description')}
             />
@@ -224,6 +225,7 @@ export default function ManageCourses({
               name="lang"
               render={({ field: { onChange } }) => (
                 <Select
+                  className="w-full"
                   options={languageOptions}
                   selected={selectedLang}
                   setSelected={({ id, value, label, disabled }) => {

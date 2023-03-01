@@ -16,15 +16,14 @@ const TextArea = ({
   ...rest
 }: TextAreaProps & React.HTMLProps<HTMLTextAreaElement>) => (
   <textarea
-    {...(register(label, { required }) as {
-      (...unknown);
+    {...(register && {
+      ...(register(label, { required }) as { (...unknown) }),
     })}
     className={clsx(
-      'w-72 rounded-lg border border-neutral-300 bg-neutral-50 p-3 placeholder:text-neutral-400 dark:border-neutral-600 dark:bg-neutral-700 sm:w-96',
+      'min-w-72 sm:min-w-96 rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-3 placeholder:text-neutral-400 dark:border-neutral-600 dark:bg-neutral-700',
       className
     )}
     {...rest}
   />
 );
-
 export default TextArea;
