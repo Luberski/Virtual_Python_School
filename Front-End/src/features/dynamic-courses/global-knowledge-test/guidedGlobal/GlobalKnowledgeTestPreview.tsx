@@ -21,15 +21,19 @@ export default function GlobalKnowledgeTestPreview({
               __html: parseMarkdown(question?.question),
             }}
           />
-          <div>
+          <div className="ml-4 space-y-2">
             <Input
               label="answer-preview"
               name="answer-preview"
               placeholder={translations('Lessons.answer')}
             />
+            <div>
+              {translations('Lessons.correct-answer')}:&nbsp;
+              <span className="font-bold text-green-600">
+                {question.answer}
+              </span>
+            </div>
           </div>
-          <div>{translations('Lessons.correct-answer')}</div>
-          <div>{question.answer}</div>
         </div>
       ))}
     </div>

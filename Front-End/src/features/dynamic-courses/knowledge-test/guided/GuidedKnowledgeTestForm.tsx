@@ -261,7 +261,7 @@ export default function GuidedKnowledgeTestForm({
           </div>
         }
         onClose={() => setIsAddQuestionDialogOpen(!isAddQuestionDialogOpen)}>
-        <div className="mt-6 max-h-[768px] overflow-y-auto overflow-x-hidden">
+        <div className="mt-6 md:w-[1024px]">
           <Alert>
             <InformationCircleIcon className="mr-4 h-6 w-6 self-start" />
             <ul className="w-fit max-w-xs list-disc px-6">
@@ -290,13 +290,13 @@ export default function GuidedKnowledgeTestForm({
               rows={4}
               placeholder={translations('Survey.question')}
               className={clsx(
-                'resize-none',
+                'w-full resize-none',
                 errors.question &&
                   errors.question.type === 'required' &&
                   'border-red-600 dark:border-red-400'
               )}
             />
-            <div>
+            <div className="w-full">
               <h4 className="text-sky-900 dark:text-sky-300">
                 {translations('Lessons.answer')}
               </h4>
@@ -322,11 +322,12 @@ export default function GuidedKnowledgeTestForm({
                   required
                   maxLength={100}
                   placeholder={translations('Lessons.answer')}
-                  className={
+                  className={clsx(
+                    'w-full',
                     errors.answer &&
-                    errors.answer.type === 'required' &&
-                    'border-red-600 dark:border-red-400'
-                  }
+                      errors.answer.type === 'required' &&
+                      'border-red-600 dark:border-red-400'
+                  )}
                 />
               </div>
             </div>
