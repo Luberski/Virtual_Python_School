@@ -22,6 +22,7 @@ const userAssignmentObj: ClassroomUserAssignment = {
   },
   status: AssignmentStatus.NOT_STARTED,
   grade: null,
+  gradeHistory: [],
   feedback: null,
 };
 
