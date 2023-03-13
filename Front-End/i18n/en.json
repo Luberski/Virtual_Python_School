@@ -274,6 +274,25 @@
     "no-questions-found": "No questions found",
     "delete-knowledge-test-confirmation": "Are you sure you want to DELETE this knowledge test?"
   },
+  "AccessibilityDeclaration": {
+    "leading": "Accessibility declaration of the Virtual Python School website",
+    "paragraph-1": "Authors of the Virtual Python School website declare that the website is accessible in accordance with the provisions of the Act of 4 April 2019 on digital accessibility of websites and mobile applications of public institutions.",
+    "date-of-publication": "Date of publication: 2022-10-01",
+    "date-of-last-significant-update": "Date of last significant update: 2023-03-13",
+    "status": "Status of compliance with the law",
+    "status-paragraph-1": "The website is partially compliant with the Act on digital accessibility of websites and mobile applications of public institutions due to non-compliance or exclusions listed below.",
+    "non-compliance": "Non-compliance",
+    "non-compliance-1": "Not all elements have sufficient contrast ratio with the background.",
+    "non-compliance-2": "Not all interactive elements have a visible focus.",
+    "preparation": "Preparation of the accessibility declaration",
+    "preparation-date": "Date of preparation: 2023-03-13",
+    "last-review": "The declaration was last reviewed and updated on: 2023-03-13",
+    "self-assessment": "Declaration prepared on the basis of self-assessment.",
+    "keyboard-shortcuts": "Keyboard shortcuts can be used on the website.",
+    "feedback": "Feedback and contact information",
+    "feedback-paragraph-1": "If you have any questions or comments about the accessibility of the Virtual Python School website, please contact us by email at: ",
+    "paragraph-2": "Everyone has the right to request digital availability of a website, mobile application or any of their elements. You may also request information to be made available through an alternative means of access, for example, by reading a digitally unavailable document, describing the content of a film without audio description, etc. The request should include the person making the request, indication of the webpage or mobile application the request is for and the method of contact. If the person requesting the information requests an alternative means of access, he or she should also specify a convenient way of presenting the information. The public entity should execute the request immediately, not later than within 7 days from the date of the request. If it is not possible to meet this deadline, the public entity shall immediately inform the requesting person when the execution of the request will be possible, but this deadline shall not be longer than 2 months from the date of filing the request. If digital accessibility is not possible, a public entity may offer an alternative way of accessing information. Where a public entity refuses to comply with a request for accessibility or an alternative means of accessing information, the requesting person may lodge a complaint about the accessibility of a digital website, mobile application or element of a website or mobile application. Once the above mentioned procedure is exhausted, you may also apply to the Commissioner for Human Rights."
+  },
   "Meta": {
     "title-home": "Home",
     "title-courses": "Courses",
@@ -292,6 +311,7 @@
     "reminders": "Reminders",
     "title-classrooms": "Virtual classroom",
     "title-classrooms-leader": "Virtual classroom - Leader page",
-    "title-classrooms-member": "Virtual classroom - Participant page"
+    "title-classrooms-member": "Virtual classroom - Participant page",
+    "title-accessibility-declaration": "Accessibility declaration"
   }
 }
