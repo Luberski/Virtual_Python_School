@@ -109,6 +109,10 @@ export default function ClassroomsTeacherPage({
   const socketUrl = `${process.env.NEXT_PUBLIC_WS_BASE_URL}/${classroomId}`;
   const { sendJsonMessage, lastJsonMessage, readyState } =
     useWebSocket(socketUrl);
+  const accessCode = useMemo(() => {
+    const classroom = classrooms?.find((c) => c.id.toString() === classroomId);
+    return classroom?.access_code;
+  }, [classrooms, classroomId]);
 
   const codeRef = useRef('print("Hello World")\n\n\n\n\n\n\n\n\n\n');
   const myCodeRef = useRef('print("Hello World")\n\n\n\n\n\n\n\n\n\n');
@@ -631,6 +635,9 @@ export default function ClassroomsTeacherPage({
         <div className="flex h-full flex-1 flex-row">
           <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
             <div className="flex flex-col justify-start space-y-2 align-middle">
+              <div className="flex flex-row justify-center rounded-lg bg-red-500 font-bold text-red-900">
+                {translations('Classrooms.access-code')}: {accessCode}
+              </div>
               <h2 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.whiteboards')}
               </h2>
@@ -754,26 +761,30 @@ export default function ClassroomsTeacherPage({
                               register={registerAssignment}
                               required
                               maxLength={20}
+                              minLength={3}
                               placeholder={translations(
                                 'Classrooms.assignment-name'
                               )}></Input>
-                            <Input
+                            <TextArea
                               label="assignmentDescription"
                               name="assignmentDescription"
                               type="text"
                               register={registerAssignment}
                               required
                               maxLength={200}
+                              minLength={3}
+                              rows={3}
                               placeholder={translations(
                                 'Classrooms.assignment-description'
-                              )}></Input>
+                              )}></TextArea>
                             <TextArea
                               label="assignmentCode"
                               name="assignmentCode"
                               type="text"
                               register={registerAssignment}
                               className="resize-none"
-                              rows={4}
+                              cols={80}
+                              rows={15}
                               placeholder={translations(
                                 'Classrooms.assignment-code'
                               )}
@@ -899,7 +910,6 @@ export default function ClassroomsTeacherPage({
                                 step={0.5}
                                 register={registerGrade}
                                 required
-                                maxLength={200}
                                 placeholder={translations(
                                   'Classrooms.assignment-grade-label'
                                 )}></Input>
@@ -922,7 +932,8 @@ export default function ClassroomsTeacherPage({
                                 register={registerGrade}
                                 required
                                 className="resize-none"
-                                rows={4}
+                                rows={8}
+                                cols={60}
                                 placeholder={translations(
                                   'Classrooms.assignment-feedback-label'
                                 )}

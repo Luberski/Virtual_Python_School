@@ -80,7 +80,6 @@ class PayloadHandler:
         self._source_websocket = source_websocket
 
     def set_message_data(self, payload: dict, classroom_id: int, websocket: WebSocket):
-        print(payload)
         self.payload_action = payload['action']
         self.payload_user_id = payload['user_id']
         self.payload_data = payload['data']
@@ -422,7 +421,6 @@ class PayloadHandler:
         updated_user_assignment.grade = user_assignment["grade"]
         updated_user_assignment.status = AssignmentStatus(
             assignment_status)
-        print(updated_user_assignment.status.value)
         updated_user_assignment.feedback = user_assignment["feedback"]
 
         updated_user_assignment.grade_history.append(

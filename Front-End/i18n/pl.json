@@ -96,8 +96,7 @@
     "no-classrooms-found": "Nie znaleziono klas",
     "create-new": "Stwórz nową klasę",
     "classroom-name": "Nazwa klasy",
-    "link-join": "Dołącz za pomocą linku",
-    "link": "Link",
+    "join": "Dołącz",
     "is-public-checkbox": "Ustaw klasę jako publiczną",
     "delete-popup-title": "Czy jesteś pewny że chcesz usunąć tę klasę?",
     "leave-popup-title": "Czy jesteś pewny że chcesz opuścić tę klasę?",
@@ -143,7 +142,9 @@
     "assignment-reviewed-tooltip": "Praca oceniona",
     "assignment-submitted-tooltip": "Praca wysłana do sprawdzenia",
     "assignment-ongoing-tooltip": "Praca w trakcie",
-    "grade-history-btn": "Historia ocen"
+    "grade-history-btn": "Historia ocen",
+    "access-code": "Kod dostępu",
+    "join-with-access-code": "Dołącz do klasy z kodem dostępu"
   },
   "Playground": {
     "run": "Uruchom",

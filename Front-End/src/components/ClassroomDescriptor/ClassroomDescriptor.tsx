@@ -27,7 +27,9 @@ export default function ClassroomDescriptor({
   return (
     <div className="flex h-16 flex-row items-center justify-between whitespace-nowrap">
       <span className="w-1/4 truncate">{classroom.name}</span>
-      <span className="w-1/4">{classroom.teacher_id}</span>
+      <span className="w-1/4">
+        {classroom.teacher_name} {classroom.teacher_last_name}
+      </span>
       <span className="w-1/4">{classroom.num_of_students}</span>
       <div className="w-36">
         <Button

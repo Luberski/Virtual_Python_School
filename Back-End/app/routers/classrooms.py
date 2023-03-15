@@ -1,3 +1,6 @@
+import random
+import string
+
 from datetime import datetime
 from typing import Union
 
@@ -15,6 +18,8 @@ from app.schemas.classroom import (
     ClassroomsAllResponseDataCollection,
     ClassroomJoinRequest,
     ClassroomJoinResponse,
+    ClassroomCodeJoinRequest,
+    ClassroomCodeJoinResponse,
     ClassroomDeleteRequest,
     ClassroomDeleteResponse,
     ClassroomDeleteResponseData,
@@ -22,6 +27,10 @@ from app.schemas.classroom import (
 from app.settings import ADMIN_ID
 
 router = APIRouter()
+
+
+def code_generator(size=8, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 
 @router.post("/classrooms", tags=["classrooms"], response_model=ClassroomCreateResponse)
@@ -62,6 +71,7 @@ def create_classroom(
         name=request_data.data.name,
         teacher_id=user.id,
         is_public=request_data.data.is_public,
+        access_code=code_generator(),
     )
 
     db.add(new_classroom)
@@ -88,6 +98,7 @@ def create_classroom(
                 "name": new_classroom.name,
                 "teacher_id": new_classroom.teacher_id,
                 "is_public": new_classroom.is_public,
+                "access_code": new_classroom.access_code,
             },
             "error": None,
         },
@@ -183,12 +194,19 @@ def get_classrooms_all(
         )
     if classrooms:
         for classroom in classrooms:
+            teacher = db.query(models.User).filter_by(
+                id=classroom.teacher_id).first()
+            print(teacher)
             classrooms_response_data.append(
                 {
                     "id": classroom.id,
                     "name": classroom.name,
                     "teacher_id": classroom.teacher_id,
+                    "teacher_username": teacher.username,
+                    "teacher_name": teacher.name,
+                    "teacher_last_name": teacher.last_name,
                     "is_public": classroom.is_public,
+                    "access_code": classroom.access_code,
                 }
             )
 
@@ -227,12 +245,76 @@ def join_classroom(
             content={"error": "Classroom not found"},
         )
 
-    user_occurences_in_classrooms = (
+    is_assigned_to_classroom = (
         db.query(models.ClassroomSessions)
         .filter_by(user_id=user.id)
         .first()
     )
-    if user_occurences_in_classrooms:
+    if is_assigned_to_classroom:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "error": "User cannot join the same classroom or multiple classrooms"},
+        )
+
+    new_record = models.ClassroomSessions(
+        classroom_id=target_classroom.id,
+        user_id=user.id,
+        is_teacher=False,
+    )
+    db.add(new_record)
+    db.commit()
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "data": {
+                "username": username,
+                "user_id": new_record.user_id,
+                "id": new_record.classroom_id,
+                "is_teacher": new_record.is_teacher,
+            },
+            "error": None,
+        },
+    )
+
+
+@router.post("/classroom/codejoin", tags=["classrooms"], response_model=ClassroomCodeJoinResponse)
+def join_classroom_code(
+    request_data: ClassroomCodeJoinRequest,
+    db: Session = Depends(deps.get_db),
+    Authorize: AuthJWT = Depends(),
+):
+    Authorize.jwt_required()
+    username = Authorize.get_jwt_subject()
+    if username is None:
+        return JSONResponse(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            content={"error": "Unauthorized"},
+        )
+    user = db.query(models.User).filter_by(username=username).first()
+
+    access_code = request_data.data.access_code
+    if access_code is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Classroom does not exist"},
+        )
+
+    target_classroom = db.query(models.Classrooms).filter_by(
+        access_code=access_code).first()
+    if target_classroom is None:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"error": "Access code does not match any classrooms"},
+        )
+
+    is_assigned_to_classroom = (
+        db.query(models.ClassroomSessions)
+        .filter_by(user_id=user.id)
+        .first()
+    )
+    if is_assigned_to_classroom:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={

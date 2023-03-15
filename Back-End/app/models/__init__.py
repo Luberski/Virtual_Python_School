@@ -120,10 +120,12 @@ class DynamicCourseSurveyUserResults(Base):
     )
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
     question_id = Column(
-        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
+        Integer, ForeignKey(
+            "dynamic_course_survey_questions.id", ondelete="CASCADE")
     )
     answer_id = Column(
-        Integer, ForeignKey("dynamic_course_survey_answers.id", ondelete="CASCADE")
+        Integer, ForeignKey(
+            "dynamic_course_survey_answers.id", ondelete="CASCADE")
     )
     survey = relationship("DynamicCourseSurvey")
 
@@ -133,7 +135,8 @@ class DynamicCourseSurveyAnswers(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     question_id = Column(
-        Integer, ForeignKey("dynamic_course_survey_questions.id", ondelete="CASCADE")
+        Integer, ForeignKey(
+            "dynamic_course_survey_questions.id", ondelete="CASCADE")
     )
     rule_type = Column(Integer)
     rule_value = Column(Integer)
@@ -252,7 +255,8 @@ class GlobalKnowledgeTestUserResults(Base):
         Integer, ForeignKey("global_knowledge_test.id", ondelete="CASCADE")
     )
     question_id = Column(
-        Integer, ForeignKey("global_knowledge_test_questions.id", ondelete="CASCADE")
+        Integer, ForeignKey(
+            "global_knowledge_test_questions.id", ondelete="CASCADE")
     )
     answer = Column(String(500))
     is_correct = Column(Boolean, default=False, nullable=False)
@@ -264,6 +268,7 @@ class Classrooms(Base):
     name = Column(String(50))
     teacher_id = Column(Integer, ForeignKey("user.id"))
     is_public = Column(Boolean, default=False, nullable=False)
+    access_code = Column(String(8))
     users = relationship("ClassroomSessions")
 
 
