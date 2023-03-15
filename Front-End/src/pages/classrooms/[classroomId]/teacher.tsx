@@ -635,7 +635,6 @@ export default function ClassroomsTeacherPage({
         <div className="flex h-full flex-1 flex-row">
           <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
             <div className="flex flex-col justify-start space-y-2 align-middle">
-              <h1>Connection status: {readyState}</h1>
               <div className="flex flex-row justify-center rounded-lg bg-red-500 font-bold text-red-900">
                 {translations('Classrooms.access-code')}: {accessCode}
               </div>
