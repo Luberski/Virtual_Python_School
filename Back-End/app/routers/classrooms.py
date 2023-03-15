@@ -194,11 +194,17 @@ def get_classrooms_all(
         )
     if classrooms:
         for classroom in classrooms:
+            teacher = db.query(models.User).filter_by(
+                id=classroom.teacher_id).first()
+            print(teacher)
             classrooms_response_data.append(
                 {
                     "id": classroom.id,
                     "name": classroom.name,
                     "teacher_id": classroom.teacher_id,
+                    "teacher_username": teacher.username,
+                    "teacher_name": teacher.name,
+                    "teacher_last_name": teacher.last_name,
                     "is_public": classroom.is_public,
                     "access_code": classroom.access_code,
                 }

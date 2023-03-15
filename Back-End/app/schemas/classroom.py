@@ -28,6 +28,9 @@ class ClassroomsAllResponseData(BaseModel):
     id: int
     name: str
     teacher_id: int
+    teacher_username: str
+    teacher_name: str
+    teacher_last_name: str
     is_public: bool
     access_code: str
 
