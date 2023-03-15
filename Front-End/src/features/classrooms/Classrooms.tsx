@@ -93,7 +93,7 @@ export default function Classrooms({
     setCodeJoinValue('accessCode', '');
 
     try {
-      await dispatch(joinClassroomWithAccessCode(accessCode))
+      await dispatch(joinClassroomWithAccessCode(accessCode.trim()))
         .unwrap()
         .then((result) => {
           if (result.data) {
