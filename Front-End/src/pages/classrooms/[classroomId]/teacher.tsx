@@ -933,7 +933,8 @@ export default function ClassroomsTeacherPage({
                                 register={registerGrade}
                                 required
                                 className="resize-none"
-                                rows={4}
+                                rows={8}
+                                cols={60}
                                 placeholder={translations(
                                   'Classrooms.assignment-feedback-label'
                                 )}
