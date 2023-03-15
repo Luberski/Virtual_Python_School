@@ -910,7 +910,6 @@ export default function ClassroomsTeacherPage({
                                 step={0.5}
                                 register={registerGrade}
                                 required
-                                maxLength={200}
                                 placeholder={translations(
                                   'Classrooms.assignment-grade-label'
                                 )}></Input>
