@@ -6,7 +6,10 @@ import { useForm } from 'react-hook-form';
 import StyledDialog from '@app/components/StyledDialog';
 import ClassroomDescriptorWrapper from '@app/components/ClassroomDescriptorWrapper';
 import type Classroom from '@app/models/Classroom';
-import { createClassroom } from '@app/features/classrooms/classroomsSlice';
+import {
+  createClassroom,
+  joinClassroomWithAccessCode,
+} from '@app/features/classrooms/classroomsSlice';
 import Checkbox from '@app/components/Checkbox';
 import Button, { ButtonVariant } from '@app/components/Button';
 import Input from '@app/components/Input';
@@ -21,19 +24,33 @@ export default function Classrooms({
 }: ClassroomsProps) {
   const [isCreateClassroomDialogOpen, setIsCreateClassroomDialogOpen] =
     useState(false);
+  const [isJoinWithAccessCodeDialogOpen, setIsJoinWithAccessCodeDialogOpen] =
+    useState(false);
 
   const [checked, setChecked] = useState(true);
 
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, setValue } =
-    useForm<{
-      name: string;
-      is_public: boolean;
-    }>();
+  const {
+    register: registerClassroom,
+    handleSubmit: handleClassroomSubmit,
+    setValue: setClassroomValue,
+  } = useForm<{
+    name: string;
+    is_public: boolean;
+  }>();
 
-  const cancelButtonRef = useRef(null);
+  const {
+    register: registerCodeJoin,
+    handleSubmit: handleCodeJoinSubmit,
+    setValue: setCodeJoinValue,
+  } = useForm<{
+    accessCode: string;
+  }>();
+
+  const cancelClassroomButtonRef = useRef(null);
+  const cancelCodeJoinButtonRef = useRef(null);
 
   const closeCreateClassroomDialog = () => {
     setIsCreateClassroomDialogOpen(false);
@@ -42,13 +59,20 @@ export default function Classrooms({
     setIsCreateClassroomDialogOpen(true);
   };
 
+  const closeJoinWithAccessCodeDialog = () => {
+    setIsJoinWithAccessCodeDialogOpen(false);
+  };
+  const openJoinWithAccessCodeDialog = () => {
+    setIsJoinWithAccessCodeDialogOpen(true);
+  };
+
   const onClassroomCreateSubmit = async (data: {
     name: string;
     is_public: boolean;
   }) => {
     const { name, is_public } = data;
-    setValue('name', '');
-    setValue('is_public', true);
+    setClassroomValue('name', '');
+    setClassroomValue('is_public', true);
 
     try {
       await dispatch(createClassroom({ name, is_public }))
@@ -64,6 +88,24 @@ export default function Classrooms({
     closeCreateClassroomDialog();
   };
 
+  const onJoinWithAccessCodeSubmit = async (data: { accessCode: string }) => {
+    const { accessCode } = data;
+    setCodeJoinValue('accessCode', '');
+
+    try {
+      await dispatch(joinClassroomWithAccessCode(accessCode))
+        .unwrap()
+        .then((result) => {
+          if (result.data) {
+            router.push(`/classrooms/${result.data.id}/student`);
+          }
+        });
+    } catch (error) {
+      console.error(error);
+    }
+    closeJoinWithAccessCodeDialog();
+  };
+
   return (
     <>
       <div className="mb-12 flex h-full flex-row items-center justify-center space-x-6">
@@ -71,7 +113,7 @@ export default function Classrooms({
           variant={ButtonVariant.PRIMARY}
           type="button"
           onClick={openCreateClassroomDialog}
-          ref={cancelButtonRef}>
+          ref={cancelClassroomButtonRef}>
           {translations('Classrooms.create-new')}
         </Button>
 
@@ -82,15 +124,16 @@ export default function Classrooms({
           <div className="py-6">
             <form
               method="dialog"
-              onSubmit={handleSubmit(onClassroomCreateSubmit)}>
+              onSubmit={handleClassroomSubmit(onClassroomCreateSubmit)}>
               <div className="flex flex-col gap-y-2">
                 <Input
                   label="name"
                   name="name"
                   type="text"
-                  register={register}
+                  register={registerClassroom}
                   required
                   maxLength={50}
+                  minLength={3}
                   placeholder={translations(
                     'Classrooms.classroom-name'
                   )}></Input>
@@ -101,7 +144,7 @@ export default function Classrooms({
                     name="is_public"
                     checked={checked}
                     onChange={() => setChecked(!checked)}
-                    register={register}></Checkbox>
+                    register={registerClassroom}></Checkbox>
                   <label htmlFor="is_public" className="ml-2">
                     {translations('Classrooms.is-public-checkbox')}
                   </label>
@@ -116,6 +159,48 @@ export default function Classrooms({
                 </Button>
                 <Button type="submit" variant={ButtonVariant.PRIMARY}>
                   {translations('Classrooms.submit')}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </StyledDialog>
+
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          type="button"
+          onClick={openJoinWithAccessCodeDialog}
+          ref={cancelCodeJoinButtonRef}>
+          {translations('Classrooms.join-with-access-code')}
+        </Button>
+
+        <StyledDialog
+          title={translations('Classrooms.join-with-access-code')}
+          isOpen={isJoinWithAccessCodeDialogOpen}
+          onClose={closeJoinWithAccessCodeDialog}>
+          <div className="py-6">
+            <form
+              method="dialog"
+              onSubmit={handleCodeJoinSubmit(onJoinWithAccessCodeSubmit)}>
+              <div className="flex flex-col gap-y-2">
+                <Input
+                  label="accessCode"
+                  name="accessCode"
+                  type="text"
+                  register={registerCodeJoin}
+                  required
+                  minLength={8}
+                  maxLength={8}
+                  placeholder={translations('Classrooms.access-code')}></Input>
+              </div>
+              <div className="mt-6 flex flex-row items-center justify-end">
+                <Button
+                  onClick={closeJoinWithAccessCodeDialog}
+                  className="mr-2"
+                  variant={ButtonVariant.DANGER}>
+                  {translations('Classrooms.cancel')}
+                </Button>
+                <Button type="submit" variant={ButtonVariant.PRIMARY}>
+                  {translations('Classrooms.join')}
                 </Button>
               </div>
             </form>

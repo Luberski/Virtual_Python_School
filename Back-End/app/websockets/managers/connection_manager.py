@@ -28,7 +28,8 @@ class ConnectionManager:
             user.go_offline()
             payload = json.dumps(
                 {"action": Actions.LEAVE.value, "data": user.to_json()})
-            await self.broadcast_class_online(classroom_id=classroom_id, payload=payload)
+            await self.broadcast_class_online(
+                classroom_id=classroom_id, payload=payload)
 
     async def send_personal_payload(self, payload: str, websocket: WebSocket):
         await websocket.send_text(payload)
@@ -44,7 +45,7 @@ class ConnectionManager:
 
     async def broadcast_class_online(self, payload: str, classroom_id: int, ):
         for user in class_manager.get_classroom(classroom_id).users:
-            if user.status:
+            if user.status.value:
                 await user.websocket.send_text(payload)
 
     async def broadcast_class_students(self, payload: str, classroom_id: int, ):

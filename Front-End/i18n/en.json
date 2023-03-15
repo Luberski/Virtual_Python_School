@@ -96,7 +96,7 @@
     "no-classrooms-found": "No classrooms found",
     "create-new": "Create new classroom",
     "classroom-name": "Classroom name",
-    "link-join": "Join with a link",
+    "join": "Join",
     "link": "Link",
     "is-public-checkbox": "Make classroom public",
     "delete-popup-title": "Are you sure you want to delete this classroom?",
@@ -143,7 +143,9 @@
     "assignment-reviewed-tooltip": "Assignment reviewed",
     "assignment-submitted-tooltip": "Assignment submitted",
     "assignment-ongoing-tooltip": "Assignment ongoing",
-    "grade-history-btn": "Historia ocen"
+    "grade-history-btn": "Grade history",
+    "access-code": "Access code",
+    "join-with-access-code": "Join with access code"
   },
   "Playground": {
     "run": "Run",

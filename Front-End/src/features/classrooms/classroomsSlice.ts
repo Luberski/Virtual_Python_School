@@ -86,6 +86,30 @@ export const joinClassroom = createAsyncThunk<ApiPayload<Classroom>, number>(
   }
 );
 
+export const joinClassroomWithAccessCode = createAsyncThunk<
+  ApiPayload<Classroom>,
+  string
+>('api/classroom/codejoin', async (code, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.post('classroom/codejoin', {
+      json: {
+        data: { access_code: code },
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await res.json();
+    return data as ApiPayload<Classroom>;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
 export const deleteClassroom = createAsyncThunk<ApiPayload<Classroom>, number>(
   'api/classroom/delete',
   async (id, thunkApi) => {
@@ -163,6 +187,30 @@ export const classroomsSlice = createSlice({
         }
       )
       .addCase(joinClassroom.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(joinClassroomWithAccessCode.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        joinClassroomWithAccessCode.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload<Classroom> }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = [...state.data, data];
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(joinClassroomWithAccessCode.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })

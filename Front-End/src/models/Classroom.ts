@@ -4,6 +4,7 @@ export type Classroom = {
   teacher_id: number;
   num_of_students: number;
   is_public: boolean;
+  access_code: string;
 };
 
 export default Classroom;
