@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 @router.get("/sessions", tags=["sessions"], response_model=ClassroomSessionsAllResponse)
-def get_classrooms_all(
+def get_sessions_all(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
 ):
@@ -69,7 +69,7 @@ def get_classrooms_all(
 
 
 @router.delete("/sessions", tags=["sessions"], response_model=ClassroomSessionDeleteResponse)
-def get_classrooms_all(
+def delete_session(
     db: Session = Depends(deps.get_db),
     Authorize: AuthJWT = Depends(),
 ):
