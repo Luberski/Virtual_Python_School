@@ -15,6 +15,7 @@ const class1: Classroom = {
   teacher_last_name: 'Kowalski',
   num_of_students: 12,
   is_public: true,
+  access_code: '1234',
 };
 
 export const Default: ComponentStory<typeof ClassroomDescriptor> = (args) => (
