@@ -1,55 +1,30 @@
-import React from 'react';
-import Link from 'next/link';
-import Button, { ButtonVariant } from '../Button';
-import ButtonLink, { ButtonLinkVariant } from '../ButtonLink';
+import type React from 'react';
 
 type FancyCardProps = {
-  title: string;
-  description: string | React.ReactNode;
-  link?: string;
-  buttonText: string;
+  title: React.ReactNode;
+  description: React.ReactNode;
   cardColor?: string;
   darkCardColor?: string;
   shadowColor?: string;
   hoverShadowColor?: string;
-  onClick?: () => void;
+  bottomControls?: React.ReactNode;
 };
 
 export default function FancyCard({
-  link,
   title,
   description,
-  buttonText,
-  cardColor = 'bg-gray-200',
-  darkCardColor = 'dark:bg-gray-900',
-  shadowColor = 'shadow-gray-200/50',
-  hoverShadowColor = 'hover:shadow-gray-400/50',
-  onClick,
+  cardColor = 'bg-neutral-200',
+  darkCardColor = 'dark:bg-neutral-800',
+  shadowColor = 'shadow-neutral-200/50',
+  hoverShadowColor = 'hover:shadow-neutral-400/50',
+  bottomControls,
 }: FancyCardProps) {
   return (
     <div
-      className={`flex flex-col justify-between p-8 ${cardColor} ${darkCardColor} border dark:border-gray-400 shadow-md hover:shadow-lg ${hoverShadowColor} transition duration-500 ease-in-out hover:scale-110 ${shadowColor} rounded-lg text-gray-700 dark:text-gray-100`}>
-      <h3 title={title} className="text-xl font-bold break-words">
-        {title}
-      </h3>
-      <p className="max-w-xs h-full max-h-96 truncate break-words">
-        {description}
-      </p>
-
-      {link ? (
-        <Link href={link} passHref={true}>
-          <ButtonLink variant={ButtonLinkVariant.SECONDARY} className="mt-16">
-            {buttonText}
-          </ButtonLink>
-        </Link>
-      ) : (
-        <Button
-          variant={ButtonVariant.SECONDARY}
-          className="mt-16"
-          onClick={onClick}>
-          {buttonText}
-        </Button>
-      )}
+      className={`flex flex-col justify-between p-6 ${cardColor} ${darkCardColor} brand-shadow2 border shadow-black/25 dark:border-neutral-400 ${hoverShadowColor} transition duration-500 ease-in-out ${shadowColor} max-h-[768px] w-80 rounded-lg text-neutral-700 dark:text-neutral-100`}>
+      <div className="break-words text-xl font-bold">{title}</div>
+      <div className="h-full truncate break-words">{description}</div>
+      <div className="mt-3 items-end pt-1">{bottomControls}</div>
     </div>
   );
 }

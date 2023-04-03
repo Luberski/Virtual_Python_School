@@ -17,6 +17,7 @@
 
 # misc
 .DS_Store
+*.pem
 
 # debug
 npm-debug.log*
@@ -30,3 +31,6 @@ yarn-error.log*
 .env.production.local
 .dccache
 storybook-static
+/cypress/videos
+/cypress/screenshots
+.cache

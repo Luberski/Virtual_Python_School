@@ -1,12 +1,23 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import ButtonLink, { ButtonLinkVariant } from '../ButtonLink';
-import { User } from '../../models/User';
-import { ThemeButton } from '../ThemeButton';
-import { Disclosure } from '@headlessui/react';
-import clsx from 'clsx';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { useRouter } from 'next/router';
-import Button from '../Button';
+import {
+  ArrowRightOnRectangleIcon,
+  LanguageIcon,
+} from '@heroicons/react/20/solid';
+import { Fragment } from 'react';
+import IconButton, {
+  IconButtonSize,
+  IconButtonVariant,
+} from '@app/components/IconButton';
+import ButtonLink, {
+  ButtonLinkSize,
+  ButtonLinkVariant,
+} from '@app/components/ButtonLink';
+import { ThemeButton } from '@app/components/ThemeButton';
+import type User from '@app/models/User';
+import IconButtonLink, { IconButtonLinkVariant } from '../IconButtonLink';
 
 type NavBarProps = {
   isLoggedIn?: boolean;
@@ -17,6 +28,7 @@ type NavBarProps = {
 const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
   const router = useRouter();
   const t = useTranslations();
+  const otherLocale = router.locales?.find((cur) => cur !== router.locale);
 
   return (
     <Disclosure
@@ -24,12 +36,12 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
       className="mx-auto w-full"
       suppressHydrationWarning={true}>
       {({ open }) => (
-        <div className="container flex justify-between items-center py-4 px-6 mx-auto lg:items-stretch xl:h-16">
-          <div className="flex items-center h-full">
+        <div className="container mx-auto flex items-center justify-between py-4 px-6 lg:items-stretch xl:h-16">
+          <div className="flex h-full items-center">
             {!open && (
               <div className="sm:mr-10">
                 <Link href="/" passHref={true}>
-                  <a className="ml-3 text-base font-bold tracking-normal leading-tight text-gray-700 dark:text-gray-300 no-underline hover:no-underline">
+                  <a className="ml-3 text-base font-bold leading-tight tracking-normal text-sky-900 no-underline hover:no-underline dark:text-sky-300">
                     Virtual Python School
                   </a>
                 </Link>
@@ -38,84 +50,192 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             <ul className="hidden items-center space-x-2 xl:flex">
               <li>
                 <Link href="/" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Home.home')}
-                  </a>
+                  </ButtonLink>
                 </Link>
               </li>
               <li>
                 <Link href="/courses" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/courses'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Home.courses')}
-                  </a>
+                  </ButtonLink>
                 </Link>
               </li>
               <li>
                 <Link href="/courses/enrolled" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/courses/enrolled'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Meta.title-enrolled-courses')}
-                  </a>
+                  </ButtonLink>
                 </Link>
+              </li>
+              <li>
+                <Link href="/classrooms" passHref={true}>
+                  <ButtonLink
+                    variant={
+                      router.pathname === '/classrooms' ||
+                      router.pathname === '/classrooms/[classroomId]'
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
+                    {t('Meta.title-classrooms')}
+                  </ButtonLink>
+                </Link>
+              </li>
+              <li>
                 <Link href="/playground" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/playground'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Meta.title-playground')}
-                  </a>
+                  </ButtonLink>
                 </Link>
               </li>
             </ul>
           </div>
 
-          <div className="hidden justify-end items-center h-full xl:flex">
-            <div className="flex items-center w-full h-full">
-              <div className="flex w-full h-full">
+          <div className="hidden h-full items-center justify-end xl:flex">
+            <div className="flex h-full w-full items-center">
+              <div className="flex h-full w-full">
                 <div
                   aria-haspopup="true"
-                  className="flex justify-end items-center w-full cursor-pointer">
+                  className="flex w-full cursor-pointer items-center justify-end">
                   {isLoggedIn && user ? (
-                    <div className="flex justify-center items-center">
-                      <div
-                        className="flex justify-end items-center mx-4 w-48 text-sm truncate"
-                        title={`${user?.name} ${user?.lastName}`}>
-                        {user?.name} {user?.lastName}
-                      </div>
-                      <Button className="ml-4 menu-btn-danger" onClick={logout}>
-                        {t('Auth.logout')}
-                      </Button>
+                    <div className="flex items-center justify-center">
+                      <Menu
+                        as="div"
+                        className="relative inline-block rounded-md text-left">
+                        <Menu.Button
+                          title="Expand menu"
+                          className="flex w-full items-center justify-center rounded-md p-2 font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700">
+                          <div
+                            className="flex items-center truncate px-2"
+                            title={`${user?.name} ${user?.lastName}`}>
+                            {user?.name} {user?.lastName}
+                          </div>
+                        </Menu.Button>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95">
+                          <Menu.Items
+                            // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
+                            className="absolute right-0 mt-2 origin-top-right divide-y divide-neutral-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-neutral-800">
+                            <div className="flex flex-col justify-end p-2">
+                              <Menu.Item>
+                                <Link href="/users/dashboard" passHref={true}>
+                                  <ButtonLink
+                                    sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                    variant={ButtonLinkVariant.FLAT_PRIMARY}>
+                                    {t('Meta.title-dashboard')}
+                                  </ButtonLink>
+                                </Link>
+                              </Menu.Item>
+                              {user?.role.role_name === 'admin' && (
+                                <>
+                                  <Menu.Item>
+                                    <Link
+                                      href="/manage/courses"
+                                      passHref={true}>
+                                      <ButtonLink
+                                        sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                        variant={
+                                          ButtonLinkVariant.FLAT_PRIMARY
+                                        }>
+                                        {t('Manage.manage-courses')}
+                                      </ButtonLink>
+                                    </Link>
+                                  </Menu.Item>
+                                  <Menu.Item>
+                                    <Link
+                                      href="/manage/dynamic-courses"
+                                      passHref={true}>
+                                      <ButtonLink
+                                        sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                        variant={
+                                          ButtonLinkVariant.FLAT_PRIMARY
+                                        }>
+                                        {t('Manage.manage-dynamic-courses')}
+                                      </ButtonLink>
+                                    </Link>
+                                  </Menu.Item>
+                                  <Menu.Item>
+                                    <Link
+                                      href="/manage/dynamic-courses/global-knowledge-tests"
+                                      passHref={true}>
+                                      <ButtonLink
+                                        sizeType={ButtonLinkSize.EXTRA_LARGE}
+                                        variant={
+                                          ButtonLinkVariant.FLAT_PRIMARY
+                                        }>
+                                        {t(
+                                          'Manage.manage-global-knowledge-tests'
+                                        )}
+                                      </ButtonLink>
+                                    </Link>
+                                  </Menu.Item>
+                                </>
+                              )}
+                              <Menu.Item>
+                                <IconButton
+                                  type="button"
+                                  sizeType={IconButtonSize.EXTRA_LARGE}
+                                  onClick={logout}
+                                  variant={IconButtonVariant.FLAT_DANGER}
+                                  icon={
+                                    <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                                  }>
+                                  {t('Auth.logout')}
+                                </IconButton>
+                              </Menu.Item>
+                            </div>
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
                     </div>
                   ) : (
                     <div className="flex space-x-4">
                       <Link href="/login" passHref={true}>
-                        <ButtonLink variant={ButtonLinkVariant.SECONDARY}>
+                        <ButtonLink variant={ButtonLinkVariant.PRIMARY}>
                           {t('Auth.login')}
                         </ButtonLink>
                       </Link>
                     </div>
                   )}
                   <ThemeButton />
+                  <Link href={router.asPath} locale={otherLocale}>
+                    <IconButtonLink
+                      title={t('Meta.switch-locale', {
+                        locale: otherLocale,
+                      })}
+                      variant={IconButtonLinkVariant.FLAT_SECONDARY}
+                      icon={
+                        <LanguageIcon className="h-5 w-5" aria-hidden="true" />
+                      }
+                    />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -124,7 +244,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             {open ? (
               <Disclosure.Button className="xl:hidden">
                 <svg
-                  className="w-6 h-6"
+                  className="h-6 w-6"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -137,7 +257,7 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             ) : (
               <Disclosure.Button className="xl:hidden">
                 <svg
-                  className="w-6 h-6"
+                  className="h-6 w-6"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -151,66 +271,74 @@ const NavBar = ({ user, isLoggedIn, logout }: NavBarProps) => {
             <Disclosure.Panel className="py-2 xl:hidden">
               <div className="flex flex-col space-y-2">
                 <Link href="/" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Home.home')}
-                  </a>
+                  </ButtonLink>
                 </Link>
                 <Link href="/courses" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/courses'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Home.courses')}
-                  </a>
+                  </ButtonLink>
                 </Link>
                 <Link href="/courses/enrolled" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/courses/enrolled'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Meta.title-enrolled-courses')}
-                  </a>
+                  </ButtonLink>
+                </Link>
+                <Link href="/classrooms" passHref={true}>
+                  <ButtonLink
+                    variant={
+                      router.pathname === '/classrooms'
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
+                    {t('Meta.title-classrooms')}
+                  </ButtonLink>
                 </Link>
                 <Link href="/playground" passHref={true}>
-                  <a
-                    className={clsx(
-                      'menu-btn',
+                  <ButtonLink
+                    variant={
                       router.pathname === '/playground'
-                        ? 'menu-btn-primary'
-                        : `menu-btn-secondary`
-                    )}>
+                        ? ButtonLinkVariant.PRIMARY
+                        : ButtonLinkVariant.FLAT_SECONDARY
+                    }>
                     {t('Meta.title-playground')}
-                  </a>
+                  </ButtonLink>
                 </Link>
                 {isLoggedIn && user ? (
                   <div className="flex items-center">
                     <div
-                      className="mx-4 w-20 text-sm truncate"
+                      className="mx-4 w-20 truncate"
                       title={`${user?.name} ${user?.lastName}`}>
                       {user?.name} {user?.lastName}
                     </div>
-                    <Button className="ml-4 menu-btn-danger" onClick={logout}>
+                    <IconButton
+                      type="button"
+                      onClick={logout}
+                      variant={IconButtonVariant.FLAT_DANGER}
+                      icon={<ArrowRightOnRectangleIcon className="h-5 w-5" />}>
                       {t('Auth.logout')}
-                    </Button>
+                    </IconButton>
                   </div>
                 ) : (
                   <div className="flex flex-col">
                     <Link href="/login" passHref={true}>
-                      <a className="menu-btn menu-btn-secondary">
-                        {t('Auth.login')}
-                      </a>
+                      <ButtonLink>{t('Auth.login')}</ButtonLink>
                     </Link>
                     <ThemeButton />
                   </div>

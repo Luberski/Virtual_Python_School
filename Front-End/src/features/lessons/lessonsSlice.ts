@@ -1,12 +1,15 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiClient from '../../apiClient';
-import { RootState } from '../../store';
-import { Lesson } from '../../models/Lesson';
 import { HYDRATE } from 'next-redux-wrapper';
+import apiClient from '@app/apiClient';
+import type { RootState } from '@app/store';
+import type Lesson from '@app/models/Lesson';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type LessonsState = {
   data: Lesson[];
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -16,20 +19,41 @@ const initialState: LessonsState = {
   error: null,
 };
 
-export const fetchLessons = createAsyncThunk(
-  'api/lessons',
-  async (courseId: string, thunkApi) => {
+export const fetchLessonsByCourseId = createAsyncThunk<
+  ApiPayload<Lesson[]>,
+  number
+>('api/lessons/byCourseId', async (courseId, thunkApi) => {
+  try {
+    const state = thunkApi.getState() as RootState;
+    const { accessToken } = state.auth.token;
+    const res = await apiClient.get(`courses/${courseId}/lessons`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await res.json();
+    return data as ApiPayload<Lesson[]>;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
+export const fetchAllLessons = createAsyncThunk<ApiPayload<Lesson[]>>(
+  'api/lessons/all',
+  async (_: void, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`courses/${courseId}/lessons`, {
+      const res = await apiClient.get(`lessons`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Lesson[]>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -37,26 +61,20 @@ export const fetchLessons = createAsyncThunk(
   }
 );
 
-// TODO: handle errors
-export const deleteLesson = createAsyncThunk(
+export const deleteLesson = createAsyncThunk<ApiPayload<Lesson>, number>(
   'api/lessons/delete',
-  async (id: string | number, thunkApi) => {
+  async (id, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.delete(`lessons`, {
-        json: {
-          data: {
-            id_lesson: id,
-          },
-        },
+      const res = await apiClient.delete(`lessons/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Lesson>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -64,8 +82,18 @@ export const deleteLesson = createAsyncThunk(
   }
 );
 
-// TODO: handle errors
-export const createLesson = createAsyncThunk(
+export const createLesson = createAsyncThunk<
+  ApiPayload<Lesson>,
+  {
+    courseId: number;
+    name: string;
+    description: string;
+    type: number;
+    numberOfAnswers: number;
+    answer: string;
+    answerCheckRule: string;
+  }
+>(
   'api/lessons/create',
   async (
     {
@@ -75,13 +103,7 @@ export const createLesson = createAsyncThunk(
       type,
       numberOfAnswers,
       answer,
-    }: {
-      courseId: string;
-      name: string;
-      description: string;
-      type: number;
-      numberOfAnswers: number;
-      answer: string;
+      answerCheckRule,
     },
     thunkApi
   ) => {
@@ -91,12 +113,13 @@ export const createLesson = createAsyncThunk(
       const res = await apiClient.post('lessons', {
         json: {
           data: {
-            id_course: courseId,
+            course_id: courseId,
             name,
             description,
             type,
             number_of_answers: numberOfAnswers,
             final_answer: answer,
+            answer_check_rule: answerCheckRule,
           },
         },
         headers: {
@@ -105,7 +128,68 @@ export const createLesson = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Lesson>;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+);
+
+// TODO: support more fields
+export const editLesson = createAsyncThunk<
+  ApiPayload<Lesson>,
+  {
+    courseId: number;
+    lessonId: number;
+    name?: string;
+    description?: string;
+    type?: number;
+    numberOfAnswers?: number;
+    answer?: string;
+    answerCheckRule?: string;
+    order?: number;
+  }
+>(
+  'api/lessons/edit',
+  async (
+    {
+      courseId,
+      lessonId,
+      name,
+      description,
+      type,
+      numberOfAnswers,
+      answer,
+      answerCheckRule,
+      order,
+    },
+    thunkApi
+  ) => {
+    try {
+      const state = thunkApi.getState() as RootState;
+      const { accessToken } = state.auth.token;
+      const res = await apiClient.patch('lessons', {
+        json: {
+          data: {
+            course_id: courseId,
+            lesson_id: lessonId,
+            ...(name && { name }),
+            ...(description && { description }),
+            ...(type && { type }),
+            ...(numberOfAnswers && { number_of_answers: numberOfAnswers }),
+            ...(answer && { final_answer: answer }),
+            ...(answerCheckRule && { answer_check_rule: answerCheckRule }),
+            ...(order && { order }),
+          },
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const data = await res.json();
+      return data as ApiPayload<Lesson>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -116,7 +200,46 @@ export const createLesson = createAsyncThunk(
 export const lessonsSlice = createSlice({
   name: 'lessons',
   initialState,
-  reducers: {},
+  reducers: {
+    changeLessonOrderUp: (
+      state,
+      action: PayloadAction<{
+        lessonId: number;
+        currentOrder: number;
+      }>
+    ) => {
+      const { lessonId, currentOrder } = action.payload;
+      const lesson = state.data.find((lesson) => lesson.id === lessonId);
+      if (lesson) {
+        const index = state.data.findIndex((lesson) => lesson.id === lessonId);
+        const prevLesson = state.data[index - 1];
+        if (prevLesson) {
+          lesson.order = prevLesson.order;
+          prevLesson.order = currentOrder;
+        }
+        state.data = state.data.sort((a, b) => a.order - b.order);
+      }
+    },
+    changeLessonOrderDown: (
+      state,
+      action: PayloadAction<{
+        lessonId: number;
+        currentOrder: number;
+      }>
+    ) => {
+      const { lessonId, currentOrder } = action.payload;
+      const lesson = state.data.find((lesson) => lesson.id === lessonId);
+      if (lesson) {
+        const index = state.data.findIndex((lesson) => lesson.id === lessonId);
+        const nextLesson = state.data[index + 1];
+        if (nextLesson) {
+          lesson.order = nextLesson.order;
+          nextLesson.order = currentOrder;
+        }
+        state.data = state.data.sort((a, b) => a.order - b.order);
+      }
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(HYDRATE, (state, action) => {
@@ -124,12 +247,15 @@ export const lessonsSlice = createSlice({
         // @ts-ignore
         return Object.assign({}, state, { ...action.payload.lessons });
       })
-      .addCase(fetchLessons.pending, (state) => {
+      .addCase(fetchLessonsByCourseId.pending, (state) => {
         state.status = 'pending';
       })
       .addCase(
-        fetchLessons.fulfilled,
-        (state, { payload: { data, error } }) => {
+        fetchLessonsByCourseId.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload<Lesson[]> }
+        ) => {
           if (error) {
             state.data = null;
             state.error = error;
@@ -141,28 +267,76 @@ export const lessonsSlice = createSlice({
           }
         }
       )
-      .addCase(fetchLessons.rejected, (state, action) => {
+      .addCase(fetchLessonsByCourseId.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })
       .addCase(deleteLesson.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(deleteLesson.fulfilled, (state, { payload }) => {
-        state.data = state.data.filter(
-          (course) => course.id !== payload.data.id
-        );
-      })
+      .addCase(
+        deleteLesson.fulfilled,
+        (state, { payload }: { payload: ApiPayload<Lesson> }) => {
+          state.data = state.data.filter(
+            (course) => course.id !== payload.data.id
+          );
+        }
+      )
       .addCase(deleteLesson.rejected, (state, action) => {
         state.error = action.error.message;
       })
       .addCase(createLesson.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(createLesson.fulfilled, (state, { payload }) => {
-        state.data = [...state.data, payload.data];
-      })
+      .addCase(
+        createLesson.fulfilled,
+        (state, { payload }: { payload: ApiPayload<Lesson> }) => {
+          state.data = [...state.data, payload.data];
+        }
+      )
       .addCase(createLesson.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(editLesson.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        editLesson.fulfilled,
+        (state, { payload }: { payload: ApiPayload<Lesson> }) => {
+          if (payload.error) {
+            state.error = payload.error;
+          } else {
+            state.data = state.data.map((lesson) =>
+              lesson.id === payload.data.id ? payload.data : lesson
+            );
+          }
+        }
+      )
+      .addCase(editLesson.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(fetchAllLessons.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(
+        fetchAllLessons.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload<Lesson[]> }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
+        }
+      )
+      .addCase(fetchAllLessons.rejected, (state, action) => {
+        state.status = 'failed';
         state.error = action.error.message;
       });
   },
@@ -171,5 +345,8 @@ export const lessonsSlice = createSlice({
 export const selectLessonsData = (state: RootState) => state.lessons.data;
 export const selectLessonsError = (state: RootState) => state.lessons.error;
 export const selectLessonsStatus = (state: RootState) => state.lessons.status;
+
+export const { changeLessonOrderUp, changeLessonOrderDown } =
+  lessonsSlice.actions;
 
 export default lessonsSlice.reducer;

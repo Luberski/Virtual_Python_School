@@ -1,21 +1,24 @@
 import Image from 'next/image';
-import Footer from '../components/Footer';
 import { useTranslations } from 'next-intl';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { selectIsLogged, selectAuthUser } from '../features/auth/authSlice';
-import NavBar from '../components/NavBar';
-import FancyCard from '../components/FancyCard';
 import Head from 'next/head';
-import { WEBSITE_TITLE } from '../constants';
+import { useDispatch } from 'react-redux';
+import Footer from '@app/components/Footer';
+import { useAppSelector } from '@app/hooks';
+import { selectIsLogged, selectAuthUser } from '@app/features/auth/authSlice';
+import NavBar from '@app/components/NavBar';
+import { WEBSITE_TITLE } from '@app/constants';
+import FeaturedCourses from '@app/features/courses/featured/FeaturedCourses';
 import {
   fetchFeaturedCourses,
   selectFeaturedCoursesData,
-} from '../features/courses/featuredCoursesSlice';
-import { wrapper } from '../store';
+} from '@app/features/courses/featured/featuredCoursesSlice';
+import { wrapper } from '@app/store';
+import DynamicCourseCard from '@app/components/DynamicCourseCard';
 
 export default function IndexPage() {
   const t = useTranslations();
-  const dispatch = useAppDispatch();
+  const pageTitle = `${t('Meta.title-home')} - ${WEBSITE_TITLE}`;
+  const dispatch = useDispatch();
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
   const featuredCourses = useAppSelector(selectFeaturedCoursesData);
@@ -23,11 +26,9 @@ export default function IndexPage() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-home')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <NavBar
           user={user}
           isLoggedIn={isLoggedIn}
@@ -37,45 +38,28 @@ export default function IndexPage() {
             })
           }
         />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
+        <div className="container my-6 mx-auto flex flex-col items-center justify-center px-6 pb-6">
           <div className="space-y-2">
-            <h1 className="text-center">{t('Home.leading')}</h1>
-            <p className="text-xl text-center">
+            <h1 className="text-center text-sky-900 dark:text-sky-300">
+              {t('Home.leading')}
+            </h1>
+            <p className="text-center text-xl">
               {t('Courses.courses-adjusted-skill-level')}
             </p>
           </div>
         </div>
-        <div className="container px-6 mx-auto">
-          {featuredCourses && featuredCourses.length > 0 ? (
-            <div className="flex flex-col justify-center space-y-6 sm:flex-row sm:space-y-0 sm:space-x-12">
-              {featuredCourses.map((course) => (
-                <FancyCard
-                  key={course.id}
-                  title={course.name}
-                  description={course.description}
-                  link={`/courses`}
-                  cardColor="bg-gray-50"
-                  shadowColor="shadow-gray-500/50"
-                  hoverShadowColor="hover:shadow-gray-500/50"
-                  buttonText={t('Home.learn-more')}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col justify-center items-center w-full h-full">
-              <p className="pb-8 text-lg font-medium">
-                {t('Courses.no-courses-found')}
-              </p>
-              <Image
-                src="/undraw_no_data_re_kwbl.svg"
-                alt="No data"
-                width={200}
-                height={200}
-              />
-            </div>
-          )}
-        </div>
-        <div className="flex justify-center items-center my-16">
+        {featuredCourses?.length > 0 && (
+          <div className="container mx-auto flex flex-col items-center space-y-8 px-6">
+            <DynamicCourseCard>
+              {t('DynamicCourse.try-dynamic-course')}
+            </DynamicCourseCard>
+            <FeaturedCourses
+              featuredCourses={featuredCourses}
+              translations={t}
+            />
+          </div>
+        )}
+        <div className="my-16 flex items-center justify-center">
           <Image
             src={'/undraw_online_learning_re_qw08.svg'}
             alt="online_learning"

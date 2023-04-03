@@ -1,32 +1,21 @@
 import { useEffect } from 'react';
-import Footer from '../components/Footer';
-import Input from '../components/Input';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import {
-  loginUser,
-  selectAuthError,
-  selectAuthStatus,
-  selectAuthUser,
-  selectIsLogged,
-} from '../features/auth/authSlice';
-import NavBar from '../components/NavBar';
 import { useRouter } from 'next/router';
-import IconButton, { IconButtonVariant } from '../components/IconButton';
-import { WEBSITE_TITLE } from '../constants';
 import Head from 'next/head';
+import Footer from '@app/components/Footer';
+import { useAppSelector } from '@app/hooks';
+import { selectAuthUser, selectIsLogged } from '@app/features/auth/authSlice';
+import NavBar from '@app/components/NavBar';
+import { WEBSITE_TITLE } from '@app/constants';
+import LoginForm from '@app/features/auth/LoginForm';
 
 export default function LoginPage() {
-  const dispatch = useAppDispatch();
   const t = useTranslations();
-  const { register, handleSubmit } = useForm();
-  const router = useRouter();
-  const error = useAppSelector(selectAuthError);
-  const status = useAppSelector(selectAuthStatus);
+  const pageTitle = `${t('Meta.title-login')} - ${WEBSITE_TITLE}`;
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
+  const router = useRouter();
 
   useEffect(() => {
     if (user && isLoggedIn) {
@@ -34,102 +23,30 @@ export default function LoginPage() {
     }
   }, [user, isLoggedIn, router]);
 
-  const onSubmit = (data: { username: string; password: string }) => {
-    const { username, password } = data;
-
-    try {
-      dispatch(loginUser({ username, password }));
-      if (status === 'succeeded') {
-        router.push('/');
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-login')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <NavBar />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
-          <div>
-            <h1 className="text-center">{t('Auth.welcome-back')}</h1>
+        <div className="brand-shadow2 container my-6 mx-auto flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
+          <h1 className="text-center text-sky-900 dark:text-sky-300">
+            {t('Auth.welcome-back')}
+          </h1>
+          <div className="container mx-auto px-6 pt-6">
+            <LoginForm translations={t} />
           </div>
-        </div>
-        <div className="container px-6 mx-auto">
-          <form
-            className="flex flex-col justify-center items-center space-y-6"
-            onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              label="username"
-              type="username"
-              placeholder={t('Auth.username')}
-              register={register}
-              required
+          <div className="my-16 flex items-center justify-center">
+            <Image
+              src={'/undraw_login_re_4vu2.svg'}
+              alt="login"
+              width="384"
+              height="229"
             />
-            <Input
-              label="password"
-              type="password"
-              placeholder={t('Auth.password')}
-              register={register}
-              required
-            />
-            <IconButton
-              variant={IconButtonVariant.SECONDARY}
-              type="submit"
-              icon={
-                status === 'pending' ? (
-                  <svg
-                    className="mr-1 w-5 h-5 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                ) : (
-                  <div className="relative top-0.5">
-                    <Image
-                      width="24"
-                      height="16"
-                      src="/ZUT_logo_kolor.svg"
-                      alt="zut logo"
-                    />
-                  </div>
-                )
-              }>
-              {t('Auth.login')}
-            </IconButton>
-            {status === 'failed' && error && (
-              <div className="py-2 px-4 text-red-700 bg-red-300 rounded-lg">
-                {error}
-              </div>
-            )}
-          </form>
+          </div>
+          <Footer />
         </div>
-        <div className="flex justify-center items-center my-16">
-          <Image
-            src={'/undraw_login_re_4vu2.svg'}
-            alt="login"
-            width="466"
-            height="330"
-          />
-        </div>
-        <Footer />
       </div>
     </>
   );

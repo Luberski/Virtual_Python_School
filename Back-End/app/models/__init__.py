@@ -1,119 +1,281 @@
-from sqlalchemy import ForeignKey
-from passlib.hash import pbkdf2_sha256 as sha256
-from app.db import db
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy.orm import relationship
+from passlib.hash import bcrypt_sha256
+from app.db.session import Base
 
 
-class User(db.Model):
+class User(Base):
     __tablename__ = "user"
-    id = db.Column(db.Integer, primary_key=True)
-    zut_id = db.Column(db.String(255), unique=True)
-    username = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(100))
-    name = db.Column(db.String(100))
-    last_name = db.Column(db.String(100))
-    email = db.Column(db.String(100), unique=True)
-    id_course = db.relationship("CoursesTaken")
-    role_id = db.Column(db.Integer, ForeignKey("roles.id"))
+    id = Column(Integer, primary_key=True)
+    zut_id = Column(String(255), unique=True)
+    username = Column(String(100), unique=True)
+    name = Column(String(100))
+    last_name = Column(String(100))
+    email = Column(String(100), unique=True)
+    course_id = relationship("EnrolledCourses")
+    role_id = Column(Integer, ForeignKey("roles.id"))
+    classroom_sessions = relationship(
+        "ClassroomSessions", back_populates="user", uselist=False
+    )
 
     @staticmethod
     def generate_hash(password):
-        return sha256.hash(password)
+        return bcrypt_sha256.hash(password)
 
     @staticmethod
     def verify_hash(password, hash_):
-        return sha256.verify(password, hash_)
+        return bcrypt_sha256.verify(password, hash_)
 
 
-class RevokedTokenModel(db.Model):
-    __tablename__ = "revoked_tokens"
-    id = db.Column(db.Integer, primary_key=True)
-    jti = db.Column(db.String(120))
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
-
-    @classmethod
-    def is_jti_blacklisted(cls, jti):
-        query = cls.query.filter_by(jti=jti).first()
-        return bool(query)
-
-
-class CoursesTaken(db.Model):
-    __tablename__ = "courses_taken"
-    id = db.Column(db.Integer, primary_key=True)
-    id_course = db.Column(db.Integer, ForeignKey("courses.id"))
-    id_user = db.Column(db.Integer, ForeignKey("user.id"))
-    start_date = db.Column(db.DateTime())
-    end_date = db.Column(db.DateTime())
-    section_number = db.Column(db.Integer)
-    completed = db.Column(db.String(100))
-    course = db.relationship("Courses")
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+class EnrolledCourses(Base):
+    __tablename__ = "enrolled_courses"
+    id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    start_date = Column(DateTime())
+    end_date = Column(DateTime())
+    completed = Column(Boolean, default=False, nullable=False)
+    course = relationship("Courses")
+    enrolled_lessons = relationship(
+        "EnrolledLessons", cascade="all, delete", passive_deletes=True
+    )
 
 
-class Courses(db.Model):
+class Courses(Base):
     __tablename__ = "courses"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    description = db.Column(db.String(2000))
-    featured = db.Column(db.Boolean, default=False, nullable=False)
-    lessons = db.relationship("Lessons")
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    description = Column(Text)
+    featured = Column(Boolean, default=False, nullable=False)
+    lessons = relationship("Lessons", lazy="dynamic", cascade="all, delete")
+    # ISO 639-1 Letter Language Codes
+    lang = Column(String(2), default="en")
+    tags = relationship("CourseTags", lazy="dynamic", cascade="all, delete")
 
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+
+class CourseTags(Base):
+    __tablename__ = "course_tags"
+    id = Column(Integer, primary_key=True)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
+    name = Column(String(100), nullable=False)
 
 
-class Lessons(db.Model):
+class Lessons(Base):
     __tablename__ = "lessons"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    description = db.Column(db.String(2000))
-    id_course = db.Column(db.Integer, ForeignKey("courses.id"))
-    type = db.Column(db.Integer)
-    number_of_answers = db.Column(db.Integer)
-    answers = db.relationship("Answers")
-    comments = db.relationship("Comments")
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    description = Column(Text)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
+    type = Column(Integer)
+    number_of_answers = Column(Integer)
+    answers = relationship("Answers", cascade="all, delete")
+    order = Column(Integer, default=0)
 
 
-class Answers(db.Model):
+class EnrolledLessons(Base):
+    __tablename__ = "enrolled_lessons"
+    id = Column(Integer, primary_key=True)
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+    enrolled_course_id = Column(
+        Integer, ForeignKey("enrolled_courses.id", ondelete="CASCADE")
+    )
+    user_id = Column(Integer, ForeignKey("user.id"))
+    start_date = Column(DateTime())
+    end_date = Column(DateTime())
+    completed = Column(Boolean, default=False, nullable=False)
+    lesson = relationship("Lessons")
+
+
+class Answers(Base):
     __tablename__ = "answers"
-    id = db.Column(db.Integer, primary_key=True)
-    final_answer = db.Column(db.String(500))
-    id_lesson = db.Column(db.Integer, ForeignKey("lessons.id"))
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+    id = Column(Integer, primary_key=True)
+    final_answer = Column(String(500))
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+    answer_check_rule = Column(String(50), default="equal")
 
 
-class Comments(db.Model):
-    __tablename__ = "comments"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
-    id_lesson = db.Column(db.Integer, ForeignKey("lessons.id"))
-    data_published = db.Column(db.DateTime())
-    content = db.Column(db.String(500))
-
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+class AnswersHistory(Base):
+    __tablename__ = "answers_history"
+    id = Column(Integer, primary_key=True)
+    answer_id = Column(Integer, ForeignKey("answers.id", ondelete="CASCADE"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    answer = Column(String(500))
+    is_correct = Column(Boolean, default=False, nullable=False)
+    date = Column(DateTime())
 
 
-class Roles(db.Model):
+class Roles(Base):
     __tablename__ = "roles"
-    id = db.Column(db.Integer, primary_key=True)
-    role_name = db.Column(db.String(100), unique=True)
-    user = db.relationship("User")
+    id = Column(Integer, primary_key=True)
+    role_name = Column(String(100), unique=True)
+    user = relationship("User")
 
-    def add(self):
-        db.session.add(self)
-        db.session.commit()
+
+class DynamicCourseSurveyUserResults(Base):
+    __tablename__ = "dynamic_course_survey_user_results"
+    id = Column(Integer, primary_key=True)
+    survey_id = Column(
+        Integer, ForeignKey("dynamic_course_survey.id", ondelete="CASCADE")
+    )
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
+    question_id = Column(
+        Integer, ForeignKey(
+            "dynamic_course_survey_questions.id", ondelete="CASCADE")
+    )
+    answer_id = Column(
+        Integer, ForeignKey(
+            "dynamic_course_survey_answers.id", ondelete="CASCADE")
+    )
+    survey = relationship("DynamicCourseSurvey")
+
+
+class DynamicCourseSurveyAnswers(Base):
+    __tablename__ = "dynamic_course_survey_answers"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    question_id = Column(
+        Integer, ForeignKey(
+            "dynamic_course_survey_questions.id", ondelete="CASCADE")
+    )
+    rule_type = Column(Integer)
+    rule_value = Column(Integer)
+
+
+class DynamicCourseSurveyQuestions(Base):
+    __tablename__ = "dynamic_course_survey_questions"
+    id = Column(Integer, primary_key=True)
+    survey_id = Column(
+        Integer, ForeignKey("dynamic_course_survey.id", ondelete="CASCADE")
+    )
+    question = Column(String(500))
+    answers = relationship(
+        "DynamicCourseSurveyAnswers", cascade="all, delete", passive_deletes=True
+    )
+
+
+class DynamicCourseSurvey(Base):
+    __tablename__ = "dynamic_course_survey"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    questions = relationship(
+        "DynamicCourseSurveyQuestions",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+    featured = Column(Boolean, default=False, nullable=False)
+
+
+class DynamicLessons(Base):
+    __tablename__ = "dynamic_lessons"
+    id = Column(Integer, primary_key=True)
+    dynamic_course_id = Column(Integer, ForeignKey("dynamic_courses.id"))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    completed = Column(Boolean, default=False, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    start_date = Column(DateTime())
+    end_date = Column(DateTime())
+
+
+class DynamicCourses(Base):
+    __tablename__ = "dynamic_courses"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    dynamic_lessons = relationship(
+        "DynamicLessons", lazy="dynamic", cascade="all, delete", passive_deletes=True
+    )
+
+
+class KnowledgeTestQuestions(Base):
+    __tablename__ = "knowledge_test_questions"
+    id = Column(Integer, primary_key=True)
+    question = Column(String(500))
+    answer = Column(String(500))
+    knowledge_test_id = Column(
+        Integer, ForeignKey("knowledge_test.id", ondelete="CASCADE")
+    )
+
+
+class KnowledgeTest(Base):
+    __tablename__ = "knowledge_test"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    questions = relationship(
+        "KnowledgeTestQuestions",
+        lazy="dynamic",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+
+
+class KnowledgeTestUserResults(Base):
+    __tablename__ = "knowledge_test_user_results"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    knowledge_test_id = Column(
+        Integer, ForeignKey("knowledge_test.id", ondelete="CASCADE")
+    )
+    question_id = Column(
+        Integer, ForeignKey("knowledge_test_questions.id", ondelete="CASCADE")
+    )
+    answer = Column(String(500))
+    is_correct = Column(Boolean, default=False, nullable=False)
+
+
+class GlobalKnowledgeTest(Base):
+    __tablename__ = "global_knowledge_test"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100))
+    questions = relationship(
+        "GlobalKnowledgeTestQuestions",
+        lazy="dynamic",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
+
+
+class GlobalKnowledgeTestQuestions(Base):
+    __tablename__ = "global_knowledge_test_questions"
+    id = Column(Integer, primary_key=True)
+    question = Column(String(500))
+    lesson_id = Column(Integer, ForeignKey("lessons.id"))
+    answer = Column(String(500))
+    global_knowledge_test_id = Column(
+        Integer, ForeignKey("global_knowledge_test.id", ondelete="CASCADE")
+    )
+
+
+class GlobalKnowledgeTestUserResults(Base):
+    __tablename__ = "global_knowledge_test_user_results"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    global_knowledge_test_id = Column(
+        Integer, ForeignKey("global_knowledge_test.id", ondelete="CASCADE")
+    )
+    question_id = Column(
+        Integer, ForeignKey(
+            "global_knowledge_test_questions.id", ondelete="CASCADE")
+    )
+    answer = Column(String(500))
+    is_correct = Column(Boolean, default=False, nullable=False)
+
+
+class Classrooms(Base):
+    __tablename__ = "classrooms"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50))
+    teacher_id = Column(Integer, ForeignKey("user.id"))
+    is_public = Column(Boolean, default=False, nullable=False)
+    access_code = Column(String(8))
+    users = relationship("ClassroomSessions")
+
+
+class ClassroomSessions(Base):
+    __tablename__ = "classroom_sessions"
+    id = Column(Integer, primary_key=True)
+    classroom_id = Column(Integer, ForeignKey("classrooms.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    is_teacher = Column(Boolean, default=False, nullable=False)
+    user = relationship("User", back_populates="classroom_sessions")

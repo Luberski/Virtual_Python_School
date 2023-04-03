@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiClient from '../../apiClient';
-import { RootState } from '../../store';
-import { Course } from '../../models/Course';
 import { HYDRATE } from 'next-redux-wrapper';
+import apiClient from '@app/apiClient';
+import type { RootState } from '@app/store';
+import type Course from '@app/models/Course';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type CourseState = {
   data: Course;
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -16,9 +18,9 @@ const initialState: CourseState = {
   error: null,
 };
 
-export const fetchCourse = createAsyncThunk(
+export const fetchCourse = createAsyncThunk<ApiPayload<Course>, number>(
   'api/course',
-  async (id: string | number, thunkApi) => {
+  async (id, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
@@ -28,26 +30,7 @@ export const fetchCourse = createAsyncThunk(
         },
       });
       const data = await res.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-);
-export const fetchCourseWithLessons = createAsyncThunk(
-  'api/course/with-lessons',
-  async (id: string | number, thunkApi) => {
-    try {
-      const state = thunkApi.getState() as RootState;
-      const { accessToken } = state.auth.token;
-      const res = await apiClient.get(`courses/${id}?include_lessons=true`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      const data = await res.json();
-      return data;
+      return data as ApiPayload<Course>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -55,15 +38,30 @@ export const fetchCourseWithLessons = createAsyncThunk(
   }
 );
 
-export const enrollCourse = createAsyncThunk(
-  'api/course/enroll',
-  async (id: string | number, thunkApi) => {
+export const editCourse = createAsyncThunk<
+  ApiPayload<Course>,
+  {
+    courseId: number;
+    name?: string;
+    description?: string;
+    featured?: boolean;
+    lang?: string;
+  }
+>(
+  'api/courses/edit',
+  async ({ courseId, name, description, featured, lang }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
-      const res = await apiClient.post('course', {
+      const res = await apiClient.patch('courses', {
         json: {
-          data: { id_course: id },
+          data: {
+            course_id: courseId,
+            ...(name && { name }),
+            ...(description && { description }),
+            ...(lang && { lang }),
+            featured,
+          },
         },
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -71,7 +69,7 @@ export const enrollCourse = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Course>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -93,73 +91,38 @@ export const courseSlice = createSlice({
       .addCase(fetchCourse.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(fetchCourse.fulfilled, (state, { payload: { data, error } }) => {
-        if (error) {
-          state.data = null;
-          state.error = error;
-          state.status = 'failed';
-        } else {
-          state.data = data;
-          state.error = null;
-          state.status = 'succeeded';
+      .addCase(
+        fetchCourse.fulfilled,
+        (
+          state,
+          { payload: { data, error } }: { payload: ApiPayload<Course> }
+        ) => {
+          if (error) {
+            state.data = null;
+            state.error = error;
+            state.status = 'failed';
+          } else {
+            state.data = data;
+            state.error = null;
+            state.status = 'succeeded';
+          }
         }
-      })
+      )
       .addCase(fetchCourse.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })
-      .addCase(enrollCourse.pending, (state) => {
-        state.status = 'pending';
-      })
       .addCase(
-        enrollCourse.fulfilled,
-        (state, { payload: { data, error } }) => {
-          if (error) {
-            state.data = null;
-            state.error = error;
-            state.status = 'failed';
-          } else {
-            state.data = data;
-            state.error = null;
-            state.status = 'succeeded';
-          }
+        editCourse.fulfilled,
+        (state, { payload }: { payload: ApiPayload<Course> }) => {
+          state.data = { ...state.data, ...payload.data };
         }
-      )
-      .addCase(enrollCourse.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
-      .addCase(fetchCourseWithLessons.pending, (state) => {
-        state.status = 'pending';
-      })
-      .addCase(
-        fetchCourseWithLessons.fulfilled,
-        (state, { payload: { data, error } }) => {
-          if (error) {
-            state.data = null;
-            state.error = error;
-            state.status = 'failed';
-          } else {
-            state.data = data;
-            state.error = null;
-            state.status = 'succeeded';
-          }
-        }
-      )
-      .addCase(fetchCourseWithLessons.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      });
+      );
   },
 });
 
 export const selectCourseData = (state: RootState) => state.course.data;
 export const selectCourseError = (state: RootState) => state.course.error;
 export const selectCourseStatus = (state: RootState) => state.course.status;
-
-export const selectEnrollCourseData = (state: RootState) => state.course.data;
-export const selectEnrollCourseError = (state: RootState) => state.course.error;
-export const selectEnrollCourseStatus = (state: RootState) =>
-  state.course.status;
 
 export default courseSlice.reducer;

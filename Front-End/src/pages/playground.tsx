@@ -1,25 +1,31 @@
 import { useMemo, useRef } from 'react';
-import Editor from '@monaco-editor/react';
-import NavBar from '../components/NavBar';
 import { useTranslations } from 'use-intl';
-import { useAppDispatch, useAppSelector } from '../hooks';
+import Head from 'next/head';
+import dynamic from 'next/dynamic';
+import { PlayIcon } from '@heroicons/react/20/solid';
+import debounce from 'debounce';
+import { useDispatch } from 'react-redux';
+import NavBar from '@app/components/NavBar';
+import { useAppSelector } from '@app/hooks';
 import {
   selectPlaygroundData,
   selectPlaygroundError,
   selectPlaygroundStatus,
   sendCode,
-} from '../features/playground/playgroundSlice';
-import { selectAuthUser, selectIsLogged } from '../features/auth/authSlice';
-import { WEBSITE_TITLE } from '../constants';
-import Head from 'next/head';
-import IconButton, { IconButtonVariant } from '../components/IconButton';
-import { PlayIcon } from '@heroicons/react/outline';
-import Footer from '../components/Footer';
-import debounce from 'debounce';
+} from '@app/features/playground/playgroundSlice';
+import { selectAuthUser, selectIsLogged } from '@app/features/auth/authSlice';
+import { WEBSITE_TITLE } from '@app/constants';
+import IconButton, { IconButtonVariant } from '@app/components/IconButton';
+import Footer from '@app/components/Footer';
+
+const Editor = dynamic(() => import('@monaco-editor/react'), {
+  ssr: false,
+});
 
 export default function Playground() {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const t = useTranslations();
+  const pageTitle = `${t('Meta.title-playground')} - ${WEBSITE_TITLE}`;
   const editorRef = useRef(null);
   const user = useAppSelector(selectAuthUser);
   const isLoggedIn = useAppSelector(selectIsLogged);
@@ -27,9 +33,9 @@ export default function Playground() {
   const playgroundError = useAppSelector(selectPlaygroundError);
   const playgroundStatus = useAppSelector(selectPlaygroundStatus);
 
-  const handleEditorDidMount = (editor) => {
+  function handleEditorDidMount(editor) {
     editorRef.current = editor;
-  };
+  }
 
   const handleValue = useMemo(
     () =>
@@ -47,11 +53,9 @@ export default function Playground() {
   return (
     <>
       <Head>
-        <title>
-          {t('Meta.title-playground')} - {WEBSITE_TITLE}
-        </title>
+        <title>{pageTitle}</title>
       </Head>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <NavBar
           user={user}
           isLoggedIn={isLoggedIn}
@@ -61,67 +65,66 @@ export default function Playground() {
             })
           }
         />
-        <div className="container flex flex-col justify-center items-center px-6 pb-4 my-6 mx-auto">
-          <div>
-            <h1 className="text-center">{t('Playground.leading')}</h1>
-          </div>
-        </div>
-        <div className="container px-6 mx-auto space-y-4">
-          <div className="grid grid-cols-2 items-center">
-            <IconButton
-              onClick={handleValue}
-              className="my-8 max-w-fit h-12"
-              variant={IconButtonVariant.PRIMARY}
-              icon={
-                playgroundStatus === 'pending' ? (
-                  <svg
-                    className="mr-1 w-5 h-5 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                ) : (
-                  <PlayIcon className="w-5 h-5" />
-                )
-              }>
-              {t('Playground.run')}
-            </IconButton>
-          </div>
-        </div>
-        <div className="flex px-6">
-          <Editor
-            className="w-1/2 h-96"
-            defaultLanguage="python"
-            defaultValue=""
-            onMount={handleEditorDidMount}
-            theme="vs-dark"
-          />
-          <div className="w-full">
-            <div className="mx-auto w-full h-96 subpixel-antialiased bg-black rounded border-black shadow-2xl">
-              <div
-                className="flex items-center h-6 text-center text-black dark:text-white bg-gray-200 dark:bg-gray-800 rounded-t border-b border-gray-500"
-                id="headerTerminal">
-                <div className="mx-auto" id="terminaltitle">
-                  <p className="text-center">Terminal output</p>
+        <div className="container mx-auto px-4">
+          <div className="brand-shadow2 container my-6 flex flex-col items-center justify-center rounded-lg bg-white p-9 shadow-black/25 dark:bg-neutral-800">
+            <h1 className="pb-6 text-center text-sky-900 dark:text-sky-300">
+              {t('Playground.leading')}
+            </h1>
+            <div className="my-9 self-end">
+              <IconButton
+                onClick={handleValue}
+                variant={IconButtonVariant.PRIMARY}
+                icon={
+                  playgroundStatus === 'pending' ? (
+                    <svg
+                      className="mr-1 h-5 w-5 animate-spin"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  ) : (
+                    <PlayIcon className="h-5 w-5" />
+                  )
+                }>
+                {t('Playground.run')}
+              </IconButton>
+            </div>
+            <div className="flex w-full">
+              <Editor
+                className="h-96 w-1/2"
+                defaultLanguage="python"
+                defaultValue=""
+                onMount={handleEditorDidMount}
+                theme="vs-dark"
+              />
+              <div className="w-full">
+                <div className="mx-auto h-96 w-full rounded border-black bg-black subpixel-antialiased shadow-2xl">
+                  <div
+                    className="flex h-6 items-center rounded-t border-b border-neutral-500 bg-neutral-200 text-center text-black dark:bg-neutral-800 dark:text-white"
+                    id="headerTerminal">
+                    <div className="mx-auto" id="terminaltitle">
+                      <p className="text-center">Console</p>
+                    </div>
+                  </div>
+                  <div
+                    className="font-mono h-auto bg-black pt-1 pl-1 text-xs"
+                    id="console">
+                    <pre className="pb-1 text-white">
+                      {playgroundData?.content || playgroundError}
+                    </pre>
+                  </div>
                 </div>
-              </div>
-              <div
-                className="pt-1 pl-1 h-auto text-xs bg-black font-mono"
-                id="console">
-                <pre className="pb-1 text-white">
-                  {playgroundData?.content || playgroundError}
-                </pre>
               </div>
             </div>
           </div>

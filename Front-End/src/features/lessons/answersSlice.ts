@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import apiClient from '../../apiClient';
-import { RootState } from '../../store';
-import { Answer } from '../../models/Answer';
 import { HYDRATE } from 'next-redux-wrapper';
+import apiClient from '@app/apiClient';
+import type { RootState } from '@app/store';
+import type Answer from '@app/models/Answer';
+import type ApiPayload from '@app/models/ApiPayload';
+import type ApiStatus from '@app/models/ApiStatus';
 
 export type AnswersState = {
   data: Answer[];
-  status: 'idle' | 'pending' | 'succeeded' | 'failed';
+  status: ApiStatus;
   error: string | null;
 };
 
@@ -16,26 +18,25 @@ const initialState: AnswersState = {
   error: null,
 };
 
-export const createAnswer = createAsyncThunk(
+export const createAnswer = createAsyncThunk<
+  ApiPayload<Answer>,
+  {
+    lessonId: string;
+    finalAnswer: string;
+    answerCheckRule: string;
+  }
+>(
   'api/answers/create',
-  async (
-    {
-      lessonId,
-      finalAnswer,
-    }: {
-      lessonId: string;
-      finalAnswer: string;
-    },
-    thunkApi
-  ) => {
+  async ({ lessonId, finalAnswer, answerCheckRule }, thunkApi) => {
     try {
       const state = thunkApi.getState() as RootState;
       const { accessToken } = state.auth.token;
       const res = await apiClient.post('answers', {
         json: {
           data: {
-            id_lesson: lessonId,
+            lesson_id: lessonId,
             final_answer: finalAnswer,
+            answer_check_rule: answerCheckRule,
           },
         },
         headers: {
@@ -44,7 +45,7 @@ export const createAnswer = createAsyncThunk(
       });
 
       const data = await res.json();
-      return data;
+      return data as ApiPayload<Answer>;
     } catch (error) {
       console.error(error);
       throw error;
@@ -66,9 +67,12 @@ export const answersSlice = createSlice({
       .addCase(createAnswer.pending, (state) => {
         state.status = 'pending';
       })
-      .addCase(createAnswer.fulfilled, (state, { payload }) => {
-        state.data = [...state.data, payload.data];
-      })
+      .addCase(
+        createAnswer.fulfilled,
+        (state, { payload }: { payload: ApiPayload<Answer> }) => {
+          state.data = [...state.data, payload.data];
+        }
+      )
       .addCase(createAnswer.rejected, (state, action) => {
         state.error = action.error.message;
       });
