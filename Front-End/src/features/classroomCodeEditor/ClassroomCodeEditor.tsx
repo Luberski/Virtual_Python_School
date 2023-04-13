@@ -118,7 +118,7 @@ export default function ClassroomCodeEditor({
     });
   };
 
-  const debouncedSendData = debounce((value: string) => sendData(value), 100);
+  const debouncedSendData = debounce((value: string) => sendData(value), 150);
 
   const sendPersonalData = (value: string) => {
     sendMsg({
@@ -133,7 +133,7 @@ export default function ClassroomCodeEditor({
 
   const debouncedSendPersonalData = debounce(
     (value: string) => sendPersonalData(value),
-    100
+    150
   );
 
   const sendPersonalAssignmentData = (value: string) => {
@@ -150,7 +150,7 @@ export default function ClassroomCodeEditor({
 
   const debouncedSendPersonalAssignmentData = debounce(
     (value: string) => sendPersonalAssignmentData(value),
-    100
+    150
   );
 
   const sendDataToUser = (value: string) => {
@@ -167,7 +167,7 @@ export default function ClassroomCodeEditor({
 
   const debouncedSendDataToUser = debounce(
     (value: string) => sendDataToUser(value),
-    100
+    150
   );
 
   const sendAssignmentDataToUser = (value: string) => {
@@ -185,7 +185,7 @@ export default function ClassroomCodeEditor({
 
   const debouncedSendAssignmentDataToUser = debounce(
     (value: string) => sendAssignmentDataToUser(value),
-    100
+    150
   );
 
   const onChange = useCallback(
@@ -248,6 +248,7 @@ export default function ClassroomCodeEditor({
     onChange: onChange,
     editable: isEditable,
     theme: theme === 'dark' ? editorDarkTheme : editorLightTheme,
+    minHeight: '1000px',
   });
   useEffect(() => {
     if (editor.current) {

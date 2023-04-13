@@ -9,6 +9,7 @@ import {
   ViewMode,
   WhiteboardType,
   AssignmentStatus,
+  connectionStatus,
 } from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
@@ -30,16 +31,17 @@ import {
 import router from 'next/router';
 import dynamic from 'next/dynamic';
 import {
-  notifyUnauthorized,
   notifyClassroomDeleted,
   notifyUserJoined,
   notifyAssignmentCreated,
   notifyAssignmentGraded,
+  notifyAccessCodeCopied,
 } from '@app/notifications';
 import {
   PlusIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  ClipboardIcon,
 } from '@heroicons/react/24/outline';
 import Input from '@app/components/Input';
 import type CodeChangeRes from '@app/models/classroom/JsonDataModels/response/CodeChange';
@@ -63,6 +65,7 @@ import TextArea from '@app/components/TextArea';
 import UserAssignmentButton from '@app/components/UserAssignmentButton';
 import UserStatus from '@app/components/UserStatus';
 import Checkbox from '@app/components/Checkbox';
+import IconButton from '@app/components/IconButton';
 
 const Toaster = dynamic(
   () => import('react-hot-toast').then((c) => c.Toaster),
@@ -183,7 +186,6 @@ export default function ClassroomsTeacherPage({
   useEffect(() => {
     const validate = () => {
       if (!classrooms?.find((c) => c.id.toString() === classroomId)) {
-        notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
           router.replace('/');
@@ -191,7 +193,6 @@ export default function ClassroomsTeacherPage({
       }
       if (classroomSessionsData?.length > 0) {
         if (classroomSessionsData[0].is_teacher === false) {
-          notifyUnauthorized(translations('Classrooms.unauthorized'));
           setTimeout(() => {
             toast.dismiss();
             router.replace(
@@ -200,7 +201,6 @@ export default function ClassroomsTeacherPage({
           }, 1000);
         }
       } else {
-        notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
           router.replace('/');
@@ -433,6 +433,7 @@ export default function ClassroomsTeacherPage({
     const usersDropdown = [];
 
     if (!messageHandled && responseMsg != null) {
+      console.log('responseMsg:', responseMsg);
       if (responseMsg.action === Actions.SYNC_DATA) {
         const data = responseMsg.data as JoinTeacherRes;
         const students = data.classroomData.users.filter(
@@ -456,6 +457,9 @@ export default function ClassroomsTeacherPage({
           notifyUserJoined(
             newUser.userId + ' ' + translations('Classrooms.student-joined')
           );
+          setTimeout(() => {
+            toast.dismiss();
+          }, 1000);
         } else {
           const updatedUsers: ClassroomUser[] = users;
           const existingUserIndex = updatedUsers.findIndex(
@@ -614,6 +618,16 @@ export default function ClassroomsTeacherPage({
     return userAssignmentObj;
   };
 
+  const copyAccessCode = () => {
+    navigator.clipboard.writeText(accessCode);
+    notifyAccessCodeCopied(
+      translations('Classrooms.access-code-copied-notification')
+    );
+    setTimeout(() => {
+      toast.dismiss();
+    }, 1000);
+  };
+
   return (
     <>
       <div>
@@ -632,16 +646,24 @@ export default function ClassroomsTeacherPage({
             })
           }
         />
-        <div className="flex h-full flex-1 flex-row">
-          <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
-            <div className="flex flex-col justify-start space-y-2 align-middle">
-              <div className="flex flex-row justify-center rounded-lg bg-red-500 font-bold text-red-900">
-                {translations('Classrooms.access-code')}: {accessCode}
-              </div>
+        <div className="flex h-full flex-1 flex-row overflow-hidden">
+          <div className="flex h-full w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
+            <div className="mb-8 flex h-full flex-col justify-start space-y-2 overflow-hidden align-middle">
+              <h5>Connection status: {connectionStatus[readyState]}</h5>
+              <IconButton
+                type="button"
+                icon={<ClipboardIcon className="h-5 w-5 p-0" />}
+                className="place-content-center p-0.5"
+                onClick={() => {
+                  copyAccessCode();
+                }}
+                variant={ButtonVariant.SUCCESS}>
+                {translations('Classrooms.access-code-copy-btn')}
+              </IconButton>
               <h2 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.whiteboards')}
               </h2>
-              <div className="flex max-h-64 flex-col justify-start space-y-2 overflow-auto align-middle">
+              <div className="flex max-h-full flex-col justify-start space-y-2 overflow-auto align-middle">
                 <Button
                   type="button"
                   onClick={() => {
@@ -671,7 +693,7 @@ export default function ClassroomsTeacherPage({
               <h2 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.assignments')}
               </h2>
-              <div className="flex max-h-64 flex-col space-y-2 overflow-auto rounded-lg border-2 border-neutral-200 p-2 dark:border-neutral-600">
+              <div className="flex h-auto flex-col space-y-2 overflow-auto rounded-lg border-2 border-neutral-200 p-2 dark:border-neutral-600">
                 <Button
                   type="button"
                   variant={ButtonVariant.FLAT_SECONDARY}
@@ -771,9 +793,8 @@ export default function ClassroomsTeacherPage({
                               type="text"
                               register={registerAssignment}
                               required
-                              maxLength={200}
                               minLength={3}
-                              rows={3}
+                              rows={8}
                               placeholder={translations(
                                 'Classrooms.assignment-description'
                               )}></TextArea>
@@ -839,7 +860,7 @@ export default function ClassroomsTeacherPage({
             </StyledDialog>
           </div>
 
-          <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
+          <div className="flex h-full w-5/6 flex-col bg-white dark:bg-neutral-800">
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
               <Button variant={ButtonVariant.PRIMARY} onClick={runCode}>
                 {translations('Classrooms.run')}
@@ -930,7 +951,6 @@ export default function ClassroomsTeacherPage({
                                 name="feedback"
                                 type="text"
                                 register={registerGrade}
-                                required
                                 className="resize-none"
                                 rows={8}
                                 cols={60}
@@ -1072,8 +1092,8 @@ export default function ClassroomsTeacherPage({
                 </>
               )}
             </div>
-            <div className="flex h-full flex-col justify-between overflow-hidden">
-              <div className="h-auto max-h-96 overflow-scroll">
+            <div className="flex h-full flex-col">
+              <div className="h-full overflow-y-scroll">
                 {mode === ViewMode.PersonalWhiteboard ? (
                   <ClassroomCodeEditor
                     connState={readyState}
@@ -1109,7 +1129,7 @@ export default function ClassroomsTeacherPage({
                 )}
               </div>
               <div
-                className="h-64 overflow-y-auto border-t-2 border-neutral-50 pt-1 pl-1 font-mono text-xs dark:border-neutral-900"
+                className="h-2/6 overflow-y-scroll border-t-2 border-neutral-50 pt-1 pl-1 font-mono text-xs dark:border-neutral-900"
                 id="console">
                 <p>{'Console >'}</p>
                 <pre className="pb-1">

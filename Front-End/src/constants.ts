@@ -1,3 +1,5 @@
+import { ReadyState } from 'react-use-websocket';
+
 export const WEBSITE_TITLE = 'Virtual Python School';
 export const LESSONS_LIMIT = 3;
 export const COURSES_LIMIT = 3;
@@ -26,13 +28,6 @@ export enum Actions {
   ASSIGNMENT_CREATE = 10,
   SUBMIT_ASSIGNMENT = 11,
   GRADE_ASSIGNMENT = 12,
-}
-
-export enum ReadyState {
-  CONNECTING = 0,
-  OPEN = 1,
-  CLOSING = 2,
-  CLOSED = 3,
 }
 
 export enum ViewMode {

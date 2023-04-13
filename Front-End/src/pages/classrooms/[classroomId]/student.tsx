@@ -16,6 +16,7 @@ import {
   ViewMode,
   WEBSITE_TITLE,
   WhiteboardType,
+  connectionStatus,
 } from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
@@ -32,7 +33,6 @@ import {
 } from '@app/features/classrooms/sessions/classroomSessionsSlice';
 import StyledDialog from '@app/components/StyledDialog';
 import {
-  notifyUnauthorized,
   notifyClassroomLeave,
   notifyUserLeft,
   notifyClassroomDeleted,
@@ -122,7 +122,6 @@ export default function ClassroomsStudentPage(
   useEffect(() => {
     const validate = () => {
       if (!classrooms?.find((c) => c.id.toString() === classroomId)) {
-        notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           router.replace('/');
         }, 1000);
@@ -134,7 +133,6 @@ export default function ClassroomsStudentPage(
           );
         }
       } else {
-        notifyUnauthorized(translations('Classrooms.unauthorized'));
         setTimeout(() => {
           toast.dismiss();
           router.replace('/');
@@ -255,6 +253,7 @@ export default function ClassroomsStudentPage(
   useEffect(() => {
     const responseMsg = lastJsonMessage as JsonRequest<unknown>;
     if (!messageHandled && lastJsonMessage != null) {
+      console.log('responseMsg:', responseMsg);
       if (responseMsg.action === Actions.SYNC_DATA) {
         const data = responseMsg.data as JoinUserRes;
         setUsers(data.users);
@@ -349,7 +348,9 @@ export default function ClassroomsStudentPage(
       } else if (responseMsg.action === Actions.UNLOCK_CODE) {
         setIsEditable(true);
       } else if (responseMsg.action === Actions.CLASSROOM_DELETED) {
-        notifyClassroomDeleted(translations('Classrooms.classroom-deleted'));
+        notifyClassroomDeleted(
+          translations('Classrooms.classroom-deleted-student')
+        );
         setTimeout(() => {
           toast.dismiss();
           router.replace('/');
@@ -459,9 +460,10 @@ export default function ClassroomsStudentPage(
             })
           }
         />
-        <div className="flex h-full flex-1 flex-row">
-          <div className="flex w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
+        <div className="flex h-full flex-1 flex-row overflow-hidden">
+          <div className="flex h-full w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
             <div className="flex flex-col justify-start gap-2 align-middle">
+              <h5>Connection status: {connectionStatus[readyState]}</h5>
               <h1 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.whiteboards')}
               </h1>
@@ -550,7 +552,7 @@ export default function ClassroomsStudentPage(
             </StyledDialog>
           </div>
 
-          <div className="flex w-5/6 flex-col bg-white dark:bg-neutral-800">
+          <div className="flex h-full w-5/6 flex-col bg-white dark:bg-neutral-800">
             <div className="flex h-16 flex-row items-center justify-between border-b-2 border-neutral-50 p-4 dark:border-neutral-900">
               <Button variant={ButtonVariant.PRIMARY} onClick={runCode}>
                 {translations('Classrooms.run')}
@@ -647,8 +649,8 @@ export default function ClassroomsStudentPage(
                 </>
               )}
             </div>
-            <div className="flex h-full flex-col justify-between overflow-hidden">
-              <div className="h-auto max-h-96 overflow-scroll">
+            <div className="flex h-full flex-col">
+              <div className="h-full overflow-y-scroll">
                 {mode === ViewMode.PersonalWhiteboard ||
                 mode === ViewMode.Assignment ? (
                   <ClassroomCodeEditor
@@ -688,7 +690,7 @@ export default function ClassroomsStudentPage(
                 )}
               </div>
               <div
-                className="h-64 overflow-y-auto border-t-2 border-neutral-50 pt-1 pl-1 font-mono text-xs dark:border-neutral-900"
+                className="h-2/6 overflow-y-scroll border-t-2 border-neutral-50 pt-1 pl-1 font-mono text-xs dark:border-neutral-900"
                 id="console">
                 <p>{'Console >'}</p>
                 <pre className="pb-1">

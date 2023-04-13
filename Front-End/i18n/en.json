@@ -96,6 +96,7 @@
     "no-classrooms-found": "No classrooms found",
     "create-new": "Create new classroom",
     "classroom-name": "Classroom name",
+    "teacher-name": "Teacher",
     "join": "Join",
     "link": "Link",
     "is-public-checkbox": "Make classroom public",
@@ -145,7 +146,9 @@
     "assignment-ongoing-tooltip": "Assignment ongoing",
     "grade-history-btn": "Grade history",
     "access-code": "Access code",
-    "join-with-access-code": "Join with access code"
+    "join-with-access-code": "Join with access code",
+    "access-code-copied-notification": "Classroom access code copied to clipboard",
+    "access-code-copy-btn": "Copy access code"
   },
   "Playground": {
     "run": "Run",

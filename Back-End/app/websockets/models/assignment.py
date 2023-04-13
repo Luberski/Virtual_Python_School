@@ -15,8 +15,8 @@ class Assignment:
         self._id = str(uuid.uuid4())
         self._title = assignment_name
         self._desc = assignment_description
-        self._initial_code = "# " + assignment_description + \
-            "\n\n" + assignment_code + "\n\n\n\n\n\n\n\n\n\n"
+        self._initial_code = "#" + assignment_description.replace("\n", "\n#") + \
+            "\n\n" + assignment_code
 
     @property
     def id(self):

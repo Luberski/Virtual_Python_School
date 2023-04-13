@@ -209,7 +209,10 @@ export default function Classrooms({
       </div>
       {classrooms && classrooms.length > 0 ? (
         <div className="flex flex-col justify-center space-y-6">
-          <ClassroomDescriptorWrapper classroomArr={classrooms} />
+          <ClassroomDescriptorWrapper
+            translations={translations}
+            classroomArr={classrooms}
+          />
         </div>
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center">
