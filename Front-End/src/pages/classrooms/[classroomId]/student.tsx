@@ -87,6 +87,7 @@ export default function ClassroomsStudentPage(
   const codeRef = useRef(null);
   const myCodeRef = useRef('print("Hello World")\n\n\n\n\n\n\n\n\n\n');
   const connectNotification = useRef(null);
+  const userName = user.lastName + ' ' + user.name;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [users, setUsers] = useState([]);
@@ -150,7 +151,7 @@ export default function ClassroomsStudentPage(
           if (result.data.id.toString() === classroomId) {
             const leaveMsg: JsonRequest<null> = {
               action: Actions.LEAVE,
-              user_id: user.username,
+              user_id: userName,
               data: null,
             };
             sendJsonMessage(leaveMsg);
@@ -170,7 +171,7 @@ export default function ClassroomsStudentPage(
   useEffect(() => {
     const joinRequestMsg: JsonRequest<null> = {
       action: Actions.JOIN,
-      user_id: user.username,
+      user_id: userName,
       data: null,
     };
     switch (readyState) {
@@ -195,7 +196,7 @@ export default function ClassroomsStudentPage(
         );
         break;
     }
-  }, [readyState, sendJsonMessage, translations, user.username]);
+  }, [readyState, sendJsonMessage, translations, userName]);
 
   useEffect(() => {
     const getDataRequest = async (
@@ -207,10 +208,10 @@ export default function ClassroomsStudentPage(
     ) => {
       const requestMsg: JsonRequest<GetDataReq> = {
         action: Actions.GET_DATA,
-        user_id: user.username,
+        user_id: userName,
         data: {
           whiteboard_type: whiteboardType,
-          target_user: user.username,
+          target_user: userName,
           assignment_name: assignmentName,
         },
       };
@@ -242,7 +243,7 @@ export default function ClassroomsStudentPage(
           break;
       }
     }
-  }, [mode, selectedAssignment, sendJsonMessage, user.username]);
+  }, [mode, selectedAssignment, sendJsonMessage, userName]);
 
   useEffect(() => {
     if (lastJsonMessage) {
@@ -412,7 +413,7 @@ export default function ClassroomsStudentPage(
   const sendAssignment = (assignment: string) => () => {
     const requestMsg: JsonRequest<string> = {
       action: Actions.SUBMIT_ASSIGNMENT,
-      user_id: user.username,
+      user_id: userName,
       data: assignment,
     };
     sendJsonMessage(requestMsg);

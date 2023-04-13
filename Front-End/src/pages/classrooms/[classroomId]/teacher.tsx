@@ -119,6 +119,7 @@ export default function ClassroomsTeacherPage({
 
   const codeRef = useRef('print("Hello World")\n\n\n\n\n\n\n\n\n\n');
   const myCodeRef = useRef('print("Hello World")\n\n\n\n\n\n\n\n\n\n');
+  const userName = user.lastName + ' ' + user.name;
   const connectNotification = useRef(null);
 
   const [users, setUsers] = useState([]);
@@ -233,7 +234,7 @@ export default function ClassroomsTeacherPage({
   useEffect(() => {
     const joinRequestMsg: JsonRequest<null> = {
       action: Actions.TEACHER_JOIN,
-      user_id: user.username,
+      user_id: userName,
       data: null,
     };
 
@@ -258,7 +259,7 @@ export default function ClassroomsTeacherPage({
         );
         break;
     }
-  }, [readyState, sendJsonMessage, translations, user.username]);
+  }, [readyState, sendJsonMessage, translations, userName]);
 
   useEffect(() => {
     const getUserCode = async (
@@ -268,7 +269,7 @@ export default function ClassroomsTeacherPage({
     ) => {
       const requestMsg: JsonRequest<GetDataReq> = {
         action: Actions.GET_DATA,
-        user_id: user.username,
+        user_id: userName,
         data: {
           whiteboard_type: whiteboardType,
           target_user: student,
@@ -299,7 +300,7 @@ export default function ClassroomsTeacherPage({
       default:
         break;
     }
-  }, [mode, selectedAssignment, selectedUser, sendJsonMessage, user.username]);
+  }, [mode, selectedAssignment, selectedUser, sendJsonMessage, userName]);
 
   const onClassroomDeleteSubmit = async () => {
     try {
@@ -310,7 +311,7 @@ export default function ClassroomsTeacherPage({
             // Send message to all students that the classroom has been deleted
             const requestMsg: JsonRequest<null> = {
               action: Actions.CLASSROOM_DELETED,
-              user_id: user.username,
+              user_id: userName,
               data: null,
             };
             sendJsonMessage(requestMsg);
@@ -338,7 +339,7 @@ export default function ClassroomsTeacherPage({
     setAssignmentValue('assignmentCode', '');
     const requestMsg: JsonRequest<AssignmentCreateReq> = {
       action: Actions.ASSIGNMENT_CREATE,
-      user_id: user.username,
+      user_id: userName,
       data: {
         assignment_name: assignmentName,
         assignment_description: assignmentDescription,
@@ -409,7 +410,7 @@ export default function ClassroomsTeacherPage({
 
     const requestMsg: JsonRequest<ClassroomUserAssignment> = {
       action: Actions.GRADE_ASSIGNMENT,
-      user_id: user.username,
+      user_id: userName,
       data: selectedUserAssignment,
     };
 
@@ -437,7 +438,7 @@ export default function ClassroomsTeacherPage({
       if (responseMsg.action === Actions.SYNC_DATA) {
         const data = responseMsg.data as JoinTeacherRes;
         const students = data.classroomData.users.filter(
-          (student: ClassroomUser) => student.userId !== user.username
+          (student: ClassroomUser) => student.userId !== userName
         ) as ClassroomUser[];
         setUsers(students);
         setIsEditable(data.classroomData.editable);
@@ -571,7 +572,7 @@ export default function ClassroomsTeacherPage({
     selectedAssignment,
     selectedUser,
     translations,
-    user.username,
+    userName,
     users,
   ]);
 
@@ -876,7 +877,7 @@ export default function ClassroomsTeacherPage({
                         setIsEditable(true);
                         sendJsonMessage({
                           action: Actions.UNLOCK_CODE,
-                          user_id: user.username,
+                          user_id: userName,
                           data: null,
                         });
                       }}>
@@ -889,7 +890,7 @@ export default function ClassroomsTeacherPage({
                         setIsEditable(false);
                         sendJsonMessage({
                           action: Actions.LOCK_CODE,
-                          user_id: user.username,
+                          user_id: userName,
                           data: null,
                         });
                       }}>
