@@ -16,7 +16,6 @@ import {
   ViewMode,
   WEBSITE_TITLE,
   WhiteboardType,
-  connectionStatus,
 } from '@app/constants';
 import { wrapper } from '@app/store';
 import NavBar from '@app/components/NavBar';
