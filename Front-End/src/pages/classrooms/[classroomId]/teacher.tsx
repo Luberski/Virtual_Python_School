@@ -434,7 +434,6 @@ export default function ClassroomsTeacherPage({
     const usersDropdown = [];
 
     if (!messageHandled && responseMsg != null) {
-      console.log('responseMsg:', responseMsg);
       if (responseMsg.action === Actions.SYNC_DATA) {
         const data = responseMsg.data as JoinTeacherRes;
         const students = data.classroomData.users.filter(
@@ -650,7 +649,6 @@ export default function ClassroomsTeacherPage({
         <div className="flex h-full flex-1 flex-row overflow-hidden">
           <div className="flex h-full w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
             <div className="mb-8 flex h-full flex-col justify-start space-y-2 overflow-hidden align-middle">
-              <h5>Connection status: {connectionStatus[readyState]}</h5>
               <IconButton
                 type="button"
                 icon={<ClipboardIcon className="h-5 w-5 p-0" />}
@@ -680,14 +678,6 @@ export default function ClassroomsTeacherPage({
                       translations={translations}
                       key={user.userId}
                       user={user}
-                      onClick={() => {
-                        setSelectedUser(user.userId);
-                        setMode(ViewMode.ViewUserWhiteboard);
-                      }}
-                      disabled={
-                        user.userId === selectedUser &&
-                        mode === ViewMode.ViewUserWhiteboard
-                      }
                     />
                   ))}
               </div>

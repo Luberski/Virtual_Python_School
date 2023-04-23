@@ -19,4 +19,4 @@ npm run build
 pm2 start npm --name "virtual-school" -- start
 
 cd ../Back-End/
-gunicorn --worker-class uvicorn.workers.UvicornWorker --daemon  --bind 0.0.0.0:5000 app.main:app
+gunicorn -w 4 --worker-class uvicorn.workers.UvicornWorker --daemon  --bind 0.0.0.0:5000 app.main:app --timeout 300

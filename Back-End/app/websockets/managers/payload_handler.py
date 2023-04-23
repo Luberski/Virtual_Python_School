@@ -89,9 +89,6 @@ class PayloadHandler:
         self.source_websocket = websocket
 
     async def process_message(self, payload: dict, classroom_id: int, websocket: WebSocket):
-        print("Received payload:")
-        print(json.dumps(payload, indent=2))
-
         self.set_message_data(
             payload=payload, classroom_id=classroom_id, websocket=websocket)
 
@@ -147,18 +144,11 @@ class PayloadHandler:
             })
 
             await conn_manager.send_personal_payload(payload=response_payload, websocket=self.source_websocket)
-            print("Sent sync data to user")
-            print(json.dumps(json.loads(response_payload), indent=2))
 
         else:
             # Create new user
             user = user_manager.create_student(
                 user_id=self.payload_user_id, classroom=self.selected_classroom, websocket=self.source_websocket)
-
-            # Create assignments for user if classroom has assignments
-            # for assignment in self.selected_classroom.assignments:
-            #     user.add_user_assignment(
-            #         assignment.to_user_assignment(user_id=user.user_id))
 
             # Add user to classroom
             self.selected_classroom.add_user(user)
@@ -177,8 +167,6 @@ class PayloadHandler:
             })
 
             await conn_manager.send_personal_payload(payload=response_payload, websocket=self.source_websocket)
-            print("join: Send data to new user")
-            print(json.dumps(json.loads(response_payload), indent=2))
 
         # Broadcast message to all users in classroom that a new user has joined
         class_payload = json.dumps({
@@ -187,8 +175,6 @@ class PayloadHandler:
         })
 
         await conn_manager.broadcast_class_except(classroom_id=self.source_classroom_id, payload=class_payload, websocket=self.source_websocket)
-        print("join: New user joined classroom")
-        print(json.dumps(json.loads(response_payload), indent=2))
 
     async def teacher_join(self):
         response_payload = None
@@ -209,8 +195,6 @@ class PayloadHandler:
             })
 
             await conn_manager.send_personal_payload(payload=response_payload, websocket=self.source_websocket)
-            print("teacher_join: Teacher reconnected")
-            print(json.dumps(json.loads(response_payload), indent=2))
         else:
             # Create new teacher
             new_user = user_manager.create_teacher(
@@ -218,7 +202,6 @@ class PayloadHandler:
 
             # Add teacher to classroom
             self.selected_classroom.add_user(new_user)
-            print("teacher_join: Teacher joined")
 
     async def code_change(self):
         source_user = self.selected_classroom.get_user(
@@ -242,8 +225,6 @@ class PayloadHandler:
                 })
 
                 await conn_manager.broadcast_class_students(classroom_id=self.source_classroom_id, payload=response_payload)
-                print("code_change: Broadcasted shared whiteboard change to students")
-                print(json.dumps(json.loads(response_payload), indent=2))
 
             elif source_whiteboard_type == WhiteboardType.PRIVATE.value:
                 # Update user whiteboard code and send it to user
@@ -260,8 +241,6 @@ class PayloadHandler:
                 })
 
                 await conn_manager.send_personal_payload(payload=response_payload, websocket=target_user.websocket)
-                print("code_change: Sent private whiteboard change to student")
-                print(json.dumps(json.loads(response_payload), indent=2))
 
             elif source_whiteboard_type == WhiteboardType.ASSIGNMENT.value:
                 # Update user assignment whiteboard code and send it to user
@@ -282,8 +261,6 @@ class PayloadHandler:
                 })
 
                 await conn_manager.send_personal_payload(payload=response_payload, websocket=target_user.websocket)
-                print("code_change: Sent assignment whiteboard change to student")
-                print(json.dumps(json.loads(response_payload), indent=2))
 
         else:
             if source_whiteboard_type == WhiteboardType.PRIVATE.value:
@@ -299,8 +276,6 @@ class PayloadHandler:
                 })
 
                 await conn_manager.send_personal_payload(payload=response_payload, websocket=self.selected_classroom.get_teacher().websocket)
-                print("code_change: Sent private whiteboard change to teacher")
-                print(json.dumps(json.loads(response_payload), indent=2))
 
             elif source_whiteboard_type == WhiteboardType.PUBLIC.value:
                 if(self.selected_classroom.editable == False):
@@ -317,9 +292,6 @@ class PayloadHandler:
                 })
 
                 await conn_manager.broadcast_class(payload=response_payload, classroom_id=self.source_classroom_id)
-                print(
-                    "code_change: Broadcasted user's shared whiteboard change to students")
-                print(json.dumps(json.loads(response_payload), indent=2))
 
             elif source_whiteboard_type == WhiteboardType.ASSIGNMENT.value:
                 # Update user assignment whiteboard code and send it to teacher
@@ -337,8 +309,6 @@ class PayloadHandler:
                 })
 
                 await conn_manager.send_personal_payload(payload=response_payload, websocket=self.selected_classroom.get_teacher().websocket)
-                print("code_change: Sent assignment whiteboard change to teacher")
-                print(json.dumps(json.loads(response_payload), indent=2))
 
     async def get_data(self):
         source_user = self.selected_classroom.get_user(
@@ -377,8 +347,6 @@ class PayloadHandler:
             })
 
         await conn_manager.send_personal_payload(payload=response_payload, websocket=source_user.websocket)
-        print("get_data")
-        print(json.dumps(json.loads(response_payload), indent=2))
 
     async def assignment_create(self):
         new_assignment = Assignment(
@@ -406,30 +374,22 @@ class PayloadHandler:
         })
 
         await conn_manager.send_personal_payload(payload=response_teacher, websocket=self.selected_classroom.get_teacher().websocket)
-        print("assignment_create_2")
-        print(json.dumps(json.loads(response_teacher), indent=2))
 
     async def lock_code(self):
         self.selected_classroom.editable = False
         response_payload = json.dumps({"action": Actions.LOCK_CODE.value})
         await conn_manager.broadcast_class_students(classroom_id=self.source_classroom_id, payload=response_payload)
-        print("lock_code")
-        print(json.dumps(json.loads(response_payload), indent=2))
 
     async def unlock_code(self):
         self.selected_classroom.editable = True
         response_payload = json.dumps({"action": Actions.UNLOCK_CODE.value})
         await conn_manager.broadcast_class_students(classroom_id=self.source_classroom_id, payload=response_payload)
-        print("unlock_code")
-        print(json.dumps(json.loads(response_payload), indent=2))
 
     async def classroom_deleted(self):
         response_payload = json.dumps(
             {"action": Actions.CLASSROOM_DELETED.value})
         await conn_manager.broadcast_class_students(classroom_id=self.source_classroom_id, payload=response_payload)
         class_manager.remove_classroom(self.source_classroom_id)
-        print("classroom_deleted")
-        print(json.dumps(json.loads(response_payload), indent=2))
 
     async def submit_assignment(self):
         user_assignment = self.payload_data
@@ -449,8 +409,6 @@ class PayloadHandler:
         })
 
         await conn_manager.send_personal_payload(payload=response_payload, websocket=self.selected_classroom.get_teacher().websocket)
-        print("submit_assignment")
-        print(json.dumps(json.loads(response_payload), indent=2))
 
     async def grade_assignment(self):
         user_assignment = self.payload_data
@@ -475,8 +433,6 @@ class PayloadHandler:
         })
 
         await conn_manager.send_personal_payload(payload=response_payload, websocket=target_user.websocket)
-        print("grade_assignment")
-        print(json.dumps(json.loads(response_payload), indent=2))
 
 
 payload_handler = PayloadHandler()

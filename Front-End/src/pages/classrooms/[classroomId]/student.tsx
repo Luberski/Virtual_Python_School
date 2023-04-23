@@ -254,7 +254,6 @@ export default function ClassroomsStudentPage(
   useEffect(() => {
     const responseMsg = lastJsonMessage as JsonRequest<unknown>;
     if (!messageHandled && lastJsonMessage != null) {
-      console.log('responseMsg:', responseMsg);
       if (responseMsg.action === Actions.SYNC_DATA) {
         const data = responseMsg.data as JoinUserRes;
         setUsers(data.users);
@@ -464,7 +463,6 @@ export default function ClassroomsStudentPage(
         <div className="flex h-full flex-1 flex-row overflow-hidden">
           <div className="flex h-full w-1/6 flex-1 flex-col justify-between border-r-2 border-neutral-50 bg-white p-6 dark:border-neutral-900 dark:bg-neutral-800">
             <div className="flex flex-col justify-start gap-2 align-middle">
-              <h5>Connection status: {connectionStatus[readyState]}</h5>
               <h1 className="mb-4 text-center text-2xl font-bold">
                 {translations('Classrooms.whiteboards')}
               </h1>
