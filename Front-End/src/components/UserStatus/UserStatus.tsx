@@ -1,6 +1,5 @@
 import type React from 'react';
 import type ClassroomUser from '@app/models/classroom/ClassroomUser';
-import Button, { ButtonVariant } from '@app/components/Button';
 
 type UserStatusProps = {
   user: ClassroomUser;
