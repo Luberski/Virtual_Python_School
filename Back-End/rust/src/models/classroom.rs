@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 pub struct Classroom {
     pub classroom_id: String,
     pub users: Vec<User>,
+    pub editable: bool,
 }
 
 impl Classroom {
@@ -12,6 +13,7 @@ impl Classroom {
         Classroom {
             classroom_id: classroom_id.to_string(),
             users: Vec::new(),
+            editable: false,
         }
     }
 }
