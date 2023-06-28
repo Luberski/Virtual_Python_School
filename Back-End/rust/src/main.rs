@@ -29,14 +29,25 @@ type WebsocketConnections = Arc<RwLock<HashMap<usize, mpsc::UnboundedSender<Mess
 #[tokio::main]
 async fn main() {
     pretty_env_logger::init();
+    run().await;
+}
 
+// Returns Response provided by applying the Filter.
+async fn run() {
+    // GET / -> index html
+    let index = warp::path::end().map(|| warp::reply::html(INDEX_HTML));
+    let routes = index.or(serve_ws());
+
+    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+}
+
+fn serve_ws() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     // Keep track of all connected users, key is usize, value
     // is a websocket sender.
     let ws_connections = WebsocketConnections::default();
     // Turn our "state" into a new Filter...
     let ws_connections = warp::any().map(move || ws_connections.clone());
-    // /ws/{classroom_id}
-    let serve_ws = warp::path("ws")
+    warp::path("ws")
         // The `ws()` filter will prepare Websocket handshake...
         .and(warp::ws())
         .and(ws_connections)
@@ -44,14 +55,7 @@ async fn main() {
         .map(|ws: warp::ws::Ws, ws_connections, classroom_id: u32| {
             // This will call our function if the handshake succeeds.
             ws.on_upgrade(move |socket| user_connected(socket, ws_connections, classroom_id))
-        });
-
-    // GET / -> index html
-    let index = warp::path::end().map(|| warp::reply::html(INDEX_HTML));
-
-    let routes = index.or(serve_ws);
-
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+        })
 }
 
 async fn user_connected(ws: WebSocket, ws_connections: WebsocketConnections, classroom_id: u32) {
@@ -180,3 +184,37 @@ static INDEX_HTML: &str = r#"<!DOCTYPE html>
     </body>
 </html>
 "#;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_ws() {
+        let server = serve_ws();
+
+        let mut client1 = warp::test::ws()
+            .path("/ws/1")
+            .handshake(server.clone())
+            .await
+            .expect("handshake");
+
+        let mut client2 = warp::test::ws()
+            .path("/ws/1")
+            .handshake(server.clone())
+            .await
+            .expect("handshake");
+
+        client1.send_text("hello").await;
+        client2.send_text("world").await;
+
+        assert_eq!(
+            client1.recv().await.unwrap().to_str().unwrap(),
+            "<User#2>: world"
+        );
+        assert_eq!(
+            client2.recv().await.unwrap().to_str().unwrap(),
+            "<User#1>: hello"
+        );
+    }
+}
